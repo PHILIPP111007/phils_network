@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import settingsLogo from '../images/three_points.svg'
 import Button from "./UI/Button"
+import ReactLinkify from 'react-linkify'
 
 export default function Post(props) {
 
@@ -26,12 +27,14 @@ export default function Post(props) {
             <br />
             <div className='content'>
                 <p>
-                    {(props.post.content.length > 500 && flag)
-                        ?
-                        props.post.content.substring(0, 499) + '...'
-                        :
-                        props.post.content
-                    }
+                    <ReactLinkify>
+                        {(props.post.content.length > 500 && flag)
+                            ?
+                            props.post.content.substring(0, 499) + '...'
+                            :
+                            props.post.content
+                        }
+                    </ReactLinkify>
                 </p>
             </div>
             <br />

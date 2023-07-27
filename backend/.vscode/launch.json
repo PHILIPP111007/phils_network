@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Django",
+            "name": "phils_network",
             "type": "python",
             "request": "launch",
             "python": "${workspaceFolder}/venv/bin/python",

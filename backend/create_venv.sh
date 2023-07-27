@@ -4,13 +4,13 @@
 
 RED='\033[0;31m'
 NC='\033[0m' # No Color
-venvActived="venv activated"
+venv="venv activated"
 
 if [ ! -d "venv" ]
     then
         python3 -m venv venv
     else
-        if [ -d "venv" ]; then source $PWD/venv/bin/activate; echo $venvActived; fi
+        if [ -d "venv" ]; then source $PWD/venv/bin/activate; echo $venv; fi
 fi
 
 pip install --upgrade pip

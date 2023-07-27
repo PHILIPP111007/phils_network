@@ -1,8 +1,6 @@
 export async function myFetch({ action, method, body, token }) {
 
-    const url = `${process.env.REACT_APP_DJANGO_HOST}${action}`
-
-    console.log(url)
+    const url = `${process.env.REACT_APP_DJANGO_URL}${action}`
 
     if (method === 'GET') {
         try {
