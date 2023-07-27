@@ -1,0 +1,33 @@
+input[type="submit"], input[type="reset"], input[type="password"] {
+    all: unset;
+    cursor: pointer;
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    outline: none;
+    padding: 5px;
+}
+input[type="text"], input[type="email"], input[type="password"] {
+    all: unset;
+    font-size: inherit;
+    color: inherit;
+    background: none;
+    cursor: auto;
+    display: inline-block;
+    letter-spacing: 1px;
+    outline: none;
+    width: 250px;
+    border: 1px solid gray;
+    padding: 5px 15px;
+}
+input[type="submit"]:after, input[type="reset"]:after {
+    position: relative;
+    z-index: -1;
+}
+input[type="submit"]:hover, input[type="reset"]:hover {
+    position: relative;
+}
+input[type="submit"]:active, input[type="reset"]:active {
+    position: relative;
+    top: 2px;
+}

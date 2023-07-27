@@ -1,0 +1,7 @@
+.ModalSettings {
+    min-width: 250px;
+    padding: 50px;
+}
+.ModalSettings .Input {
+    margin: 10px;
+}

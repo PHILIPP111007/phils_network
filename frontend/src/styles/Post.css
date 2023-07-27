@@ -1,0 +1,11 @@
+.Post {
+    margin-bottom: 10px;
+    padding: 20px;
+    word-break: break-all;
+}
+.Post a {
+    text-decoration: none;
+}
+.Post .content {
+    white-space: pre-line;
+} 

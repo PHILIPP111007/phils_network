@@ -1,0 +1,19 @@
+.ModalPostEdit {
+    width: 500px;
+    padding: 50px;
+}
+.ModalPostEdit textarea {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    width: 400px;
+    min-height: 200px;
+    resize: none;
+    outline: none;
+	border: 1px solid;
+    overflow: auto;
+    padding: 5px;
+}
+.ModalPostEdit button {
+    margin: 10px;
+}

@@ -1,0 +1,14 @@
+.Error {
+    position: fixed;
+    top: 30%;
+    bottom: 30%;
+    right: 30%;
+    left: 30%;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    font-size: xx-large;
+    background-color: rgb(181, 173, 173);
+    color: rgb(250, 244, 244);
+}

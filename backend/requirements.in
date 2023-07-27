@@ -1,0 +1,8 @@
+django
+daphne
+channels
+channels-redis
+python-dotenv
+django-cors-headers
+djoser
+djangorestframework

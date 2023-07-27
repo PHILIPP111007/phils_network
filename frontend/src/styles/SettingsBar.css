@@ -1,0 +1,14 @@
+.SettingsBar {
+    position: fixed;
+    top: -200px;
+    right: 20%;
+    text-align: center;
+    transition: top 0.5s;
+    -webkit-transition: top 0.5s;
+    border: 2px solid gray;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+.SettingsBar button {
+    margin: 10px;
+}

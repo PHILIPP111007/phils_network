@@ -1,0 +1,19 @@
+.Button {
+    border: none;
+    cursor: pointer;
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    outline: none;
+    padding: 5px;
+}
+.Button:after {
+    z-index: -1;
+}
+.Button:hover {
+    position: relative;
+}
+.Button:active {
+    position: relative;
+    top: 2px;
+}

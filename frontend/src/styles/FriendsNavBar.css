@@ -1,0 +1,21 @@
+.FriendsNavBar {
+    position: fixed;
+    top: 100px;
+    right: 10px;
+    display: flex;
+}
+.FriendsNavBar a {
+    display: block;
+    width: 200px;
+    padding: 20px;
+    font-size: 17px;
+    text-align: left;
+    text-decoration: none;
+    color: black;
+}
+.FriendsNavBar .subscribersCount {
+    padding: 5px 10px;
+    background-color: red;
+    border-radius: 20px;
+    color: white;
+}

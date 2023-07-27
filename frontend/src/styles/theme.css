@@ -1,0 +1,148 @@
+/* Light Theme */
+.light {
+    background-color: rgb(250, 244, 244);
+    color: rgb(0, 0, 0);
+}
+.light button {
+    background-color: rgb(205, 205, 205);
+    color: rgb(44, 42, 42);
+}
+.light textarea {
+    background-color: rgb(250, 244, 244);
+    color: rgb(0, 0, 0);
+}
+.light input[type="submit"], .light input[type="reset"] {
+    background-color: rgb(205, 205, 205);
+    color: rgb(44, 42, 42);
+}
+.light input[type="text"], .light input[type="email"] {
+    background-color: rgb(250, 244, 244);
+    color: rgb(44, 42, 42);
+}
+.light .UpperLine {
+    background-color: rgb(235, 235, 235, 0.8);
+}
+.light .SettingsBar {
+    background-color: rgb(235, 235, 235, 0.8);
+    border-color: rgb(202, 195, 195);
+}
+.light .NavBar {
+    background-color: rgb(235, 235, 235, 0.8);
+}
+.light .NavBar a:hover {
+    background-color: rgb(220, 220, 220, 0.8);
+}
+.light .FriendsNavBar {
+    background-color: rgb(235, 235, 235, 0.8);
+}
+.light .FriendsNavBar a:hover {
+    background-color: rgb(220, 220, 220, 0.8);
+}
+.light .UserCard {
+    background-color: rgb(202, 195, 195);
+}
+.light .Post {
+    background-color: rgb(230, 230, 230);
+}
+.light .Post .title {
+    color: rgb(134, 134, 134);
+}
+.light .Post a {
+    color: rgb(134, 134, 134);
+}
+.light .ModalSettings {
+    background: rgb(250, 244, 244);
+}
+.light .ModalPostEdit {
+    background: rgb(250, 244, 244);
+}
+.light .ModalDelAcc {
+    background: rgb(250, 244, 244);
+}
+.light .FriendCard {
+    background-color: rgb(230, 230, 230);
+    color: black;
+}
+.light .FriendCard .name {
+    color: black;
+}
+.light .FriendCard .username {
+    color: rgb(134, 134, 134);
+}
+
+/* Dark Theme */
+.dark {
+    background-color: rgb(43, 43, 43);
+    color: rgb(205, 205, 205);
+}
+.dark button {
+    background-color: rgb(101, 101, 110);
+    color: rgb(205, 205, 205);
+}
+.dark input[type="submit"], .dark input[type="reset"] {
+    background-color: rgb(101, 101, 110);
+    color: rgb(205, 205, 205);
+}
+.dark input[type="text"], .dark input[type="email"] {
+    background-color: rgb(43, 43, 43);
+    color: rgb(205, 205, 205);
+}
+.dark textarea {
+    background-color: rgb(43, 43, 43);
+    color: rgb(205, 205, 205);
+}
+.dark .UpperLine {
+    background-color: rgb(61, 61, 71, 0.8);
+}
+.dark .SettingsBar {
+    background-color: rgb(61, 61, 71, 0.8);
+    border-color: rgb(80, 80, 90);
+}
+.dark .NavBar {
+    background: rgb(61, 61, 71, 0.8);
+}
+.dark .NavBar a {
+    color: rgb(205, 205, 205);
+}
+.dark .NavBar a:hover {
+    background-color: rgb(49, 48, 57, 0.8);
+}
+.dark .FriendsNavBar {
+    background: rgb(61, 61, 71, 0.8);
+}
+.dark .FriendsNavBar a {
+    color: rgb(205, 205, 205);
+}
+.dark .FriendsNavBar a:hover {
+    background-color: rgb(49, 48, 57, 0.8);
+}
+.dark .UserCard {
+    background-color: rgb(57, 57, 61);
+}
+.dark .Post {
+    background-color: rgb(57, 57, 61);
+}
+.dark .Post .title {
+    color: rgb(134, 134, 134);
+}
+.dark .Post a {
+    color: rgb(134, 134, 134);
+}
+.dark .ModalSettings {
+    background: rgb(57, 57, 61);
+}
+.dark .ModalPostEdit {
+    background: rgb(57, 57, 61);
+}
+.dark .ModalDelAcc {
+    background: rgb(57, 57, 61);
+}
+.dark .FriendCard {
+    background-color: rgb(57, 57, 61);
+}
+.dark .FriendCard .name {
+    color: rgb(205, 205, 205);;
+}
+.dark .FriendCard .username {
+    color: rgb(134, 134, 134);
+}
