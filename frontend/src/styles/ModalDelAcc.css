@@ -1,4 +1,6 @@
 .ModalDelAcc {
     background-color: aliceblue;
     padding: 50px;
+    max-height: calc(100vh - 110px);
+    overflow-y: auto;
 }

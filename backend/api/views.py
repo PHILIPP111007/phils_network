@@ -1,12 +1,12 @@
 from django.contrib.auth.models import User
-from .models import Blog, Subscriber
+from .models import Blog, Subscriber, Room, Message
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 
-from .serializers import UserSerializer, BlogSerializer
+from .serializers import UserSerializer, BlogSerializer, RoomSerializer, MessageSerializer
 from .permissions import IsOwnerOrReadOnly  # custom permission
 from backend.settings import POSTS_TO_LOAD
 
@@ -68,7 +68,7 @@ class BlogAPIView(APIView):
 	
 	def put(self, request, **kwargs):
 		self.check_permissions(request=request)
-		pk = kwargs.get('pk')
+		pk = kwargs.get('pk', '')
 		if not pk:
 			return Response({'status': False})
 		
@@ -241,20 +241,60 @@ class NewsAPIView(APIView):
 		friends = Subscriber.get_friends(username=request.user.username)
 		posts = Blog.objects.filter(user_id__in=friends)[loaded_posts:loaded_posts + POSTS_TO_LOAD]
 
-		if posts:
-			posts = [
-				{
-					'id': post.id,
-					'username': post.user.username,
-					'first_name': post.user.first_name,
-					'last_name': post.user.last_name,
-					'content': post.content,
-					'date_time': post.date_time.strftime('%Y-%m-%d %H:%M'),
-					'is_changed': post.is_changed
-				} for post in posts
-			]
-			return Response({
-				'status': True,
-				'posts': posts
-			})
-		return Response({'status': False})
+		return Response({
+			'status': True,
+			'posts': BlogSerializer(posts, many=True).data
+		})
+
+
+class RoomsAPIView(APIView):
+	serializer_class = RoomSerializer
+	authentication_classes = (TokenAuthentication, )
+	permission_classes = (IsAuthenticated, )
+
+	def get(self, request):
+		self.check_permissions(request=request)
+
+		rooms = Room.objects.filter(subscribers__username=request.user.username)
+
+		return Response({
+			'status': True,
+			'rooms': RoomSerializer(rooms, many=True).data
+		})
+	
+	def post(self, request):
+		self.check_permissions(request=request)
+
+		usernames = request.data.get('subscribers', '')
+		name = request.data.get('name', '')
+		users = User.objects.filter(username__in=usernames).values_list('pk', flat=True)
+
+		room = Room(name=name)
+		room.save()
+		room.subscribers.add(*users)
+
+		return Response({
+			'status': True,
+			'room': RoomSerializer(room).data
+		})
+
+
+class RoomAPIView(APIView):
+	serializer_class = RoomSerializer
+	authentication_classes = (TokenAuthentication, )
+	permission_classes = (IsAuthenticated, )
+
+	def get(self, request, room_name):
+		self.check_permissions(request=request)
+
+		rooms = Room.objects.filter(name=room_name)
+	
+		return Response({
+			'status': True,
+			'rooms': RoomSerializer(rooms, many=True).data
+		})
+	
+
+
+
+

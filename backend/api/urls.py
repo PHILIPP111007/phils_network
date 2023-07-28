@@ -1,5 +1,5 @@
-from django.urls import path, re_path, include
-from .views import UserAPIView, BlogAPIView, FindUserAPIView, SubscriberAPIView, NewsAPIView, FriendsAPIView
+from django.urls import path, include
+from .views import UserAPIView, BlogAPIView, FindUserAPIView, SubscriberAPIView, NewsAPIView, FriendsAPIView, RoomsAPIView, RoomAPIView
 
 """
 Create user:
@@ -18,20 +18,22 @@ POST http://127.0.0.1:8000/auth/token/logout/
 """
 
 urlpatterns = [
-    path('api/auth/', include('djoser.urls')),
-    re_path(r'^auth/', include('djoser.urls.authtoken')),
+    path('auth/', include('djoser.urls')),
 
-    path('api/user/<str:username>/', UserAPIView.as_view()),
+    path('user/<str:username>/', UserAPIView.as_view()),
 
-    path('api/blog/', BlogAPIView.as_view()),
-    path('api/blog/<int:pk>/', BlogAPIView.as_view()),
-    path('api/blog/<str:username>/<int:loaded_posts>/', BlogAPIView.as_view()),
+    path('blog/', BlogAPIView.as_view()),
+    path('blog/<int:pk>/', BlogAPIView.as_view()),
+    path('blog/<str:username>/<int:loaded_posts>/', BlogAPIView.as_view()),
 
-    path('api/news/<int:loaded_posts>/', NewsAPIView.as_view()),
+    path('news/<int:loaded_posts>/', NewsAPIView.as_view()),
 
-    path('api/find/', FindUserAPIView.as_view()),
+    path('find/', FindUserAPIView.as_view()),
 
-    path('api/subscriber/<str:username>/', SubscriberAPIView.as_view()),
+    path('subscriber/<str:username>/', SubscriberAPIView.as_view()),
 
-    path('api/friends/<str:option>/', FriendsAPIView.as_view()),
+    path('friends/<str:option>/', FriendsAPIView.as_view()),
+
+    path("room/", RoomsAPIView.as_view()),
+    path("room/<str:room_name>/", RoomAPIView.as_view()),
 ]

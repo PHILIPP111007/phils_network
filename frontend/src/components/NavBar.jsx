@@ -14,6 +14,9 @@ export default function NavBar() {
                     <Link to={`/user/${user.username}/`}>User</Link>
                 </p>
                 <p>
+                    <Link to={`/chats/${user.username}/`}>Chats</Link>
+                </p>
+                <p>
                     <Link to={`/news/${user.username}/`}>News</Link>
                 </p>
                 <p>

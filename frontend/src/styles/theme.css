@@ -50,6 +50,12 @@
 .light .Post a {
     color: rgb(134, 134, 134);
 }
+
+.light .RoomCard {
+    background-color: rgb(230, 230, 230);
+}
+
+
 .light .ModalSettings {
     background: rgb(250, 244, 244);
 }
@@ -128,6 +134,13 @@
 .dark .Post a {
     color: rgb(134, 134, 134);
 }
+
+
+.dark .RoomCard {
+    background-color: rgb(57, 57, 61);
+}
+
+
 .dark .ModalSettings {
     background: rgb(57, 57, 61);
 }

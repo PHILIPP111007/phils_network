@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Blog
+from .models import Blog, Room, Message
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -8,10 +8,25 @@ class UserSerializer(serializers.ModelSerializer):
 		model = User
 		fields = ('username', 'first_name', 'last_name', 'email')
 
+
 class BlogSerializer(serializers.ModelSerializer):
+	user_info = UserSerializer(source='user', read_only=True)
 	date_time = serializers.DateTimeField(read_only=True, format="%Y-%m-%d %H:%M")
 	class Meta:
 		model = Blog
+		fields = '__all__'
+
+
+class RoomSerializer(serializers.ModelSerializer):
+	subscribers_info = UserSerializer(source='subscribers', many=True, read_only=True)
+	class Meta:
+		model = Room
+		fields = '__all__'
+
+
+class MessageSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Message
 		fields = '__all__'
 
 

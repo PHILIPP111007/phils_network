@@ -1,4 +1,5 @@
 import '../styles/User.css'
+import '../styles/Posts.css'
 import { useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useInView } from 'react-intersection-observer'
@@ -96,6 +97,7 @@ export default function User() {
                 <Post
                     key={post.id}
                     post={post}
+                    linkShow={false}
                     settings={isUserGlobal}
                     setPost={setPost}
                     setModalPost={setModalPostEdit}

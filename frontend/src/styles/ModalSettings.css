@@ -1,6 +1,8 @@
 .ModalSettings {
     min-width: 250px;
     padding: 50px;
+    max-height: calc(100vh - 110px);
+    overflow-y: auto;
 }
 .ModalSettings .Input {
     margin: 10px;

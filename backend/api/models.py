@@ -49,3 +49,24 @@ class Subscriber(models.Model):
 			Q(username__in=set_2) & ~Q(username__in=set_1)
 		)
 		return query
+
+
+class Room(models.Model):
+	name = models.CharField(max_length=50)
+	subscribers = models.ManyToManyField(User, blank=True)
+	
+	def __str__(self):
+		return f"{self.name}"
+
+
+class Message(models.Model):
+	room = models.ForeignKey(Room, to_field="id", db_column="room", on_delete=models.CASCADE)
+	sender = models.ForeignKey(User, to_field="username", db_column="sender", on_delete=models.PROTECT)
+	message = models.CharField(max_length=5000)
+	timestamp = models.DateTimeField(auto_now_add=True)
+
+	class Meta:
+		ordering=["timestamp"]
+	
+	def __str__(self):
+		return f"{self.room} {self.sender} [{self.timestamp}]"

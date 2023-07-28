@@ -1,0 +1,15 @@
+.ModalRoomCreate {
+    padding: 50px;
+    max-height: calc(100vh - 110px);
+    overflow-y: auto;
+
+    background-color: aliceblue;
+}
+
+.ModalRoomCreate .card {
+    margin-top: 10px;
+    padding: 5px;
+
+    
+    background-color: aqua;
+}

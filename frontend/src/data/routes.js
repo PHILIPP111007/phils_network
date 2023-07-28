@@ -1,4 +1,5 @@
 import User from "../pages/User"
+import Rooms from "../pages/Rooms"
 import News from "../pages/News"
 import Friends from "../pages/Friends"
 import FriendsSection from "../pages/FriendsSection"
@@ -7,6 +8,7 @@ import SubscribersSection from "../pages/SubscribersSection"
 
 export const privateRoutes = [
     {path: '/user/:username/', name: 'User', element: <User />, exact: true},
+    {path: '/chats/:username/', name: 'Chats', element: <Rooms />, exact: true},
     {path: '/news/:username/', name: 'News', element: <News />, exact: true},
     {path: '/friends/:username/', name: 'Friends', element: <Friends />, exact: true},
 

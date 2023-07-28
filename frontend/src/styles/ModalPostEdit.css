@@ -1,6 +1,8 @@
 .ModalPostEdit {
     width: 500px;
     padding: 50px;
+    max-height: calc(100vh - 110px);
+    overflow-y: auto;
 }
 .ModalPostEdit textarea {
     font-family: inherit;

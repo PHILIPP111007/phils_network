@@ -1,0 +1,57 @@
+import '../../styles/ModalRoomCreate.css'
+import { useEffect, useState } from 'react'
+import { UserSection } from '../../hooks/UserSection'
+import Loading from '../../components/Loading'
+import Button from "../UI/Button"
+import Input from '../UI/Input'
+
+export default function ModalRoomCreate(props) {
+
+    const [room, setRoom] = useState({ name: '', subscribers: [] })
+    const [friends, setFriends] = useState([])
+    const [loading, setLoading] = useState(true)
+
+    function friendsShow() {
+        return friends.map((user) =>
+
+            <div key={user.username} className="card">
+                <div className="info">
+                    <p>{user.first_name} {user.last_name} @{user.username}</p>
+                </div>
+
+                {room.subscribers.filter(username => username === user.username).length === 0
+                    ?
+                    <Button onClick={() => setRoom({ ...room, subscribers: [...room.subscribers, user.username] })} >add</Button>
+                    :
+                    <Button onClick={() => setRoom({ ...room, subscribers: room.subscribers.filter(username => username !== user.username) })} >delete</Button>
+                }
+            </div>
+        )
+    }
+
+    useEffect(() => {
+        UserSection({ option: 'friends', setUserSection: setFriends, setLoading: setLoading })
+    }, [])
+
+    return (
+        <div className='ModalRoomCreate'>
+
+            <Button onClick={() => {
+                if (room.name.length > 0 && room.subscribers.length > 0) {
+                    props.createRoom(room)
+                }
+                setRoom({ name: '', subscribers: [] })
+            }} >create</Button>
+
+            <Input
+                type="text"
+                placeholder="room name"
+                value={room.name}
+                onChange={(e) => setRoom({ ...room, name: e.target.value })}
+            />
+
+            {friendsShow()}
+            {loading && <Loading />}
+        </div>
+    )
+}

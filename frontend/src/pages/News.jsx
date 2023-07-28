@@ -1,3 +1,4 @@
+import '../styles/Posts.css'
 import { useState, useContext } from "react"
 import { useInView } from "react-intersection-observer"
 import { useObserver } from "../hooks/useObserver"
@@ -36,7 +37,7 @@ export default function News() {
 
             <div className='Posts'>
                 {posts.map((post) =>
-                    <Post key={post.id} post={post} settings={false} />
+                    <Post key={post.id} post={post} linkShow={true} settings={false} />
                 )}
                 {loading && <Loading />}
             </div>

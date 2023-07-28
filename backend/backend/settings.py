@@ -1,9 +1,10 @@
-from pathlib import Path
 from os import getenv
-from dotenv import load_dotenv
+from pathlib import Path
 
+import dotenv
 
-load_dotenv()
+dotenv.load_dotenv()
+
 
 # Build paths inside the project like this: BASE_DIR / "subdir".
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -18,7 +19,7 @@ SECRET_KEY = getenv('SECRET_KEY')
 # SECURITY WARNING: don"t run with debug turned on in production!
 DEBUG = bool(getenv('DEBUG', default=0))
 
-ALLOWED_HOSTS = [getenv('ALLOWED_HOSTS')]
+ALLOWED_HOSTS = getenv('ALLOWED_HOSTS').split(',')
 
 
 # Application definition
@@ -49,7 +50,6 @@ MIDDLEWARE = [
 	"django.contrib.auth.middleware.AuthenticationMiddleware",
 	"django.contrib.messages.middleware.MessageMiddleware",
 	"django.middleware.clickjacking.XFrameOptionsMiddleware",
-	# "whitenoise.middleware.WhiteNoiseMiddleware" # for hypercorn server
 
 	'corsheaders.middleware.CorsMiddleware',
 ]
@@ -78,7 +78,7 @@ CHANNEL_LAYERS = {
 	"default": {
 		"BACKEND": "channels_redis.core.RedisChannelLayer",
 		"CONFIG": {
-			"hosts": [("127.0.0.1", 6379)],
+			"hosts": [(getenv('CHANNEL_LAYERS_HOST'), int(getenv('CHANNEL_LAYERS_PORT')))],
 		},
 	},
 }
@@ -91,7 +91,7 @@ DATABASES = {
 	"default": {
 		"ENGINE": "django.db.backends.sqlite3",
 		"NAME": BASE_DIR / "db.sqlite3",
-	}
+	},
 }
 
 
@@ -130,6 +130,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = "/static/"
+STATIC_ROOT = "static"
+
 
 STATICFILES_DIRS = [
 	BASE_DIR / "backend/static"
@@ -140,9 +142,6 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-
-LOGIN_URL = "/login"
 
 
 # ----- My settings -----
@@ -157,7 +156,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
-        'rest_framework.renderers.BrowsableAPIRenderer', # отключить в продакшене
+        'rest_framework.renderers.BrowsableAPIRenderer', #! disable in prod
     ],
 
     'DEFAULT_AUTHENTICATION_CLASSES': [
