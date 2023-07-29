@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import UserAPIView, BlogAPIView, FindUserAPIView, SubscriberAPIView, NewsAPIView, FriendsAPIView, RoomsAPIView, RoomAPIView
+from .views import UserAPIView, BlogAPIView, FindUserAPIView, SubscriberAPIView, NewsAPIView, FriendsAPIView, RoomsAPIView, ChatAPIView
 
 """
 Create user:
@@ -35,5 +35,5 @@ urlpatterns = [
     path('friends/<str:option>/', FriendsAPIView.as_view()),
 
     path("room/", RoomsAPIView.as_view()),
-    path("room/<str:room_name>/", RoomAPIView.as_view()),
+    path("room/<str:room_name>/", ChatAPIView.as_view()),
 ]

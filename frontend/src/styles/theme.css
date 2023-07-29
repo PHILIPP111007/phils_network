@@ -1,161 +1,124 @@
+:root {
+    --gray-color: rgb(134, 134, 134);
+
+    /* Light vars */
+    --l-color: rgb(0, 0, 0);
+    --l-ui-color: rgb(44, 42, 42);
+    --l-list-color: rgb(134, 134, 134);
+    
+    --l-main-bg-color: rgb(250, 244, 244);
+    --l-ui-bg-color: rgb(205, 205, 205);
+    --l-upper-line-bg-color: rgba(235, 235, 235, 0.8);
+    --l-upper-line-bg-color-hover: rgba(220, 220, 220, 0.8);
+    --l-user-card-bg-color: rgb(202, 195, 195);
+    --l-list-bg-color: rgb(230, 230, 230);
+
+    --l-border-color: rgb(202, 195, 195);
+
+    /* Dark vars */
+    --d-color: rgb(205, 205, 205);
+    --d-ui-color: rgb(205, 205, 205);
+    --d-list-color: rgb(134, 134, 134);
+    
+    --d-main-bg-color: rgb(43, 43, 43);
+    --d-ui-bg-color: rgb(101, 101, 110);
+    --d-upper-line-bg-color: rgba(61, 61, 71, 0.8);
+    --d-upper-line-bg-color-hover: rgba(49, 48, 57, 0.8);
+    --d-user-card-bg-color: rgb(57, 57, 61);
+    --d-list-bg-color: rgb(57, 57, 61);
+
+    --d-border-color: rgb(80, 80, 90);
+}
+
+.FriendCard .username {
+    color: var(--gray-color);
+}
+
 /* Light Theme */
 .light {
-    background-color: rgb(250, 244, 244);
-    color: rgb(0, 0, 0);
+    background-color: var(--l-main-bg-color);
+    color: var(--l-color);
 }
-.light button {
-    background-color: rgb(205, 205, 205);
-    color: rgb(44, 42, 42);
+.light button, .light input[type="submit"], .light input[type="reset"] {
+    background-color: var(--l-ui-bg-color);
+    color: var(--l-ui-color);
 }
 .light textarea {
-    background-color: rgb(250, 244, 244);
-    color: rgb(0, 0, 0);
-}
-.light input[type="submit"], .light input[type="reset"] {
-    background-color: rgb(205, 205, 205);
-    color: rgb(44, 42, 42);
+    background-color: var(--l-main-bg-color);
+    /* color: var(--l-color); */
 }
 .light input[type="text"], .light input[type="email"] {
-    background-color: rgb(250, 244, 244);
-    color: rgb(44, 42, 42);
+    background-color: var(--l-main-bg-color);
+    color: var(--l-ui-color);
 }
-.light .UpperLine {
-    background-color: rgb(235, 235, 235, 0.8);
+.light .UpperLine, .light .NavBar, .light .FriendsNavBar {
+    background-color: var(--l-upper-line-bg-color);
 }
 .light .SettingsBar {
-    background-color: rgb(235, 235, 235, 0.8);
-    border-color: rgb(202, 195, 195);
+    background-color: var(--l-upper-line-bg-color);
+    border-color: var(--l-border-color);
 }
-.light .NavBar {
-    background-color: rgb(235, 235, 235, 0.8);
-}
-.light .NavBar a:hover {
-    background-color: rgb(220, 220, 220, 0.8);
-}
-.light .FriendsNavBar {
-    background-color: rgb(235, 235, 235, 0.8);
-}
-.light .FriendsNavBar a:hover {
-    background-color: rgb(220, 220, 220, 0.8);
+.light .NavBar a:hover, .light .FriendsNavBar a:hover {
+    background-color: var(--l-upper-line-bg-color-hover);
 }
 .light .UserCard {
-    background-color: rgb(202, 195, 195);
+    background-color: var(--l-user-card-bg-color);
 }
-.light .Post {
-    background-color: rgb(230, 230, 230);
+.light .Post, .light .RoomCard, .light .ModalRoomCreate .card, .light .FriendCard {
+    background-color: var(--l-list-bg-color);
 }
-.light .Post .title {
-    color: rgb(134, 134, 134);
+.light .Post .title, .light .Post a {
+    color: var(--l-list-color);
 }
-.light .Post a {
-    color: rgb(134, 134, 134);
+.light .ModalRoomCreate, .light .ModalSettings, .light .ModalPostEdit, .light .ModalDelAcc {
+    background-color: var(--l-main-bg-color);
 }
-
-.light .RoomCard {
-    background-color: rgb(230, 230, 230);
-}
-
-
-.light .ModalSettings {
-    background: rgb(250, 244, 244);
-}
-.light .ModalPostEdit {
-    background: rgb(250, 244, 244);
-}
-.light .ModalDelAcc {
-    background: rgb(250, 244, 244);
-}
-.light .FriendCard {
-    background-color: rgb(230, 230, 230);
-    color: black;
-}
-.light .FriendCard .name {
-    color: black;
-}
-.light .FriendCard .username {
-    color: rgb(134, 134, 134);
+.light .FriendCard, .light .FriendCard .name {
+    color: var(--l-color);
 }
 
 /* Dark Theme */
 .dark {
-    background-color: rgb(43, 43, 43);
-    color: rgb(205, 205, 205);
+    background-color: var(--d-main-bg-color);
+    color: var(--d-color);
 }
-.dark button {
-    background-color: rgb(101, 101, 110);
-    color: rgb(205, 205, 205);
-}
-.dark input[type="submit"], .dark input[type="reset"] {
-    background-color: rgb(101, 101, 110);
-    color: rgb(205, 205, 205);
-}
-.dark input[type="text"], .dark input[type="email"] {
-    background-color: rgb(43, 43, 43);
-    color: rgb(205, 205, 205);
+.dark button, .dark input[type="submit"], .dark input[type="reset"] {
+    background-color: var(--d-ui-bg-color);
+    color: var(--d-ui-color);
 }
 .dark textarea {
-    background-color: rgb(43, 43, 43);
-    color: rgb(205, 205, 205);
+    background-color: var(--d-main-bg-color);
+    color: var(--d-color);
 }
-.dark .UpperLine {
-    background-color: rgb(61, 61, 71, 0.8);
+.dark input[type="text"], .dark input[type="email"] {
+    background-color: var(--d-main-bg-color);
+    color: var(--d-ui-color);
+}
+.dark .UpperLine, .dark .NavBar, .dark .FriendsNavBar {
+    background-color: var(--d-upper-line-bg-color);
 }
 .dark .SettingsBar {
-    background-color: rgb(61, 61, 71, 0.8);
-    border-color: rgb(80, 80, 90);
+    background-color: var(--d-upper-line-bg-color);
+    border-color: var(--d-border-color);
 }
-.dark .NavBar {
-    background: rgb(61, 61, 71, 0.8);
+.dark .NavBar a, .dark .FriendsNavBar a {
+    color: var(--d-ui-color);
 }
-.dark .NavBar a {
-    color: rgb(205, 205, 205);
-}
-.dark .NavBar a:hover {
-    background-color: rgb(49, 48, 57, 0.8);
-}
-.dark .FriendsNavBar {
-    background: rgb(61, 61, 71, 0.8);
-}
-.dark .FriendsNavBar a {
-    color: rgb(205, 205, 205);
-}
-.dark .FriendsNavBar a:hover {
-    background-color: rgb(49, 48, 57, 0.8);
+.dark .NavBar a:hover, .dark .FriendsNavBar a:hover {
+    background-color: var(--d-upper-line-bg-color-hover);
 }
 .dark .UserCard {
-    background-color: rgb(57, 57, 61);
+    background-color: var(--d-user-card-bg-color);
 }
-.dark .Post {
-    background-color: rgb(57, 57, 61);
+.dark .Post, .dark .RoomCard, .dark .ModalRoomCreate .card, .dark .FriendCard {
+    background-color: var(--d-list-bg-color);
 }
-.dark .Post .title {
-    color: rgb(134, 134, 134);
+.dark .Post .title, .dark .Post a {
+    color: var(--d-list-color);
 }
-.dark .Post a {
-    color: rgb(134, 134, 134);
+.dark .ModalRoomCreate, .dark .ModalSettings, .dark .ModalPostEdit, .dark .ModalDelAcc {
+    background-color: var(--d-main-bg-color);
 }
-
-
-.dark .RoomCard {
-    background-color: rgb(57, 57, 61);
-}
-
-
-.dark .ModalSettings {
-    background: rgb(57, 57, 61);
-}
-.dark .ModalPostEdit {
-    background: rgb(57, 57, 61);
-}
-.dark .ModalDelAcc {
-    background: rgb(57, 57, 61);
-}
-.dark .FriendCard {
-    background-color: rgb(57, 57, 61);
-}
-.dark .FriendCard .name {
-    color: rgb(205, 205, 205);;
-}
-.dark .FriendCard .username {
-    color: rgb(134, 134, 134);
+.dark .FriendCard, .dark .FriendCard .name {
+    color: var(--d-color);
 }

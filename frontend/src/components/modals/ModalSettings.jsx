@@ -57,12 +57,6 @@ export default function ModalSettings(props) {
                 />
             </form>
 
-            <label>Low power mode</label>
-            <form>
-                <Input type="checkbox" />
-                <Input type="submit" value="save" />
-            </form>
-
             <label>Danger zone</label>
             <br />
             <Button onClick={() => {

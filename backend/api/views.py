@@ -279,20 +279,13 @@ class RoomsAPIView(APIView):
 		})
 
 
-class RoomAPIView(APIView):
+class ChatAPIView(APIView):
 	serializer_class = RoomSerializer
 	authentication_classes = (TokenAuthentication, )
 	permission_classes = (IsAuthenticated, )
 
 	def get(self, request, room_name):
 		self.check_permissions(request=request)
-
-		rooms = Room.objects.filter(name=room_name)
-	
-		return Response({
-			'status': True,
-			'rooms': RoomSerializer(rooms, many=True).data
-		})
 	
 
 
