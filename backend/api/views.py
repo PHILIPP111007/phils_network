@@ -280,12 +280,21 @@ class RoomsAPIView(APIView):
 
 
 class ChatAPIView(APIView):
-	serializer_class = RoomSerializer
+	serializer_class = MessageSerializer
 	authentication_classes = (TokenAuthentication, )
 	permission_classes = (IsAuthenticated, )
 
-	def get(self, request, room_name):
+	def get(self, request, room):
 		self.check_permissions(request=request)
+
+		messages = Message.objects.filter(room=room)
+
+		return Response({
+			'status': True,
+			'messages': MessageSerializer(messages, many=True).data
+		})
+
+
 	
 
 

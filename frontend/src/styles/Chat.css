@@ -1,0 +1,45 @@
+.Chat {
+    margin: 100px auto;
+    min-width: 500px;
+    max-width: 800px;
+    word-break: break-all;
+}
+
+.Chat .Message {
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
+.Chat .info {
+    margin-bottom: 10px;
+}
+
+.Chat .info a {
+    text-decoration: none;
+}
+
+.Chat .text {
+    white-space: pre-line;
+}
+
+.Chat .UserInput {
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+}
+.Chat .MessageArea {
+    width: 400px;
+    resize: none;
+    outline: none;
+    overflow: auto;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+	border: 1px solid;
+    padding: 5px;
+}
+.Chat .Wrapper-Scrollbottom {
+    margin-top: 50px;
+}

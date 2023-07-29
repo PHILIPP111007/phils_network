@@ -62,7 +62,7 @@ class Room(models.Model):
 class Message(models.Model):
 	room = models.ForeignKey(Room, to_field="id", db_column="room", on_delete=models.CASCADE)
 	sender = models.ForeignKey(User, to_field="username", db_column="sender", on_delete=models.PROTECT)
-	message = models.CharField(max_length=5000)
+	text = models.TextField(max_length=5000)
 	timestamp = models.DateTimeField(auto_now_add=True)
 
 	class Meta:

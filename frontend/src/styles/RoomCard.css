@@ -1,5 +1,12 @@
 .RoomCard {
     margin-top: 10px;
-    padding: 20px;
     word-break: break-all;
+}
+
+.RoomCard .text {
+    padding: 20px;
+}
+
+.RoomCard .link a {
+    text-decoration: none;
 }

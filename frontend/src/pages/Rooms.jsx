@@ -17,7 +17,7 @@ export default function Rooms() {
 
     async function createRoom(room) {
         room.subscribers.push(user.username)
-        await myFetch({ action: `api/room/`, method: 'POST', body: room, token: token })
+        await myFetch({ action: 'api/room/', method: 'POST', body: room, token: token })
             .then((data) => {
                 if (data.status) {
                     setRooms([data.room, ...rooms])
@@ -27,7 +27,7 @@ export default function Rooms() {
     }
 
     useEffect(() => {
-        myFetch({ action: `api/room/`, method: 'GET', token: token })
+        myFetch({ action: 'api/room/', method: 'GET', token: token })
             .then((data) => {
                 if (data.status) {
                     setRooms(data.rooms)
@@ -48,7 +48,7 @@ export default function Rooms() {
 
             <div className='list'>
                 {rooms.map((room) =>
-                    <RoomCard key={room.id} room={room} />
+                    <RoomCard key={room.id} room={room} link={`/chats/${user.username}/${room.id}/`} />
                 )}
             </div>
 

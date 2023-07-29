@@ -1,7 +1,7 @@
 import '../../styles/ModalRoomCreate.css'
 import { useEffect, useState } from 'react'
 import { UserSection } from '../../hooks/UserSection'
-import Loading from '../../components/Loading'
+import Loading from '../Loading'
 import Button from "../UI/Button"
 import Input from '../UI/Input'
 
@@ -43,12 +43,18 @@ export default function ModalRoomCreate(props) {
                 setRoom({ name: '', subscribers: [] })
             }} >create</Button>
 
+            <br />
+            <br />
+
             <Input
                 type="text"
                 placeholder="room name"
                 value={room.name}
                 onChange={(e) => setRoom({ ...room, name: e.target.value })}
             />
+
+            <br />
+            <br />
 
             {friendsShow()}
             {loading && <Loading />}

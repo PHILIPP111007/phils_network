@@ -42,7 +42,7 @@ export default function News() {
                 {loading && <Loading />}
             </div>
 
-            <LazyDiv myRef={ref} />
+            <LazyDiv Ref={ref} />
 
         </div>
     )

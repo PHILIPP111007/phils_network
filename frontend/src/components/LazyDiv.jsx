@@ -1,5 +1,5 @@
-export default function LazyDiv(props) {
+export default function LazyDiv({ Ref }) {
     return (
-        <div className="LazyDiv" ref={props.myRef} ></div>
+        <div className="LazyDiv" ref={Ref} ></div>
     )
 }

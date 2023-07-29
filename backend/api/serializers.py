@@ -21,10 +21,12 @@ class RoomSerializer(serializers.ModelSerializer):
 	subscribers_info = UserSerializer(source='subscribers', many=True, read_only=True)
 	class Meta:
 		model = Room
-		fields = '__all__'
+		exclude = ('subscribers', )
 
 
 class MessageSerializer(serializers.ModelSerializer):
+	sender_info = UserSerializer(source='sender', read_only=True)
+	timestamp = serializers.DateTimeField(read_only=True, format="%Y-%m-%d %H:%M")
 	class Meta:
 		model = Message
 		fields = '__all__'

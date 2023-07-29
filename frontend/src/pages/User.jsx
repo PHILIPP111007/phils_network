@@ -160,7 +160,7 @@ export default function User() {
                 {loading && <Loading />}
             </div>
 
-            <LazyDiv myRef={ref} />
+            <LazyDiv Ref={ref} />
 
         </div>
     )

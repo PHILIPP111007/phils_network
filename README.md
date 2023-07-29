@@ -5,11 +5,11 @@ Minimalistic social network written using Django and React
 ## What supports this app
 1. Accounts and adding friends. Each user has the opportunity to maintain their own blog, subscribe to other people and see their blogs.
 
-2. Meet the dark theme!
+2. Dark theme
 
-3. Lazy loading of posts!
+3. Lazy loading of posts
 
-4. The messenger has not yet been implemented
+4. You can create a conversation and chat with friends
 
 \
 Have fun and if you want please leave feedback!
