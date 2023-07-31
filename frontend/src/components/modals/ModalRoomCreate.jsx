@@ -16,7 +16,7 @@ export default function ModalRoomCreate(props) {
 
             <div key={user.username} className="card">
                 <div className="info">
-                    <p>{user.first_name} {user.last_name} @{user.username}</p>
+                    <div>{user.first_name} {user.last_name} @{user.username}</div>
                 </div>
 
                 {room.subscribers.filter(username => username === user.username).length === 0
@@ -49,6 +49,7 @@ export default function ModalRoomCreate(props) {
             <Input
                 type="text"
                 placeholder="room name"
+                maxLength="50"
                 value={room.name}
                 onChange={(e) => setRoom({ ...room, name: e.target.value })}
             />

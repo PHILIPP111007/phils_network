@@ -15,7 +15,7 @@ export default function MainComponents(props) {
 
     return (
         <div className="MainComponents">
-            <UpperLine user={props.user} setBarRef={setBarRef} />
+            <UpperLine user={props.user} setBarRef={setBarRef} roomName={props.roomName} />
 
             <NavBar />
 
@@ -26,7 +26,7 @@ export default function MainComponents(props) {
             </Modal>
 
             <Modal modal={modalDelAcc} setModal={setModalDelAcc}>
-                <ModalDelAcc setModalDelAcc={setModalDelAcc} />
+                <ModalDelAcc />
             </Modal>
 
             <ScrollToTop />

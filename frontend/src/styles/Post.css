@@ -1,7 +1,7 @@
 .Post {
     margin-bottom: 10px;
     padding: 20px;
-    word-break: break-all;
+    word-break: break-word;
 }
 .Post .link a {
     text-decoration: none;

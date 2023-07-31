@@ -1,15 +1,23 @@
 import '../styles/Chat.css'
 import { useContext, useEffect, useRef, useState } from "react"
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { UserContext } from "../data/context"
 import { myFetch } from '../API/myFetch'
 import MainComponents from "../components/MainComponents"
+import Modal from '../components/Modal'
+import ModalRoomEdit from '../components/modals/ModalRoomEdit'
 import Message from '../components/Message'
-import Button from '../components/UI/Button'
+import sendIcon from '../images/send-icon.svg'
+import settingsLogo from '../images/three_points_gray.svg'
 
 export default function Chat() {
 
     const { user } = useContext(UserContext)
+    const navigate = useNavigate()
+    const [isCreator, setIsCreator] = useState(false)
+    const [room, setRoom] = useState({ id: undefined, name: '', subscribers_info: [] })
+    const [invitationChanges, setInvitationChanges] = useState({ friends: [], subscribers: [] })
+    const [modalRoomEdit, setModalRoomEdit] = useState(false)
     const [messages, setMessages] = useState([])
     const [text, setText] = useState('')
     const params = useParams()
@@ -21,7 +29,6 @@ export default function Chat() {
         if (wrapperRef.current) {
             wrapperRef.current.scrollIntoView(
                 {
-                    behavior: 'smooth',
                     block: 'start',
                     inline: 'nearest'
                 })
@@ -38,16 +45,37 @@ export default function Chat() {
         }
     }
 
+    async function editRoom() {
+        let subscribers = invitationChanges.subscribers.filter((user) => user.isInRoom === false)
+        let friends = invitationChanges.friends.filter((user) => user.isInRoom === true)
+        subscribers = subscribers.map((user) => {
+            return user.username
+        })
+        friends = friends.map((user) => {
+            return user.username
+        })
+
+        if (friends.length > 0 || subscribers.length > 0) {
+            const data = { subscribers: subscribers, friends: friends }
+
+            myFetch({ action: `api/room/${params.room_id}/`, method: 'PUT', body: data, token: token })
+                .then((data) => {
+                    if (data.status) {
+                        navigate(`/chats/${user.username}/`)
+                    }
+                })
+        }
+    }
+
     useEffect(() => {
         scrollToBottom()
     }, [messages])
 
     useEffect(() => {
-        const messageArea = document.getElementsByClassName('MessageArea').item(0)
+        const textArea = document.getElementsByClassName('TextArea').item(0)
         const sendButton = document.getElementById('SendButton')
-        messageArea.focus()
-
-        messageArea.onkeyup = function (e) {
+        textArea.focus()
+        textArea.onkeyup = function (e) {
             if (e.keyCode === 13) {
                 sendButton.click()
             }
@@ -56,10 +84,15 @@ export default function Chat() {
         myFetch({ action: `api/room/${params.room_id}/`, method: 'GET', token: token })
             .then((data) => {
                 if (data.status) {
+                    setIsCreator(data.isCreator)
                     setMessages(data.messages)
+                    setRoom(data.room)
+                    invitationChanges.subscribers = data.room.subscribers_info.map((user) => {
+                        return { ...user, isInRoom: true }
+                    })
                 }
             })
-    }, [])
+    }, [room.name])
 
     useEffect(() => {
         const socket = new WebSocket(
@@ -97,7 +130,11 @@ export default function Chat() {
 
     return (
         <div className="Chat">
-            <MainComponents user={user} />
+            <MainComponents user={user} roomName={room.name} />
+
+            <Modal modal={modalRoomEdit} setModal={setModalRoomEdit}>
+                <ModalRoomEdit room={room} setRoom={setRoom} isCreator={isCreator} me={user} editRoom={editRoom} invitationChanges={invitationChanges} setInvitationChanges={setInvitationChanges} />
+            </Modal>
 
             <div className='Messages'>
                 {messages.map((message) =>
@@ -106,8 +143,9 @@ export default function Chat() {
             </div>
 
             <div className='UserInput'>
-                <textarea className='MessageArea' placeholder="send message..." value={text} onChange={(e) => setText(e.target.value)} />
-                <Button id="SendButton" onClick={() => sendMessage()} >send</Button>
+                <img id="SettingsButton" src={settingsLogo} onClick={() => setModalRoomEdit(true)} alt="settings button" />
+                <textarea className='TextArea' maxLength="5000" placeholder="type text..." value={text} onChange={(e) => setText(e.target.value)} />
+                <img id="SendButton" src={sendIcon} onClick={() => sendMessage()} alt="send button" />
             </div>
 
             <div className="Wrapper-Scrollbottom" ref={wrapperRef} ></div>

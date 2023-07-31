@@ -35,5 +35,5 @@ urlpatterns = [
     path('friends/<str:option>/', FriendsAPIView.as_view()),
 
     path("room/", RoomsAPIView.as_view()),
-    path("room/<int:room>/", ChatAPIView.as_view()),
+    path("room/<int:pk>/", ChatAPIView.as_view()),
 ]

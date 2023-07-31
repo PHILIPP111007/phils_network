@@ -21,7 +21,7 @@ class Subscriber(models.Model):
 	subscribe = models.ForeignKey(User, related_name="user_2", to_field="username", db_column="subscribe", on_delete=models.CASCADE)
 
 	def __str__(self):
-		return self.user.username
+		return f"{self.user.username} -> {self.subscribe.username}"
 
 	@staticmethod
 	def get_friends(username):
@@ -57,11 +57,19 @@ class Room(models.Model):
 	
 	def __str__(self):
 		return f"{self.name}"
+	
+
+class RoomCreator(models.Model):
+	room = models.ForeignKey(Room, on_delete=models.CASCADE)
+	creator = models.ForeignKey(User, on_delete=models.CASCADE)
+
+	def __str__(self):
+		return f"{self.room}"
 
 
 class Message(models.Model):
-	room = models.ForeignKey(Room, to_field="id", db_column="room", on_delete=models.CASCADE)
-	sender = models.ForeignKey(User, to_field="username", db_column="sender", on_delete=models.PROTECT)
+	room = models.ForeignKey(Room, on_delete=models.CASCADE)
+	sender = models.ForeignKey(User, to_field="username", db_column="sender", on_delete=models.CASCADE)
 	text = models.TextField(max_length=5000)
 	timestamp = models.DateTimeField(auto_now_add=True)
 

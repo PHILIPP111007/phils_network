@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from .models import Blog, Subscriber, Room, Message
+from .models import Blog, Subscriber, Room, RoomCreator, Message
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 
 from .serializers import UserSerializer, BlogSerializer, RoomSerializer, MessageSerializer
-from .permissions import IsOwnerOrReadOnly  # custom permission
+from .permissions import IsOwnerOrReadOnly
 from backend.settings import POSTS_TO_LOAD
 
 
@@ -38,6 +38,13 @@ class UserAPIView(APIView):
 		user.save()
 
 		return Response({'user': UserSerializer(user).data})
+	
+	def delete(self, request, **kwargs):
+		self.check_permissions(request=request)
+		user = User.objects.get(username=request.user.username)
+		self.check_object_permissions(request=request, obj=user)
+		user.delete()
+		return Response({'status': True})
 
 
 class BlogAPIView(APIView):
@@ -167,7 +174,7 @@ class SubscriberAPIView(APIView):
 
 		if not Subscriber.objects.filter(user=request.user.username, subscribe=username).count():
 			subscribe = User.objects.get(username=username)
-			Subscriber.objects.create(user=request.user, subscribe=subscribe)
+			Subscriber.objects.get_or_create(user=request.user, subscribe=subscribe)
 		
 			return Response({'status': True})
 		return Response({'status': False})
@@ -254,9 +261,7 @@ class RoomsAPIView(APIView):
 
 	def get(self, request):
 		self.check_permissions(request=request)
-
 		rooms = Room.objects.filter(subscribers__username=request.user.username)
-
 		return Response({
 			'status': True,
 			'rooms': RoomSerializer(rooms, many=True).data
@@ -265,13 +270,16 @@ class RoomsAPIView(APIView):
 	def post(self, request):
 		self.check_permissions(request=request)
 
-		usernames = request.data.get('subscribers', '')
-		name = request.data.get('name', '')
-		users = User.objects.filter(username__in=usernames).values_list('pk', flat=True)
+		creator = User.objects.get(username=request.user.username)
 
-		room = Room(name=name)
+		usernames = request.data.get('subscribers', '')
+		room_name = request.data.get('name', '')
+		subscribers = User.objects.filter(username__in=usernames).values_list('pk', flat=True)
+
+		room = Room(name=room_name)
 		room.save()
-		room.subscribers.add(*users)
+		room.subscribers.add(*subscribers)
+		RoomCreator.objects.get_or_create(room=room, creator=creator)
 
 		return Response({
 			'status': True,
@@ -284,19 +292,32 @@ class ChatAPIView(APIView):
 	authentication_classes = (TokenAuthentication, )
 	permission_classes = (IsAuthenticated, )
 
-	def get(self, request, room):
+	def get(self, request, pk):
 		self.check_permissions(request=request)
-
-		messages = Message.objects.filter(room=room)
-
+		room = Room.objects.get(pk=pk)
+		messages = Message.objects.filter(room=pk)
+		is_creator = RoomCreator.objects.get(room=room).creator == request.user
 		return Response({
 			'status': True,
-			'messages': MessageSerializer(messages, many=True).data
+			'room': RoomSerializer(room).data,
+			'messages': MessageSerializer(messages, many=True).data,
+			'isCreator': is_creator
 		})
-
-
 	
+	def put(self, request, pk):
+		self.check_permissions(request=request)
+		room = Room.objects.get(pk=pk)
 
+		friends = request.data['friends']
+		subscribers = request.data['subscribers']
 
+		friends = User.objects.filter(username__in=friends).values_list('pk', flat=True)
+		subscribers = User.objects.filter(username__in=subscribers).values_list('pk', flat=True)
 
+		room.subscribers.add(*friends)
+		room.subscribers.remove(*subscribers)
 
+		if room.subscribers.count() == 0:
+			room.delete()
+		
+		return Response({'status': True})
