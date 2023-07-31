@@ -40,7 +40,7 @@ export default function Chat() {
         setText('')
 
         if (sendingText.length > 0) {
-            const message = { sender: user.username, text: sendingText }
+            const message = { sender_id: user.pk, text: sendingText }
             await chatSocket.current.send(JSON.stringify({ message: message }))
         }
     }
@@ -49,10 +49,10 @@ export default function Chat() {
         let subscribers = invitationChanges.subscribers.filter((user) => user.isInRoom === false)
         let friends = invitationChanges.friends.filter((user) => user.isInRoom === true)
         subscribers = subscribers.map((user) => {
-            return user.username
+            return user.pk
         })
         friends = friends.map((user) => {
-            return user.username
+            return user.pk
         })
 
         if (friends.length > 0 || subscribers.length > 0) {
@@ -106,7 +106,7 @@ export default function Chat() {
             console.log(`chatSocket: The connection in room ${params.room_id} was setup successfully!`)
         }
         socket.onclose = function (e) {
-            console.error(`chatSocket: in room ${params.room_id} something unexpected happened!`)
+            console.warn(`chatSocket: in room ${params.room_id} something unexpected happened!`)
         }
         socket.onerror = function (e) {
             console.error(e)

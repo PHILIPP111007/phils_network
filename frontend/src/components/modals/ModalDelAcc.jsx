@@ -11,7 +11,7 @@ export default function ModalDelAcc() {
     const { user } = useContext(UserContext)
 
     async function deleteAccount() {
-        await myFetch({ action: `api/user/${user.username}/`, method: 'DELETE', token: token })
+        await myFetch({ action: `api/user/${user.pk}/`, method: 'DELETE', token: token })
             .then((data) => {
                 if (data.status) {
                     localStorage.removeItem('token')

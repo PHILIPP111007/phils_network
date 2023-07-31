@@ -13,7 +13,7 @@ export default function ModalRoomEdit(props) {
         props.setInvitationChanges({
             friends: props.invitationChanges.friends,
             subscribers: props.invitationChanges.subscribers.map((user) => {
-                if (user.username === subscriber.username) {
+                if (user.pk === subscriber.pk) {
                     return { ...user, isInRoom: user.isInRoom ? false : true }
                 }
                 return user
@@ -25,7 +25,7 @@ export default function ModalRoomEdit(props) {
         props.setInvitationChanges({
             subscribers: props.invitationChanges.subscribers,
             friends: props.invitationChanges.friends.map((user) => {
-                if (user.username === friend.username) {
+                if (user.pk === friend.pk) {
                     return { ...user, isInRoom: user.isInRoom ? false : true }
                 }
                 return user
@@ -37,10 +37,10 @@ export default function ModalRoomEdit(props) {
         return props.invitationChanges.subscribers.map((user) =>
             <div key={user.username} className="card">
                 <div className="info">
-                    <div>{user.first_name} {user.last_name} @{user.username}</div>
+                    <div>{user.first_name ? user.first_name : 'No name'} {user.last_name ? user.last_name : 'No name'} @{user.username}</div>
                 </div>
 
-                {props.isCreator === true || user.username === props.me.username
+                {props.isCreator === true || user.pk === props.me.pk
                     ?
                     <Button onClick={() => editSubscribers(user)} >
                         {user.isInRoom === true ? 'delete' : 'add'}
@@ -58,7 +58,7 @@ export default function ModalRoomEdit(props) {
                     <div>{user.first_name} {user.last_name} @{user.username}</div>
                 </div>
 
-                {props.isCreator === true || user.username === props.me.username
+                {props.isCreator === true
                     ?
                     <Button onClick={() => editFriends(user)} >
                         {user.isInRoom === true ? 'delete' : 'add'}
@@ -76,17 +76,15 @@ export default function ModalRoomEdit(props) {
             myFetch({ action: `api/friends/friends/`, method: 'GET', token: token })
                 .then((data) => {
                     if (data.status) {
-                        let query = data.query
-                        query = query.filter((friend) => {
-                            const hasMatch = props.room.subscribers_info.some(user => friend.username === user.username)
+                        let response = data.query
+                        response = response.filter((friend) => {
+                            const hasMatch = props.room.subscribers_info.some(user => friend.pk === user.pk)
                             return !hasMatch
                         })
-
-                        query = query.map((user) => {
+                        response = response.map((user) => {
                             return { ...user, isInRoom: false }
                         })
-
-                        props.invitationChanges.friends = query
+                        props.invitationChanges.friends = response
                     }
                     setLoading(false)
                 })
@@ -104,6 +102,7 @@ export default function ModalRoomEdit(props) {
             {props.isCreator === true && props.invitationChanges.friends.length > 0
                 &&
                 <div>
+                    <br />
                     <hr />
                     <br />
                     <h3>friends</h3>

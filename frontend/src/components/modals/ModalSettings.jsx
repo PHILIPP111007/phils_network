@@ -8,18 +8,21 @@ import Input from "../UI/Input"
 export default function ModalSettings(props) {
 
     const { user, setUser } = useContext(UserContext)
-    const [userNew, setUserNew] = useState({})
+    const [userNew, setUserNew] = useState({ first_name: '', last_name: '', email: '' })
     const token = localStorage.getItem('token')
 
     async function userUpdate(event) {
         event.preventDefault()
 
-        myFetch({ action: `api/user/${user.username}/`, method: 'PUT', body: userNew, token: token })
-            .then((data) => {
-                if (data.user) {
-                    setUser(data.user)
-                }
-            })
+        if (userNew.first_name || userNew.last_name || userNew.email) {
+            myFetch({ action: `api/user/${user.pk}/`, method: 'PUT', body: userNew, token: token })
+                .then((data) => {
+                    if (data.user) {
+                        setUser(data.user)
+                    }
+                })
+        }
+
     }
 
     return (
@@ -32,21 +35,21 @@ export default function ModalSettings(props) {
                     type="text"
                     placeholder="first name"
                     value={userNew.first_name}
-                    onChange={(e) => setUserNew({...userNew, first_name: e.target.value})}
+                    onChange={(e) => setUserNew({ ...userNew, first_name: e.target.value })}
                 />
                 <br />
                 <Input
                     type="text"
                     placeholder="last name"
                     value={userNew.last_name}
-                    onChange={(e) => setUserNew({...userNew, last_name: e.target.value})}
+                    onChange={(e) => setUserNew({ ...userNew, last_name: e.target.value })}
                 />
                 <br />
                 <Input
                     type="email"
                     placeholder="email"
                     value={userNew.email}
-                    onChange={(e) => setUserNew({...userNew, email: e.target.value})}
+                    onChange={(e) => setUserNew({ ...userNew, email: e.target.value })}
                 />
                 <br />
                 <Button onClick={(e) => userUpdate(e)} >upload</Button>

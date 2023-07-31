@@ -83,6 +83,7 @@
     .Post,
     .RoomCard,
     .ModalRoomCreate .card,
+    .ModalRoomEdit .card,
     .FriendCard,
     .Chat .Message {
         background-color: var(--l-list-bg-color);
@@ -169,6 +170,7 @@
     .Post,
     .RoomCard,
     .ModalRoomCreate .card,
+    .ModalRoomEdit .card,
     .FriendCard,
     .Chat .Message {
         background-color: var(--d-list-bg-color);

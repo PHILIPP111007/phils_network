@@ -17,11 +17,11 @@ export default function Post({ post, ...props }) {
                     <div className='link' >
                         <Link to={`/user/${post.user_info.username}/`} >
                             <p>{post.user_info.first_name} {post.user_info.last_name}</p>
-                            <p>{post.date_time} {post.is_changed && 'Modified'}</p>
+                            <p>{post.timestamp} {post.changed && 'Modified'}</p>
                         </Link>
                     </div>
                     :
-                    <p>{post.date_time} {post.is_changed && 'Modified'}</p>
+                    <p>{post.timestamp} {post.changed && 'Modified'}</p>
                 }
             </div>
             <br />

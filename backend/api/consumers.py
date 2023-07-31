@@ -1,15 +1,17 @@
 import json
+
 from .models import Message
+from .serializers import MessageSerializer
+
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
-from .serializers import MessageSerializer
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
 
 	@database_sync_to_async
 	def create_message(self, message):
-		msg = Message.objects.create(room_id=self.room, sender_id=message['sender'], text=message['text'])
+		msg = Message.objects.create(room_id=self.room, sender_id=message['sender_id'], text=message['text'])
 		return MessageSerializer(msg).data
 
 	async def connect(self):

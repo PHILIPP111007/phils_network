@@ -16,7 +16,7 @@ export default function Rooms() {
     const token = localStorage.getItem('token')
 
     async function createRoom(room) {
-        room.subscribers.push(user.username)
+        room.subscribers.push(user.pk)
         await myFetch({ action: 'api/room/', method: 'POST', body: room, token: token })
             .then((data) => {
                 if (data.status) {
@@ -27,7 +27,7 @@ export default function Rooms() {
     }
 
     useEffect(() => {
-        myFetch({ action: 'api/room/', method: 'GET', token: token })
+        myFetch({ action: `api/room/`, method: 'GET', token: token })
             .then((data) => {
                 if (data.status) {
                     setRooms(data.rooms)

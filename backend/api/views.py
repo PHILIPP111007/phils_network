@@ -8,7 +8,7 @@ from rest_framework.authentication import TokenAuthentication
 
 from .serializers import UserSerializer, BlogSerializer, RoomSerializer, MessageSerializer
 from .permissions import IsOwnerOrReadOnly
-from backend.settings import POSTS_TO_LOAD
+from django.conf import settings
 
 
 class UserAPIView(APIView):
@@ -18,7 +18,7 @@ class UserAPIView(APIView):
 
 	def get(self, request, username):
 		self.check_permissions(request=request)
-		global_user = User.objects.get(username=request.user.username)
+		global_user = User.objects.get(pk=request.user.id)
 		query = {'global_user': UserSerializer(global_user).data}
 		try:
 			local_user = User.objects.get(username=username)
@@ -32,16 +32,20 @@ class UserAPIView(APIView):
 		user = User.objects.get(username=request.user.username)
 		self.check_object_permissions(request=request, obj=user)
 
-		user.first_name = request.data.get('first_name', '')
-		user.last_name = request.data.get('last_name', '')
-		user.email = request.data.get('email', '')
+		first_name = request.data.get('first_name', '')
+		last_name = request.data.get('last_name', '')
+		email = request.data.get('email', '')
+		if first_name:
+			user.first_name = first_name
+		if last_name:
+			user.last_name = last_name
+		user.email = email
 		user.save()
-
 		return Response({'user': UserSerializer(user).data})
 	
 	def delete(self, request, **kwargs):
 		self.check_permissions(request=request)
-		user = User.objects.get(username=request.user.username)
+		user = User.objects.get(pk=request.user.id)
 		self.check_object_permissions(request=request, obj=user)
 		user.delete()
 		return Response({'status': True})
@@ -57,7 +61,7 @@ class BlogAPIView(APIView):
 		username = kwargs.get('username')
 		loaded_posts = kwargs.get('loaded_posts')
 
-		posts = Blog.objects.filter(user=username)[loaded_posts:loaded_posts + POSTS_TO_LOAD]
+		posts = Blog.objects.filter(user_id__username=username)[loaded_posts:loaded_posts + settings.POSTS_TO_LOAD]
 		return Response({
 			'status': True,
 			'posts': BlogSerializer(posts, many=True).data
@@ -107,7 +111,6 @@ class BlogAPIView(APIView):
 		
 		self.check_object_permissions(request=request, obj=post.user)
 		post.delete()
-
 		return Response({'status': True})
 
 
@@ -136,8 +139,7 @@ class FindUserAPIView(APIView):
 				find_users = eval(result_str)
 
 		if find_users:
-			find_users = find_users.exclude(username=request.user.username)
-		
+			find_users = find_users.exclude(pk=request.user.id)
 			return Response({
 				'status': True,
 				'users': UserSerializer(find_users, many=True).data
@@ -151,12 +153,12 @@ class SubscriberAPIView(APIView):
 	authentication_classes = (TokenAuthentication, )
 	permission_classes = (IsAuthenticated, )
 
-	def get(self, request, username):
+	def get(self, request, pk):
 		self.check_permissions(request=request)
 
 		query = {}
-		user_1 = Subscriber.objects.filter(user=request.user.username, subscribe=username)
-		user_2 = Subscriber.objects.filter(user=username, subscribe=request.user.username)
+		user_1 = Subscriber.objects.filter(user_id=request.user.id, subscribe_id=pk)
+		user_2 = Subscriber.objects.filter(user_id=pk, subscribe_id=request.user.id)
 		# If we are friends, I can see his blog
 		if user_1 and user_2:
 			query["status"] = 'is_my_friend'
@@ -169,31 +171,26 @@ class SubscriberAPIView(APIView):
 		return Response(query)
 
 	# add friend
-	def post(self, request, username):
+	def post(self, request, pk):
 		self.check_permissions(request=request)
-
-		if not Subscriber.objects.filter(user=request.user.username, subscribe=username).count():
-			subscribe = User.objects.get(username=username)
-			Subscriber.objects.get_or_create(user=request.user, subscribe=subscribe)
-		
-			return Response({'status': True})
-		return Response({'status': False})
+		Subscriber.objects.get_or_create(user_id=request.user.id, subscribe_id=pk)
+		return Response({'status': True})
 
 	# delete friend
-	def delete(self, request, username):
+	def delete(self, request, pk):
 		self.check_permissions(request=request)
 
 		flag = request.data.get('flag', '')
 		if flag == 'delete_friend':
 			try:
-				subscribe = Subscriber.objects.get(subscribe=username, user=request.user.username)
+				subscribe = Subscriber.objects.get(subscribe_id=pk, user_id=request.user.id)
 				subscribe.delete()
 				return Response({'status': True})
 			except Subscriber.DoesNotExist:
 				pass
 		elif flag == 'delete_subscriber':
 			try:
-				subscribe = Subscriber.objects.get(subscribe=request.user.username, user=username)
+				subscribe = Subscriber.objects.get(subscribe_id=request.user.id, user_id=pk)
 				subscribe.delete()
 				return Response({"status": True})
 			except Subscriber.DoesNotExist:
@@ -210,25 +207,25 @@ class FriendsAPIView(APIView):
 		self.check_permissions(request=request)
 
 		if option == 'friends':
-			query = Subscriber.get_friends(username=request.user.username)
+			query = Subscriber.get_friends(pk=request.user.id)
 			return Response({
 				'status': True,
 				'query': UserSerializer(query, many=True).data
 			})
 		elif option == 'subscriptions':
-			query = Subscriber.get_subscriptions(username=request.user.username)
+			query = Subscriber.get_subscriptions(pk=request.user.id)
 			return Response({
 				'status': True,
 				'query': UserSerializer(query, many=True).data
 			})
 		elif option == 'subscribers':
-			query = Subscriber.get_subscribers(username=request.user.username)
+			query = Subscriber.get_subscribers(pk=request.user.id)
 			return Response({
 				'status': True,
 				'query': UserSerializer(query, many=True).data
 			})
 		elif option == 'subscribers_count':
-			query = Subscriber.get_subscribers(username=request.user.username).count()
+			query = Subscriber.get_subscribers(pk=request.user.id).count()
 			return Response({
 				'status': True,
 				'query': query
@@ -244,10 +241,8 @@ class NewsAPIView(APIView):
 
 	def get(self, request, loaded_posts):
 		self.check_permissions(request=request)
-
-		friends = Subscriber.get_friends(username=request.user.username)
-		posts = Blog.objects.filter(user_id__in=friends)[loaded_posts:loaded_posts + POSTS_TO_LOAD]
-
+		friends = Subscriber.get_friends(pk=request.user.id).only('pk').values_list('pk', flat=True)
+		posts = Blog.objects.filter(user_id__in=friends)[loaded_posts:loaded_posts + settings.POSTS_TO_LOAD]
 		return Response({
 			'status': True,
 			'posts': BlogSerializer(posts, many=True).data
@@ -261,7 +256,7 @@ class RoomsAPIView(APIView):
 
 	def get(self, request):
 		self.check_permissions(request=request)
-		rooms = Room.objects.filter(subscribers__username=request.user.username)
+		rooms = Room.objects.filter(subscribers=request.user.id)
 		return Response({
 			'status': True,
 			'rooms': RoomSerializer(rooms, many=True).data
@@ -269,17 +264,14 @@ class RoomsAPIView(APIView):
 	
 	def post(self, request):
 		self.check_permissions(request=request)
-
-		creator = User.objects.get(username=request.user.username)
-
-		usernames = request.data.get('subscribers', '')
+		pk_list = request.data.get('subscribers', '')
 		room_name = request.data.get('name', '')
-		subscribers = User.objects.filter(username__in=usernames).values_list('pk', flat=True)
+		subscribers = User.objects.filter(pk__in=pk_list).only('pk').values_list('pk', flat=True)
 
 		room = Room(name=room_name)
 		room.save()
 		room.subscribers.add(*subscribers)
-		RoomCreator.objects.get_or_create(room=room, creator=creator)
+		RoomCreator.objects.get_or_create(room=room, creator_id=request.user.id)
 
 		return Response({
 			'status': True,
@@ -310,9 +302,6 @@ class ChatAPIView(APIView):
 
 		friends = request.data['friends']
 		subscribers = request.data['subscribers']
-
-		friends = User.objects.filter(username__in=friends).values_list('pk', flat=True)
-		subscribers = User.objects.filter(username__in=subscribers).values_list('pk', flat=True)
 
 		room.subscribers.add(*friends)
 		room.subscribers.remove(*subscribers)

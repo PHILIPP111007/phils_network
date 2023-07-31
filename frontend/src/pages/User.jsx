@@ -59,7 +59,7 @@ export default function User() {
         setModalPostCreate(false)
 
         const newPost = {
-            user: user.username,
+            user: user.pk,
             content: text,
         }
 
@@ -74,7 +74,7 @@ export default function User() {
     async function editPost(newPost) {
         if (newPost.content.length > 0) {
             setModalPostEdit(false)
-            newPost.is_changed = true
+            newPost.changed = true
 
             await myFetch({ action: `api/blog/${newPost.id}/`, method: 'PUT', body: newPost, token: token })
                 .then((data) => {
@@ -82,7 +82,7 @@ export default function User() {
                         setPosts(posts.map(post => {
                             if (post.id === newPost.id) {
                                 post.content = newPost.content
-                                post.is_changed = true
+                                post.changed = true
                             }
                             return post
                         }))
@@ -139,7 +139,7 @@ export default function User() {
                 <div className='UserBtns'>
                     {!isUserGlobal
                         &&
-                        <UserStatus username={params.username} status={status} setStatus={setStatus} />
+                        <UserStatus pk={userLocal.pk} status={status} setStatus={setStatus} />
                     }
                 </div>
             </div>

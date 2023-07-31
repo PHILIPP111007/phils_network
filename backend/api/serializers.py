@@ -6,12 +6,12 @@ from .models import Blog, Room, Message
 class UserSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = User
-		fields = ('username', 'first_name', 'last_name', 'email')
+		fields = ('pk', 'username', 'first_name', 'last_name', 'email')
 
 
 class BlogSerializer(serializers.ModelSerializer):
 	user_info = UserSerializer(source='user', read_only=True)
-	date_time = serializers.DateTimeField(read_only=True, format="%Y-%m-%d %H:%M")
+	timestamp = serializers.DateTimeField(read_only=True, format="%Y-%m-%d %H:%M")
 	class Meta:
 		model = Blog
 		fields = '__all__'

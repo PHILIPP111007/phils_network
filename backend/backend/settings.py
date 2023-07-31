@@ -37,7 +37,7 @@ INSTALLED_APPS = [
 	'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
-    'djoser', # run migrate
+    'djoser',
     
 	'api',
 ]
@@ -156,7 +156,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
-        'rest_framework.renderers.BrowsableAPIRenderer', #! disable in prod
+        'rest_framework.renderers.BrowsableAPIRenderer', #! disable in production
     ],
 
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -170,7 +170,7 @@ REST_FRAMEWORK = {
 # DJOSER settings
 
 DJOSER = {
-   "USER_ID_FIELD": "username",
+   "USER_ID_FIELD": "pk",
    "LOGIN_FIELD": "username",
 }
 

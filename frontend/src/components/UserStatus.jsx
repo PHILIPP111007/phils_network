@@ -9,7 +9,7 @@ export default function UserStatus(props) {
     const token = localStorage.getItem('token')
 
     useEffect(() => {
-        myFetch({ action: `api/subscriber/${props.username}/`, method: 'GET', token: token })
+        myFetch({ action: `api/subscriber/${props.pk}/`, method: 'GET', token: token })
             .then((data) => {
                 props.setStatus(data.status)
             })
@@ -21,7 +21,7 @@ export default function UserStatus(props) {
                 <div className="UserStatus" >
                     <Button onClick={() => {
                         Subscribe.deleteFriend({
-                            username: props.username,
+                            pk: props.pk,
                             setStatus: props.setStatus
                         })
                     }
@@ -33,7 +33,7 @@ export default function UserStatus(props) {
                 <div className="UserStatus" >
                     <Button onClick={() => {
                         Subscribe.deleteFriend({
-                            username: props.username,
+                            pk: props.pk,
                             setStatus: props.setStatus
                         })
                     }
@@ -45,7 +45,7 @@ export default function UserStatus(props) {
                 <div className="UserStatus" >
                     <Button onClick={() => {
                         Subscribe.deleteSubscriber({
-                            username: props.username,
+                            pk: props.pk,
                             setStatus: props.setStatus
                         })
                     }
@@ -53,7 +53,7 @@ export default function UserStatus(props) {
 
                     <Button onClick={() => {
                         Subscribe.addSubscription({
-                            username: props.username,
+                            pk: props.pk,
                             setStatus: props.setStatus
                         })
                     }
@@ -65,7 +65,7 @@ export default function UserStatus(props) {
                 <div className="UserStatus" >
                     <Button onClick={() => {
                         Subscribe.addSubscription({
-                            username: props.username,
+                            pk: props.pk,
                             setStatus: props.setStatus
                         })
                     }
