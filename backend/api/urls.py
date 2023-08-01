@@ -1,15 +1,3 @@
-from django.urls import path, include
-from .views import (
-    UserAPIView,
-    BlogAPIView,
-    FindUserAPIView,
-    SubscriberAPIView,
-    NewsAPIView,
-    FriendsAPIView,
-    RoomsAPIView,
-    ChatAPIView
-)
-
 """
 Create user:
 POST http://127.0.0.1:8000/api/auth/users/ {"username": "admin", "password": "123", "email": "email@gmail.com"}
@@ -25,6 +13,10 @@ Logout:
 headers -> Authorization -> Token d91dacef1757b45259d45372359d4f7c91a856c2
 POST http://127.0.0.1:8000/auth/token/logout/
 """
+
+from django.urls import path, include
+from .views import *
+
 
 urlpatterns = [
     path('auth/', include('djoser.urls')),

@@ -1,9 +1,5 @@
-from os import getenv
+import os
 from pathlib import Path
-
-import dotenv
-
-dotenv.load_dotenv()
 
 
 # Build paths inside the project like this: BASE_DIR / "subdir".
@@ -14,18 +10,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = getenv('SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don"t run with debug turned on in production!
-DEBUG = bool(getenv('DEBUG', default=0))
+DEBUG = bool(os.environ.get('DEBUG', default=0))
 
-ALLOWED_HOSTS = getenv('ALLOWED_HOSTS').split(',')
+
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS').split(',')
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    "daphne",
+	"daphne",
 
 	"django.contrib.admin",
 	"django.contrib.auth",
@@ -35,10 +32,10 @@ INSTALLED_APPS = [
 	"django.contrib.staticfiles",
 
 	'corsheaders',
-    'rest_framework',
-    'rest_framework.authtoken',
-    'djoser',
-    
+	'rest_framework',
+	'rest_framework.authtoken',
+	'djoser',
+	
 	'api',
 ]
 
@@ -78,7 +75,7 @@ CHANNEL_LAYERS = {
 	"default": {
 		"BACKEND": "channels_redis.core.RedisChannelLayer",
 		"CONFIG": {
-			"hosts": [(getenv('CHANNEL_LAYERS_HOST'), int(getenv('CHANNEL_LAYERS_PORT')))],
+			"hosts": [(os.environ.get('CHANNEL_LAYERS_HOST'), int(os.environ.get('CHANNEL_LAYERS_PORT')))],
 		},
 	},
 }
@@ -154,16 +151,16 @@ CORS_ORIGIN_ALLOW_ALL = True
 # REST FRAMEWORK settings
 
 REST_FRAMEWORK = {
-    'DEFAULT_RENDERER_CLASSES': [
-        'rest_framework.renderers.JSONRenderer',
-        'rest_framework.renderers.BrowsableAPIRenderer', #! disable in production
-    ],
+	'DEFAULT_RENDERER_CLASSES': [
+		'rest_framework.renderers.JSONRenderer',
+		'rest_framework.renderers.BrowsableAPIRenderer', #! disable in production
+	],
 
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.TokenAuthentication'
-    ],
+	'DEFAULT_AUTHENTICATION_CLASSES': [
+		'rest_framework.authentication.BasicAuthentication',
+		'rest_framework.authentication.SessionAuthentication',
+		'rest_framework.authentication.TokenAuthentication'
+	],
 }
 
 
@@ -175,4 +172,6 @@ DJOSER = {
 }
 
 
-POSTS_TO_LOAD = int(getenv('POSTS_TO_LOAD'))
+POSTS_TO_LOAD = int(os.environ.get('POSTS_TO_LOAD'))
+
+TIME_FORMAT = r'%Y-%m-%d %H:%M'

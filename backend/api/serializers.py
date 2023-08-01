@@ -1,5 +1,8 @@
-from rest_framework import serializers
+from django.conf import settings
 from django.contrib.auth.models import User
+
+from rest_framework import serializers
+
 from .models import Blog, Room, Message
 
 
@@ -11,7 +14,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class BlogSerializer(serializers.ModelSerializer):
 	user_info = UserSerializer(source='user', read_only=True)
-	timestamp = serializers.DateTimeField(read_only=True, format="%Y-%m-%d %H:%M")
+	timestamp = serializers.DateTimeField(read_only=True, format=settings.TIME_FORMAT)
 	class Meta:
 		model = Blog
 		fields = '__all__'
@@ -26,7 +29,7 @@ class RoomSerializer(serializers.ModelSerializer):
 
 class MessageSerializer(serializers.ModelSerializer):
 	sender_info = UserSerializer(source='sender', read_only=True)
-	timestamp = serializers.DateTimeField(read_only=True, format="%Y-%m-%d %H:%M")
+	timestamp = serializers.DateTimeField(read_only=True, format=settings.TIME_FORMAT)
 	class Meta:
 		model = Message
 		fields = '__all__'

@@ -1,10 +1,10 @@
 import json
 
-from .models import Message
-from .serializers import MessageSerializer
-
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
+
+from .models import Message
+from .serializers import MessageSerializer
 
 
 class ChatConsumer(AsyncWebsocketConsumer):

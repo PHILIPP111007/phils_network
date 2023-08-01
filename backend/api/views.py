@@ -1,14 +1,15 @@
+from django.conf import settings
 from django.contrib.auth.models import User
-from .models import Blog, Subscriber, Room, RoomCreator, Message
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 
+from .models import Blog, Subscriber, Room, RoomCreator, Message
+
 from .serializers import UserSerializer, BlogSerializer, RoomSerializer, MessageSerializer
 from .permissions import IsOwnerOrReadOnly
-from django.conf import settings
 
 
 class UserAPIView(APIView):
