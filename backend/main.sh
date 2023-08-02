@@ -1,28 +1,61 @@
 #!/bin/bash
 
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-NC='\033[0m' # No Color
-venvActived="venv activated"
+venv=""
+migrations=""
+superuser=""
 
-# create_venv.sh
-printf "${GREEN}This script creates venv and downloads packages from requirements file${NC}
-run? [y / n] : "
-read answer
+read -p "Create venv and download packages? [y / n] : " venv
+read -p "Create migrations? [y / n] : " migrations
+read -p "Create superuser? [y / n] : " superuser
 
-if [ $answer = "y" ]
+if [ $venv = "y" ]
     then
-        bash create_venv.sh
+        if [ ! -d "venv" ]
+            then
+                python3 -m venv venv
+        fi
+
+        source $PWD/venv/bin/activate
+        pip install --upgrade pip
+
+        if [ -f "requirements.in" ]
+            then
+                pip install -r requirements.in
+            else
+                if [ -f "requirements.txt" ]
+                    then
+                        pip install -r requirements.txt
+                    else
+                        echo "Venv script: requirements file does not exists."
+                fi
+        fi
+
+        pip list
+        echo "Venv script: venv created."
 fi
 
-# migrate.sh
-printf "${GREEN}This script makes migrations${NC}
-run? [y / n] : "
-read answer
-
-if [ $answer = "y" ]
+if [ $migrations = "y" ]
     then
-        bash migrate.sh
+        if [ -d "venv" ]
+            then
+                source $PWD/venv/bin/activate
+                python manage.py makemigrations
+                python manage.py migrate
+                echo "Migrations script: migrations created."
+            else
+                echo "Migrations script: you dont have venv."
+        fi
 fi
 
-echo $'\nDone!'
+if [ $superuser = "y" ]
+    then
+        if [ -d "venv" ]
+            then
+                source $PWD/venv/bin/activate
+                python manage.py createsuperuser
+            else
+                echo "Migrations script: you dont have venv."
+        fi
+fi
+
+echo "Main script: Done."

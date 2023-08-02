@@ -59,8 +59,8 @@ class BlogAPIView(APIView):
 
 	def get(self, request, **kwargs):
 		self.check_permissions(request=request)
-		username = kwargs.get('username')
-		loaded_posts = kwargs.get('loaded_posts')
+		username = kwargs.get('username', '')
+		loaded_posts = kwargs.get('loaded_posts', '')
 
 		posts = Blog.objects.filter(user_id__username=username)[loaded_posts:loaded_posts + settings.POSTS_TO_LOAD]
 		return Response({
@@ -83,7 +83,7 @@ class BlogAPIView(APIView):
 		pk = kwargs.get('pk', '')
 		if not pk:
 			return Response({'status': False})
-		
+
 		try:
 			instance = Blog.objects.get(pk=pk)
 		except Blog.DoesNotExist:
@@ -101,7 +101,7 @@ class BlogAPIView(APIView):
 	
 	def delete(self, request, **kwargs):
 		self.check_permissions(request=request)
-		pk = kwargs.get('pk')
+		pk = kwargs.get('pk', '')
 		if not pk:
 			return Response({'status': False})
 
@@ -123,21 +123,22 @@ class FindUserAPIView(APIView):
 	def post(self, request):
 		self.check_permissions(request=request)
 		username = request.data.get('username', '')
-		if username != "":
+		find_users = None
+		if username:
 			find_users = User.objects.filter(username__icontains=username)
 		else:
-			result_str = "User.objects"
-
+			query = "User.objects"
 			first_name = request.data.get("first_name", '')
-			if first_name != "":
-				result_str += f".filter(first_name__icontains=\"{first_name}\")"
-
 			last_name = request.data.get("last_name", '')
-			if last_name != "":
-				result_str += f".filter(last_name__icontains=\"{last_name}\")"
 
-			if result_str != "User.objects":
-				find_users = eval(result_str)
+			if first_name:
+				query += f".filter(first_name__icontains=\"{first_name}\")"
+
+			if last_name:
+				query += f".filter(last_name__icontains=\"{last_name}\")"
+
+			if query != "User.objects":
+				find_users = eval(query)
 
 		if find_users:
 			find_users = find_users.exclude(pk=request.user.id)
@@ -307,7 +308,7 @@ class ChatAPIView(APIView):
 		room.subscribers.add(*friends)
 		room.subscribers.remove(*subscribers)
 
-		if room.subscribers.count() == 0:
+		if not room.subscribers.count():
 			room.delete()
 		
 		return Response({'status': True})

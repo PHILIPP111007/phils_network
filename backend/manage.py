@@ -8,15 +8,13 @@ def read_env():
 	try:
 		with open('.env') as file:
 			content = file.read()
-	except IOError:
+	except FileNotFoundError:
 		content = ''
-
-	for line in content.split('\n'):
-
-		line = line.split('=')
-		key = line[0]
-		val = line[1]
-		os.environ.setdefault(key, val)
+	
+	if content:
+		for line in content.split('\n'):
+			key, val = line.split('=')
+			os.environ.setdefault(key, val)
 
 
 def main():
