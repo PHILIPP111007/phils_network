@@ -14,9 +14,9 @@ export default function Post({ post, ...props }) {
             <div className='title'>
                 {props.linkShow
                     ?
-                    <div className='link' >
-                        <Link to={`/user/${post.user_info.username}/`} >
-                            <p>{post.user_info.first_name} {post.user_info.last_name}</p>
+                    <div className='link'>
+                        <Link to={`/user/${post.username}/`} >
+                            <p>{post.first_name} {post.last_name}</p>
                             <p>{post.timestamp} {post.changed && 'Modified'}</p>
                         </Link>
                     </div>
@@ -65,6 +65,7 @@ export default function Post({ post, ...props }) {
                         props.setPost(post)
                         props.setModalPost(true)
                     }}
+                    alt='settings logo'
                 />
             }
         </div>

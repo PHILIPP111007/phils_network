@@ -1,4 +1,4 @@
-import os
+from os import environ
 from pathlib import Path
 
 
@@ -10,34 +10,43 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don"t run with debug turned on in production!
-DEBUG = bool(os.environ.get('DEBUG', default=0))
+DEBUG = bool(environ.get('DEBUG', default=0))
 
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS').split(',')
+ALLOWED_HOSTS = environ.get('ALLOWED_HOSTS').split(',')
 
 
 # Application definition
 
-INSTALLED_APPS = [
-	"daphne",
-
+DJANGO_APPS = [
 	"django.contrib.admin",
 	"django.contrib.auth",
 	"django.contrib.contenttypes",
 	"django.contrib.sessions",
 	"django.contrib.messages",
 	"django.contrib.staticfiles",
+]
 
+THIRD_PARTY_APPS = [
+	"daphne",
 	'corsheaders',
 	'rest_framework',
 	'rest_framework.authtoken',
 	'djoser',
-	
+]
+
+if DEBUG:
+	THIRD_PARTY_APPS.append('debug_toolbar')
+
+LOCAL_APPS = [
 	'api',
 ]
+
+INSTALLED_APPS = THIRD_PARTY_APPS + DJANGO_APPS + LOCAL_APPS
+
 
 MIDDLEWARE = [
 	"django.middleware.security.SecurityMiddleware",
@@ -51,12 +60,17 @@ MIDDLEWARE = [
 	'corsheaders.middleware.CorsMiddleware',
 ]
 
-ROOT_URLCONF = "backend.urls"
+if DEBUG:
+	MIDDLEWARE.append("debug_toolbar.middleware.DebugToolbarMiddleware")
+	INTERNAL_IPS = ["127.0.0.1"]
+
+
+ROOT_URLCONF = f"{environ.get('APP_NAME')}.urls"
 
 TEMPLATES = [
 	{
 		"BACKEND": "django.template.backends.django.DjangoTemplates",
-		"DIRS": [ BASE_DIR / "backend/templates" ],
+		"DIRS": [ BASE_DIR / f"{environ.get('APP_NAME')}/templates" ],
 		"APP_DIRS": True,
 		"OPTIONS": {
 			"context_processors": [
@@ -69,13 +83,13 @@ TEMPLATES = [
 	},
 ]
 
-WSGI_APPLICATION = "backend.wsgi.application"
-ASGI_APPLICATION = "backend.asgi.application"
+WSGI_APPLICATION = f"{environ.get('APP_NAME')}.wsgi.application"
+ASGI_APPLICATION = f"{environ.get('APP_NAME')}.asgi.application"
 CHANNEL_LAYERS = {
 	"default": {
 		"BACKEND": "channels_redis.core.RedisChannelLayer",
 		"CONFIG": {
-			"hosts": [(os.environ.get('CHANNEL_LAYERS_HOST'), int(os.environ.get('CHANNEL_LAYERS_PORT')))],
+			"hosts": [(environ.get('CHANNEL_LAYERS_HOST'), int(environ.get('CHANNEL_LAYERS_PORT')))],
 		},
 	},
 }
@@ -126,12 +140,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = "/static/"
+STATIC_URL = "static/"
 STATIC_ROOT = "static"
 
 
 STATICFILES_DIRS = [
-	BASE_DIR / "backend/static"
+	BASE_DIR / f"{environ.get('APP_NAME')}/static"
 ]
 
 
@@ -153,7 +167,6 @@ CORS_ORIGIN_ALLOW_ALL = True
 REST_FRAMEWORK = {
 	'DEFAULT_RENDERER_CLASSES': [
 		'rest_framework.renderers.JSONRenderer',
-		'rest_framework.renderers.BrowsableAPIRenderer', #! disable in production
 	],
 
 	'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -162,6 +175,10 @@ REST_FRAMEWORK = {
 		'rest_framework.authentication.TokenAuthentication'
 	],
 }
+
+if DEBUG:
+	REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append('rest_framework.renderers.BrowsableAPIRenderer')
+
 
 
 # DJOSER settings
@@ -172,6 +189,6 @@ DJOSER = {
 }
 
 
-POSTS_TO_LOAD = int(os.environ.get('POSTS_TO_LOAD'))
+POSTS_TO_LOAD = int(environ.get('POSTS_TO_LOAD'))
 
-TIME_FORMAT = r'%Y-%m-%d %H:%M'
+DATETIME_FORMAT = '%Y-%m-%d %H:%M'

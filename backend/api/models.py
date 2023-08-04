@@ -29,7 +29,7 @@ class Subscriber(models.Model):
 		set_2 = Subscriber.objects.filter(subscribe_id=pk).only('user').values_list("user", flat=True)
 		query = User.objects.filter(
 			Q(pk__in=set_1) & Q(pk__in=set_2)
-		)
+		).only('pk', 'username', 'first_name', 'last_name')
 		return query
 	
 	@staticmethod
@@ -38,7 +38,7 @@ class Subscriber(models.Model):
 		set_2 = Subscriber.objects.filter(subscribe_id=pk).only('user').values_list("user", flat=True)
 		query = User.objects.filter(
 			Q(pk__in=set_1) & ~Q(pk__in=set_2)
-		)
+		).only('pk', 'username', 'first_name', 'last_name')
 		return query
 	
 	@staticmethod
@@ -47,7 +47,7 @@ class Subscriber(models.Model):
 		set_2 = Subscriber.objects.filter(subscribe_id=pk).only('user').values_list("user", flat=True)
 		query = User.objects.filter(
 			Q(pk__in=set_2) & ~Q(pk__in=set_1)
-		)
+		).only('pk', 'username', 'first_name', 'last_name')
 		return query
 
 

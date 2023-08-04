@@ -5,3 +5,4 @@ django-cors-headers==4.2.0
 daphne==4.0.0
 channels==4.0.0
 channels-redis==4.1.0
+django-debug-toolbar==4.1.0

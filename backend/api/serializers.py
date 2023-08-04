@@ -1,9 +1,9 @@
 from django.conf import settings
 from django.contrib.auth.models import User
 
-from rest_framework import serializers
-
 from .models import Blog, Room, Message
+
+from rest_framework import serializers
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -13,8 +13,12 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class BlogSerializer(serializers.ModelSerializer):
-	user_info = UserSerializer(source='user', read_only=True)
-	timestamp = serializers.DateTimeField(read_only=True, format=settings.TIME_FORMAT)
+	username = serializers.StringRelatedField(source='user.username', read_only=True)
+	first_name = serializers.StringRelatedField(source='user.first_name', read_only=True)
+	last_name = serializers.StringRelatedField(source='user.last_name', read_only=True)
+	timestamp = serializers.DateTimeField(read_only=True, format=settings.DATETIME_FORMAT)
+	# user = serializers.PrimaryKeyRelatedField(read_only=True)
+	# user_info = UserSerializer(source='user', read_only=True)
 	class Meta:
 		model = Blog
 		fields = '__all__'
@@ -28,31 +32,12 @@ class RoomSerializer(serializers.ModelSerializer):
 
 
 class MessageSerializer(serializers.ModelSerializer):
-	sender_info = UserSerializer(source='sender', read_only=True)
-	timestamp = serializers.DateTimeField(read_only=True, format=settings.TIME_FORMAT)
+	username = serializers.StringRelatedField(source='sender.username', read_only=True)
+	first_name = serializers.StringRelatedField(source='sender.first_name', read_only=True)
+	last_name = serializers.StringRelatedField(source='sender.last_name', read_only=True)
+	timestamp = serializers.DateTimeField(read_only=True, format=settings.DATETIME_FORMAT)
+	# sender = serializers.PrimaryKeyRelatedField(read_only=True)
+	# sender_info = UserSerializer(source='sender', read_only=True)
 	class Meta:
 		model = Message
 		fields = '__all__'
-
-
-# Ручная реализация
-
-# class BlogSerializer(serializers.Serializer):
-# 	user = serializers.CharField()
-# 	date_time = serializers.DateTimeField(read_only=True)
-# 	content = serializers.CharField(max_length=5000)
-
-# 	def validate_user(self, value):
-# 		try:
-# 			user = User.objects.get(username=value)
-# 		except User.DoesNotExist:
-# 			raise serializers.ValidationError('User Does Not Exist')
-# 		return user
-
-# 	def create(self, validated_data):
-# 		return Blog.objects.create(**validated_data)
-	
-# 	def update(self, instance, validated_data):
-# 		instance.content = validated_data.get('content', instance.content)
-# 		instance.save()
-# 		return instance

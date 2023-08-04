@@ -61,8 +61,8 @@ class BlogAPIView(APIView):
 		self.check_permissions(request=request)
 		username = kwargs.get('username', '')
 		loaded_posts = kwargs.get('loaded_posts', '')
+		posts = Blog.objects.filter(user_id__username=username).select_related('user')[loaded_posts:loaded_posts + settings.POSTS_TO_LOAD]
 
-		posts = Blog.objects.filter(user_id__username=username)[loaded_posts:loaded_posts + settings.POSTS_TO_LOAD]
 		return Response({
 			'status': True,
 			'posts': BlogSerializer(posts, many=True).data
@@ -159,8 +159,8 @@ class SubscriberAPIView(APIView):
 		self.check_permissions(request=request)
 
 		query = {}
-		user_1 = Subscriber.objects.filter(user_id=request.user.id, subscribe_id=pk)
-		user_2 = Subscriber.objects.filter(user_id=pk, subscribe_id=request.user.id)
+		user_1 = Subscriber.objects.filter(user_id=request.user.id, subscribe_id=pk).count()
+		user_2 = Subscriber.objects.filter(user_id=pk, subscribe_id=request.user.id).count()
 		# If we are friends, I can see his blog
 		if user_1 and user_2:
 			query["status"] = 'is_my_friend'
@@ -244,7 +244,7 @@ class NewsAPIView(APIView):
 	def get(self, request, loaded_posts):
 		self.check_permissions(request=request)
 		friends = Subscriber.get_friends(pk=request.user.id).only('pk').values_list('pk', flat=True)
-		posts = Blog.objects.filter(user_id__in=friends)[loaded_posts:loaded_posts + settings.POSTS_TO_LOAD]
+		posts = Blog.objects.filter(user_id__in=friends).select_related('user')[loaded_posts:loaded_posts + settings.POSTS_TO_LOAD]
 		return Response({
 			'status': True,
 			'posts': BlogSerializer(posts, many=True).data
@@ -288,8 +288,8 @@ class ChatAPIView(APIView):
 
 	def get(self, request, pk):
 		self.check_permissions(request=request)
-		room = Room.objects.get(pk=pk)
-		messages = Message.objects.filter(room=pk)
+		room = Room.objects.filter(pk=pk).prefetch_related('subscribers')[0]
+		messages = Message.objects.filter(room=pk).select_related('sender')
 		is_creator = RoomCreator.objects.get(room=room).creator == request.user
 		return Response({
 			'status': True,
