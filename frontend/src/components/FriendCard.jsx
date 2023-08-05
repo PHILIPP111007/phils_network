@@ -1,11 +1,11 @@
-import '../styles/FriendCard.css'
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import UserStatus from './UserStatus'
+import "../styles/FriendCard.css"
+import { useState } from "react"
+import { Link } from "react-router-dom"
+import UserStatus from "./UserStatus"
 
 export default function FriendCard({ user }) {
 
-    const [status, setStatus] = useState('')
+    const [status, setStatus] = useState("")
 
     return (
         <div className="FriendCard">
@@ -20,7 +20,7 @@ export default function FriendCard({ user }) {
                     </div>
                 </div>
             </Link>
-            <div className='UserBtns'>
+            <div className="UserBtns">
                 <UserStatus pk={user.pk} status={status} setStatus={setStatus} />
             </div>
         </div>

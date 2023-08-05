@@ -10,13 +10,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = environ.get('SECRET_KEY')
+SECRET_KEY = environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don"t run with debug turned on in production!
-DEBUG = bool(environ.get('DEBUG', default=0))
+DEBUG = bool(environ.get("DEBUG", default=0))
 
 
-ALLOWED_HOSTS = environ.get('ALLOWED_HOSTS').split(',')
+ALLOWED_HOSTS = environ.get("ALLOWED_HOSTS").split(",")
 
 
 # Application definition
@@ -32,17 +32,17 @@ DJANGO_APPS = [
 
 THIRD_PARTY_APPS = [
 	"daphne",
-	'corsheaders',
-	'rest_framework',
-	'rest_framework.authtoken',
-	'djoser',
+	"corsheaders",
+	"rest_framework",
+	"rest_framework.authtoken",
+	"djoser",
 ]
 
 if DEBUG:
-	THIRD_PARTY_APPS.append('debug_toolbar')
+	THIRD_PARTY_APPS.append("debug_toolbar")
 
 LOCAL_APPS = [
-	'api',
+	"api",
 ]
 
 INSTALLED_APPS = THIRD_PARTY_APPS + DJANGO_APPS + LOCAL_APPS
@@ -57,7 +57,7 @@ MIDDLEWARE = [
 	"django.contrib.messages.middleware.MessageMiddleware",
 	"django.middleware.clickjacking.XFrameOptionsMiddleware",
 
-	'corsheaders.middleware.CorsMiddleware',
+	"corsheaders.middleware.CorsMiddleware",
 ]
 
 if DEBUG:
@@ -89,7 +89,7 @@ CHANNEL_LAYERS = {
 	"default": {
 		"BACKEND": "channels_redis.core.RedisChannelLayer",
 		"CONFIG": {
-			"hosts": [(environ.get('CHANNEL_LAYERS_HOST'), int(environ.get('CHANNEL_LAYERS_PORT')))],
+			"hosts": [(environ.get("CHANNEL_LAYERS_HOST"), int(environ.get("CHANNEL_LAYERS_PORT")))],
 		},
 	},
 }
@@ -165,19 +165,19 @@ CORS_ORIGIN_ALLOW_ALL = True
 # REST FRAMEWORK settings
 
 REST_FRAMEWORK = {
-	'DEFAULT_RENDERER_CLASSES': [
-		'rest_framework.renderers.JSONRenderer',
+	"DEFAULT_RENDERER_CLASSES": [
+		"rest_framework.renderers.JSONRenderer",
 	],
 
-	'DEFAULT_AUTHENTICATION_CLASSES': [
-		'rest_framework.authentication.BasicAuthentication',
-		'rest_framework.authentication.SessionAuthentication',
-		'rest_framework.authentication.TokenAuthentication'
+	"DEFAULT_AUTHENTICATION_CLASSES": [
+		"rest_framework.authentication.BasicAuthentication",
+		"rest_framework.authentication.SessionAuthentication",
+		"rest_framework.authentication.TokenAuthentication"
 	],
 }
 
 if DEBUG:
-	REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append('rest_framework.renderers.BrowsableAPIRenderer')
+	REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"].append("rest_framework.renderers.BrowsableAPIRenderer")
 
 
 
@@ -189,6 +189,7 @@ DJOSER = {
 }
 
 
-POSTS_TO_LOAD = int(environ.get('POSTS_TO_LOAD'))
+POSTS_TO_LOAD = int(environ.get("POSTS_TO_LOAD"))
+MESSAGES_TO_LOAD = int(environ.get("MESSAGES_TO_LOAD"))
 
-DATETIME_FORMAT = '%Y-%m-%d %H:%M'
+DATETIME_FORMAT = "%Y-%m-%d %H:%M"

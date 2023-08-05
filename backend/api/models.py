@@ -13,7 +13,7 @@ class Blog(models.Model):
 		ordering=["-timestamp"]
 
 	def __str__(self):
-		return f"{self.user.username} [{self.timestamp}]"
+		return f"{self.user.username} [ {self.timestamp} ]"
 
 
 class Subscriber(models.Model):
@@ -21,33 +21,36 @@ class Subscriber(models.Model):
 	subscribe = models.ForeignKey(User, related_name="subscribe", on_delete=models.CASCADE)
 
 	def __str__(self):
-		return f"{self.user.username} -> {self.subscribe.username}"
+		return f"{self.user.username}"
 
 	@staticmethod
 	def get_friends(pk):
-		set_1 = Subscriber.objects.filter(user_id=pk).only('subscribe').values_list("subscribe", flat=True)
-		set_2 = Subscriber.objects.filter(subscribe_id=pk).only('user').values_list("user", flat=True)
+		set_1 = Subscriber.objects.filter(user_id=pk).only("subscribe").values_list("subscribe", flat=True)
+		set_2 = Subscriber.objects.filter(subscribe_id=pk).only("user").values_list("user", flat=True)
 		query = User.objects.filter(
 			Q(pk__in=set_1) & Q(pk__in=set_2)
-		).only('pk', 'username', 'first_name', 'last_name')
+		).only("pk", "username", "first_name", "last_name")
+
 		return query
 	
 	@staticmethod
 	def get_subscriptions(pk):
-		set_1 = Subscriber.objects.filter(user_id=pk).only('subscribe').values_list("subscribe", flat=True)
-		set_2 = Subscriber.objects.filter(subscribe_id=pk).only('user').values_list("user", flat=True)
+		set_1 = Subscriber.objects.filter(user_id=pk).only("subscribe").values_list("subscribe", flat=True)
+		set_2 = Subscriber.objects.filter(subscribe_id=pk).only("user").values_list("user", flat=True)
 		query = User.objects.filter(
 			Q(pk__in=set_1) & ~Q(pk__in=set_2)
-		).only('pk', 'username', 'first_name', 'last_name')
+		).only("pk", "username", "first_name", "last_name")
+
 		return query
 	
 	@staticmethod
 	def get_subscribers(pk):
-		set_1 = Subscriber.objects.filter(user_id=pk).only('subscribe').values_list("subscribe", flat=True)
-		set_2 = Subscriber.objects.filter(subscribe_id=pk).only('user').values_list("user", flat=True)
+		set_1 = Subscriber.objects.filter(user_id=pk).only("subscribe").values_list("subscribe", flat=True)
+		set_2 = Subscriber.objects.filter(subscribe_id=pk).only("user").values_list("user", flat=True)
 		query = User.objects.filter(
 			Q(pk__in=set_2) & ~Q(pk__in=set_1)
-		).only('pk', 'username', 'first_name', 'last_name')
+		).only("pk", "username", "first_name", "last_name")
+
 		return query
 
 
@@ -60,15 +63,15 @@ class Room(models.Model):
 		ordering=["-timestamp"]
 	
 	def __str__(self):
-		return f"{self.name} [{self.timestamp}]"
+		return f"{self.name} [ {self.timestamp} ]"
 	
 
 class RoomCreator(models.Model):
-	room = models.ForeignKey(Room, on_delete=models.CASCADE)
 	creator = models.ForeignKey(User, on_delete=models.CASCADE)
+	room = models.ForeignKey(Room, on_delete=models.CASCADE)
 
 	def __str__(self):
-		return f"{self.creator} -> {self.room}"
+		return f"{self.creator}"
 
 
 class Message(models.Model):
@@ -78,7 +81,7 @@ class Message(models.Model):
 	timestamp = models.DateTimeField(auto_now_add=True)
 
 	class Meta:
-		ordering=["timestamp"]
+		ordering=["-timestamp"]
 	
 	def __str__(self):
-		return f"{self.room} {self.sender} [{self.timestamp}]"
+		return f"{self.sender} [ {self.timestamp} ]"

@@ -1,8 +1,8 @@
-import '../styles/Post.css'
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import ReactLinkify from 'react-linkify'
-import settingsLogo from '../images/three_points.svg'
+import "../styles/Post.css"
+import { useState } from "react"
+import { Link } from "react-router-dom"
+import ReactLinkify from "react-linkify"
+import settingsLogo from "../images/three_points.svg"
 import Button from "./UI/Button"
 
 export default function Post({ post, ...props }) {
@@ -10,27 +10,27 @@ export default function Post({ post, ...props }) {
     const [flag, setFlag] = useState(post.content.length > 500)
 
     return (
-        <div className='Post'>
-            <div className='title'>
+        <div className="Post">
+            <div className="title">
                 {props.linkShow
                     ?
-                    <div className='link'>
+                    <div className="link">
                         <Link to={`/user/${post.username}/`} >
-                            <p>{post.first_name} {post.last_name}</p>
-                            <p>{post.timestamp} {post.changed && 'Modified'}</p>
+                            <p>{post.first_name ? post.first_name : "No name"} {post.last_name ? post.last_name : "No name"} @{post.username}</p>
+                            <p>{post.timestamp} {post.changed && "Modified"}</p>
                         </Link>
                     </div>
                     :
-                    <p>{post.timestamp} {post.changed && 'Modified'}</p>
+                    <p>{post.timestamp} {post.changed && "Modified"}</p>
                 }
             </div>
             <br />
-            <div className='content'>
+            <div className="content">
                 <p>
                     <ReactLinkify>
                         {(post.content.length > 500 && flag)
                             ?
-                            post.content.substring(0, 499) + '...'
+                            post.content.substring(0, 499) + "..."
                             :
                             post.content
                         }
@@ -59,13 +59,13 @@ export default function Post({ post, ...props }) {
             {props.settings === true
                 &&
                 <img
-                    className='settingsLogo'
+                    className="settingsLogo"
                     src={settingsLogo}
                     onClick={() => {
                         props.setPost(post)
                         props.setModalPost(true)
                     }}
-                    alt='settings logo'
+                    alt="settings logo"
                 />
             }
         </div>

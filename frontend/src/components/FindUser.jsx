@@ -1,11 +1,11 @@
-import '../styles/FindUser.css'
+import "../styles/FindUser.css"
 import { useState } from "react"
 import Button from "./UI/Button"
 import Input from "./UI/Input"
 
 export default function FindUser(props) {
 
-    const [findUser, setFindUser] = useState({username: '', first_name: '', last_name: ''})
+    const [findUser, setFindUser] = useState({ username: "", first_name: "", last_name: "" })
 
     return (
         <div className="FindUser">

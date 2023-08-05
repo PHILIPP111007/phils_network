@@ -7,7 +7,7 @@ Minimalistic social network written using Django and React
 
 2. Dark theme
 
-3. Lazy loading of posts
+3. Lazy loading of posts and messages
 
 4. You can create a conversation and chat with friends
 

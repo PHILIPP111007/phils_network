@@ -1,4 +1,4 @@
-import '../styles/UserStatus.css'
+import "../styles/UserStatus.css"
 import { useEffect } from "react"
 import { myFetch } from "../API/myFetch"
 import Button from "./UI/Button"
@@ -6,17 +6,17 @@ import Subscribe from "../hooks/Subscribe"
 
 export default function UserStatus(props) {
 
-    const token = localStorage.getItem('token')
+    const token = localStorage.getItem("token")
 
     useEffect(() => {
-        myFetch({ action: `api/subscriber/${props.pk}/`, method: 'GET', token: token })
+        myFetch({ action: `api/subscriber/${props.pk}/`, method: "GET", token: token })
             .then((data) => {
                 props.setStatus(data.status)
             })
     }, [props.status])
 
     switch (props.status) {
-        case 'is_my_friend':
+        case "is_my_friend":
             return (
                 <div className="UserStatus" >
                     <Button onClick={() => {
@@ -28,7 +28,7 @@ export default function UserStatus(props) {
                     } >delete friend</Button>
                 </div>
             )
-        case 'i_am_subscriber':
+        case "i_am_subscriber":
             return (
                 <div className="UserStatus" >
                     <Button onClick={() => {
@@ -40,7 +40,7 @@ export default function UserStatus(props) {
                     } >delete subscription</Button>
                 </div>
             )
-        case 'he_is_subscriber':
+        case "he_is_subscriber":
             return (
                 <div className="UserStatus" >
                     <Button onClick={() => {
@@ -60,7 +60,7 @@ export default function UserStatus(props) {
                     } >add</Button>
                 </div>
             )
-        case 'no_data':
+        case "no_data":
             return (
                 <div className="UserStatus" >
                     <Button onClick={() => {

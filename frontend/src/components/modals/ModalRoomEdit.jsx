@@ -1,13 +1,13 @@
-import '../../styles/ModalRoomEdit.css'
-import { useEffect, useState } from 'react'
-import { myFetch } from '../../API/myFetch'
-import Loading from '../Loading'
+import "../../styles/ModalRoomEdit.css"
+import { useEffect, useState } from "react"
+import { myFetch } from "../../API/myFetch"
+import Loading from "../Loading"
 import Button from "../UI/Button"
 
 export default function ModalRoomEdit(props) {
 
     const [loading, setLoading] = useState(true)
-    const token = localStorage.getItem('token')
+    const token = localStorage.getItem("token")
 
     function editSubscribers(subscriber) {
         props.setInvitationChanges({
@@ -37,13 +37,13 @@ export default function ModalRoomEdit(props) {
         return props.invitationChanges.subscribers.map((user) =>
             <div key={user.username} className="card">
                 <div className="info">
-                    <div>{user.first_name ? user.first_name : 'No name'} {user.last_name ? user.last_name : 'No name'} @{user.username}</div>
+                    <div>{user.first_name ? user.first_name : "No name"} {user.last_name ? user.last_name : "No name"} @{user.username}</div>
                 </div>
 
                 {props.isCreator === true || user.pk === props.me.pk
                     ?
                     <Button onClick={() => editSubscribers(user)} >
-                        {user.isInRoom === true ? 'delete' : 'add'}
+                        {user.isInRoom === true ? "delete" : "add"}
                     </Button>
                     : undefined
                 }
@@ -61,7 +61,7 @@ export default function ModalRoomEdit(props) {
                 {props.isCreator === true
                     ?
                     <Button onClick={() => editFriends(user)} >
-                        {user.isInRoom === true ? 'delete' : 'add'}
+                        {user.isInRoom === true ? "delete" : "add"}
                     </Button>
                     : undefined
                 }
@@ -73,7 +73,7 @@ export default function ModalRoomEdit(props) {
         if (props.isCreator) {
             setLoading(true)
 
-            myFetch({ action: `api/friends/friends/`, method: 'GET', token: token })
+            myFetch({ action: "api/friends/friends/", method: "GET", token: token })
                 .then((data) => {
                     if (data.status) {
                         let response = data.query
@@ -92,7 +92,7 @@ export default function ModalRoomEdit(props) {
     }, [props.room.name])
 
     return (
-        <div className='ModalRoomEdit'>
+        <div className="ModalRoomEdit">
             <Button onClick={() => props.editRoom()} >edit</Button>
             <br />
             <br />

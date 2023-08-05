@@ -1,4 +1,4 @@
-import cl from '../styles/Modal.module.css'
+import cl from "../styles/Modal.module.css"
 
 export default function Modal(props) {
 
@@ -9,7 +9,7 @@ export default function Modal(props) {
     }
 
     return (
-        <div className={rootClass.join(' ')} onClick={() => props.setModal(false)} >
+        <div className={rootClass.join(" ")} onClick={() => props.setModal(false)} >
             <div className={cl.ModalContent} onClick={e => e.stopPropagation()} >
                 {props.children}
             </div>

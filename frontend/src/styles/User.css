@@ -15,6 +15,9 @@
 .settingsLogo:hover {
     cursor: pointer;
 }
+.PostCreate img {
+    width: 30px;
+}
 .PostCreate {
     margin: 20px auto;
     width: 30px;

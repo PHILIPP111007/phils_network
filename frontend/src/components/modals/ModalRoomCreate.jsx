@@ -1,13 +1,13 @@
-import '../../styles/ModalRoomCreate.css'
-import { useEffect, useState } from 'react'
-import { UserSection } from '../../hooks/UserSection'
-import Loading from '../Loading'
+import "../../styles/ModalRoomCreate.css"
+import { useEffect, useState } from "react"
+import { UserSection } from "../../hooks/UserSection"
+import Loading from "../Loading"
 import Button from "../UI/Button"
-import Input from '../UI/Input'
+import Input from "../UI/Input"
 
 export default function ModalRoomCreate(props) {
 
-    const [room, setRoom] = useState({ name: '', subscribers: [] })
+    const [room, setRoom] = useState({ name: "", subscribers: [] })
     const [friends, setFriends] = useState([])
     const [loading, setLoading] = useState(true)
 
@@ -30,17 +30,17 @@ export default function ModalRoomCreate(props) {
     }
 
     useEffect(() => {
-        UserSection({ option: 'friends', setUserSection: setFriends, setLoading: setLoading })
+        UserSection({ option: "friends", setUserSection: setFriends, setLoading: setLoading })
     }, [])
 
     return (
-        <div className='ModalRoomCreate'>
+        <div className="ModalRoomCreate">
 
             <Button onClick={() => {
                 if (room.name.length > 0) {
                     props.createRoom(room)
                 }
-                setRoom({ name: '', subscribers: [] })
+                setRoom({ name: "", subscribers: [] })
             }} >create</Button>
 
             <br />

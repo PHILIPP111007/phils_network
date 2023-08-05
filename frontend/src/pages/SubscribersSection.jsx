@@ -1,19 +1,19 @@
-import '../styles/Friends.css'
+import "../styles/Friends.css"
 import { useEffect, useState, useContext } from "react"
-import { UserContext } from '../data/context'
+import { UserContext } from "../data/context"
 import { useFriends } from "../hooks/useFriends"
-import { UserSection } from '../hooks/UserSection'
+import { UserSection } from "../hooks/UserSection"
 import FriendCard from "../components/FriendCard"
 import FriendsNavBar from "../components/FriendsNavBar"
 import MainComponents from "../components/MainComponents"
 import FindUser from "../components/FindUser"
-import Loading from '../components/Loading'
+import Loading from "../components/Loading"
 
 export default function SubscribersSection() {
 
     const { user } = useContext(UserContext)
     const [subscribers, setSubscribers] = useState([])
-    const [filter, setFilter] = useState({ username: '', first_name: '', last_name: '' })
+    const [filter, setFilter] = useState({ username: "", first_name: "", last_name: "" })
     const searchedSubscribers = useFriends(subscribers, filter)  // custom hook
     const [loading, setLoading] = useState(true)
 
@@ -22,7 +22,7 @@ export default function SubscribersSection() {
     }
 
     useEffect(() => {
-        UserSection({option: 'subscribers', setUserSection: setSubscribers, setLoading: setLoading})
+        UserSection({ option: "subscribers", setUserSection: setSubscribers, setLoading: setLoading })
     }, [])
 
     return (

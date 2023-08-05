@@ -1,22 +1,22 @@
-import './styles/App.css'
-import './styles/theme.css'
-import { useEffect, useState } from 'react'
-import { AuthContext, UserContext, ThemeContext } from './data/context'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { privateRoutes } from './data/routes'
-import Error from './pages/Error'
-import Login from './pages/Login'
-import Register from './pages/Register'
+import "./styles/App.css"
+import "./styles/theme.css"
+import { useEffect, useState } from "react"
+import { AuthContext, UserContext, ThemeContext } from "./data/context"
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
+import { privateRoutes } from "./data/routes"
+import Error from "./pages/Error"
+import Login from "./pages/Login"
+import Register from "./pages/Register"
 
 export default function App() {
 
     const [isAuth, setIsAuth] = useState(false)
     const [user, setUser] = useState({})
-    const [theme, setTheme] = useState('light') // "light" or "dark"
-    const html = document.getElementsByTagName('html')[0]
+    const [theme, setTheme] = useState("light") // "light" or "dark"
+    const html = document.getElementsByTagName("html")[0]
 
     useEffect(() => {
-        const newTheme = localStorage.getItem('theme')
+        const newTheme = localStorage.getItem("theme")
         if (newTheme !== null && newTheme !== theme) {
             setTheme(newTheme)
             html.className = newTheme
@@ -30,7 +30,7 @@ export default function App() {
             <UserContext.Provider value={{ user, setUser }}>
                 <ThemeContext.Provider value={{ theme, setTheme }}>
                     <BrowserRouter>
-                        <div className='App'>
+                        <div className="App">
                             <Routes>
                                 {privateRoutes.map((route) =>
                                     <Route
@@ -43,27 +43,27 @@ export default function App() {
                                 )}
 
                                 <Route
-                                    path='/'
+                                    path="/"
                                     errorElement={<Error />}
                                     element={<Login />}
                                     exact
                                 />
 
                                 <Route
-                                    path='/login/'
+                                    path="/login/"
                                     errorElement={<Error />}
                                     element={<Login />}
                                     exact
                                 />
 
                                 <Route
-                                    path='/register/'
+                                    path="/register/"
                                     errorElement={<Error />}
                                     element={<Register />}
                                     exact
                                 />
 
-                                <Route path='*' element={<Error />} />
+                                <Route path="*" element={<Error />} />
                             </Routes>
                         </div>
                     </BrowserRouter>

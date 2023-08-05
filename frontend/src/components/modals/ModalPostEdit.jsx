@@ -1,9 +1,9 @@
-import '../../styles/ModalPostEdit.css'
+import "../../styles/ModalPostEdit.css"
 import Button from "../UI/Button"
 
 export default function ModalPostEdit(props) {
     return (
-        <div className='ModalPostEdit'>
+        <div className="ModalPostEdit">
             <div>
                 <textarea value={props.post.content} maxLength="5000" onChange={(e) => props.setPost({ ...props.post, content: e.target.value })} />
             </div>

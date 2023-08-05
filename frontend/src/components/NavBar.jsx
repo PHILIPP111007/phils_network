@@ -1,14 +1,14 @@
-import '../styles/NavBar.css'
-import { useContext } from 'react'
-import { Link } from 'react-router-dom'
-import { UserContext } from '../data/context'
+import "../styles/NavBar.css"
+import { useContext } from "react"
+import { Link } from "react-router-dom"
+import { UserContext } from "../data/context"
 
 export default function NavBar() {
 
     const { user } = useContext(UserContext)
 
     return (
-        <aside className='NavBar'>
+        <aside className="NavBar">
             <nav>
                 <p>
                     <Link to={`/user/${user.username}/`}>User</Link>

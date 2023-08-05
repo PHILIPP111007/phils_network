@@ -1,6 +1,6 @@
-import '../styles/UpperLine.css'
-import showHideBar from '../modules/showHideBar'
-import menuLogo from '../images/lines_menu_burger_icon.svg'
+import "../styles/UpperLine.css"
+import showHideBar from "../modules/showHideBar"
+import menuLogo from "../images/lines_menu_burger_icon.svg"
 
 export default function UpperLine(props) {
     return (
@@ -8,7 +8,7 @@ export default function UpperLine(props) {
             <div>
                 {props.user.first_name
                     ? props.user.first_name
-                    : 'No name'
+                    : "No name"
                 }
             </div>
             <div>

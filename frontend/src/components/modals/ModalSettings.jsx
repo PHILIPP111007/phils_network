@@ -1,21 +1,21 @@
-import '../../styles/ModalSettings.css'
-import { useContext, useState } from 'react'
-import { UserContext } from '../../data/context'
-import { myFetch } from '../../API/myFetch'
-import Button from '../UI/Button'
+import "../../styles/ModalSettings.css"
+import { useContext, useState } from "react"
+import { UserContext } from "../../data/context"
+import { myFetch } from "../../API/myFetch"
+import Button from "../UI/Button"
 import Input from "../UI/Input"
 
 export default function ModalSettings(props) {
 
     const { user, setUser } = useContext(UserContext)
-    const [userNew, setUserNew] = useState({ first_name: '', last_name: '', email: '' })
-    const token = localStorage.getItem('token')
+    const [userNew, setUserNew] = useState({ first_name: "", last_name: "", email: "" })
+    const token = localStorage.getItem("token")
 
     async function userUpdate(event) {
         event.preventDefault()
 
         if (userNew.first_name || userNew.last_name || userNew.email) {
-            myFetch({ action: `api/user/${user.pk}/`, method: 'PUT', body: userNew, token: token })
+            await myFetch({ action: `api/user/${user.pk}/`, method: "PUT", body: userNew, token: token })
                 .then((data) => {
                     if (data.user) {
                         setUser(data.user)
@@ -26,7 +26,7 @@ export default function ModalSettings(props) {
     }
 
     return (
-        <div className='ModalSettings'>
+        <div className="ModalSettings">
             <h2>Settings</h2>
 
             <label>Change personal info</label>
