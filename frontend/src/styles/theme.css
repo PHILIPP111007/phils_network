@@ -104,7 +104,7 @@
     .ModalSettings,
     .ModalPostEdit,
     .ModalDelAcc {
-        background-color: var(--l-main-bg-color);
+        background: var(--l-main-bg-color);
     }
 
     .FriendCard,
@@ -113,7 +113,7 @@
     }
 
     .Chat #SendButton, .Chat #SettingsButton {
-        background-color: var(--l-main-bg-color);
+        background: var(--l-main-bg-color);
     }
 }
 
@@ -191,7 +191,7 @@
     .ModalSettings,
     .ModalPostEdit,
     .ModalDelAcc {
-        background-color: var(--d-main-bg-color);
+        background: var(--d-main-bg-color);
     }
 
     .FriendCard,
@@ -200,6 +200,6 @@
     }
 
     .Chat #SendButton, .Chat #SettingsButton {
-        background-color: var(--d-main-bg-color);
+        background: var(--d-main-bg-color);
     }
 }

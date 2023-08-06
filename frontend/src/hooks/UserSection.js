@@ -1,8 +1,8 @@
-import { myFetch } from "../API/myFetch"
+import Fetch from "../API/Fetch"
 
-export async function UserSection(props) {
+export default async function UserSection(props) {
     const token = localStorage.getItem("token")
-    await myFetch({ action: `api/friends/${props.option}/`, method: "GET", token: token })
+    await Fetch({ action: `api/friends/${props.option}/`, method: "GET", token: token })
         .then((data) => {
             if (data.status) {
                 props.setUserSection(data.query)

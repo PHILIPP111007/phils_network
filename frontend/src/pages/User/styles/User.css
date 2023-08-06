@@ -1,0 +1,21 @@
+.UserCard {
+    margin-top: 100px;
+    margin: 100px auto 0px;
+    width: 500px;
+    padding: 20px;
+    text-align: center;
+}
+.User .UserBtns {
+    height: 30px;
+    padding: 10px;
+}
+.PostCreate img {
+    width: 30px;
+}
+.PostCreate {
+    margin: 20px auto;
+    width: 30px;
+}
+.PostCreate img:hover {
+    cursor: pointer;
+}

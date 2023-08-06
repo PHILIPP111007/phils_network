@@ -63,10 +63,12 @@ class BlogAPIView(APIView):
 		loaded_posts = kwargs.get("loaded_posts", "")
 		posts = Blog.objects.filter(user_id__username=username).select_related("user")[loaded_posts:loaded_posts + settings.POSTS_TO_LOAD]
 
-		return Response({
-			"status": True,
-			"posts": BlogSerializer(posts, many=True).data
-		})
+		if posts.count():
+			return Response({
+				"status": True,
+				"posts": BlogSerializer(posts, many=True).data
+			})
+		return Response({'status': False})
 	
 	def post(self, request, **kwargs):
 		self.check_permissions(request=request)
@@ -318,7 +320,6 @@ class MessagesAPIView(APIView):
 	def get(self, request, pk, loaded_messages):
 		self.check_permissions(request=request)
 		messages = Message.objects.filter(room=pk).select_related("sender")[loaded_messages:loaded_messages + settings.MESSAGES_TO_LOAD]
-
 		if messages.count():
 			return Response({
 				"status": True,

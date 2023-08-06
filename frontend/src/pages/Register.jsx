@@ -1,10 +1,9 @@
-import "../styles/Login.css"
+import "./Login/styles/Login.css"
 import { useState, useContext, useEffect } from "react"
-import { Link } from "react-router-dom"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { UserContext, AuthContext } from "../data/context"
-import { myFetch } from "../API/myFetch"
-import Input from "../components/UI/Input"
+import Fetch from "../API/Fetch"
+import Input from "./components/UI/Input"
 
 export default function Register() {
 
@@ -21,7 +20,7 @@ export default function Register() {
         const token = localStorage.getItem("token")
         if (token) {
 
-            await myFetch({ action: "api/auth/users/me/", method: "GET", token: token })
+            await Fetch({ action: "api/auth/users/me/", method: "GET", token: token })
                 .then((data) => {
                     if (data.username) {
                         setUser({ ...user, ...data })
@@ -40,7 +39,7 @@ export default function Register() {
         event.preventDefault()
 
         if (registerForm.password === registerForm.password2) {
-            await myFetch({ action: "api/auth/users/", method: "POST", body: registerForm })
+            await Fetch({ action: "api/auth/users/", method: "POST", body: registerForm })
                 .then((data) => {
                     if (typeof data.username === "string") {
                         setUser(data)

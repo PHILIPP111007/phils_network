@@ -1,6 +1,6 @@
 import { useMemo } from "react"
 
-export const useFriends = (users, filter) => {
+export default function useFriends(users, filter) {
 
     function lambda(user) {
         let flag = true

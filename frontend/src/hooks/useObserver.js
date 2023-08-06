@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 
-export const useObserver = (props) => {
+export default function useObserver(props) {
 
     const Fetch = useEffect(() => {
         if (props.inView) {

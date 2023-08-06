@@ -33,13 +33,13 @@ class RoomSerializer(serializers.ModelSerializer):
 
 
 class MessageSerializer(serializers.ModelSerializer):
+	sender = serializers.PrimaryKeyRelatedField(read_only=True)
 	username = serializers.StringRelatedField(source="sender.username", read_only=True)
 	first_name = serializers.StringRelatedField(source="sender.first_name", read_only=True)
 	last_name = serializers.StringRelatedField(source="sender.last_name", read_only=True)
 	timestamp = serializers.DateTimeField(read_only=True, format=settings.DATETIME_FORMAT)
-	# sender = serializers.PrimaryKeyRelatedField(read_only=True)
 	# sender_info = UserSerializer(source="sender", read_only=True)
 
 	class Meta:
 		model = Message
-		exclude = ("sender", )
+		fields = '__all__'

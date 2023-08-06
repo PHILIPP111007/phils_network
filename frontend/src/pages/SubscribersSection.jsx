@@ -1,13 +1,13 @@
-import "../styles/Friends.css"
+import "./Friends/styles/Friends.css"
 import { useEffect, useState, useContext } from "react"
 import { UserContext } from "../data/context"
-import { useFriends } from "../hooks/useFriends"
-import { UserSection } from "../hooks/UserSection"
-import FriendCard from "../components/FriendCard"
-import FriendsNavBar from "../components/FriendsNavBar"
-import MainComponents from "../components/MainComponents"
-import FindUser from "../components/FindUser"
-import Loading from "../components/Loading"
+import useFriends from "../hooks/useFriends"
+import UserSection from "../hooks/UserSection"
+import MainComponents from "./components/MainComponents/MainComponents"
+import FriendCard from "./components/FriendCard"
+import FriendsNavBar from "./components/FriendsNavBar"
+import FindUser from "./components/FindUser"
+import Loading from "./components/Loading"
 
 export default function SubscribersSection() {
 
@@ -27,7 +27,6 @@ export default function SubscribersSection() {
 
     return (
         <div className="Friends">
-
             <MainComponents user={user} />
 
             <FriendsNavBar />
@@ -35,7 +34,6 @@ export default function SubscribersSection() {
             <FindUser findFunc={findFunc} />
 
             <div className="friends-section">
-
                 <div id="subscribers" className="section">
                     <h3>Subscribers: {searchedSubscribers.length}</h3>
                     {loading
@@ -46,7 +44,6 @@ export default function SubscribersSection() {
                         )
                     }
                 </div>
-
             </div>
         </div>
     )

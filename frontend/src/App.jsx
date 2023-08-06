@@ -1,12 +1,10 @@
 import "./styles/App.css"
 import "./styles/theme.css"
 import { useEffect, useState } from "react"
-import { AuthContext, UserContext, ThemeContext } from "./data/context"
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
-import { privateRoutes } from "./data/routes"
-import Error from "./pages/Error"
-import Login from "./pages/Login"
-import Register from "./pages/Register"
+import { AuthContext, UserContext, ThemeContext } from "./data/context"
+import { privateRoutes, publicRoutes } from "./data/routes"
+import Error from "./pages/Error/Error"
 
 export default function App() {
 
@@ -38,30 +36,19 @@ export default function App() {
                                         path={route.path}
                                         errorElement={<Error />}
                                         element={isAuth ? route.element : <Navigate replace to="/login/" />}
-                                        exact={route.exact}
+                                        exact
                                     />
                                 )}
 
-                                <Route
-                                    path="/"
-                                    errorElement={<Error />}
-                                    element={<Login />}
-                                    exact
-                                />
-
-                                <Route
-                                    path="/login/"
-                                    errorElement={<Error />}
-                                    element={<Login />}
-                                    exact
-                                />
-
-                                <Route
-                                    path="/register/"
-                                    errorElement={<Error />}
-                                    element={<Register />}
-                                    exact
-                                />
+                                {publicRoutes.map((route) =>
+                                    <Route
+                                        key={route.path}
+                                        path={route.path}
+                                        errorElement={<Error />}
+                                        element={route.element}
+                                        exact
+                                    />
+                                )}
 
                                 <Route path="*" element={<Error />} />
                             </Routes>
