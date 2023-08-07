@@ -8,7 +8,6 @@ export default function SettingsBar(props) {
 
     const { setIsAuth } = useContext(AuthContext)
     const { theme, setTheme } = useContext(ThemeContext)
-    const token = localStorage.getItem("token")
 
     function changeTheme() {
         if (theme === "light") {
@@ -21,7 +20,7 @@ export default function SettingsBar(props) {
     }
 
     async function logout() {
-        await Fetch({ action: "auth/token/logout/", method: "POST", token: token })
+        await Fetch({ action: "auth/token/logout/", method: "POST" })
             .then(() => {
                 localStorage.removeItem("token")
                 setIsAuth(false)

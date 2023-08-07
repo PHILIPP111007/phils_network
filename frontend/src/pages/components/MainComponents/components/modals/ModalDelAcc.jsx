@@ -6,12 +6,11 @@ import Button from "../../../UI/Button"
 
 export default function ModalDelAcc() {
 
-    const token = localStorage.getItem("token")
     const { setIsAuth } = useContext(AuthContext)
     const { user } = useContext(UserContext)
 
     async function deleteAccount() {
-        await Fetch({ action: `api/user/${user.pk}/`, method: "DELETE", token: token })
+        await Fetch({ action: `api/user/${user.pk}/`, method: "DELETE" })
             .then((data) => {
                 if (data.status) {
                     localStorage.removeItem("token")

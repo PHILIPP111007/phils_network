@@ -17,18 +17,14 @@ export default function Register() {
     })
 
     async function auth() {
-        const token = localStorage.getItem("token")
-        if (token) {
-
-            await Fetch({ action: "api/auth/users/me/", method: "GET", token: token })
-                .then((data) => {
-                    if (data.username) {
-                        setUser({ ...user, ...data })
-                        setIsAuth(true)
-                        navigate(`/user/${data.username}/`)
-                    }
-                })
-        }
+        await Fetch({ action: "api/auth/users/me/", method: "GET" })
+            .then((data) => {
+                if (data.username) {
+                    setUser({ ...user, ...data })
+                    setIsAuth(true)
+                    navigate(`/user/${data.username}/`)
+                }
+            })
     }
 
     useEffect(() => {
@@ -37,7 +33,6 @@ export default function Register() {
 
     async function register(event) {
         event.preventDefault()
-
         if (registerForm.password === registerForm.password2) {
             await Fetch({ action: "api/auth/users/", method: "POST", body: registerForm })
                 .then((data) => {
@@ -75,7 +70,6 @@ export default function Register() {
                         type="text"
                     />
                     <br />
-
                     <Input type="submit" value="register" />
                 </form>
                 <Link to="/login/" >Log in</Link>

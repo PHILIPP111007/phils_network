@@ -13,13 +13,12 @@ export default function Friends() {
     const { user } = useContext(UserContext)
     const [users, setUsers] = useState([])
     const [loading, setLoading] = useState(false)
-    const token = localStorage.getItem("token")
 
     async function findFunc(findUser) {
         setUsers([])
         if (findUser.username || findUser.first_name || findUser.last_name) {
             setLoading(true)
-            await Fetch({ action: "api/find/", method: "POST", body: findUser, token: token })
+            await Fetch({ action: "api/find/", method: "POST", body: findUser })
                 .then((data) => {
                     if (data.status) {
                         setUsers(data.users)

@@ -13,17 +13,14 @@ export default function Login() {
     const navigate = useNavigate()
 
     async function auth() {
-        const token = localStorage.getItem("token")
-        if (token) {
-            await Fetch({ action: "api/auth/users/me/", method: "GET", token: token })
-                .then((data) => {
-                    if (data.username) {
-                        setUser({ ...user, ...data })
-                        setIsAuth(true)
-                        navigate(`/user/${data.username}/`)
-                    }
-                })
-        }
+        await Fetch({ action: "api/auth/users/me/", method: "GET" })
+            .then((data) => {
+                if (data.username) {
+                    setUser({ ...user, ...data })
+                    setIsAuth(true)
+                    navigate(`/user/${data.username}/`)
+                }
+            })
     }
 
     async function login(event) {

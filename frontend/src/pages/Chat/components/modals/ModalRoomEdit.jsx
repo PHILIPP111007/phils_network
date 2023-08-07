@@ -7,7 +7,6 @@ import Button from "../../../components/UI/Button"
 export default function ModalRoomEdit({ mainSets, setMainSets, me, editRoom }) {
 
     const [loading, setLoading] = useState(true)
-    const token = localStorage.getItem("token")
 
     function editSubscribers(subscriber) {
         setMainSets({
@@ -79,7 +78,7 @@ export default function ModalRoomEdit({ mainSets, setMainSets, me, editRoom }) {
         if (mainSets.isCreator) {
             setLoading(true)
 
-            Fetch({ action: "api/friends/friends/", method: "GET", token: token })
+            Fetch({ action: "api/friends/friends/", method: "GET" })
                 .then((data) => {
                     if (data.status) {
                         let response = data.query

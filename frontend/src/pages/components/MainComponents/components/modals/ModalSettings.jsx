@@ -9,20 +9,17 @@ export default function ModalSettings(props) {
 
     const { user, setUser } = useContext(UserContext)
     const [userNew, setUserNew] = useState({ first_name: "", last_name: "", email: "" })
-    const token = localStorage.getItem("token")
 
     async function userUpdate(event) {
         event.preventDefault()
-
         if (userNew.first_name || userNew.last_name || userNew.email) {
-            await Fetch({ action: `api/user/${user.pk}/`, method: "PUT", body: userNew, token: token })
+            await Fetch({ action: `api/user/${user.pk}/`, method: "PUT", body: userNew })
                 .then((data) => {
                     if (data.user) {
                         setUser(data.user)
                     }
                 })
         }
-
     }
 
     return (

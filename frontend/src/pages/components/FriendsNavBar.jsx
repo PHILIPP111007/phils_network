@@ -8,10 +8,9 @@ export default function FriendsNavBar() {
 
     const { user } = useContext(UserContext)
     const [subscribersCount, setSubscribersCount] = useState(0)
-    const token = localStorage.getItem("token")
 
     useEffect(() => {
-        Fetch({ action: "api/friends/subscribers_count/", method: "GET", token: token })
+        Fetch({ action: "api/friends/subscribers_count/", method: "GET" })
             .then((data) => {
                 if (data.status) {
                     setSubscribersCount(data.query)

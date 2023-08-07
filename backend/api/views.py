@@ -19,13 +19,13 @@ class UserAPIView(APIView):
 
 	def get(self, request, username):
 		self.check_permissions(request=request)
-		global_user = User.objects.get(pk=request.user.id)
+		global_user = User.objects.filter(pk=request.user.id).only("username", "first_name", "last_name")[0]
 		query = {"global_user": UserSerializer(global_user).data}
-		try:
-			local_user = User.objects.get(username=username)
-			query["local_user"] = UserSerializer(local_user).data
-		except User.DoesNotExist:
-			pass
+
+		local_user = User.objects.filter(username=username).only("username", "first_name", "last_name")
+		if local_user.exists():
+			query["local_user"] = UserSerializer(local_user[0]).data
+
 		return Response(query)
 	
 	def put(self, request, **kwargs):
@@ -61,9 +61,12 @@ class BlogAPIView(APIView):
 		self.check_permissions(request=request)
 		username = kwargs.get("username", "")
 		loaded_posts = kwargs.get("loaded_posts", "")
-		posts = Blog.objects.filter(user_id__username=username).select_related("user")[loaded_posts:loaded_posts + settings.POSTS_TO_LOAD]
 
-		if posts.count():
+		posts = Blog.objects.filter(user_id__username=username).select_related("user") \
+			.only("content", "timestamp", "changed", "user__username", "user__first_name", "user__last_name") \
+			[loaded_posts:loaded_posts + settings.POSTS_TO_LOAD]
+
+		if posts.exists():
 			return Response({
 				"status": True,
 				"posts": BlogSerializer(posts, many=True).data
@@ -86,11 +89,11 @@ class BlogAPIView(APIView):
 		if not pk:
 			return Response({"status": False})
 
-		try:
-			instance = Blog.objects.get(pk=pk)
-		except Blog.DoesNotExist:
+		instance = Blog.objects.filter(pk=pk)
+		if not instance.exists():
 			return Response({"status": False})
 
+		instance = instance[0]
 		serializer = BlogSerializer(data=request.data, instance=instance)
 		serializer.is_valid(raise_exception=True)
 		user = serializer.validated_data.get("user")
@@ -106,15 +109,15 @@ class BlogAPIView(APIView):
 		pk = kwargs.get("pk", "")
 		if not pk:
 			return Response({"status": False})
-
-		try:
-			post = Blog.objects.get(pk=pk)
-		except Blog.DoesNotExist:
-			return Response({"status": False})
 		
-		self.check_object_permissions(request=request, obj=post.user)
-		post.delete()
-		return Response({"status": True})
+		post = Blog.objects.filter(pk=pk)
+		if post.exists():
+			post = post[0]
+			self.check_object_permissions(request=request, obj=post.user)
+			post.delete()
+			return Response({"status": True})
+		
+		return Response({"status": False})
 
 
 class FindUserAPIView(APIView):
@@ -127,7 +130,7 @@ class FindUserAPIView(APIView):
 		username = request.data.get("username", "")
 		find_users = None
 		if username:
-			find_users = User.objects.filter(username__icontains=username)
+			find_users = User.objects.filter(username__icontains=username).only("username", "first_name", "last_name")
 		else:
 			query = "User.objects"
 			first_name = request.data.get("first_name", "")
@@ -140,6 +143,7 @@ class FindUserAPIView(APIView):
 				query += f".filter(last_name__icontains=\"{last_name}\")"
 
 			if query != "User.objects":
+				query += '.only("username", "first_name", "last_name")'
 				find_users = eval(query)
 
 		if find_users:
@@ -160,8 +164,8 @@ class SubscriberAPIView(APIView):
 	def get(self, request, pk):
 		self.check_permissions(request=request)
 
-		user_1 = Subscriber.objects.filter(user_id=request.user.id, subscribe_id=pk).count()
-		user_2 = Subscriber.objects.filter(user_id=pk, subscribe_id=request.user.id).count()
+		user_1 = Subscriber.objects.filter(user_id=request.user.id, subscribe_id=pk).only("pk").exists()
+		user_2 = Subscriber.objects.filter(user_id=pk, subscribe_id=request.user.id).only("pk").exists()
 		
 		# If we are friends, I can see his blog
 		if user_1 and user_2:
@@ -182,22 +186,22 @@ class SubscriberAPIView(APIView):
 	# delete friend
 	def delete(self, request, pk):
 		self.check_permissions(request=request)
-
 		flag = request.data.get("flag", "")
+
 		if flag == "delete_friend":
-			try:
-				subscribe = Subscriber.objects.get(subscribe_id=pk, user_id=request.user.id)
+			subscribe = Subscriber.objects.filter(subscribe_id=pk, user_id=request.user.id)
+			if subscribe.exists():
+				subscribe = subscribe[0]
 				subscribe.delete()
 				return Response({"status": True})
-			except Subscriber.DoesNotExist:
-				pass
+
 		elif flag == "delete_subscriber":
-			try:
-				subscribe = Subscriber.objects.get(subscribe_id=request.user.id, user_id=pk)
+			subscribe = Subscriber.objects.filter(subscribe_id=request.user.id, user_id=pk)
+			if subscribe.exists():
+				subscribe = subscribe[0]
 				subscribe.delete()
 				return Response({"status": True})
-			except Subscriber.DoesNotExist:
-				pass
+
 		return Response({"status": False})
 
 
@@ -243,7 +247,11 @@ class NewsAPIView(APIView):
 	def get(self, request, loaded_posts):
 		self.check_permissions(request=request)
 		friends = Subscriber.get_friends(pk=request.user.id).only("pk").values_list("pk", flat=True)
-		posts = Blog.objects.filter(user_id__in=friends).select_related("user")[loaded_posts:loaded_posts + settings.POSTS_TO_LOAD]
+
+		posts = Blog.objects.filter(user_id__in=friends).select_related("user") \
+			.only("content", "timestamp", "changed", "user__username", "user__first_name", "user__last_name") \
+			[loaded_posts:loaded_posts + settings.POSTS_TO_LOAD]
+
 		return Response({
 			"status": True,
 			"posts": BlogSerializer(posts, many=True).data
@@ -289,7 +297,6 @@ class ChatAPIView(APIView):
 		self.check_permissions(request=request)
 		room = Room.objects.filter(pk=pk).prefetch_related("subscribers")[0]
 		is_creator = RoomCreator.objects.get(room=room).creator == request.user
-
 		return Response({
 			"status": True,
 			"room": RoomSerializer(room).data,
@@ -306,7 +313,7 @@ class ChatAPIView(APIView):
 		room.subscribers.add(*friends)
 		room.subscribers.remove(*subscribers)
 
-		if not room.subscribers.count():
+		if not room.subscribers.exists():
 			room.delete()
 		
 		return Response({"status": True})
@@ -319,8 +326,12 @@ class MessagesAPIView(APIView):
 
 	def get(self, request, pk, loaded_messages):
 		self.check_permissions(request=request)
-		messages = Message.objects.filter(room=pk).select_related("sender")[loaded_messages:loaded_messages + settings.MESSAGES_TO_LOAD]
-		if messages.count():
+
+		messages = Message.objects.filter(room=pk).select_related("sender") \
+			.only("text", "timestamp", "sender__username", "sender__first_name", "sender__last_name") \
+			[loaded_messages:loaded_messages + settings.MESSAGES_TO_LOAD]
+
+		if messages.exists():
 			return Response({
 				"status": True,
 				"messages": MessageSerializer(messages, many=True).data,

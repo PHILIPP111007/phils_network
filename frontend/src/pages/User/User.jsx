@@ -22,7 +22,6 @@ export default function User() {
     const { user, setUser } = useContext(UserContext)
     const [ref, inView] = useInView()
     const params = useParams()
-    const token = localStorage.getItem("token")
 
     const [userLocal, setUserLocal] = useState(user)
     const [posts, setPosts] = useState([])
@@ -40,7 +39,7 @@ export default function User() {
 
     async function getPosts() {
         setMainSets({ ...mainSets, loading: true })
-        await Fetch({ action: `api/blog/${params.username}/${posts.length}/`, method: "GET", token: token })
+        await Fetch({ action: `api/blog/${params.username}/${posts.length}/`, method: "GET" })
             .then((data) => {
                 if (data.status) {
                     const newPosts = data.posts.map(post => {
@@ -53,7 +52,7 @@ export default function User() {
     }
 
     async function deletePost(oldPost) {
-        await Fetch({ action: `api/blog/${oldPost.id}/`, method: "DELETE", token: token })
+        await Fetch({ action: `api/blog/${oldPost.id}/`, method: "DELETE" })
             .then((data) => {
                 if (data.status) {
                     setPosts(posts.filter(post => post.id !== oldPost.id))
@@ -69,7 +68,7 @@ export default function User() {
             user: user.pk,
             content: text,
         }
-        await Fetch({ action: "api/blog/", method: "POST", body: newPost, token: token })
+        await Fetch({ action: "api/blog/", method: "POST", body: newPost })
             .then((data) => {
                 if (data.status) {
                     setPosts([data.post, ...posts])
@@ -82,7 +81,7 @@ export default function User() {
             setModalPostEdit(false)
             newPost.changed = true
 
-            await Fetch({ action: `api/blog/${newPost.id}/`, method: "PUT", body: newPost, token: token })
+            await Fetch({ action: `api/blog/${newPost.id}/`, method: "PUT", body: newPost })
                 .then((data) => {
                     if (data.status) {
                         setPosts(posts.map(post => {
@@ -116,11 +115,12 @@ export default function User() {
     }
 
     useEffect(() => {
+        const token = localStorage.getItem("token")
         if (token === null) {
             setIsAuth(false)
         }
 
-        Fetch({ action: `api/user/${params.username}/`, method: "GET", token: token })
+        Fetch({ action: `api/user/${params.username}/`, method: "GET" })
             .then((data) => {
                 setUser(data.global_user)
                 if (data.local_user) {

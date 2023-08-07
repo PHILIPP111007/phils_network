@@ -23,18 +23,17 @@ export default function Chat() {
     const [mainSets, setMainSets] = useState({
         room: { id: undefined, name: "", subscribers_info: [] },
         isCreator: false,
-        loading: true,
+        loading: false,
         text: "",
         invitationChanges: { friends: [], subscribers: [] },
     })
-    
+
     const params = useParams()
     const navigate = useNavigate()
     const chatSocket = useRef(null)
     const wrapperRef = useRef(null)
     const [refLazyDivinView, inViewLazyDiv] = useInView()
     const [refWrapperinView, inViewWrapper] = useInView()
-    const token = localStorage.getItem("token")
 
     function scrollToBottom() {
         if (wrapperRef.current) {
@@ -48,7 +47,7 @@ export default function Chat() {
 
     async function sendMessage() {
         const sendingText = mainSets.text.trim()
-        setMainSets({...mainSets, text: ""})
+        setMainSets({ ...mainSets, text: "" })
         if (sendingText.length > 0) {
             const message = { sender_id: user.pk, text: sendingText }
             await chatSocket.current.send(JSON.stringify({ message: message }))
@@ -68,7 +67,7 @@ export default function Chat() {
         if (friends.length > 0 || subscribers.length > 0) {
             const data = { subscribers: subscribers, friends: friends }
 
-            await Fetch({ action: `api/room/${params.room_id}/`, method: "PUT", body: data, token: token })
+            await Fetch({ action: `api/room/${params.room_id}/`, method: "PUT", body: data })
                 .then((data) => {
                     if (data.status) {
                         navigate(`/chats/${user.username}/`)
@@ -77,15 +76,19 @@ export default function Chat() {
         }
     }
 
-    async function fetchAddMessages() {
-        setMainSets({...mainSets, loading: true})
-        await Fetch({ action: `api/room/${params.room_id}/${messages.length}/`, method: "GET", token: token })
-            .then((data) => {
-                if (data.status) {
-                    setMessages([...data.messages.reverse(), ...messages])
-                }
-                setMainSets({...mainSets, loading: false})
-            })
+    async function fetchAddMessages(bool) {
+
+        if (bool || messages.length > 0) {
+
+            setMainSets({ ...mainSets, loading: true })
+            await Fetch({ action: `api/room/${params.room_id}/${messages.length}/`, method: "GET" })
+                .then((data) => {
+                    if (data.status) {
+                        setMessages([...data.messages.reverse(), ...messages])
+                    }
+                    setMainSets({ ...mainSets, loading: false })
+                })
+        }
     }
 
     useEffect(() => {
@@ -98,17 +101,22 @@ export default function Chat() {
             }
         }
 
-        Fetch({ action: `api/room/${params.room_id}/`, method: "GET", token: token })
+        Fetch({ action: `api/room/${params.room_id}/`, method: "GET" })
             .then((data) => {
                 if (data.status) {
-                    setMainSets({...mainSets, isCreator: data.isCreator, room: data.room})
-                    
+                    setMainSets({ ...mainSets, isCreator: data.isCreator, room: data.room })
+
                     mainSets.invitationChanges.subscribers = data.room.subscribers_info.map((user) => {
                         return { ...user, isInRoom: true }
                     })
                 }
             })
+
     }, [mainSets.room.name])
+
+    useEffect(() => {
+        fetchAddMessages(true)
+    }, [])
 
     useEffect(() => {
         const socket = new WebSocket(
@@ -181,7 +189,7 @@ export default function Chat() {
                     maxLength="5000"
                     placeholder="type text..."
                     value={mainSets.text}
-                    onChange={(e) => setMainSets({...mainSets, text: e.target.value})}
+                    onChange={(e) => setMainSets({ ...mainSets, text: e.target.value })}
                 />
                 <img id="SendButton" src={sendIcon} onClick={() => sendMessage()} alt="send button" />
             </div>

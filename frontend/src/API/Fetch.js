@@ -1,6 +1,7 @@
-export default async function Fetch({ action, method, body, token }) {
+export default async function Fetch({ action, method, body }) {
 
     const url = `${process.env.REACT_APP_DJANGO_URL}${action}`
+    const token = localStorage.getItem("token")
 
     if (method === "GET") {
         try {

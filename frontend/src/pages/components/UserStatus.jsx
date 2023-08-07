@@ -6,10 +6,8 @@ import Subscribe from "../../hooks/Subscribe"
 
 export default function UserStatus(props) {
 
-    const token = localStorage.getItem("token")
-
     useEffect(() => {
-        Fetch({ action: `api/subscriber/${props.pk}/`, method: "GET", token: token })
+        Fetch({ action: `api/subscriber/${props.pk}/`, method: "GET" })
             .then((data) => {
                 props.setStatus(data.status)
             })

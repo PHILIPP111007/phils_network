@@ -15,15 +15,14 @@ export default function News() {
     const [posts, setPosts] = useState([])
     const [loading, setLoading] = useState(true)
     const [ref, inView] = useInView()
-    const token = localStorage.getItem("token")
 
     async function fetchAddPosts() {
         setLoading(true)
-        await Fetch({ action: `api/news/${posts.length}/`, method: "GET", token: token })
+        await Fetch({ action: `api/news/${posts.length}/`, method: "GET" })
             .then((data) => {
                 if (data.status) {
                     const newPosts = data.posts.map(post => {
-                        return {...post, postLen500: post.content.length > 500, btnFlag: true}
+                        return { ...post, postLen500: post.content.length > 500, btnFlag: true }
                     })
                     setPosts([...posts, ...newPosts])
                 }
