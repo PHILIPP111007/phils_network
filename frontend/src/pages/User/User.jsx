@@ -156,7 +156,7 @@ export default function User() {
                 <ModalPostCreate mainSets={mainSets} setMainSets={setMainSets} createPost={createPost} />
             </Modal>
 
-            {isUserGlobal
+            {(isUserGlobal && !mainSets.loading)
                 &&
                 <div className="PostCreate">
                     <img src={plusIcon} onClick={() => setModalPostCreate(true)} alt="menu logo" />

@@ -1,15 +1,11 @@
-from django.conf import settings
-from django.contrib.auth.models import User
-
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 
-from .models import Blog, Subscriber, Room, RoomCreator, Message
-
 from .serializers import UserSerializer, BlogSerializer, RoomSerializer, MessageSerializer
 from .permissions import IsOwnerOrReadOnly
+from .services import UserService, SubscriberService, PostService, RoomCreatorService, RoomService, MessageService
 
 
 class UserAPIView(APIView):
@@ -19,36 +15,29 @@ class UserAPIView(APIView):
 
 	def get(self, request, username):
 		self.check_permissions(request=request)
-		global_user = User.objects.filter(pk=request.user.id).only("username", "first_name", "last_name")[0]
+		global_user = UserService.filter(pk=request.user.id)[0]
+		local_user = UserService.filter_by_username(username=username)
 		query = {"global_user": UserSerializer(global_user).data}
 
-		local_user = User.objects.filter(username=username).only("username", "first_name", "last_name")
 		if local_user.exists():
 			query["local_user"] = UserSerializer(local_user[0]).data
-
+		
 		return Response(query)
 	
 	def put(self, request, **kwargs):
 		self.check_permissions(request=request)
-		user = User.objects.get(username=request.user.username)
+		user = UserService.filter(pk=request.user.id)[0]
 		self.check_object_permissions(request=request, obj=user)
-
-		first_name = request.data.get("first_name", "")
-		last_name = request.data.get("last_name", "")
-		email = request.data.get("email", "")
-		if first_name:
-			user.first_name = first_name
-		if last_name:
-			user.last_name = last_name
-		user.email = email
-		user.save()
+		user = UserService.put(user=user, request=request)
+		
 		return Response({"user": UserSerializer(user).data})
 	
 	def delete(self, request, **kwargs):
 		self.check_permissions(request=request)
-		user = User.objects.get(pk=request.user.id)
+		user = UserService.filter(pk=request.user.id)[0]
 		self.check_object_permissions(request=request, obj=user)
 		user.delete()
+
 		return Response({"status": True})
 
 
@@ -61,16 +50,14 @@ class BlogAPIView(APIView):
 		self.check_permissions(request=request)
 		username = kwargs.get("username", "")
 		loaded_posts = kwargs.get("loaded_posts", "")
-
-		posts = Blog.objects.filter(user_id__username=username).select_related("user") \
-			.only("content", "timestamp", "changed", "user__username", "user__first_name", "user__last_name") \
-			[loaded_posts:loaded_posts + settings.POSTS_TO_LOAD]
+		posts = PostService.filter_by_username(username=username, loaded_posts=loaded_posts)
 
 		if posts.exists():
 			return Response({
 				"status": True,
 				"posts": BlogSerializer(posts, many=True).data
 			})
+
 		return Response({'status': False})
 	
 	def post(self, request, **kwargs):
@@ -78,6 +65,7 @@ class BlogAPIView(APIView):
 		serializer = BlogSerializer(data=request.data)
 		serializer.is_valid(raise_exception=True)
 		serializer.save()
+
 		return Response({
 			"status": True,
 			"post": serializer.data
@@ -88,17 +76,18 @@ class BlogAPIView(APIView):
 		pk = kwargs.get("pk", "")
 		if not pk:
 			return Response({"status": False})
-
-		instance = Blog.objects.filter(pk=pk)
+		
+		instance = PostService.filter(pk=pk)
 		if not instance.exists():
 			return Response({"status": False})
-
+		
 		instance = instance[0]
 		serializer = BlogSerializer(data=request.data, instance=instance)
 		serializer.is_valid(raise_exception=True)
 		user = serializer.validated_data.get("user")
 		self.check_object_permissions(request=request, obj=user)
 		serializer.save()
+
 		return Response({
 			"status": True,
 			"post": serializer.data
@@ -109,8 +98,8 @@ class BlogAPIView(APIView):
 		pk = kwargs.get("pk", "")
 		if not pk:
 			return Response({"status": False})
-		
-		post = Blog.objects.filter(pk=pk)
+
+		post = PostService.filter(pk=pk)		
 		if post.exists():
 			post = post[0]
 			self.check_object_permissions(request=request, obj=post.user)
@@ -127,34 +116,15 @@ class FindUserAPIView(APIView):
 
 	def post(self, request):
 		self.check_permissions(request=request)
-		username = request.data.get("username", "")
-		find_users = None
-		if username:
-			find_users = User.objects.filter(username__icontains=username).only("username", "first_name", "last_name")
-		else:
-			query = "User.objects"
-			first_name = request.data.get("first_name", "")
-			last_name = request.data.get("last_name", "")
-
-			if first_name:
-				query += f".filter(first_name__icontains=\"{first_name}\")"
-
-			if last_name:
-				query += f".filter(last_name__icontains=\"{last_name}\")"
-
-			if query != "User.objects":
-				query += '.only("username", "first_name", "last_name")'
-				find_users = eval(query)
+		find_users = UserService.filter_find(request=request)
 
 		if find_users:
-			find_users = find_users.exclude(pk=request.user.id)
 			return Response({
 				"status": True,
 				"users": UserSerializer(find_users, many=True).data
 			})
 		
 		return Response({"status": False})
-
 
 class SubscriberAPIView(APIView):
 	serializer_class = UserSerializer
@@ -163,9 +133,8 @@ class SubscriberAPIView(APIView):
 
 	def get(self, request, pk):
 		self.check_permissions(request=request)
-
-		user_1 = Subscriber.objects.filter(user_id=request.user.id, subscribe_id=pk).only("pk").exists()
-		user_2 = Subscriber.objects.filter(user_id=pk, subscribe_id=request.user.id).only("pk").exists()
+		user_1 = SubscriberService.filter(user_id=request.user.id, subscribe_id=pk).only("pk").exists()
+		user_2 = SubscriberService.filter(user_id=pk, subscribe_id=request.user.id).only("pk").exists()
 		
 		# If we are friends, I can see his blog
 		if user_1 and user_2:
@@ -177,29 +146,32 @@ class SubscriberAPIView(APIView):
 
 		return Response({"status": "no_data"})
 
-	# add friend
 	def post(self, request, pk):
 		self.check_permissions(request=request)
-		Subscriber.objects.get_or_create(user_id=request.user.id, subscribe_id=pk)
+		SubscriberService.create(user_id=request.user.id, subscribe_id=pk)
+
 		return Response({"status": True})
 
-	# delete friend
 	def delete(self, request, pk):
 		self.check_permissions(request=request)
 		flag = request.data.get("flag", "")
 
 		if flag == "delete_friend":
-			subscribe = Subscriber.objects.filter(subscribe_id=pk, user_id=request.user.id)
+			subscribe = SubscriberService.filter(user_id=request.user.id, subscribe_id=pk)
+
 			if subscribe.exists():
 				subscribe = subscribe[0]
 				subscribe.delete()
+			
 				return Response({"status": True})
 
 		elif flag == "delete_subscriber":
-			subscribe = Subscriber.objects.filter(subscribe_id=request.user.id, user_id=pk)
+			subscribe = SubscriberService.filter(user_id=pk, subscribe_id=request.user.id)
+			
 			if subscribe.exists():
 				subscribe = subscribe[0]
 				subscribe.delete()
+			
 				return Response({"status": True})
 
 		return Response({"status": False})
@@ -212,30 +184,14 @@ class FriendsAPIView(APIView):
 
 	def get(self, request, option):
 		self.check_permissions(request=request)
-
-		options = {
-			"friends": lambda: UserSerializer(
-				Subscriber.get_friends(pk=request.user.id),
-				many=True
-			).data,
-			"subscriptions": lambda: UserSerializer(
-				Subscriber.get_subscriptions(pk=request.user.id),
-				many=True
-			).data,
-			"subscribers": lambda: UserSerializer(
-				Subscriber.get_subscribers(pk=request.user.id),
-				many=True
-			).data,
-			"subscribers_count": lambda: Subscriber.get_subscribers(pk=request.user.id).count()
-		}
-
-		if options.get(option, ""):
-			query = options[option]()
+		query = SubscriberService.filter_by_option(pk=request.user.id, option=option, serializer=True)
+		
+		if query:
 			return Response({
 				"status": True,
 				"query": query
 			})
-		
+
 		return Response({"status": False})
 
 
@@ -246,11 +202,8 @@ class NewsAPIView(APIView):
 
 	def get(self, request, loaded_posts):
 		self.check_permissions(request=request)
-		friends = Subscriber.get_friends(pk=request.user.id).only("pk").values_list("pk", flat=True)
-
-		posts = Blog.objects.filter(user_id__in=friends).select_related("user") \
-			.only("content", "timestamp", "changed", "user__username", "user__first_name", "user__last_name") \
-			[loaded_posts:loaded_posts + settings.POSTS_TO_LOAD]
+		friends = SubscriberService.filter_by_option(pk=request.user.id, option="friends", serializer=False).only("pk").values_list("pk", flat=True)
+		posts = PostService.filter_by_friends(friends=friends, loaded_posts=loaded_posts)
 
 		return Response({
 			"status": True,
@@ -265,7 +218,8 @@ class RoomsAPIView(APIView):
 
 	def get(self, request):
 		self.check_permissions(request=request)
-		rooms = Room.objects.filter(subscribers=request.user.id)
+		rooms = RoomService.filter_by_subscriber(pk=request.user.id)
+		
 		return Response({
 			"status": True,
 			"rooms": RoomSerializer(rooms, many=True).data
@@ -273,14 +227,11 @@ class RoomsAPIView(APIView):
 	
 	def post(self, request):
 		self.check_permissions(request=request)
-		pk_list = request.data.get("subscribers", "")
 		room_name = request.data.get("name", "")
-		subscribers = User.objects.filter(pk__in=pk_list).only("pk").values_list("pk", flat=True)
+		pk_list = request.data.get("subscribers", "")
 
-		room = Room(name=room_name)
-		room.save()
-		room.subscribers.add(*subscribers)
-		RoomCreator.objects.get_or_create(room=room, creator_id=request.user.id)
+		room = RoomService.create(room_name=room_name, pk_list=pk_list)		
+		RoomCreatorService.create(room=room, creator_id=request.user.id)
 
 		return Response({
 			"status": True,
@@ -295,8 +246,10 @@ class ChatAPIView(APIView):
 
 	def get(self, request, pk):
 		self.check_permissions(request=request)
-		room = Room.objects.filter(pk=pk).prefetch_related("subscribers")[0]
-		is_creator = RoomCreator.objects.get(room=room).creator == request.user
+		room = RoomService.filter(pk=pk)[0]
+		creator = RoomCreatorService.filter(room=room)[0].creator
+		is_creator = creator == request.user
+
 		return Response({
 			"status": True,
 			"room": RoomSerializer(room).data,
@@ -305,16 +258,9 @@ class ChatAPIView(APIView):
 	
 	def put(self, request, pk):
 		self.check_permissions(request=request)
-		room = Room.objects.get(pk=pk)
-
-		friends = request.data["friends"]
-		subscribers = request.data["subscribers"]
-
-		room.subscribers.add(*friends)
-		room.subscribers.remove(*subscribers)
-
-		if not room.subscribers.exists():
-			room.delete()
+		friends = request.data.get("friends", "")
+		subscribers = request.data.get("subscribers", "")
+		RoomService.put(pk=pk, friends=friends, subscribers=subscribers)
 		
 		return Response({"status": True})
 
@@ -326,14 +272,12 @@ class MessagesAPIView(APIView):
 
 	def get(self, request, pk, loaded_messages):
 		self.check_permissions(request=request)
-
-		messages = Message.objects.filter(room=pk).select_related("sender") \
-			.only("text", "timestamp", "sender__username", "sender__first_name", "sender__last_name") \
-			[loaded_messages:loaded_messages + settings.MESSAGES_TO_LOAD]
-
+		messages = MessageService.filter(room_id=pk, loaded_messages=loaded_messages)
+		
 		if messages.exists():
 			return Response({
 				"status": True,
 				"messages": MessageSerializer(messages, many=True).data,
 			})
+		
 		return Response({"status": False})
