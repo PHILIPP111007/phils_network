@@ -4,7 +4,7 @@ export default class Subscribe {
 
     static deleteFriend(props) {
         const token = localStorage.getItem("token")
-        const body = { flag: "delete_friend" }
+        const body = { option: "delete_friend" }
         Fetch({ action: `api/subscriber/${props.pk}/`, method: "DELETE", body: body, token: token })
             .then((data) => {
                 if (data.status) {
@@ -15,7 +15,7 @@ export default class Subscribe {
 
     static deleteSubscriber(props) {
         const token = localStorage.getItem("token")
-        const body = { flag: "delete_subscriber" }
+        const body = { option: "delete_subscriber" }
         Fetch({ action: `api/subscriber/${props.pk}/`, method: "DELETE", body: body, token: token })
             .then((data) => {
                 if (data.status) {

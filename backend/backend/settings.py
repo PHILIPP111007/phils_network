@@ -38,17 +38,17 @@ THIRD_PARTY_APPS = [
 	"djoser",
 ]
 
-if DEBUG:
-	THIRD_PARTY_APPS.append("debug_toolbar")
-
 LOCAL_APPS = [
 	"api",
 ]
 
+if DEBUG:
+	THIRD_PARTY_APPS.append("debug_toolbar")
+
 INSTALLED_APPS = THIRD_PARTY_APPS + DJANGO_APPS + LOCAL_APPS
 
 
-MIDDLEWARE = [
+DJANGO_MIDDLEWARE = [
 	"django.middleware.security.SecurityMiddleware",
 	"django.contrib.sessions.middleware.SessionMiddleware",
 	"django.middleware.common.CommonMiddleware",
@@ -56,13 +56,17 @@ MIDDLEWARE = [
 	"django.contrib.auth.middleware.AuthenticationMiddleware",
 	"django.contrib.messages.middleware.MessageMiddleware",
 	"django.middleware.clickjacking.XFrameOptionsMiddleware",
+]
 
+THIRD_PARTY_MIDDLEWARE = [
 	"corsheaders.middleware.CorsMiddleware",
 ]
 
 if DEBUG:
-	MIDDLEWARE.append("debug_toolbar.middleware.DebugToolbarMiddleware")
+	THIRD_PARTY_MIDDLEWARE.append("debug_toolbar.middleware.DebugToolbarMiddleware")
 	INTERNAL_IPS = ["127.0.0.1"]
+
+MIDDLEWARE = DJANGO_MIDDLEWARE + THIRD_PARTY_MIDDLEWARE
 
 
 ROOT_URLCONF = f"{environ.get('APP_NAME')}.urls"
@@ -155,7 +159,7 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
-# ----- My settings -----
+######### My settings #########
 
 # CORS settings
 

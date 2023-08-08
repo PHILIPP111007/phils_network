@@ -1,9 +1,9 @@
 from django.conf import settings
 from django.contrib.auth.models import User
 
-from .models import Blog, Room, Message
-
 from rest_framework import serializers
+
+from .models import Blog, Room, Message
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -42,4 +42,4 @@ class MessageSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Message
-		fields = '__all__'
+		fields = "__all__"

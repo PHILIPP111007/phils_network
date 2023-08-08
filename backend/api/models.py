@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models import Q
 from django.contrib.auth.models import User
+from django.db.models.query import QuerySet
 
 
 class Blog(models.Model):
@@ -24,7 +25,7 @@ class Subscriber(models.Model):
 		return f"{self.user.username}"
 
 	@staticmethod
-	def get_friends(pk):
+	def get_friends(pk: int) -> QuerySet[User]:
 		set_1 = Subscriber.objects.filter(user_id=pk).only("subscribe").values_list("subscribe", flat=True)
 		set_2 = Subscriber.objects.filter(subscribe_id=pk).only("user").values_list("user", flat=True)
 		query = User.objects.filter(
@@ -34,7 +35,7 @@ class Subscriber(models.Model):
 		return query
 	
 	@staticmethod
-	def get_subscriptions(pk):
+	def get_subscriptions(pk: int) -> QuerySet[User]:
 		set_1 = Subscriber.objects.filter(user_id=pk).only("subscribe").values_list("subscribe", flat=True)
 		set_2 = Subscriber.objects.filter(subscribe_id=pk).only("user").values_list("user", flat=True)
 		query = User.objects.filter(
@@ -44,7 +45,7 @@ class Subscriber(models.Model):
 		return query
 	
 	@staticmethod
-	def get_subscribers(pk):
+	def get_subscribers(pk: int) -> QuerySet[User]:
 		set_1 = Subscriber.objects.filter(user_id=pk).only("subscribe").values_list("subscribe", flat=True)
 		set_2 = Subscriber.objects.filter(subscribe_id=pk).only("user").values_list("user", flat=True)
 		query = User.objects.filter(

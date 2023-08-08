@@ -1,5 +1,11 @@
 from django.contrib import admin
-from .models import Blog, Subscriber, Room, RoomCreator, Message
+from .models import (
+    Blog,
+    Subscriber,
+    Room,
+    RoomCreator,
+    Message
+)
 
 
 @admin.register(Blog)

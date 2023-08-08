@@ -127,7 +127,11 @@ export default function User() {
                     setUserLocal(data.local_user)
                 }
             })
-    }, [])
+
+        setPosts([])
+        getPosts()
+
+    }, [params.username])
 
     useObserver({ inView: inView, func: getPosts })
 
