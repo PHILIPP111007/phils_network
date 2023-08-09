@@ -80,7 +80,7 @@ export default function ModalRoomEdit({ mainSets, setMainSets, me, editRoom }) {
 
             Fetch({ action: "api/friends/friends/", method: "GET" })
                 .then((data) => {
-                    if (data.status) {
+                    if (data) {
                         let response = data.query
                         response = response.filter((friend) => {
                             const hasMatch = mainSets.room.subscribers_info.some(user => friend.pk === user.pk)

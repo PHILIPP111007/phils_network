@@ -1,7 +1,5 @@
 from django.db import models
-from django.db.models import Q
 from django.contrib.auth.models import User
-from django.db.models.query import QuerySet
 
 
 class Blog(models.Model):
@@ -23,36 +21,6 @@ class Subscriber(models.Model):
 
 	def __str__(self):
 		return f"{self.user.username}"
-
-	@staticmethod
-	def get_friends(pk: int) -> QuerySet[User]:
-		set_1 = Subscriber.objects.filter(user_id=pk).only("subscribe").values_list("subscribe", flat=True)
-		set_2 = Subscriber.objects.filter(subscribe_id=pk).only("user").values_list("user", flat=True)
-		query = User.objects.filter(
-			Q(pk__in=set_1) & Q(pk__in=set_2)
-		).only("username", "first_name", "last_name")
-
-		return query
-	
-	@staticmethod
-	def get_subscriptions(pk: int) -> QuerySet[User]:
-		set_1 = Subscriber.objects.filter(user_id=pk).only("subscribe").values_list("subscribe", flat=True)
-		set_2 = Subscriber.objects.filter(subscribe_id=pk).only("user").values_list("user", flat=True)
-		query = User.objects.filter(
-			Q(pk__in=set_1) & ~Q(pk__in=set_2)
-		).only("username", "first_name", "last_name")
-
-		return query
-	
-	@staticmethod
-	def get_subscribers(pk: int) -> QuerySet[User]:
-		set_1 = Subscriber.objects.filter(user_id=pk).only("subscribe").values_list("subscribe", flat=True)
-		set_2 = Subscriber.objects.filter(subscribe_id=pk).only("user").values_list("user", flat=True)
-		query = User.objects.filter(
-			Q(pk__in=set_2) & ~Q(pk__in=set_1)
-		).only("username", "first_name", "last_name")
-
-		return query
 
 
 class Room(models.Model):

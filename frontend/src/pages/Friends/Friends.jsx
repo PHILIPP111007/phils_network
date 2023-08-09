@@ -20,7 +20,7 @@ export default function Friends() {
             setLoading(true)
             await Fetch({ action: "api/find/", method: "POST", body: findUser })
                 .then((data) => {
-                    if (data.status) {
+                    if (data) {
                         setUsers(data.users)
                     }
                     setLoading(false)

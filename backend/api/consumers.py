@@ -13,14 +13,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
 	def _create_message(self, message):
 		"""Create message."""
 
-		msg = MessageService.create(room_id=self.room, sender_id=message["sender_id"], text=message["text"])
+		msg = MessageService.create(room_id=self.room, \
+			sender_id=message["sender_id"], text=message["text"])
+
 		return MessageSerializer(msg).data
 
 	@database_sync_to_async
 	def _check_permission(self, pk):
 		"""Check if user is this room subscriber."""
 
-		return MessageService.check_permission(room_id=self.room, subscriber_id=pk)
+		return MessageService.check_permission(room_id=self.room, \
+			subscriber_id=pk)
 
 	async def connect(self):
 		"""Join room group."""
@@ -37,13 +40,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		Leave room group.
 		"""
 
-		await self.channel_layer.group_discard(self.room_group, self.channel_name)
+		await self.channel_layer.group_discard(self.room_group, \
+			self.channel_name)
 
 	async def receive(self, text_data):
 		"""
 		Called with a decoded WebSocket frame.
 		Receive message from WebSocket and send it to room group.
-		If the user is not a subscriber to the conversation, he will be disconnected.
+		If the user is not a subscriber to the conversation,
+		he will be disconnected.
 		"""
 
 		text_data = json.loads(text_data)

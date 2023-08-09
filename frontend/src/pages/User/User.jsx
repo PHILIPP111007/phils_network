@@ -41,7 +41,7 @@ export default function User() {
         setMainSets({ ...mainSets, loading: true })
         await Fetch({ action: `api/blog/${params.username}/${posts.length}/`, method: "GET" })
             .then((data) => {
-                if (data.status) {
+                if (data) {
                     const newPosts = data.posts.map(post => {
                         return { ...post, postLen500: post.content.length > 500, btnFlag: true }
                     })
@@ -54,7 +54,7 @@ export default function User() {
     async function deletePost(oldPost) {
         await Fetch({ action: `api/blog/${oldPost.id}/`, method: "DELETE" })
             .then((data) => {
-                if (data.status) {
+                if (data) {
                     setPosts(posts.filter(post => post.id !== oldPost.id))
                     setModalPostEdit(false)
                 }
@@ -70,7 +70,7 @@ export default function User() {
         }
         await Fetch({ action: "api/blog/", method: "POST", body: newPost })
             .then((data) => {
-                if (data.status) {
+                if (data) {
                     setPosts([data.post, ...posts])
                 }
             })
@@ -83,7 +83,7 @@ export default function User() {
 
             await Fetch({ action: `api/blog/${newPost.id}/`, method: "PUT", body: newPost })
                 .then((data) => {
-                    if (data.status) {
+                    if (data) {
                         setPosts(posts.map(post => {
                             if (post.id === newPost.id) {
                                 post.content = newPost.content
@@ -122,9 +122,11 @@ export default function User() {
 
         Fetch({ action: `api/user/${params.username}/`, method: "GET" })
             .then((data) => {
-                setUser(data.global_user)
-                if (data.local_user) {
-                    setUserLocal(data.local_user)
+                if (data.global_user) {
+                    setUser(data.global_user)
+                    if (data.local_user) {
+                        setUserLocal(data.local_user)
+                    }
                 }
             })
 

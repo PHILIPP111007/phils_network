@@ -18,7 +18,7 @@ export default function Rooms() {
         room.subscribers.push(user.pk)
         await Fetch({ action: "api/room/", method: "POST", body: room })
             .then((data) => {
-                if (data.status) {
+                if (data) {
                     setRooms([data.room, ...rooms])
                 }
             })
@@ -28,7 +28,7 @@ export default function Rooms() {
     useEffect(() => {
         Fetch({ action: "api/room/", method: "GET" })
             .then((data) => {
-                if (data.status) {
+                if (data) {
                     setRooms(data.rooms)
                 }
             })

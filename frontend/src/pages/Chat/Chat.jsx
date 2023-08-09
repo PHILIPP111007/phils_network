@@ -69,7 +69,7 @@ export default function Chat() {
 
             await Fetch({ action: `api/room/${params.room_id}/`, method: "PUT", body: data })
                 .then((data) => {
-                    if (data.status) {
+                    if (data) {
                         navigate(`/chats/${user.username}/`)
                     }
                 })
@@ -83,7 +83,7 @@ export default function Chat() {
             setMainSets({ ...mainSets, loading: true })
             await Fetch({ action: `api/room/${params.room_id}/${messages.length}/`, method: "GET" })
                 .then((data) => {
-                    if (data.status) {
+                    if (data) {
                         setMessages([...data.messages.reverse(), ...messages])
                     }
                     setMainSets({ ...mainSets, loading: false })
@@ -103,7 +103,7 @@ export default function Chat() {
 
         Fetch({ action: `api/room/${params.room_id}/`, method: "GET" })
             .then((data) => {
-                if (data.status) {
+                if (data) {
                     setMainSets({ ...mainSets, isCreator: data.isCreator, room: data.room })
 
                     mainSets.invitationChanges.subscribers = data.room.subscribers_info.map((user) => {
@@ -146,7 +146,7 @@ export default function Chat() {
     useEffect(() => {
         chatSocket.current.onmessage = (e) => {
             const data = JSON.parse(e.data)
-            if (data.status) {
+            if (data) {
                 setMessages([...messages, data.message])
             }
         }

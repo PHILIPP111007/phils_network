@@ -12,7 +12,7 @@ export default function ModalDelAcc() {
     async function deleteAccount() {
         await Fetch({ action: `api/user/${user.pk}/`, method: "DELETE" })
             .then((data) => {
-                if (data.status) {
+                if (data) {
                     localStorage.removeItem("token")
                     setIsAuth(false)
                 }
