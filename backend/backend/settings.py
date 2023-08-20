@@ -3,25 +3,26 @@ from pathlib import Path
 
 
 # Build paths inside the project like this: BASE_DIR / "subdir".
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR: Path = Path(__file__).resolve().parent.parent
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = environ.get("SECRET_KEY")
+SECRET_KEY: str = environ.get("SECRET_KEY", default="")
+
 
 # SECURITY WARNING: don"t run with debug turned on in production!
-DEBUG = bool(environ.get("DEBUG", default=0))
+DEBUG: bool = not not int(environ.get("DEBUG", default="0"))
 
 
-ALLOWED_HOSTS = environ.get("ALLOWED_HOSTS").split(",")
+ALLOWED_HOSTS: list[str] = environ.get("ALLOWED_HOSTS", default="*").split(",")
 
 
 # Application definition
 
-DJANGO_APPS = [
+DJANGO_APPS: list[str] = [
 	"django.contrib.admin",
 	"django.contrib.auth",
 	"django.contrib.contenttypes",
@@ -30,7 +31,7 @@ DJANGO_APPS = [
 	"django.contrib.staticfiles",
 ]
 
-THIRD_PARTY_APPS = [
+THIRD_PARTY_APPS: list[str] = [
 	"daphne",
 	"corsheaders",
 	"rest_framework",
@@ -38,7 +39,7 @@ THIRD_PARTY_APPS = [
 	"djoser",
 ]
 
-LOCAL_APPS = [
+LOCAL_APPS: list[str] = [
 	"api",
 ]
 
@@ -48,7 +49,7 @@ if DEBUG:
 INSTALLED_APPS = THIRD_PARTY_APPS + DJANGO_APPS + LOCAL_APPS
 
 
-DJANGO_MIDDLEWARE = [
+DJANGO_MIDDLEWARE: list[str] = [
 	"django.middleware.security.SecurityMiddleware",
 	"django.contrib.sessions.middleware.SessionMiddleware",
 	"django.middleware.common.CommonMiddleware",
@@ -58,23 +59,23 @@ DJANGO_MIDDLEWARE = [
 	"django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-THIRD_PARTY_MIDDLEWARE = [
+THIRD_PARTY_MIDDLEWARE: list[str] = [
 	"corsheaders.middleware.CorsMiddleware",
 ]
 
 if DEBUG:
 	THIRD_PARTY_MIDDLEWARE.append("debug_toolbar.middleware.DebugToolbarMiddleware")
-	INTERNAL_IPS = ["127.0.0.1"]
+	INTERNAL_IPS: list[str] = environ.get("DEBUG_TOOLBAR_INTERNAL_IPS", default="127.0.0.1").split(",")
 
 MIDDLEWARE = DJANGO_MIDDLEWARE + THIRD_PARTY_MIDDLEWARE
 
 
-ROOT_URLCONF = f"{environ.get('APP_NAME')}.urls"
+ROOT_URLCONF: str = f"{environ.get('APP_NAME', default='backend')}.urls"
 
-TEMPLATES = [
+TEMPLATES: list[dict] = [
 	{
 		"BACKEND": "django.template.backends.django.DjangoTemplates",
-		"DIRS": [ BASE_DIR / f"{environ.get('APP_NAME')}/templates" ],
+		"DIRS": [ BASE_DIR / environ.get('APP_NAME', default='backend') / "templates" ],
 		"APP_DIRS": True,
 		"OPTIONS": {
 			"context_processors": [
@@ -87,13 +88,18 @@ TEMPLATES = [
 	},
 ]
 
-WSGI_APPLICATION = f"{environ.get('APP_NAME')}.wsgi.application"
-ASGI_APPLICATION = f"{environ.get('APP_NAME')}.asgi.application"
+WSGI_APPLICATION: str = f"{environ.get('APP_NAME', default='backend')}.wsgi.application"
+ASGI_APPLICATION: str = f"{environ.get('APP_NAME', default='backend')}.asgi.application"
 CHANNEL_LAYERS = {
 	"default": {
 		"BACKEND": "channels_redis.core.RedisChannelLayer",
 		"CONFIG": {
-			"hosts": [(environ.get("CHANNEL_LAYERS_HOST"), int(environ.get("CHANNEL_LAYERS_PORT")))],
+			"hosts": [
+				(
+					environ.get("CHANNEL_LAYERS_HOST", default="127.0.0.1"),
+     				int(environ.get("CHANNEL_LAYERS_PORT", default="6379"))
+				)
+			],
 		},
 	},
 }
@@ -113,7 +119,7 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
-AUTH_PASSWORD_VALIDATORS = [
+AUTH_PASSWORD_VALIDATORS: list[dict[str, str]] = [
 	{
 		"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
 	},
@@ -132,43 +138,43 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE: str = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE: str = "UTC"
 
-USE_I18N = True
+USE_I18N: bool = True
 
-USE_TZ = True
+USE_TZ: bool = True
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = "static/"
-STATIC_ROOT = "static"
+STATIC_URL: str = "static/"
+STATIC_ROOT: str = "static"
 
 
-STATICFILES_DIRS = [
-	BASE_DIR / f"{environ.get('APP_NAME')}/static"
+STATICFILES_DIRS: list[Path] = [
+	BASE_DIR / environ.get('APP_NAME', default='backend') / "static"
 ]
 
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+DEFAULT_AUTO_FIELD: str = "django.db.models.BigAutoField"
 
 
 ######### My settings #########
 
 # CORS settings
 
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_ALLOW_ALL: bool = True
 
 
 # REST FRAMEWORK settings
 
-REST_FRAMEWORK = {
+REST_FRAMEWORK: dict[str, list[str]] = {
 	"DEFAULT_RENDERER_CLASSES": [
 		"rest_framework.renderers.JSONRenderer",
 	],
@@ -181,19 +187,26 @@ REST_FRAMEWORK = {
 }
 
 if DEBUG:
-	REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"].append("rest_framework.renderers.BrowsableAPIRenderer")
+	REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] \
+		.append("rest_framework.renderers.BrowsableAPIRenderer")
 
 
 
 # DJOSER settings
 
-DJOSER = {
+DJOSER: dict[str, str] = {
    "USER_ID_FIELD": "pk",
    "LOGIN_FIELD": "username",
 }
 
 
-POSTS_TO_LOAD = int(environ.get("POSTS_TO_LOAD"))
-MESSAGES_TO_LOAD = int(environ.get("MESSAGES_TO_LOAD"))
+# Lazy loading settings
 
-DATETIME_FORMAT = "%Y-%m-%d %H:%M"
+POSTS_TO_LOAD: int = int(environ.get("POSTS_TO_LOAD", default="20"))
+
+MESSAGES_TO_LOAD: int = int(environ.get("MESSAGES_TO_LOAD", default="30"))
+
+
+# Date time format
+
+DATETIME_FORMAT: str = environ.get("DATETIME_FORMAT", default="%Y-%m-%d %H:%M")

@@ -21,6 +21,7 @@ if [ $venv = "y" ]
         if [ -f "requirements.in" ]
             then
                 pip install -r requirements.in
+                pip freeze > requirements.txt
             else
                 if [ -f "requirements.txt" ]
                     then

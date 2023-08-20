@@ -20,7 +20,7 @@ class Subscriber(models.Model):
 	subscribe = models.ForeignKey(User, related_name="subscribe", on_delete=models.CASCADE)
 
 	def __str__(self):
-		return f"{self.user.username}"
+		return self.user.username
 
 
 class Room(models.Model):
@@ -40,7 +40,7 @@ class RoomCreator(models.Model):
 	room = models.ForeignKey(Room, on_delete=models.CASCADE)
 
 	def __str__(self):
-		return f"{self.creator}"
+		return self.creator
 
 
 class Message(models.Model):

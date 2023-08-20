@@ -7,7 +7,6 @@ import MainComponents from "./components/MainComponents/MainComponents"
 import FriendCard from "./components/FriendCard"
 import FriendsNavBar from "./components/FriendsNavBar"
 import FindUser from "./components/FindUser"
-import Loading from "./components/Loading"
 
 export default function SubscribersSection() {
 
@@ -27,7 +26,7 @@ export default function SubscribersSection() {
 
     return (
         <div className="Friends">
-            <MainComponents user={user} />
+            <MainComponents user={user} loading={loading} />
 
             <FriendsNavBar />
 
@@ -36,13 +35,9 @@ export default function SubscribersSection() {
             <div className="friends-section">
                 <div id="subscribers" className="section">
                     <h3>Subscribers: {searchedSubscribers.length}</h3>
-                    {loading
-                        ? <Loading />
-                        :
-                        searchedSubscribers.map(user =>
-                            <FriendCard key={user.username} user={user} />
-                        )
-                    }
+                    {searchedSubscribers.map(user =>
+                        <FriendCard key={user.username} user={user} />
+                    )}
                 </div>
             </div>
         </div>

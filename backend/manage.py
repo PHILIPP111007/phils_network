@@ -1,25 +1,33 @@
 #!/usr/bin/env python
-"""Django's command-line utility for administrative tasks."""
+"""Django"s command-line utility for administrative tasks."""
 import os
 import sys
+import tomllib
 
 
-def read_env():
-	try:
-		with open('.env') as file:
-			content = file.read()
-	except FileNotFoundError:
-		content = ''
+def read_env(env_file: str) -> None:
+	"""Read env.toml file and set app settings variables."""
+
 	
-	if content:
-		for line in content.split('\n'):
-			key, val = line.split('=')
-			os.environ.setdefault(key, val)
+	if os.path.exists(env_file):
+		with open(env_file, "rb") as file:
+			toml_content: dict = tomllib.load(file)
+			app_settings: dict = toml_content.get("app-settings", "")
+
+		if app_settings:
+			for key, val in app_settings.items():
+				os.environ.setdefault(key, val)
+		else:
+			print("\"env.toml\" file does not contain app-settings variables.")
+
+	else:
+		print("You do not have \"env.toml\" file.")
 
 
-def main():
+def main() -> None:
 	"""Run administrative tasks."""
-	os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings')
+
+	os.environ.setdefault("DJANGO_SETTINGS_MODULE", "backend.settings")
 	try:
 		from django.core.management import execute_from_command_line
 	except ImportError as exc:
@@ -31,6 +39,7 @@ def main():
 	execute_from_command_line(sys.argv)
 
 
-if __name__ == '__main__':
-	read_env()
+if __name__ == "__main__":
+	env_file: str = ".env.toml"
+	read_env(env_file=env_file)
 	main()

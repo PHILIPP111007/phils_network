@@ -89,7 +89,7 @@ class UserService:
 class SubscriberService:
 
 	@staticmethod
-	def _get_subscribers_sets(pk) -> tuple[QuerySet[int], QuerySet[int]]:
+	def _get_subscribers_sets(pk: int) -> tuple[QuerySet[int], QuerySet[int]]:
 
 		set_1 = Subscriber.objects.filter(user_id=pk) \
 			.only("subscribe").values_list("subscribe", flat=True)
@@ -235,8 +235,8 @@ class RoomService:
 		If their number is zero, the room will be deleted.
 		"""
 
-		friends = request.data.get("friends", "")
-		subscribers = request.data.get("subscribers", "")
+		friends: list = request.data.get("friends", "")
+		subscribers: list = request.data.get("subscribers", "")
 		
 		room = Room.objects.filter(pk=pk)
 
@@ -257,8 +257,8 @@ class RoomService:
 
 	@staticmethod
 	def create(request: Request) -> Union[Room, None]:
-		room_name = request.data.get("name", "")
-		pk_list = request.data.get("subscribers", "")
+		room_name: str = request.data.get("name", "")
+		pk_list: list = request.data.get("subscribers", "")
 
 		if room_name:
 			room = Room(name=room_name)

@@ -11,8 +11,7 @@ export default function ModalRoomEdit({ mainSets, setMainSets, me, editRoom }) {
     function editSubscribers(subscriber) {
         setMainSets({
             ...mainSets,
-            invitationChanges:
-            {
+            invitationChanges: {
                 friends: mainSets.invitationChanges.friends,
                 subscribers: mainSets.invitationChanges.subscribers.map((user) => {
                     if (user.pk === subscriber.pk) {
@@ -27,8 +26,7 @@ export default function ModalRoomEdit({ mainSets, setMainSets, me, editRoom }) {
     function editFriends(friend) {
         setMainSets({
             ...mainSets,
-            invitationChanges:
-            {
+            invitationChanges: {
                 subscribers: mainSets.invitationChanges.subscribers,
                 friends: mainSets.invitationChanges.friends.map((user) => {
                     if (user.pk === friend.pk) {
@@ -44,7 +42,13 @@ export default function ModalRoomEdit({ mainSets, setMainSets, me, editRoom }) {
         return mainSets.invitationChanges.subscribers.map((user) =>
             <div key={user.username} className="card">
                 <div className="info">
-                    <div>{user.first_name ? user.first_name : "No name"} {user.last_name ? user.last_name : "No name"} @{user.username}</div>
+                    <div>
+                        {user.first_name ? user.first_name : "No name"} {user.last_name ? user.last_name : "No name"} @{user.username}
+                    </div>
+
+                    {me.pk === user.pk &&
+                        <div className="me">me</div>
+                    }
                 </div>
 
                 {(mainSets.isCreator === true || user.pk === me.pk)
@@ -61,7 +65,9 @@ export default function ModalRoomEdit({ mainSets, setMainSets, me, editRoom }) {
         return mainSets.invitationChanges.friends.map((user) =>
             <div key={user.username} className="card">
                 <div className="info">
-                    <div>{user.first_name} {user.last_name} @{user.username}</div>
+                    <div>
+                        {user.first_name} {user.last_name} @{user.username}
+                    </div>
                 </div>
 
                 {mainSets.isCreator === true
@@ -75,12 +81,13 @@ export default function ModalRoomEdit({ mainSets, setMainSets, me, editRoom }) {
     }
 
     useEffect(() => {
+
         if (mainSets.isCreator) {
             setLoading(true)
 
             Fetch({ action: "api/friends/friends/", method: "GET" })
                 .then((data) => {
-                    if (data) {
+                    if (data.ok) {
                         let response = data.query
                         response = response.filter((friend) => {
                             const hasMatch = mainSets.room.subscribers_info.some(user => friend.pk === user.pk)
@@ -94,7 +101,7 @@ export default function ModalRoomEdit({ mainSets, setMainSets, me, editRoom }) {
                     setLoading(false)
                 })
         }
-    }, [mainSets.room.name])
+    }, [mainSets.room.id])
 
     return (
         <div className="ModalRoomEdit">

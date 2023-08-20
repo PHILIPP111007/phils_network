@@ -7,14 +7,12 @@ import Button from "./UI/Button"
 export default function Post({ post, ...props }) {
 
     function setFlag(bool) {
-        props.setPosts(
-            [
-                ...props.posts.map((p) => {
-                    if (p.id === post.id) { return { ...p, btnFlag: bool } }
-                    return p
-                })
-            ]
-        )
+        props.setPosts([
+            ...props.posts.map((p) => {
+                if (p.id === post.id) { return { ...p, btnFlag: bool } }
+                return p
+            })
+        ])
     }
 
     function showButton() {

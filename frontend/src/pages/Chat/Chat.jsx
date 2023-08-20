@@ -37,11 +37,10 @@ export default function Chat() {
 
     function scrollToBottom() {
         if (wrapperRef.current) {
-            wrapperRef.current.scrollIntoView(
-                {
-                    block: "start",
-                    inline: "start"
-                })
+            wrapperRef.current.scrollIntoView({
+                block: "start",
+                inline: "start"
+            })
         }
     }
 
@@ -65,29 +64,25 @@ export default function Chat() {
         })
 
         if (friends.length > 0 || subscribers.length > 0) {
-            const data = { subscribers: subscribers, friends: friends }
+            const body = { subscribers: subscribers, friends: friends }
 
-            await Fetch({ action: `api/room/${params.room_id}/`, method: "PUT", body: data })
-                .then((data) => {
-                    if (data) {
-                        navigate(`/chats/${user.username}/`)
-                    }
-                })
+            const data = await Fetch({ action: `api/room/${params.room_id}/`, method: "PUT", body: body })
+            if (data.ok) {
+                navigate(`/chats/${user.username}/`)
+            }
         }
     }
 
     async function fetchAddMessages(bool) {
-
         if (bool || messages.length > 0) {
 
             setMainSets({ ...mainSets, loading: true })
-            await Fetch({ action: `api/room/${params.room_id}/${messages.length}/`, method: "GET" })
-                .then((data) => {
-                    if (data) {
-                        setMessages([...data.messages.reverse(), ...messages])
-                    }
-                    setMainSets({ ...mainSets, loading: false })
-                })
+
+            const data = await Fetch({ action: `api/room/${params.room_id}/${messages.length}/`, method: "GET" })
+            if (data.ok) {
+                setMessages([...data.messages.reverse(), ...messages])
+            }
+            setMainSets({ ...mainSets, loading: false })
         }
     }
 
@@ -103,7 +98,7 @@ export default function Chat() {
 
         Fetch({ action: `api/room/${params.room_id}/`, method: "GET" })
             .then((data) => {
-                if (data) {
+                if (data.ok) {
                     setMainSets({ ...mainSets, isCreator: data.isCreator, room: data.room })
 
                     mainSets.invitationChanges.subscribers = data.room.subscribers_info.map((user) => {
@@ -111,8 +106,7 @@ export default function Chat() {
                     })
                 }
             })
-
-    }, [mainSets.room.name])
+    }, [mainSets.room.id])
 
     useEffect(() => {
         fetchAddMessages(true)
@@ -130,7 +124,7 @@ export default function Chat() {
             console.log(`chatSocket: The connection in room ${params.room_id} was setup successfully!`)
         }
         socket.onclose = function (e) {
-            console.warn(`chatSocket: in room ${params.room_id} something unexpected happened!`)
+            console.warn(`chatSocket: room ${params.room_id} has already closed.`)
         }
         socket.onerror = function (e) {
             console.error(e)
@@ -162,7 +156,7 @@ export default function Chat() {
 
     return (
         <div className="Chat">
-            <MainComponents user={user} roomName={mainSets.room.name} />
+            <MainComponents user={user} roomName={mainSets.room.name} loading={mainSets.loading} />
 
             <Modal modal={modalRoomEdit} setModal={setModalRoomEdit}>
                 <ModalRoomEdit mainSets={mainSets} setMainSets={setMainSets} me={user} editRoom={editRoom} />
@@ -171,8 +165,6 @@ export default function Chat() {
             <LazyDiv Ref={refLazyDivinView} />
 
             <div className="Messages">
-                {mainSets.loading && <Loading />}
-
                 {messages.map((message) =>
                     <Message key={message.id} message={message} />
                 )}

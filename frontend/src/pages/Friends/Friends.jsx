@@ -18,13 +18,12 @@ export default function Friends() {
         setUsers([])
         if (findUser.username || findUser.first_name || findUser.last_name) {
             setLoading(true)
-            await Fetch({ action: "api/find/", method: "POST", body: findUser })
-                .then((data) => {
-                    if (data) {
-                        setUsers(data.users)
-                    }
-                    setLoading(false)
-                })
+
+            const data = await Fetch({ action: "api/find/", method: "POST", body: findUser })
+            if (data.ok) {
+                setUsers(data.users)
+            }
+            setLoading(false)
         }
     }
 

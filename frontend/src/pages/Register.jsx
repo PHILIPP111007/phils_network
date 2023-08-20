@@ -17,14 +17,12 @@ export default function Register() {
     })
 
     async function auth() {
-        await Fetch({ action: "api/auth/users/me/", method: "GET" })
-            .then((data) => {
-                if (data.username) {
-                    setUser({ ...user, ...data })
-                    setIsAuth(true)
-                    navigate(`/user/${data.username}/`)
-                }
-            })
+        const data = await Fetch({ action: "api/auth/users/me/", method: "GET" })
+        if (data.username) {
+            setUser({ ...user, ...data })
+            setIsAuth(true)
+            navigate(`/user/${data.username}/`)
+        }
     }
 
     useEffect(() => {
@@ -34,13 +32,11 @@ export default function Register() {
     async function register(event) {
         event.preventDefault()
         if (registerForm.password === registerForm.password2) {
-            await Fetch({ action: "api/auth/users/", method: "POST", body: registerForm })
-                .then((data) => {
-                    if (typeof data.username === "string") {
-                        setUser(data)
-                        navigate("/login/")
-                    }
-                })
+            const data = await Fetch({ action: "api/auth/users/", method: "POST", body: registerForm })
+            if (typeof data.username === "string") {
+                setUser(data)
+                navigate("/login/")
+            }
         }
     }
 

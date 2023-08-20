@@ -12,7 +12,7 @@ export default function FriendsNavBar() {
     useEffect(() => {
         Fetch({ action: "api/friends/subscribers_count/", method: "GET" })
             .then((data) => {
-                if (data) {
+                if (data.ok) {
                     setSubscribersCount(data.query)
                 }
             })

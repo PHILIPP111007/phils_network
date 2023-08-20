@@ -13,30 +13,32 @@ export default function Rooms() {
     const { user } = useContext(UserContext)
     const [rooms, setRooms] = useState([])
     const [modalRoomCreate, setModalRoomCreate] = useState(false)
+    const [loading, setLoading] = useState(true)
 
     async function createRoom(room) {
         room.subscribers.push(user.pk)
-        await Fetch({ action: "api/room/", method: "POST", body: room })
-            .then((data) => {
-                if (data) {
-                    setRooms([data.room, ...rooms])
-                }
-            })
+
+        const data = await Fetch({ action: "api/room/", method: "POST", body: room })
+        if (data.ok) {
+            setRooms([data.room, ...rooms])
+        }
         setModalRoomCreate(false)
     }
 
     useEffect(() => {
+        setLoading(true)
         Fetch({ action: "api/room/", method: "GET" })
             .then((data) => {
-                if (data) {
+                if (data.ok) {
                     setRooms(data.rooms)
                 }
+                setLoading(false)
             })
     }, [])
 
     return (
         <div className="Rooms">
-            <MainComponents user={user} />
+            <MainComponents user={user} loading={loading} />
 
             <Modal modal={modalRoomCreate} setModal={setModalRoomCreate}>
                 <ModalRoomCreate createRoom={createRoom} />

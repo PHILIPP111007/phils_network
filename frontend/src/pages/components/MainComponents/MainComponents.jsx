@@ -15,7 +15,7 @@ export default function MainComponents(props) {
 
     return (
         <div className="MainComponents">
-            <UpperLine user={props.user} setBarRef={setBarRef} roomName={props.roomName} />
+            <UpperLine user={props.user} setBarRef={setBarRef} roomName={props.roomName} loading={props.loading} />
 
             <NavBar />
 

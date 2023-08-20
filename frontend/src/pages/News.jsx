@@ -6,7 +6,6 @@ import useObserver from "../hooks/useObserver"
 import Fetch from "../API/Fetch"
 import MainComponents from "./components/MainComponents/MainComponents"
 import Post from "./components/Post"
-import Loading from "./components/Loading"
 import LazyDiv from "./components/LazyDiv"
 
 export default function News() {
@@ -18,23 +17,21 @@ export default function News() {
 
     async function fetchAddPosts() {
         setLoading(true)
-        await Fetch({ action: `api/news/${posts.length}/`, method: "GET" })
-            .then((data) => {
-                if (data) {
-                    const newPosts = data.posts.map(post => {
-                        return { ...post, postLen500: post.content.length > 500, btnFlag: true }
-                    })
-                    setPosts([...posts, ...newPosts])
-                }
-                setLoading(false)
+        const data = await Fetch({ action: `api/news/${posts.length}/`, method: "GET" })
+        if (data.ok) {
+            const newPosts = data.posts.map(post => {
+                return { ...post, postLen500: post.content.length > 500, btnFlag: true }
             })
+            setPosts([...posts, ...newPosts])
+        }
+        setLoading(false)
     }
 
     useObserver({ inView: inView, func: fetchAddPosts })
 
     return (
         <div className="News">
-            <MainComponents user={user} />
+            <MainComponents user={user} loading={loading} />
 
             <div className="Posts">
                 {posts.map((post) =>
@@ -47,7 +44,6 @@ export default function News() {
                         settings={false}
                     />
                 )}
-                {loading && <Loading />}
             </div>
 
             <LazyDiv Ref={ref} />

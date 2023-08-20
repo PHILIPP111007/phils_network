@@ -1,5 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.request import Request
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework import status
@@ -26,7 +27,7 @@ class UserAPIView(APIView):
 	authentication_classes = (TokenAuthentication, )
 	permission_classes = (IsOwnerOrReadOnly, IsAuthenticated)
 
-	def get(self, request, username: str):
+	def get(self, request: Request, username: str) -> Response:
 		"""
 		Global user for upper line of the app.
 		Local user for user card and posts.
@@ -35,42 +36,51 @@ class UserAPIView(APIView):
 		self.check_permissions(request=request)
 		global_user = UserService.filter(pk=request.user.id)
 
-		if global_user.exists():
-			query = {"global_user": UserSerializer(global_user[0]).data}
-			local_user = UserService.filter_by_username(username=username)
+		if not global_user.exists():
+			return Response({"ok": False, \
+		    	"error_message": "Not found the global user."}, \
+				status=status.HTTP_404_NOT_FOUND)
+		
+		query = {"ok": True, "global_user": UserSerializer(global_user[0]).data}
+		local_user = UserService.filter_by_username(username=username)
 
-			if local_user.exists():
-				query["local_user"] = UserSerializer(local_user[0]).data
+		if local_user.exists():
+			query["local_user"] = UserSerializer(local_user[0]).data
 
-			return Response(query, status=status.HTTP_200_OK)
+		return Response(query, status=status.HTTP_200_OK)
 
-		return Response(status=status.HTTP_404_NOT_FOUND)
-
-	def put(self, request, **kwargs):
+	def put(self, request: Request, **kwargs) -> Response:
 		"""Updating user info."""
 
 		self.check_permissions(request=request)
 		user = UserService.filter(pk=request.user.id)
 
-		if user.exists():
-			user = user[0]
-			self.check_object_permissions(request=request, obj=user)
-			user = UserService.put(user=user, request=request)
+		if not user.exists():
+			return Response({"ok": False, \
+		    	"error_message": "Not found the user."}, \
+				status=status.HTTP_404_NOT_FOUND)
 
-			return Response({"user": UserSerializer(user).data}, status=status.HTTP_200_OK)
-		return Response(status=status.HTTP_404_NOT_FOUND)
+		user = user[0]
+		self.check_object_permissions(request=request, obj=user)
+		user = UserService.put(user=user, request=request)
 
-	def delete(self, request, **kwargs):
+		return Response({"ok": True, "user": UserSerializer(user).data}, \
+			status=status.HTTP_200_OK)
+
+	def delete(self, request: Request, **kwargs) -> Response:
 		self.check_permissions(request=request)
 		user = UserService.filter(pk=request.user.id)
 
-		if user.exists():
-			user = user[0]
-			self.check_object_permissions(request=request, obj=user)
-			user.delete()
+		if not user.exists():
+			return Response({"ok": False, \
+		    	"error_message": "Not found the user."}, \
+				status=status.HTTP_404_NOT_FOUND)
+		
+		user = user[0]
+		self.check_object_permissions(request=request, obj=user)
+		user.delete()
 
-			return Response({"status": True}, status=status.HTTP_200_OK)
-		return Response(status=status.HTTP_404_NOT_FOUND)
+		return Response({"ok": True}, status=status.HTTP_200_OK)
 
 
 class BlogAPIView(APIView):
@@ -78,62 +88,74 @@ class BlogAPIView(APIView):
 	authentication_classes = (TokenAuthentication, )
 	permission_classes = (IsOwnerOrReadOnly, IsAuthenticated)
 
-	def get(self, request, **kwargs):
+	def get(self, request: Request, **kwargs) -> Response:
 		self.check_permissions(request=request)
 		posts = BlogService.filter_by_username(**kwargs)
 
-		if posts.exists():
+		if not posts.exists():
+			return Response({"ok": False, \
+		    	"error_message": "Not found user posts."}, \
+				status=status.HTTP_404_NOT_FOUND)
 
-			return Response({
-				"posts": BlogSerializer(posts, many=True).data
-			}, status=status.HTTP_200_OK)
+		return Response({"ok": True, \
+			"posts": BlogSerializer(posts, many=True).data}, \
+			status=status.HTTP_200_OK)
 
-		return Response(status=status.HTTP_404_NOT_FOUND)
 
-	def post(self, request, **kwargs):
+	def post(self, request: Request, **kwargs) -> Response:
 		self.check_permissions(request=request)
 		serializer = BlogSerializer(data=request.data)
 		serializer.is_valid(raise_exception=True)
 		serializer.save()
 
-		return Response({"post": serializer.data}, status=status.HTTP_200_OK)
+		return Response({"ok": True, "post": serializer.data}, \
+			status=status.HTTP_200_OK)
 
-	def put(self, request, **kwargs):
+	def put(self, request: Request, **kwargs) -> Response:
 		"""Update post text."""
 
 		self.check_permissions(request=request)
-		pk = kwargs.get("pk", "")
-		if not pk:
-			return Response(status=status.HTTP_404_NOT_FOUND)
+		pk = kwargs.get("pk", None)
+		if pk is None:
+			return Response({"ok": False, \
+		    	"error_message": "You didn't submit a post id."}, \
+				status=status.HTTP_404_NOT_FOUND)
 
-		instance = BlogService.filter(pk=pk)
-		if not instance.exists():
-			return Response(status=status.HTTP_404_NOT_FOUND)
+		post = BlogService.filter(pk=pk)
+		if not post.exists():
+			return Response({"ok": False, \
+				"error_message": "Not found the post."}, \
+				status=status.HTTP_404_NOT_FOUND)
 
-		instance = instance[0]
-		serializer = BlogSerializer(data=request.data, instance=instance)
+		post = post[0]
+		serializer = BlogSerializer(data=request.data, instance=post)
 		serializer.is_valid(raise_exception=True)
 		user = serializer.validated_data.get("user")
 		self.check_object_permissions(request=request, obj=user)
 		serializer.save()
 
-		return Response({"post": serializer.data}, status=status.HTTP_200_OK)
+		return Response({"ok": True, "post": serializer.data}, \
+			status=status.HTTP_200_OK)
 
-	def delete(self, request, **kwargs):
+	def delete(self, request: Request, **kwargs) -> Response:
 		self.check_permissions(request=request)
-		pk = kwargs.get("pk", "")
-		if not pk:
-			return Response(status=status.HTTP_404_NOT_FOUND)
+		pk = kwargs.get("pk", None)
+		if pk is None:
+			return Response({"ok": False, \
+		    	"error_message": "You didn't submit a post id."}, \
+				status=status.HTTP_404_NOT_FOUND)
 
 		post = BlogService.filter(pk=pk)
+		if not post.exists():
+			return Response({"ok": False, \
+		    	"error_message": "Not found the post."}, \
+				status=status.HTTP_404_NOT_FOUND)
+		
+		post = post[0]
+		self.check_object_permissions(request=request, obj=post.user)
+		post.delete()
 
-		if post.exists():
-			post = post[0]
-			self.check_object_permissions(request=request, obj=post.user)
-			post.delete()
-
-			return Response({"status": True}, status=status.HTTP_200_OK)
-		return Response(status=status.HTTP_404_NOT_FOUND)
+		return Response({"ok": True}, status=status.HTTP_200_OK)
 
 
 class FindUserAPIView(APIView):
@@ -141,24 +163,27 @@ class FindUserAPIView(APIView):
 	authentication_classes = (TokenAuthentication, )
 	permission_classes = (IsAuthenticated, )
 
-	def post(self, request):
+	def post(self, request: Request) -> Response:
 		"""Find users in the network."""
 
 		self.check_permissions(request=request)
 		find_users = UserService.filter_find(request=request)
 
-		if find_users:
-			return Response({"users": UserSerializer(find_users, many=True).data}, \
-				status=status.HTTP_200_OK)
+		if not find_users:
+			return Response({"ok": False, \
+		    	"error_message": "Not found users."}, \
+				status=status.HTTP_404_NOT_FOUND)
+		
+		return Response({"ok": True, "users": UserSerializer(find_users, many=True).data}, \
+			status=status.HTTP_200_OK)
 
-		return Response(status=status.HTTP_404_NOT_FOUND)
 
 class SubscriberAPIView(APIView):
 	serializer_class = UserSerializer
 	authentication_classes = (TokenAuthentication, )
 	permission_classes = (IsAuthenticated, )
 
-	def get(self, request, pk: int):
+	def get(self, request: Request, pk: int) -> Response:
 		self.check_permissions(request=request)
 		
 		user_1 = SubscriberService.filter(user_id=request.user.id, subscribe_id=pk) \
@@ -177,15 +202,15 @@ class SubscriberAPIView(APIView):
 		else:
 			data = "no_data"
 
-		return Response({"status": data}, status=status.HTTP_200_OK)
+		return Response({"ok": True, "status": data}, status=status.HTTP_200_OK)
 
-	def post(self, request, pk: int):
+	def post(self, request: Request, pk: int) -> Response:
 		self.check_permissions(request=request)
 		SubscriberService.create(user_id=request.user.id, subscribe_id=pk)
 
-		return Response({"status": True}, status=status.HTTP_200_OK)
+		return Response({"ok": True}, status=status.HTTP_200_OK)
 
-	def delete(self, request, pk: int):
+	def delete(self, request: Request, pk: int) -> Response:
 		self.check_permissions(request=request)
 		option = request.data.get("option", "")
 		subscribe = None
@@ -196,12 +221,15 @@ class SubscriberAPIView(APIView):
 		elif option == "delete_subscriber":
 			subscribe = SubscriberService.filter(user_id=pk, subscribe_id=request.user.id)
 
-		if subscribe.exists():
-			subscribe = subscribe[0]
-			subscribe.delete()
+		if not subscribe:
+			return Response({"ok": False, \
+		    	"error_message": "Not found subscriber."}, \
+				status=status.HTTP_404_NOT_FOUND)
+	
+		subscribe = subscribe[0]
+		subscribe.delete()
 
-			return Response({"status": True}, status=status.HTTP_200_OK)
-		return Response(status=status.HTTP_404_NOT_FOUND)
+		return Response({"ok": True}, status=status.HTTP_200_OK)
 
 
 class FriendsAPIView(APIView):
@@ -209,13 +237,16 @@ class FriendsAPIView(APIView):
 	authentication_classes = (TokenAuthentication, )
 	permission_classes = (IsAuthenticated, )
 
-	def get(self, request, option: str):
+	def get(self, request: Request, option: str) -> Response:
 		self.check_permissions(request=request)
 		query = SubscriberService.filter_by_option(pk=request.user.id, option=option, serializer=True)
 
-		if query:
-			return Response({"query": query}, status=status.HTTP_200_OK)
-		return Response(status=status.HTTP_404_NOT_FOUND)
+		if not query:
+			return Response({"ok": False, \
+		    	"error_message": "Not found users."}, \
+				status=status.HTTP_404_NOT_FOUND)
+		
+		return Response({"ok": True, "query": query}, status=status.HTTP_200_OK)
 
 
 class NewsAPIView(APIView):
@@ -223,8 +254,9 @@ class NewsAPIView(APIView):
 	authentication_classes = (TokenAuthentication, )
 	permission_classes = (IsAuthenticated, )
 
-	def get(self, request, loaded_posts: int):
+	def get(self, request: Request, loaded_posts: int) -> Response:
 		self.check_permissions(request=request)
+
 		friends = SubscriberService.filter_by_option(pk=request.user.id, \
 			option="friends", serializer=False) \
 			.only("pk") \
@@ -232,11 +264,13 @@ class NewsAPIView(APIView):
 		
 		posts = BlogService.filter_by_friends(friends=friends, loaded_posts=loaded_posts)
 
-		if posts.exists():
-			return Response({"posts": BlogSerializer(posts, many=True).data}, \
-				status=status.HTTP_200_OK)
+		if not posts.exists():
+			return Response({"ok": False, \
+				"error_message": "Not found posts."}, \
+				status=status.HTTP_404_NOT_FOUND)
 		
-		return Response(status=status.HTTP_404_NOT_FOUND)
+		return Response({"ok": True, "posts": BlogSerializer(posts, many=True).data}, \
+			status=status.HTTP_200_OK)
 
 
 class RoomsAPIView(APIView):
@@ -244,23 +278,30 @@ class RoomsAPIView(APIView):
 	authentication_classes = (TokenAuthentication, )
 	permission_classes = (IsAuthenticated, )
 
-	def get(self, request):
+	def get(self, request: Request) -> Response:
 		self.check_permissions(request=request)
 		rooms = RoomService.filter_by_subscriber(pk=request.user.id)
 
-		if rooms.exists():
-			return Response({"rooms": RoomSerializer(rooms, many=True).data}, \
-				status=status.HTTP_200_OK)
-		
-		return Response({"status": True}, status=status.HTTP_200_OK)
+		if not rooms.exists():
+			return Response({"ok": False, \
+		    	"error_message": "Not found rooms."}, \
+				status=status.HTTP_404_NOT_FOUND)
+			
+		return Response({"ok": True, "rooms": RoomSerializer(rooms, many=True).data}, \
+			status=status.HTTP_200_OK)
 
-	def post(self, request):
+	def post(self, request: Request) -> Response:
 		self.check_permissions(request=request)
 		room = RoomService.create(request=request)
 
-		if room:
-			return Response({"room": RoomSerializer(room).data}, status=status.HTTP_200_OK)
-		return Response(status=status.HTTP_404_NOT_FOUND)
+		if not room:
+			return Response({"ok": False, \
+		    	"error_message": "Not found room."}, \
+				status=status.HTTP_404_NOT_FOUND)
+
+		return Response({"ok": True, \
+			"room": RoomSerializer(room).data}, \
+			status=status.HTTP_200_OK)
 
 
 class ChatAPIView(APIView):
@@ -268,32 +309,42 @@ class ChatAPIView(APIView):
 	authentication_classes = (TokenAuthentication, )
 	permission_classes = (IsAuthenticated, )
 
-	def get(self, request, pk: int):
+	def get(self, request: Request, pk: int) -> Response:
 		self.check_permissions(request=request)
 		room = RoomService.filter(pk=pk)
 
-		if room.exists():
-			room = room[0]
-			creator = RoomCreatorService.filter(pk=room.pk)
+		if not room.exists():
+			return Response({"ok": False, \
+		    	"error_message": "Not found room."}, \
+				status=status.HTTP_404_NOT_FOUND)
 
-			if creator:
-				creator = creator[0].creator
-				is_creator = creator == request.user
+		room = room[0]
+		creator = RoomCreatorService.filter(pk=room.pk)
 
-				return Response({
-					"isCreator": is_creator,
-					"room": RoomSerializer(room).data
-				}, status=status.HTTP_200_OK)
+		if not creator:
+			return Response({"ok": False, \
+		    	"error_message": "Not found room creator."}, \
+				status=status.HTTP_404_NOT_FOUND)
 
-		return Response(status=status.HTTP_404_NOT_FOUND)
+		creator = creator[0].creator
+		is_creator = creator == request.user
 
-	def put(self, request, pk: int):
+		return Response({
+			"ok": True,
+			"isCreator": is_creator,
+			"room": RoomSerializer(room).data
+		}, status=status.HTTP_200_OK)
+
+	def put(self, request: Request, pk: int) -> Response:
 		self.check_permissions(request=request)
 		room = RoomService.put(pk=pk, request=request)
 
-		if room:
-			return Response({"status": True}, status=status.HTTP_200_OK)
-		return Response(status=status.HTTP_404_NOT_FOUND)
+		if not room:
+			return Response({"ok": False, \
+		    	"error_message": "Not found room."}, \
+				status=status.HTTP_404_NOT_FOUND)
+
+		return Response({"ok": True}, status=status.HTTP_200_OK)
 
 
 class MessagesAPIView(APIView):
@@ -301,13 +352,16 @@ class MessagesAPIView(APIView):
 	authentication_classes = (TokenAuthentication, )
 	permission_classes = (IsAuthenticated, )
 
-	def get(self, request, pk: int, loaded_messages: int):
+	def get(self, request: Request, pk: int, loaded_messages: int) -> Response:
 		self.check_permissions(request=request)
 		messages = MessageService.filter(room_id=pk, loaded_messages=loaded_messages)
 
-		if messages.exists():
-			return Response({
-				"messages": MessageSerializer(messages, many=True).data,
-			}, status=status.HTTP_200_OK)
+		if not messages.exists():
+			return Response({"ok": False, \
+		    	"error_message": "Not found messages."}, \
+				status=status.HTTP_404_NOT_FOUND)
 
-		return Response(status=status.HTTP_404_NOT_FOUND)
+		return Response({	
+			"ok": True,
+			"messages": MessageSerializer(messages, many=True).data,
+		}, status=status.HTTP_200_OK)

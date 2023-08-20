@@ -13,26 +13,23 @@ export default function Login() {
     const navigate = useNavigate()
 
     async function auth() {
-        await Fetch({ action: "api/auth/users/me/", method: "GET" })
-            .then((data) => {
-                if (data.username) {
-                    setUser({ ...user, ...data })
-                    setIsAuth(true)
-                    navigate(`/user/${data.username}/`)
-                }
-            })
+        const data = await Fetch({ action: "api/auth/users/me/", method: "GET" })
+        if (data.username) {
+            setUser({ ...user, ...data })
+            setIsAuth(true)
+            navigate(`/user/${data.username}/`)
+        }
     }
 
     async function login(event) {
         event.preventDefault()
-        await Fetch({ action: "auth/token/login/", method: "POST", body: loginForm })
-            .then((data) => {
-                if (data.auth_token) {
-                    setIsAuth(true)
-                    localStorage.setItem("token", data.auth_token)
-                    auth()
-                }
-            })
+
+        const data = await Fetch({ action: "auth/token/login/", method: "POST", body: loginForm })
+        if (data.auth_token) {
+            setIsAuth(true)
+            localStorage.setItem("token", data.auth_token)
+            auth()
+        }
     }
 
     useEffect(() => {

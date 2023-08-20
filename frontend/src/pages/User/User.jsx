@@ -12,7 +12,6 @@ import ModalPostCreate from "./components/modals/ModalPostCreate"
 import MainComponents from "../components/MainComponents/MainComponents"
 import Post from "../components/Post"
 import UserStatus from "../components/UserStatus"
-import Loading from "../components/Loading"
 import LazyDiv from "../components/LazyDiv"
 import plusIcon from "../../images/plus-icon.svg"
 
@@ -39,26 +38,23 @@ export default function User() {
 
     async function getPosts() {
         setMainSets({ ...mainSets, loading: true })
-        await Fetch({ action: `api/blog/${params.username}/${posts.length}/`, method: "GET" })
-            .then((data) => {
-                if (data) {
-                    const newPosts = data.posts.map(post => {
-                        return { ...post, postLen500: post.content.length > 500, btnFlag: true }
-                    })
-                    setPosts([...posts, ...newPosts])
-                }
-                setMainSets({ ...mainSets, loading: false })
+
+        const data = await Fetch({ action: `api/blog/${params.username}/${posts.length}/`, method: "GET" })
+        if (data.ok) {
+            const newPosts = data.posts.map(post => {
+                return { ...post, postLen500: post.content.length > 500, btnFlag: true }
             })
+            setPosts([...posts, ...newPosts])
+        }
+        setMainSets({ ...mainSets, loading: false })
     }
 
     async function deletePost(oldPost) {
-        await Fetch({ action: `api/blog/${oldPost.id}/`, method: "DELETE" })
-            .then((data) => {
-                if (data) {
-                    setPosts(posts.filter(post => post.id !== oldPost.id))
-                    setModalPostEdit(false)
-                }
-            })
+        const data = await Fetch({ action: `api/blog/${oldPost.id}/`, method: "DELETE" })
+        if (data.ok) {
+            setPosts(posts.filter(post => post.id !== oldPost.id))
+            setModalPostEdit(false)
+        }
     }
 
     async function createPost(text) {
@@ -68,12 +64,11 @@ export default function User() {
             user: user.pk,
             content: text,
         }
-        await Fetch({ action: "api/blog/", method: "POST", body: newPost })
-            .then((data) => {
-                if (data) {
-                    setPosts([data.post, ...posts])
-                }
-            })
+
+        const data = await Fetch({ action: "api/blog/", method: "POST", body: newPost })
+        if (data.ok) {
+            setPosts([data.post, ...posts])
+        }
     }
 
     async function editPost(newPost) {
@@ -81,18 +76,16 @@ export default function User() {
             setModalPostEdit(false)
             newPost.changed = true
 
-            await Fetch({ action: `api/blog/${newPost.id}/`, method: "PUT", body: newPost })
-                .then((data) => {
-                    if (data) {
-                        setPosts(posts.map(post => {
-                            if (post.id === newPost.id) {
-                                post.content = newPost.content
-                                post.changed = true
-                            }
-                            return post
-                        }))
+            const data = await Fetch({ action: `api/blog/${newPost.id}/`, method: "PUT", body: newPost })
+            if (data.ok) {
+                setPosts(posts.map(post => {
+                    if (post.id === newPost.id) {
+                        post.content = newPost.content
+                        post.changed = true
                     }
-                })
+                    return post
+                }))
+            }
         }
     }
 
@@ -139,7 +132,7 @@ export default function User() {
 
     return (
         <div className="User">
-            <MainComponents user={user} />
+            <MainComponents user={user} loading={mainSets.loading} />
 
             <Modal modal={modalPostEdit} setModal={setModalPostEdit}>
                 <ModalPostEdit mainSets={mainSets} setMainSets={setMainSets} editPost={editPost} deletePost={deletePost} />
@@ -171,7 +164,6 @@ export default function User() {
 
             <div className="Posts">
                 {showPosts()}
-                {mainSets.loading && <Loading />}
             </div>
 
             <LazyDiv Ref={ref} />
