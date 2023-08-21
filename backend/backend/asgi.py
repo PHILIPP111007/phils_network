@@ -12,7 +12,7 @@ from api.routing import websocket_urlpatterns
 # Initialize Django ASGI application early to ensure the AppRegistry
 # is populated before importing code that may import ORM models.
 
-environ.setdefault("DJANGO_SETTINGS_MODULE", f"{environ.get('APP_NAME')}.settings")
+environ.setdefault("DJANGO_SETTINGS_MODULE", "backend.settings")
 django_asgi_app = get_asgi_application()
 
 application = ProtocolTypeRouter(

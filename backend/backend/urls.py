@@ -5,14 +5,12 @@ from django.urls import path, include
 
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-
-    path("auth/", include("djoser.urls.authtoken")),
-
-    path("api/", include("api.urls")),
+    path("admin/", admin.site.urls, name="admin"),
+    path("auth/", include("djoser.urls.authtoken"), name="authtoken"),
+    path("api/", include("api.urls"), name="api"),
 ]
 
 if settings.DEBUG:
     urlpatterns.append(
-        path("__debug__/", include("debug_toolbar.urls"))
+        path("__debug__/", include("debug_toolbar.urls"), name="debug_toolbar")
     )

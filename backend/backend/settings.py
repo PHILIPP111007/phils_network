@@ -32,7 +32,11 @@ DJANGO_APPS: list[str] = [
 ]
 
 THIRD_PARTY_APPS: list[str] = [
+
 	"daphne",
+	# "gunicorn",
+	# "uvicorn",
+
 	"corsheaders",
 	"rest_framework",
 	"rest_framework.authtoken",
@@ -70,12 +74,12 @@ if DEBUG:
 MIDDLEWARE = DJANGO_MIDDLEWARE + THIRD_PARTY_MIDDLEWARE
 
 
-ROOT_URLCONF: str = f"{environ.get('APP_NAME', default='backend')}.urls"
+ROOT_URLCONF: str = "backend.urls"
 
 TEMPLATES: list[dict] = [
 	{
 		"BACKEND": "django.template.backends.django.DjangoTemplates",
-		"DIRS": [ BASE_DIR / environ.get('APP_NAME', default='backend') / "templates" ],
+		"DIRS": [ BASE_DIR / "backend/templates" ],
 		"APP_DIRS": True,
 		"OPTIONS": {
 			"context_processors": [
@@ -88,8 +92,8 @@ TEMPLATES: list[dict] = [
 	},
 ]
 
-WSGI_APPLICATION: str = f"{environ.get('APP_NAME', default='backend')}.wsgi.application"
-ASGI_APPLICATION: str = f"{environ.get('APP_NAME', default='backend')}.asgi.application"
+WSGI_APPLICATION: str = "backend.wsgi.application"
+ASGI_APPLICATION: str = "backend.asgi.application"
 CHANNEL_LAYERS = {
 	"default": {
 		"BACKEND": "channels_redis.core.RedisChannelLayer",
@@ -97,7 +101,7 @@ CHANNEL_LAYERS = {
 			"hosts": [
 				(
 					environ.get("CHANNEL_LAYERS_HOST", default="127.0.0.1"),
-     				int(environ.get("CHANNEL_LAYERS_PORT", default="6379"))
+	 				int(environ.get("CHANNEL_LAYERS_PORT", default="6379"))
 				)
 			],
 		},
@@ -155,7 +159,7 @@ STATIC_ROOT: str = "static"
 
 
 STATICFILES_DIRS: list[Path] = [
-	BASE_DIR / environ.get('APP_NAME', default='backend') / "static"
+	BASE_DIR / "backend/static"
 ]
 
 
@@ -198,6 +202,63 @@ DJOSER: dict[str, str] = {
    "USER_ID_FIELD": "pk",
    "LOGIN_FIELD": "username",
 }
+
+
+# Logging
+
+LOGGING = {
+	"version": 1,
+	"disable_existing_loggers": False,
+	"formatters": {
+		"simple": {
+            "format": "[{asctime}] [{levelname}] {message}",
+            "style": "{",
+        },
+		"verbose": {
+			"format": "----------"
+			"\n{asctime} [{levelname}] [{name}:{lineno}]"
+			"\nPROCESS: {process:d}"
+			"\nTHREAD: {thread:d}"
+			"\nMESSAGE:\n{message}\n",
+
+			"style": "{"
+		},
+	},
+}
+
+if DEBUG:
+	LOGGING["handlers"] = {
+		"django_server": {
+			"level": "INFO",
+			"class": "logging.StreamHandler",
+			"formatter": "simple",
+		},
+	}
+
+	LOGGING["loggers"] = {
+		"django": {
+            "handlers": ["django_server"],
+			"level": "INFO",
+            "propagate": True,
+        },
+	}
+else:
+	LOGGING["handlers"] = {
+		"django_server": {
+			"level": "WARNING",
+			"class": "logging.handlers.RotatingFileHandler",
+			"formatter": "verbose",
+			"filename": BASE_DIR / "tmp/server.log",
+		},
+	}
+
+	LOGGING["loggers"] = {
+		"django": {
+            "handlers": ["django_server"],
+			"level": "WARNING",
+            "propagate": False,
+        },
+	}
 
 
 # Lazy loading settings
