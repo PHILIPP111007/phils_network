@@ -1,9 +1,10 @@
 import "./styles/App.css"
 import "./styles/theme.css"
-import { useEffect, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import { AuthContext, UserContext, ThemeContext } from "./data/context"
-import { privateRoutes, publicRoutes } from "./data/routes"
+import { PrivateRoutes, PublicRoutes } from "./data/routes"
+import SuspenseLoading from "./pages/components/SuspenseLoading"
 import Error from "./pages/Error/Error"
 
 export default function App() {
@@ -23,35 +24,45 @@ export default function App() {
         }
     }, [theme])
 
+    useEffect(() => {
+        const token = localStorage.getItem("token")
+        if (token === null) {
+            setIsAuth(false)
+        }
+        setIsAuth(true)
+    }, [user.username])
+
     return (
         <AuthContext.Provider value={{ isAuth, setIsAuth }}>
             <UserContext.Provider value={{ user, setUser }}>
                 <ThemeContext.Provider value={{ theme, setTheme }}>
                     <BrowserRouter>
                         <div className="App">
-                            <Routes>
-                                {privateRoutes.map((route) =>
-                                    <Route
-                                        key={route.path}
-                                        path={route.path}
-                                        errorElement={<Error />}
-                                        element={isAuth ? route.element : <Navigate replace to="/login/" />}
-                                        exact
-                                    />
-                                )}
+                            <Suspense fallback={<SuspenseLoading />}>
+                                <Routes>
+                                    {PrivateRoutes.map((route) =>
+                                        <Route
+                                            key={route.path}
+                                            path={route.path}
+                                            errorElement={<Error />}
+                                            element={isAuth ? route.element : <Navigate replace to="/login/" />}
+                                            exact
+                                        />
+                                    )}
 
-                                {publicRoutes.map((route) =>
-                                    <Route
-                                        key={route.path}
-                                        path={route.path}
-                                        errorElement={<Error />}
-                                        element={route.element}
-                                        exact
-                                    />
-                                )}
+                                    {PublicRoutes.map((route) =>
+                                        <Route
+                                            key={route.path}
+                                            path={route.path}
+                                            errorElement={<Error />}
+                                            element={route.element}
+                                            exact
+                                        />
+                                    )}
 
-                                <Route path="*" element={<Error />} />
-                            </Routes>
+                                    <Route path="*" element={<Error />} />
+                                </Routes>
+                            </Suspense>
                         </div>
                     </BrowserRouter>
                 </ThemeContext.Provider>

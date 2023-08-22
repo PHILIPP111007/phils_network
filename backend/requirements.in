@@ -15,4 +15,7 @@ channels-redis==4.1.0
 ### Server
 daphne==4.0.0
 gunicorn==21.2.0
-uvicorn[standard]
+uvicorn[standard]==0.23.2
+
+### Works with static for gunicorn
+whitenoise==6.5.0

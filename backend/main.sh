@@ -4,9 +4,9 @@ venv=""
 migrations=""
 superuser=""
 
-read -p "Create venv and download packages? [y / n] : " venv
-read -p "Create migrations? [y / n] : " migrations
-read -p "Create superuser? [y / n] : " superuser
+read -p "[1 / 3] Create venv and download packages? [y / n] : " venv
+read -p "[2 / 3] Create migrations? [y / n] : " migrations
+read -p "[3 / 3] Create superuser? [y / n] : " superuser
 
 if [ $venv = "y" ]
     then
@@ -27,7 +27,7 @@ if [ $venv = "y" ]
                     then
                         pip install -r requirements.txt
                     else
-                        echo "Venv script: requirements file does not exists."
+                        echo "Venv script: requirements file does not exist."
                 fi
         fi
 
@@ -57,6 +57,11 @@ if [ $superuser = "y" ]
             else
                 echo "Migrations script: you dont have venv."
         fi
+fi
+
+if [ ! -d "tmp" ]
+    then
+        mkdir $PWD/tmp
 fi
 
 echo "Main script: Done."

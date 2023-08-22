@@ -33,10 +33,12 @@ DJANGO_APPS: list[str] = [
 
 THIRD_PARTY_APPS: list[str] = [
 
+	# Servers
 	"daphne",
-	# "gunicorn",
-	# "uvicorn",
+	"gunicorn",
+	"uvicorn",
 
+	# REST API
 	"corsheaders",
 	"rest_framework",
 	"rest_framework.authtoken",
@@ -64,7 +66,8 @@ DJANGO_MIDDLEWARE: list[str] = [
 ]
 
 THIRD_PARTY_MIDDLEWARE: list[str] = [
-	"corsheaders.middleware.CorsMiddleware",
+	"corsheaders.middleware.CorsMiddleware", # for working Django REST
+	"whitenoise.middleware.WhiteNoiseMiddleware" # for gunicorn server
 ]
 
 if DEBUG:
@@ -195,7 +198,6 @@ if DEBUG:
 		.append("rest_framework.renderers.BrowsableAPIRenderer")
 
 
-
 # DJOSER settings
 
 DJOSER: dict[str, str] = {
@@ -213,52 +215,59 @@ LOGGING = {
 		"simple": {
             "format": "[{asctime}] [{levelname}] {message}",
             "style": "{",
+			"datefmt": "%Y-%m-%d %H:%M:%S %z",
         },
 		"verbose": {
-			"format": "----------"
-			"\n{asctime} [{levelname}] [{name}:{lineno}]"
-			"\nPROCESS: {process:d}"
-			"\nTHREAD: {thread:d}"
-			"\nMESSAGE:\n{message}\n",
-
-			"style": "{"
+			"format": "[{asctime}] [{levelname}] [{module}] [{name}:{lineno}] [PROCESS: {process:d}] [THREAD: {thread:d}]\n{message}\n",
+			"style": "{",
+			"datefmt": "%Y-%m-%d %H:%M:%S %z",
 		},
 	},
+	
+	"handlers": {
+		"console": {
+			"level": "INFO",
+            "class": "logging.StreamHandler",
+			"formatter": "simple",
+        },
+	},
+
+	"loggers": {},
 }
 
 if DEBUG:
-	LOGGING["handlers"] = {
-		"django_server": {
+	LOGGING["handlers"].update({
+		"handler_debug": {
 			"level": "INFO",
-			"class": "logging.StreamHandler",
-			"formatter": "simple",
+			"class": "logging.handlers.RotatingFileHandler",
+			"formatter": "verbose",
+			"filename": BASE_DIR / "tmp/server_debug.log",
 		},
-	}
+	})
 
-	LOGGING["loggers"] = {
+	LOGGING["loggers"].update({
 		"django": {
-            "handlers": ["django_server"],
 			"level": "INFO",
+            "handlers": ["console", "handler_debug"],
             "propagate": True,
         },
-	}
+	})
 else:
-	LOGGING["handlers"] = {
-		"django_server": {
+	LOGGING["handlers"].update({
+		"handler_prod": {
 			"level": "WARNING",
 			"class": "logging.handlers.RotatingFileHandler",
 			"formatter": "verbose",
-			"filename": BASE_DIR / "tmp/server.log",
+			"filename": BASE_DIR / "tmp/server_prod.log",
 		},
-	}
+	})
 
-	LOGGING["loggers"] = {
+	LOGGING["loggers"].update({
 		"django": {
-            "handlers": ["django_server"],
-			"level": "WARNING",
+            "handlers": ["handler_prod"],
             "propagate": False,
         },
-	}
+	})
 
 
 # Lazy loading settings

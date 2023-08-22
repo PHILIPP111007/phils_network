@@ -47,24 +47,24 @@ def get_workers_count() -> int:
 	return cpu_count() * 2 + 1
 
 
-def print_server_info() -> None:
-	"""Print server info."""
+def print_server_info():
+	"""Print server info. Called when gunicorn is starting."""
 
-	url = environ.get("HOST", "") + ":" + environ.get("PORT", "")
+	url: str = environ.get("HOST", "") + ":" + environ.get("PORT", "")
 
-	django_ver = f"Django version {django.get_version()}, using settings 'backend.settings'"
-	server_url = f"Starting ASGI/Gunicorn development server at {url}"
-	workers_count = f"Workers count: {get_workers_count()}."
-	quit_server = "Quit the server with "
+	server_url: str = f"Starting ASGI/Gunicorn development server at {url}"
+	django_ver: str = f"Django version {django.get_version()}, using settings 'backend.settings'"
+	workers_count: str = f"Workers count: {get_workers_count()}."
+	quit_server: str = "Quit the server with "
 
 	if settings.DEBUG:
-		logging = "DEBUG - True, logging to console. Gunicorn daemon - OFF."
+		other = "DEBUG: True. Gunicorn daemon: OFF. Logging: console, tmp/server_debug.log."
 		quit_server += "CONTROL-C."
 	else:
-		logging = "DEBUG - False, logging to console and /tmp/server.log. Gunicorn daemon - ON."
+		other = "DEBUG: False. Gunicorn daemon: ON. Logging: console, tmp/server_prod.log."
 		quit_server += "`pkill -f gunicorn`."
 
-	info = f"\n\n{django_ver}\n{server_url}\n{workers_count}\n{logging}\n{quit_server}\n"
+	info: str = f"\n\n{django_ver}\n{server_url}\n{other}\n{workers_count}\n{quit_server}\n"
 	print(info)
 
 
@@ -118,10 +118,11 @@ bind: str = environ.get("HOST", "0.0.0.0") + ":" + environ.get("PORT", "8000")
 # Worker processes
 #
 
+reload: bool = True  # reload when file changes # TODO: reloading is not working with uvicorn workers 
+
 worker_connections: int = 1000
 max_requests: int = 1000
 timeout: int = 30
-reload: bool = True  # reload when file changes
 reload_include: str = "*.py"
 # worker_class = "gevent"  # if using only gunicorn
 worker_class: str = "uvicorn.workers.UvicornWorker"
@@ -148,9 +149,5 @@ daemon: bool = False if settings.DEBUG else True
 
 print_config: bool = False
 
-
-#
-# Print server info
-#
 
 print_server_info()
