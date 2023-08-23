@@ -59,6 +59,11 @@ if [ $superuser = "y" ]
         fi
 fi
 
+# tmp directory is for Django logging
+#
+# Django automatically creates 2 files:
+# tmp/server_debug.log - logging with DEBUG == True
+# tmp/server_prod.log - logging with DEBUG == False
 if [ ! -d "tmp" ]
     then
         mkdir $PWD/tmp

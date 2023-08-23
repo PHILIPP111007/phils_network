@@ -115,7 +115,7 @@ export default function Chat() {
     useEffect(() => {
         const socket = new WebSocket(
             "ws://"
-            + process.env.REACT_APP_DJANGO_WEBSOCKET_HOST
+            + process.env.REACT_APP_SERVER_WEBSOCKET_URL
             + "/ws/chat/"
             + params.room_id
             + "/"

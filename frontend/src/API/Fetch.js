@@ -1,7 +1,11 @@
-export default async function Fetch({ action, method, body }) {
+export default async function Fetch({ action, method, body, token }) {
 
-    const url = `${process.env.REACT_APP_DJANGO_URL}${action}`
-    const token = localStorage.getItem("token")
+    // External token gives by auth() func
+    if (!token) {
+        token = localStorage.getItem("token")
+    }
+
+    const url = `${process.env.REACT_APP_SERVER_URL}${action}`
 
     if (method === "GET") {
         const data = await fetch(url, {

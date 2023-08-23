@@ -9,16 +9,19 @@ export default function Register() {
 
     const { setIsAuth } = useContext(AuthContext)
     const { user, setUser } = useContext(UserContext)
-    const navigate = useNavigate()
     const [registerForm, setRegisterForm] = useState({
         username: "",
         password: "",
         password2: ""
     })
+    const navigate = useNavigate()
 
     async function auth() {
-        const data = await Fetch({ action: "api/auth/users/me/", method: "GET" })
-        if (data.username) {
+
+        const token = localStorage.getItem("token")
+        const data = await Fetch({ action: "api/auth/users/me/", method: "GET", token: token })
+
+        if (!data.detail && data.username) {
             setUser({ ...user, ...data })
             setIsAuth(true)
             navigate(`/user/${data.username}/`)

@@ -7,7 +7,7 @@ Minimalistic social network written using Django and React.
 
 2. Dark theme.
 
-3. Lazy loading of posts and messages.
+3. Lazy loading of pages, posts and messages.
 
 4. You can create a conversation and chat with friends.
 
@@ -42,11 +42,36 @@ Go to backend directory.
 cd backend
 ```
 
-Run main.sh script to create venv, DB migrations and superuser.
+Run `setup.sh` script to create venv, DB migrations and superuser.
 ```sh
-bash main.sh
+bash setup.sh
 ```
 
+Activate python virtual enviroment.
+```sh
+source venv/bin/activate
+```
+
+\
+**Phils_network** supports two servers: `daphne` and `gunicorn` (with `uvicorn` async workers).
+
+
+* Run backend app with `daphne`:
+```sh
+python manage.py runserver
+```
+
+* Run backend app with `gunicorn`:
+```sh
+gunicorn -c gunicorn.conf.py
+```
+
+\
+By default debug is True, so if needed, go to the `.env.toml` file and replace `DEBUG` variable from `“1”` to `“0"`. With `DEBUG == False` gunicorn starts in daemonized mode. See `gunicorn.conf.py` file for more information about gunicorn configuration.
+
+Logging takes place in the tmp folder. If DEBUG, file - `backend/tmp/server_debug.log` else `backend/tmp/server_prod.log`.
+
+\
 Then go to the frontend directory.
 
 ```sh
@@ -63,31 +88,7 @@ Create production frontend app.
 npm run build
 ```
 
-Run frontend app.
+Run the frontend app.
 ```sh
 serve -s build
 ```
-
-Go back to backend app directory. And activate virtual enviroment.
-```sh
-cd ../backend
-source venv/bin/activate
-```
-
-\
-\
-**Phils_network** supports two servers: `daphne` and `gunicorn` (with `uvicorn` async workers).
-
-
-1. Run backend app with `daphne`:
-```sh
-python manage.py runserver
-```
-
-2. Run backend app with `gunicorn`:
-```sh
-gunicorn -c gunicorn.conf.py
-```
-
-\
-By default debug is True, so if needed, go to `.env.toml` file and replace DEBUG variable from “1” to “0". With DEBUG == False gunicorn starts in daemonized mode. See `gunicorn.conf.py` file for more information about gunicorn configuration.

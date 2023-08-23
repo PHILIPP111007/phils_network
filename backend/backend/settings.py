@@ -223,49 +223,72 @@ LOGGING = {
 			"datefmt": "%Y-%m-%d %H:%M:%S %z",
 		},
 	},
-	
 	"handlers": {
-		"console": {
+		"Console": {
 			"level": "INFO",
             "class": "logging.StreamHandler",
 			"formatter": "simple",
         },
 	},
-
-	"loggers": {},
+	"loggers": {
+		"Mouse": {
+        	"handlers": ["File"], 
+        	"level": "DEBUG",
+        	"propagate": True,
+    	},
+	},
 }
 
 if DEBUG:
+
+	log_file = BASE_DIR / "tmp/server_debug.log"
+
 	LOGGING["handlers"].update({
-		"handler_debug": {
-			"level": "INFO",
+		"File": {
+            "level": "INFO",
+            "class": "logging.FileHandler",
+			"formatter": "simple",
+			"filename": log_file,
+        },
+		"Main": {
+			"level": "DEBUG",
 			"class": "logging.handlers.RotatingFileHandler",
 			"formatter": "verbose",
-			"filename": BASE_DIR / "tmp/server_debug.log",
+			"filename": log_file,
 		},
 	})
 
 	LOGGING["loggers"].update({
-		"django": {
-			"level": "INFO",
-            "handlers": ["console", "handler_debug"],
+		"Django": {
+			"level": "DEBUG",
+            "handlers": ["Console", "Main"],
             "propagate": True,
         },
 	})
 else:
+
+	log_file = BASE_DIR / "tmp/server_prod.log"
+
 	LOGGING["handlers"].update({
-		"handler_prod": {
-			"level": "WARNING",
+		"File": {
+            "level": "INFO",
+            "class": "logging.FileHandler",
+			"formatter": "simple",
+			"filename": log_file,
+        },
+		"Main": {
+			"level": "ERROR",
 			"class": "logging.handlers.RotatingFileHandler",
 			"formatter": "verbose",
-			"filename": BASE_DIR / "tmp/server_prod.log",
+			"filename": log_file,
 		},
 	})
 
 	LOGGING["loggers"].update({
-		"django": {
-            "handlers": ["handler_prod"],
-            "propagate": False,
+		"Django": {
+			"level": "ERROR",
+            "handlers": ["Main"],
+            "propagate": True,
         },
 	})
 

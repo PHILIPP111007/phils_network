@@ -2,10 +2,11 @@
 
 """
 #################################################
-# env vars settings and                         #
-# gunicorn WSGI + uvicorn server configuration. #
+#
+# env vars settings and
+# gunicorn WSGI + uvicorn server configuration.
+#
 #################################################
-
 
 ### Gunicorn + Uvicorn workers run:
 gunicorn -c gunicorn.conf.py
@@ -20,7 +21,9 @@ gunicorn backend.asgi:application -k uvicorn.workers.UvicornWorker
 ### Close gunicorn daemon:
 pkill -f gunicorn
 """
+
 from os import environ
+import logging
 from multiprocessing import cpu_count
 
 import django
@@ -52,20 +55,24 @@ def print_server_info():
 
 	url: str = environ.get("HOST", "") + ":" + environ.get("PORT", "")
 
-	server_url: str = f"Starting ASGI/Gunicorn development server at {url}"
+	server: str = f"Starting ASGI/Gunicorn development server at {url}"
+	app_ver: str = environ.get("version", "undefined")
 	django_ver: str = f"Django version {django.get_version()}, using settings 'backend.settings'"
 	workers_count: str = f"Workers count: {get_workers_count()}."
 	quit_server: str = "Quit the server with "
 
 	if settings.DEBUG:
-		other = "DEBUG: True. Gunicorn daemon: OFF. Logging: console, tmp/server_debug.log."
+		other = "DEBUG: True. Gunicorn daemon: OFF. Logging: console, tmp/server_debug.log"
 		quit_server += "CONTROL-C."
 	else:
-		other = "DEBUG: False. Gunicorn daemon: ON. Logging: console, tmp/server_prod.log."
+		other = "DEBUG: False. Gunicorn daemon: ON. Logging: console, tmp/server_prod.log"
 		quit_server += "`pkill -f gunicorn`."
 
-	info: str = f"\n\n{django_ver}\n{server_url}\n{other}\n{workers_count}\n{quit_server}\n"
+	info: str = f"\n\nApp version {app_ver}\n{django_ver}\n{server}\n{other}\n{workers_count}\n{quit_server}\n"
 	print(info)
+	
+	mouse_logger = logging.getLogger("Mouse")
+	mouse_logger.info(info)
 
 
 ##########################
@@ -120,12 +127,11 @@ bind: str = environ.get("HOST", "0.0.0.0") + ":" + environ.get("PORT", "8000")
 
 reload: bool = True  # reload when file changes # TODO: reloading is not working with uvicorn workers 
 
+# worker_class = "gevent"  # if using only gunicorn
+worker_class: str = "uvicorn.workers.UvicornWorker"
 worker_connections: int = 1000
 max_requests: int = 1000
 timeout: int = 30
-reload_include: str = "*.py"
-# worker_class = "gevent"  # if using only gunicorn
-worker_class: str = "uvicorn.workers.UvicornWorker"
 workers: int = get_workers_count()
 
 
