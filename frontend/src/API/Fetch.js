@@ -1,7 +1,7 @@
 export default async function Fetch({ action, method, body, token }) {
 
     // External token gives by auth() func
-    if (!token) {
+    if (token === undefined) {
         token = localStorage.getItem("token")
     }
 

@@ -6,7 +6,7 @@ from typing import Union
 
 from django.conf import settings
 from django.db.models.query import QuerySet
-from django.db.models import Q
+from django.db.models import Q, Max
 from django.contrib.auth.models import User
 
 from rest_framework.request import Request
@@ -226,7 +226,14 @@ class RoomService:
 
 	@staticmethod
 	def filter_by_subscriber(pk: int) -> QuerySet[Room]:
-		return Room.objects.filter(subscribers=pk).prefetch_related("subscribers")
+		"""Return Rooms ordered by last messages timestamp."""
+
+		rooms = Room.objects.filter(subscribers=pk) \
+			.annotate(last_message=Max("message")) \
+			.order_by("-last_message") \
+			.prefetch_related("subscribers")
+
+		return rooms
 
 	@staticmethod
 	def put(pk: int, request: Request) -> Union[Room, None]:

@@ -33,9 +33,11 @@ export default function Register() {
     }, [])
 
     async function register(event) {
+        
         event.preventDefault()
+        
         if (registerForm.password === registerForm.password2) {
-            const data = await Fetch({ action: "api/auth/users/", method: "POST", body: registerForm })
+            const data = await Fetch({ action: "api/auth/users/", method: "POST", body: registerForm, token: "" })
             if (typeof data.username === "string") {
                 setUser(data)
                 navigate("/login/")

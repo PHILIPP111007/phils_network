@@ -30,6 +30,7 @@
     --d-border-color: rgb(80, 80, 90);
 }
 
+
 .FriendCard .username,
 .Chat .info a {
     color: var(--gray-color);
@@ -112,13 +113,18 @@
         color: var(--l-color);
     }
 
-    .Chat #SendButton, .Chat #SettingsButton {
+    .Chat #SendButton,
+    .Chat #SettingsButton {
         background: var(--l-main-bg-color);
     }
 }
 
 
 /* Dark Theme */
+
+.dark a {
+    color: var(--d-color);
+}
 
 .dark button,
 .dark input[type="submit"],
@@ -199,7 +205,8 @@
         color: var(--d-color);
     }
 
-    .Chat #SendButton, .Chat #SettingsButton {
+    .Chat #SendButton,
+    .Chat #SettingsButton {
         background: var(--d-main-bg-color);
     }
 }

@@ -27,9 +27,6 @@ class Room(models.Model):
 	name = models.CharField(max_length=50)
 	timestamp = models.DateTimeField(auto_now_add=True)
 	subscribers = models.ManyToManyField(User, blank=True)
-
-	class Meta:
-		ordering=["-timestamp"]
 	
 	def __str__(self):
 		return f"{self.name} [ {self.timestamp} ]"
