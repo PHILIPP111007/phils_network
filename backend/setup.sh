@@ -8,6 +8,26 @@ read -p "[1 / 3] Create venv and download packages? [y / n] : " venv
 read -p "[2 / 3] Create migrations? [y / n] : " migrations
 read -p "[3 / 3] Create superuser? [y / n] : " superuser
 
+# `tmp` directory is for Django logging
+#
+# Script creates 2 files:
+# tmp/server_debug.log - logging with DEBUG == True
+# tmp/server_prod.log - logging with DEBUG == False
+if [ ! -d "tmp" ]
+    then
+        mkdir $PWD/tmp
+
+        if [ ! -f "tmp/server_debug.log" ]
+            then
+                touch tmp/server_debug.log
+        fi
+        
+        if [ ! -f "tmp/server_prod.log" ]
+            then
+                touch tmp/server_prod.log
+        fi
+fi
+
 if [ $venv = "y" ]
     then
         if [ ! -d "venv" ]
@@ -57,16 +77,6 @@ if [ $superuser = "y" ]
             else
                 echo "Migrations script: you dont have venv."
         fi
-fi
-
-# tmp directory is for Django logging
-#
-# Django automatically creates 2 files:
-# tmp/server_debug.log - logging with DEBUG == True
-# tmp/server_prod.log - logging with DEBUG == False
-if [ ! -d "tmp" ]
-    then
-        mkdir $PWD/tmp
 fi
 
 echo "Main script: Done."
