@@ -37,7 +37,7 @@ class RoomCreator(models.Model):
 	room = models.ForeignKey(Room, on_delete=models.CASCADE)
 
 	def __str__(self):
-		return self.creator
+		return self.creator.username
 
 
 class Message(models.Model):
@@ -50,4 +50,4 @@ class Message(models.Model):
 		ordering=["-timestamp"]
 	
 	def __str__(self):
-		return f"{self.sender} [ {self.timestamp} ]"
+		return f"{self.sender.username} [ {self.timestamp} ]"

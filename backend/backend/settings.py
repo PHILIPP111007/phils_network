@@ -43,14 +43,13 @@ THIRD_PARTY_APPS: list[str] = [
 	"rest_framework",
 	"rest_framework.authtoken",
 	"djoser",
+
+	"debug_toolbar",
 ]
 
 LOCAL_APPS: list[str] = [
 	"api",
 ]
-
-if DEBUG:
-	THIRD_PARTY_APPS.append("debug_toolbar")
 
 INSTALLED_APPS = THIRD_PARTY_APPS + DJANGO_APPS + LOCAL_APPS
 
@@ -67,12 +66,13 @@ DJANGO_MIDDLEWARE: list[str] = [
 
 THIRD_PARTY_MIDDLEWARE: list[str] = [
 	"corsheaders.middleware.CorsMiddleware", # for working Django REST
-	"whitenoise.middleware.WhiteNoiseMiddleware" # for gunicorn server
+	"whitenoise.middleware.WhiteNoiseMiddleware", # for servers to work with static files
+
+	"debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
-if DEBUG:
-	THIRD_PARTY_MIDDLEWARE.append("debug_toolbar.middleware.DebugToolbarMiddleware")
-	INTERNAL_IPS: list[str] = environ.get("DEBUG_TOOLBAR_INTERNAL_IPS", default="127.0.0.1").split(",")
+# DEBUG TOOLBAR
+INTERNAL_IPS: list[str] = environ.get("DEBUG_TOOLBAR_INTERNAL_IPS", default="127.0.0.1").split(",")
 
 MIDDLEWARE = DJANGO_MIDDLEWARE + THIRD_PARTY_MIDDLEWARE
 
@@ -189,7 +189,7 @@ REST_FRAMEWORK: dict[str, list[str]] = {
 	"DEFAULT_AUTHENTICATION_CLASSES": [
 		"rest_framework.authentication.BasicAuthentication",
 		"rest_framework.authentication.SessionAuthentication",
-		"rest_framework.authentication.TokenAuthentication"
+		"rest_framework.authentication.TokenAuthentication",
 	],
 }
 

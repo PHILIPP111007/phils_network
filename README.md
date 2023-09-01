@@ -31,6 +31,9 @@ https://pypi.org/project/daphne/
 * gunicorn \
 https://docs.gunicorn.org/en/stable/index.html
 
+* Redis \
+https://redis.io/docs/
+
 * React \
 https://react.dev/learn
 
@@ -42,7 +45,7 @@ Go to backend directory.
 cd backend
 ```
 
-Run `setup.sh` script to create venv, DB migrations and superuser.
+Run `setup.sh` script to create venv, DB migrations, superuser and collect static files.
 ```sh
 bash setup.sh
 ```
@@ -50,6 +53,16 @@ bash setup.sh
 Activate python virtual enviroment.
 ```sh
 source venv/bin/activate
+```
+
+Install redis.
+```sh
+brew install redis
+```
+
+Run redis server in the new terminal window (to run the chat).
+```sh
+redis-server
 ```
 
 \
@@ -67,9 +80,9 @@ gunicorn -c gunicorn.conf.py
 ```
 
 \
-By default debug is True, so if needed, go to the `.env.toml` file and replace `DEBUG` variable from `“1”` to `“0"`. With `DEBUG == False` gunicorn starts in daemonized mode. See `gunicorn.conf.py` file for more information about gunicorn configuration.
+By default debug is True, so if needed, go to the `/phils_network/backend/.env.toml` file and replace `DEBUG` variable from `“1”` to `“0"`. With `DEBUG == False` gunicorn starts in daemonized mode. See `/phils_network/backend/gunicorn.conf.py` file for more information about gunicorn configuration.
 
-Logging takes place in the tmp folder. If DEBUG, file - `backend/tmp/server_debug.log` else `backend/tmp/server_prod.log`.
+Logging takes place in the tmp folder. If DEBUG, file - `/phils_network/backend/tmp/server_debug.log` else `/phils_network/backend/tmp/server_prod.log`.
 
 \
 Then go to the frontend directory.
@@ -82,6 +95,9 @@ Install npm packages.
 ```sh
 npm install
 ```
+
+\
+By default, django server runs on the 0.0.0.0 host and 8000 port (see `/phils_network/backend/.env.toml` file). So make sure that SERVER_HOST variable in the `/phils_network/frontend/.env` file is similar to your server IP.
 
 Create production frontend app.
 ```sh
