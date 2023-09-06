@@ -32,14 +32,18 @@ export default function User() {
     const [mainSets, setMainSets] = useState({
         post: {},
         text: "",
-        status: "",
         loading: true,
     })
 
-    async function getPosts() {
+    async function getPosts(postsLength) {
         setMainSets({ ...mainSets, loading: true })
+        
+        if (postsLength === undefined) {
+            postsLength = posts.length
+        }
 
-        const data = await Fetch({ action: `api/blog/${params.username}/${posts.length}/`, method: "GET" })
+        const data = await Fetch({ action: `api/blog/${params.username}/${postsLength}/`, method: "GET" })
+
         if (data.ok) {
             const newPosts = data.posts.map(post => {
                 return { ...post, postLen500: post.content.length > 500, btnFlag: true }
@@ -124,7 +128,7 @@ export default function User() {
             })
 
         setPosts([])
-        getPosts()
+        getPosts(0)
 
     }, [params.username])
 

@@ -34,13 +34,16 @@ https://docs.gunicorn.org/en/stable/index.html
 * Redis \
 https://redis.io/docs/
 
+* Postgres \
+https://www.postgresql.org/
+
 * React \
 https://react.dev/learn
 
+
 ## Installation
 
-Go to backend directory.
-
+First of all you need to run Postgres server. Then go to backend directory.
 ```sh
 cd backend
 ```
@@ -63,6 +66,11 @@ brew install redis
 Run redis server in the new terminal window (to run the chat).
 ```sh
 redis-server
+```
+
+If you want to test data base, run:
+```sh
+python manage.py shell < test_db.py
 ```
 
 \

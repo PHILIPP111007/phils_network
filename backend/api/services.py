@@ -89,7 +89,8 @@ class UserService:
 class SubscriberService:
 
 	@staticmethod
-	def _get_subscribers_sets(pk: int) -> tuple[QuerySet[int], QuerySet[int]]:
+	def _get_subscribers_sets(pk: int) -> \
+		tuple[QuerySet[Subscriber], QuerySet[Subscriber]]:
 
 		set_1 = Subscriber.objects.filter(user_id=pk) \
 			.only("subscribe").values_list("subscribe", flat=True)
@@ -135,7 +136,7 @@ class SubscriberService:
 
 	@staticmethod
 	def filter_by_option(pk: int, option: str, serializer: bool = True) \
-		  -> Union[ReturnList, int, None]:
+		  -> Union[QuerySet[User], ReturnList, int, None]:
 		"""
 		Returns subscribers count or
 		list of friends / subscriptions / subscribers.
@@ -210,7 +211,7 @@ class BlogService:
 class RoomCreatorService:
 
 	@staticmethod
-	def filter(pk: int) -> RoomCreator:
+	def filter(pk: int) -> QuerySet[RoomCreator]:
 		return RoomCreator.objects.filter(room_id=pk).select_related("creator")
 
 

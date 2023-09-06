@@ -90,6 +90,26 @@ class BlogAPIView(APIView):
 
 	def get(self, request: Request, **kwargs) -> Response:
 		self.check_permissions(request=request)
+
+		unknown = UserService.filter_by_username(username=kwargs.get("username", ""))
+		if not unknown.exists():
+			return Response({"ok": False, \
+		    	"error_message": "Not found user."}, \
+				status=status.HTTP_404_NOT_FOUND)
+
+		unknown_id = unknown[0].id
+		user_1 = SubscriberService.filter(user_id=request.user.id, subscribe_id=unknown_id) \
+			.only("pk").exists()
+		
+		user_2 = SubscriberService.filter(user_id=unknown_id, subscribe_id=request.user.id) \
+			.only("pk").exists()
+
+		# If we are friends, I can see his blog.
+		if not user_1 and user_2:
+			return Response({"ok": False, \
+		    	"error_message": "Make friends to see his blog."}, \
+				status=status.HTTP_404_NOT_FOUND)
+
 		posts = BlogService.filter_by_username(**kwargs)
 
 		if not posts.exists():
@@ -100,7 +120,6 @@ class BlogAPIView(APIView):
 		return Response({"ok": True, \
 			"posts": BlogSerializer(posts, many=True).data}, \
 			status=status.HTTP_200_OK)
-
 
 	def post(self, request: Request, **kwargs) -> Response:
 		self.check_permissions(request=request)
@@ -217,7 +236,6 @@ class SubscriberAPIView(APIView):
 
 		if option == "delete_friend":
 			subscribe = SubscriberService.filter(user_id=request.user.id, subscribe_id=pk)
-
 		elif option == "delete_subscriber":
 			subscribe = SubscriberService.filter(user_id=pk, subscribe_id=request.user.id)
 

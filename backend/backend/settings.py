@@ -67,7 +67,6 @@ DJANGO_MIDDLEWARE: list[str] = [
 THIRD_PARTY_MIDDLEWARE: list[str] = [
 	"corsheaders.middleware.CorsMiddleware", # for working Django REST
 	"whitenoise.middleware.WhiteNoiseMiddleware", # for servers to work with static files
-
 	"debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
@@ -116,10 +115,14 @@ CHANNEL_LAYERS = {
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
-	"default": {
-		"ENGINE": "django.db.backends.sqlite3",
-		"NAME": BASE_DIR / "db.sqlite3",
-	},
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": environ.get("PG_NAME"),
+        "USER": environ.get("PG_USER"),
+        "HOST": environ.get("PG_HOST"),
+		"PORT": int(environ.get("PG_PORT", default="5432")),
+        "PASSWORD": environ.get("PG_PASSWORD"),
+    },
 }
 
 

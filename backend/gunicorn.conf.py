@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 """
 #################################################
 #
@@ -53,7 +52,7 @@ def get_workers_count() -> int:
 def print_server_info():
 	"""Print server info. Called when gunicorn is starting."""
 
-	url: str = environ.get("HOST", "") + ":" + environ.get("PORT", "")
+	url: str = environ.get("DJANGO_HOST", "") + ":" + environ.get("DJANGO_PORT", "")
 
 	server: str = f"Starting ASGI/Gunicorn development server at {url}"
 	app_ver: str = environ.get("version", "undefined")
@@ -118,7 +117,7 @@ wsgi_app: str = "backend.asgi"
 # Server socket
 #
 
-bind: str = environ.get("HOST", "0.0.0.0") + ":" + environ.get("PORT", "8000")
+bind: str = environ.get("DJANGO_HOST", "0.0.0.0") + ":" + environ.get("DJANGO_PORT", "8000")
 
 
 #

@@ -19,3 +19,6 @@ uvicorn[standard]==0.23.2
 
 ### Works with static for gunicorn
 whitenoise==6.5.0
+
+### For Postgres
+psycopg2-binary==2.9.7
