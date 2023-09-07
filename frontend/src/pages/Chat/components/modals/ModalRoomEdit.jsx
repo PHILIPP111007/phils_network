@@ -8,7 +8,7 @@ export default function ModalRoomEdit({ mainSets, setMainSets, me, editRoom }) {
 
     const [loading, setLoading] = useState(true)
 
-    function editSubscribers(subscriber) {
+    async function editSubscribers(subscriber) {
         setMainSets({
             ...mainSets,
             invitationChanges: {
@@ -23,7 +23,7 @@ export default function ModalRoomEdit({ mainSets, setMainSets, me, editRoom }) {
         })
     }
 
-    function editFriends(friend) {
+    async function editFriends(friend) {
         setMainSets({
             ...mainSets,
             invitationChanges: {
@@ -81,7 +81,6 @@ export default function ModalRoomEdit({ mainSets, setMainSets, me, editRoom }) {
     }
 
     useEffect(() => {
-
         if (mainSets.isCreator) {
             setLoading(true)
 

@@ -17,11 +17,10 @@ export default function Register() {
     const navigate = useNavigate()
 
     async function auth() {
-
         const token = localStorage.getItem("token")
         const data = await Fetch({ action: "api/auth/users/me/", method: "GET", token: token })
 
-        if (!data.detail && data.username) {
+        if (data && !data.detail && data.username) {
             setUser({ ...user, ...data })
             setIsAuth(true)
             navigate(`/user/${data.username}/`)
@@ -33,9 +32,8 @@ export default function Register() {
     }, [])
 
     async function register(event) {
-        
         event.preventDefault()
-        
+
         if (registerForm.password === registerForm.password2) {
             const data = await Fetch({ action: "api/auth/users/", method: "POST", body: registerForm, token: "" })
             if (typeof data.username === "string") {

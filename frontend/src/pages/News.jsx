@@ -18,7 +18,7 @@ export default function News() {
     async function fetchAddPosts() {
         setLoading(true)
         const data = await Fetch({ action: `api/news/${posts.length}/`, method: "GET" })
-        if (data.ok) {
+        if (data && data.ok) {
             const newPosts = data.posts.map(post => {
                 return { ...post, postLen500: post.content.length > 500, btnFlag: true }
             })

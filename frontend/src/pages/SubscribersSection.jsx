@@ -16,7 +16,7 @@ export default function SubscribersSection() {
     const searchedSubscribers = useFriends(subscribers, filter)  // custom hook
     const [loading, setLoading] = useState(true)
 
-    function findFunc(query) {
+    async function findFunc(query) {
         setFilter({ ...filter, ...query })
     }
 

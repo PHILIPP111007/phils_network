@@ -13,11 +13,10 @@ export default function Login() {
     const navigate = useNavigate()
 
     async function auth() {
-
         const token = localStorage.getItem("token")
         const data = await Fetch({ action: "api/auth/users/me/", method: "GET", token: token })
 
-        if (!data.detail && data.username) {
+        if (data && !data.detail && data.username) {
             setUser({ ...user, ...data })
             setIsAuth(true)
             navigate(`/user/${data.username}/`)
@@ -25,11 +24,10 @@ export default function Login() {
     }
 
     async function login(event) {
-
         event.preventDefault()
         const data = await Fetch({ action: "auth/token/login/", method: "POST", body: loginForm, token: "" })
 
-        if (!data.detail && data.auth_token) {
+        if (data && !data.detail && data.auth_token) {
             localStorage.setItem("token", data.auth_token)
             setIsAuth(true)
             auth()

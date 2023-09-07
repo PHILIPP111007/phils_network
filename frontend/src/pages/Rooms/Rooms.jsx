@@ -19,7 +19,7 @@ export default function Rooms() {
         room.subscribers.push(user.pk)
 
         const data = await Fetch({ action: "api/room/", method: "POST", body: room })
-        if (data.ok) {
+        if (data && data.ok) {
             setRooms([data.room, ...rooms])
         }
         setModalRoomCreate(false)
@@ -29,7 +29,7 @@ export default function Rooms() {
         setLoading(true)
         Fetch({ action: "api/room/", method: "GET" })
             .then((data) => {
-                if (data.ok) {
+                if (data && data.ok) {
                     setRooms(data.rooms)
                 }
                 setLoading(false)

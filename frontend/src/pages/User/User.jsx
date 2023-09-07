@@ -43,8 +43,7 @@ export default function User() {
         }
 
         const data = await Fetch({ action: `api/blog/${params.username}/${postsLength}/`, method: "GET" })
-
-        if (data.ok) {
+        if (data && data.ok) {
             const newPosts = data.posts.map(post => {
                 return { ...post, postLen500: post.content.length > 500, btnFlag: true }
             })
@@ -55,7 +54,7 @@ export default function User() {
 
     async function deletePost(oldPost) {
         const data = await Fetch({ action: `api/blog/${oldPost.id}/`, method: "DELETE" })
-        if (data.ok) {
+        if (data && data.ok) {
             setPosts(posts.filter(post => post.id !== oldPost.id))
             setModalPostEdit(false)
         }
@@ -70,7 +69,7 @@ export default function User() {
         }
 
         const data = await Fetch({ action: "api/blog/", method: "POST", body: newPost })
-        if (data.ok) {
+        if (data && data.ok) {
             setPosts([data.post, ...posts])
         }
     }
@@ -81,7 +80,7 @@ export default function User() {
             newPost.changed = true
 
             const data = await Fetch({ action: `api/blog/${newPost.id}/`, method: "PUT", body: newPost })
-            if (data.ok) {
+            if (data && data.ok) {
                 setPosts(posts.map(post => {
                     if (post.id === newPost.id) {
                         post.content = newPost.content
@@ -119,7 +118,7 @@ export default function User() {
 
         Fetch({ action: `api/user/${params.username}/`, method: "GET" })
             .then((data) => {
-                if (data.global_user) {
+                if (data && data.global_user) {
                     setUser(data.global_user)
                     if (data.local_user) {
                         setUserLocal(data.local_user)
