@@ -115,14 +115,14 @@ CHANNEL_LAYERS = {
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": environ.get("PG_NAME"),
-        "USER": environ.get("PG_USER"),
-        "HOST": environ.get("PG_HOST"),
+	"default": {
+		"ENGINE": "django.db.backends.postgresql_psycopg2",
+		"NAME": environ.get("PG_NAME"),
+		"USER": environ.get("PG_USER"),
+		"HOST": environ.get("PG_HOST"),
 		"PORT": int(environ.get("PG_PORT", default="5432")),
-        "PASSWORD": environ.get("PG_PASSWORD"),
-    },
+		"PASSWORD": environ.get("PG_PASSWORD"),
+	},
 }
 
 
@@ -216,10 +216,10 @@ LOGGING = {
 	"disable_existing_loggers": False,
 	"formatters": {
 		"simple": {
-            "format": "[{asctime}] [{levelname}] {message}",
-            "style": "{",
+			"format": "[{asctime}] [{levelname}] {message}",
+			"style": "{",
 			"datefmt": "%Y-%m-%d %H:%M:%S %z",
-        },
+		},
 		"verbose": {
 			"format": "[{asctime}] [{levelname}] [{module}] [{name}:{lineno}] [PROCESS: {process:d}] [THREAD: {thread:d}]\n{message}\n",
 			"style": "{",
@@ -229,16 +229,16 @@ LOGGING = {
 	"handlers": {
 		"Console": {
 			"level": "INFO",
-            "class": "logging.StreamHandler",
+			"class": "logging.StreamHandler",
 			"formatter": "simple",
-        },
+		},
 	},
 	"loggers": {
 		"Mouse": {
-        	"handlers": ["File"], 
-        	"level": "DEBUG",
-        	"propagate": True,
-    	},
+			"handlers": ["File"], 
+			"level": "DEBUG",
+			"propagate": True,
+		},
 	},
 }
 
@@ -248,11 +248,11 @@ if DEBUG:
 
 	LOGGING["handlers"].update({
 		"File": {
-            "level": "INFO",
-            "class": "logging.FileHandler",
+			"level": "INFO",
+			"class": "logging.FileHandler",
 			"formatter": "simple",
 			"filename": log_file,
-        },
+		},
 		"Main": {
 			"level": "DEBUG",
 			"class": "logging.handlers.RotatingFileHandler",
@@ -264,9 +264,9 @@ if DEBUG:
 	LOGGING["loggers"].update({
 		"Django": {
 			"level": "DEBUG",
-            "handlers": ["Console", "Main"],
-            "propagate": True,
-        },
+			"handlers": ["Console", "Main"],
+			"propagate": True,
+		},
 	})
 else:
 
@@ -274,11 +274,11 @@ else:
 
 	LOGGING["handlers"].update({
 		"File": {
-            "level": "INFO",
-            "class": "logging.FileHandler",
+			"level": "INFO",
+			"class": "logging.FileHandler",
 			"formatter": "simple",
 			"filename": log_file,
-        },
+		},
 		"Main": {
 			"level": "ERROR",
 			"class": "logging.handlers.RotatingFileHandler",
@@ -290,9 +290,9 @@ else:
 	LOGGING["loggers"].update({
 		"Django": {
 			"level": "ERROR",
-            "handlers": ["Main"],
-            "propagate": True,
-        },
+			"handlers": ["Main"],
+			"propagate": True,
+		},
 	})
 
 

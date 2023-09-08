@@ -2,7 +2,7 @@
 Business logic of the application.
 """
 
-from typing import Union
+from typing import Callable
 
 from django.conf import settings
 from django.db.models.query import QuerySet
@@ -22,6 +22,15 @@ from .models import (
 )
 
 
+class SubscriberStatus:
+	"""Implements subscriber status."""
+
+	IS_FRIEND = "is_my_friend"
+	ME_SUBSCRIBER = "i_am_subscriber"
+	HE_SUBSCRIBER = "he_is_subscriber"
+	NO_DATA = "no_data"
+
+
 class UserService:
 
 	@staticmethod
@@ -34,19 +43,20 @@ class UserService:
 		return User.objects.filter(username=username) \
 			.only("username", "first_name", "last_name")
 
+	# TODO: Change this weak method
 	@staticmethod
-	def filter_find(request: Request) -> Union[QuerySet[User], User, None]:
+	def filter_find(request: Request) -> QuerySet[User] | User | None:
 		"""Find users in the network."""
 
-		username = request.data.get("username", "")
+		username: str | None = request.data.get("username", None)
 		find_users = None
 		if username:
 			find_users = User.objects.filter(username__icontains=username) \
 				.only("username", "first_name", "last_name")
 		else:
 			query = "User.objects"
-			first_name = request.data.get("first_name", "")
-			last_name = request.data.get("last_name", "")
+			first_name: str | None = request.data.get("first_name", None)
+			last_name: str | None = request.data.get("last_name", None)
 
 			if first_name:
 				query += f".filter(first_name__icontains=\"{first_name}\")"
@@ -71,18 +81,17 @@ class UserService:
 		Email can be deleted.
 		"""
 
-		first_name = request.data.get("first_name", "")
-		last_name = request.data.get("last_name", "")
-		email = request.data.get("email", "")
+		first_name: str | None = request.data.get("first_name", None)
+		last_name: str | None = request.data.get("last_name", None)
+		email: str | None = request.data.get("email", None)
 
 		if first_name:
 			user.first_name = first_name
-
 		if last_name:
 			user.last_name = last_name
+
 		user.email = email
 		user.save()
-
 		return user
 
 
@@ -136,32 +145,76 @@ class SubscriberService:
 
 	@staticmethod
 	def filter_by_option(pk: int, option: str, serializer: bool = True) \
-		  -> Union[QuerySet[User], ReturnList, int, None]:
+		-> QuerySet[User] | ReturnList | int | None:
 		"""
 		Returns subscribers count or
 		list of friends / subscriptions / subscribers.
 		"""
 
 		options = {
-			"friends": lambda: SubscriberService._get_friends(pk=pk),
-			"subscriptions": lambda: SubscriberService._get_subscriptions(pk=pk),
-			"subscribers": lambda: SubscriberService._get_subscribers(pk=pk),
-			"subscribers_count": lambda: SubscriberService._get_subscribers(pk=pk).count()
+			"friends": lambda pk: SubscriberService._get_friends(pk=pk),
+			"subscriptions": lambda pk: SubscriberService._get_subscriptions(pk=pk),
+			"subscribers": lambda pk: SubscriberService._get_subscribers(pk=pk),
+			"subscribers_count": lambda pk: SubscriberService \
+				._get_subscribers(pk=pk).count()
 		}
 
-		if options.get(option, ""):
-			query = options[option]()
+		option_func: Callable[[int], QuerySet[User] | int] | None = \
+			options.get(option, None)
 
+		if option_func:
+			query = option_func(pk)
 			if serializer and not isinstance(query, int):
 				query = UserSerializer(query, many=True).data
-
 			return query
 		return None
 
 	@staticmethod
 	def create(user_id: int, subscribe_id: int) -> None:
 		Subscriber.objects.get_or_create(user_id=user_id, subscribe_id=subscribe_id)
+	
+	@staticmethod
+	def delete_by_option(request: Request, pk: int) -> \
+		dict[str, bool | str] | dict[str, bool]:
+		
+		option: str | None = request.data.get("option", None)
+		if not option:
+			return {"ok": False, "error_message": "Not provided an option."}
 
+		subscribe = None
+		if option == "delete_friend":
+			subscribe = SubscriberService \
+				.filter(user_id=request.user.id, subscribe_id=pk)
+		elif option == "delete_subscriber":
+			subscribe = SubscriberService \
+				.filter(user_id=pk, subscribe_id=request.user.id)
+
+		if not subscribe:
+			return {"ok": False, "error_message": "Not found subscriber."}
+	
+		subscribe = subscribe[0]
+		subscribe.delete()
+
+		return {"ok": True}
+	
+	@staticmethod
+	def get_user_status(request: Request, pk: int):
+
+		user_1 = SubscriberService.filter(user_id=request.user.id, subscribe_id=pk) \
+			.only("pk").exists()
+
+		user_2 = SubscriberService.filter(user_id=pk, subscribe_id=request.user.id) \
+			.only("pk").exists()
+
+		# If we are friends, I can see his blog.
+		if user_1 and user_2:
+			return SubscriberStatus.IS_FRIEND
+		elif user_1:
+			return SubscriberStatus.ME_SUBSCRIBER
+		elif user_2:
+			return SubscriberStatus.HE_SUBSCRIBER
+		else:
+			return SubscriberStatus.NO_DATA
 
 
 class BlogService:
@@ -174,19 +227,19 @@ class BlogService:
 	def filter_by_username(**kwargs: dict) -> QuerySet[Blog]:
 		"""Lazy loading of posts on the user page."""
 
-		username = kwargs.get("username", "")
-		loaded_posts = kwargs.get("loaded_posts", "")
+		username: str | None = kwargs.get("username", None)
+		loaded_posts: int | None = kwargs.get("loaded_posts", None)
 
 		posts = Blog.objects.filter(user_id__username=username) \
 			.select_related("user") \
-			.only(
-				"content",
-				"timestamp",
-				"changed",
-				"user__username",
-	 			"user__first_name",
-				"user__last_name"
-			)[loaded_posts:loaded_posts + settings.POSTS_TO_LOAD]
+				.only(
+					"content",
+					"timestamp",
+					"changed",
+					"user__username",
+					"user__first_name",
+					"user__last_name"
+				)[loaded_posts:loaded_posts + settings.POSTS_TO_LOAD]
 
 		return posts
 
@@ -196,14 +249,14 @@ class BlogService:
 
 		posts = Blog.objects.filter(user_id__in=friends) \
 			.select_related("user") \
-			.only(
-				"content",
-				"timestamp",
-				"changed",
-				"user__username",
-				"user__first_name",
-				"user__last_name"
-			)[loaded_posts:loaded_posts + settings.POSTS_TO_LOAD]
+				.only(
+					"content",
+					"timestamp",
+					"changed",
+					"user__username",
+					"user__first_name",
+					"user__last_name"
+				)[loaded_posts:loaded_posts + settings.POSTS_TO_LOAD]
 
 		return posts
 
@@ -230,24 +283,23 @@ class RoomService:
 		"""Return Rooms ordered by last messages timestamp."""
 
 		rooms = Room.objects.filter(subscribers=pk) \
-			.annotate(last_message=Max("message")) \
-			.order_by("-last_message") \
-			.prefetch_related("subscribers")
+			.annotate(last_message=Max("message__timestamp")) \
+				.order_by("-last_message") \
+					.prefetch_related("subscribers")
 
 		return rooms
 
 	@staticmethod
-	def put(pk: int, request: Request) -> Union[Room, None]:
+	def put(pk: int, request: Request) -> Room | None:
 		"""
 		Update room subscribers.
 		If their number is zero, the room will be deleted.
 		"""
 
-		friends: list = request.data.get("friends", "")
-		subscribers: list = request.data.get("subscribers", "")
-		
-		room = Room.objects.filter(pk=pk)
+		friends: list | None = request.data.get("friends", None)
+		subscribers: list | None = request.data.get("subscribers", None)
 
+		room = Room.objects.filter(pk=pk)
 		if room.exists():
 			room = room[0]
 
@@ -264,9 +316,9 @@ class RoomService:
 		return None
 
 	@staticmethod
-	def create(request: Request) -> Union[Room, None]:
-		room_name: str = request.data.get("name", "")
-		pk_list: list = request.data.get("subscribers", "")
+	def create(request: Request) -> Room | None:
+		room_name: str | None = request.data.get("name", None)
+		pk_list: list[int] | None = request.data.get("subscribers", None)
 
 		if room_name:
 			room = Room(name=room_name)
@@ -275,10 +327,12 @@ class RoomService:
 			if pk_list:
 				subscribers = User.objects.filter(pk__in=pk_list).only("pk") \
 					.values_list("pk", flat=True)
-				
-				room.subscribers.add(*subscribers)
-			
-			RoomCreator.objects.get_or_create(room_id=room.id, creator_id=request.user.id)
+
+				if subscribers:
+					room.subscribers.add(*subscribers)
+
+			RoomCreator.objects \
+				.get_or_create(room_id=room.id, creator_id=request.user.id)
 
 			return room
 		return None
@@ -308,7 +362,7 @@ class MessageService:
 
 	@staticmethod
 	def check_permission(room_id: int, subscriber_id: int) -> bool:
-		"""Check if user is rooms subscriber."""
+		"""Check if user is the Room subscriber."""
 
 		room = Room.objects.get(pk=room_id)
 		flag = room.subscribers.filter(pk=subscriber_id).exists()

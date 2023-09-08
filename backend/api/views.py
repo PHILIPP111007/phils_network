@@ -13,6 +13,7 @@ from .serializers import (
 	MessageSerializer
 )
 from .services import (
+	SubscriberStatus,
 	UserService,
 	SubscriberService,
 	BlogService,
@@ -38,8 +39,8 @@ class UserAPIView(APIView):
 
 		if not global_user.exists():
 			return Response({"ok": False, \
-		    	"error_message": "Not found the global user."}, \
-				status=status.HTTP_404_NOT_FOUND)
+					"error_message": "Not found the global user."}, \
+						status=status.HTTP_404_NOT_FOUND)
 		
 		query = {"ok": True, "global_user": UserSerializer(global_user[0]).data}
 		local_user = UserService.filter_by_username(username=username)
@@ -57,15 +58,15 @@ class UserAPIView(APIView):
 
 		if not user.exists():
 			return Response({"ok": False, \
-		    	"error_message": "Not found the user."}, \
-				status=status.HTTP_404_NOT_FOUND)
+					"error_message": "Not found the user."}, \
+						status=status.HTTP_404_NOT_FOUND)
 
 		user = user[0]
 		self.check_object_permissions(request=request, obj=user)
 		user = UserService.put(user=user, request=request)
 
 		return Response({"ok": True, "user": UserSerializer(user).data}, \
-			status=status.HTTP_200_OK)
+				status=status.HTTP_200_OK)
 
 	def delete(self, request: Request, **kwargs) -> Response:
 		self.check_permissions(request=request)
@@ -73,8 +74,8 @@ class UserAPIView(APIView):
 
 		if not user.exists():
 			return Response({"ok": False, \
-		    	"error_message": "Not found the user."}, \
-				status=status.HTTP_404_NOT_FOUND)
+					"error_message": "Not found the user."}, \
+						status=status.HTTP_404_NOT_FOUND)
 		
 		user = user[0]
 		self.check_object_permissions(request=request, obj=user)
@@ -91,35 +92,36 @@ class BlogAPIView(APIView):
 	def get(self, request: Request, **kwargs) -> Response:
 		self.check_permissions(request=request)
 
-		unknown = UserService.filter_by_username(username=kwargs.get("username", ""))
+		username: str | None = kwargs.get("username", None)
+		if not username:
+			return Response({"ok": False, "error_message": "No username provided."}, \
+						status=status.HTTP_404_NOT_FOUND)
+
+		unknown = UserService.filter_by_username(username=username)
 		if not unknown.exists():
-			return Response({"ok": False, \
-		    	"error_message": "Not found user."}, \
-				status=status.HTTP_404_NOT_FOUND)
+			return Response({"ok": False, "error_message": "Not found user."}, \
+						status=status.HTTP_404_NOT_FOUND)
 
-		unknown_id = unknown[0].id
-		user_1 = SubscriberService.filter(user_id=request.user.id, subscribe_id=unknown_id) \
-			.only("pk").exists()
-		
-		user_2 = SubscriberService.filter(user_id=unknown_id, subscribe_id=request.user.id) \
-			.only("pk").exists()
+		unknown_id: int = unknown[0].id
 
-		# If we are friends, I can see his blog.
-		if not user_1 and user_2:
-			return Response({"ok": False, \
-		    	"error_message": "Make friends to see his blog."}, \
-				status=status.HTTP_404_NOT_FOUND)
+		if request.user.id != unknown_id:
+			data = SubscriberService.get_user_status(request=request, pk=unknown_id)
+
+			if data != SubscriberStatus.IS_FRIEND:
+				return Response({"ok": False, \
+						"error_message": "Make friends to see his blog."}, \
+							status=status.HTTP_404_NOT_FOUND)
 
 		posts = BlogService.filter_by_username(**kwargs)
 
 		if not posts.exists():
 			return Response({"ok": False, \
-		    	"error_message": "Not found user posts."}, \
-				status=status.HTTP_404_NOT_FOUND)
+					"error_message": "Not found user posts."}, \
+						status=status.HTTP_404_NOT_FOUND)
 
 		return Response({"ok": True, \
-			"posts": BlogSerializer(posts, many=True).data}, \
-			status=status.HTTP_200_OK)
+					"posts": BlogSerializer(posts, many=True).data}, \
+						status=status.HTTP_200_OK)
 
 	def post(self, request: Request, **kwargs) -> Response:
 		self.check_permissions(request=request)
@@ -128,7 +130,7 @@ class BlogAPIView(APIView):
 		serializer.save()
 
 		return Response({"ok": True, "post": serializer.data}, \
-			status=status.HTTP_200_OK)
+				status=status.HTTP_200_OK)
 
 	def put(self, request: Request, **kwargs) -> Response:
 		"""Update post text."""
@@ -137,14 +139,13 @@ class BlogAPIView(APIView):
 		pk = kwargs.get("pk", None)
 		if pk is None:
 			return Response({"ok": False, \
-		    	"error_message": "You didn't submit a post id."}, \
-				status=status.HTTP_404_NOT_FOUND)
+					"error_message": "You didn't submit a post id."}, \
+						status=status.HTTP_404_NOT_FOUND)
 
 		post = BlogService.filter(pk=pk)
 		if not post.exists():
-			return Response({"ok": False, \
-				"error_message": "Not found the post."}, \
-				status=status.HTTP_404_NOT_FOUND)
+			return Response({"ok": False, "error_message": "Not found the post."}, \
+						status=status.HTTP_404_NOT_FOUND)
 
 		post = post[0]
 		serializer = BlogSerializer(data=request.data, instance=post)
@@ -154,21 +155,21 @@ class BlogAPIView(APIView):
 		serializer.save()
 
 		return Response({"ok": True, "post": serializer.data}, \
-			status=status.HTTP_200_OK)
+				status=status.HTTP_200_OK)
 
 	def delete(self, request: Request, **kwargs) -> Response:
 		self.check_permissions(request=request)
 		pk = kwargs.get("pk", None)
 		if pk is None:
 			return Response({"ok": False, \
-		    	"error_message": "You didn't submit a post id."}, \
-				status=status.HTTP_404_NOT_FOUND)
+					"error_message": "You didn't submit a post id."}, \
+						status=status.HTTP_404_NOT_FOUND)
 
 		post = BlogService.filter(pk=pk)
 		if not post.exists():
 			return Response({"ok": False, \
-		    	"error_message": "Not found the post."}, \
-				status=status.HTTP_404_NOT_FOUND)
+					"error_message": "Not found the post."}, \
+						status=status.HTTP_404_NOT_FOUND)
 		
 		post = post[0]
 		self.check_object_permissions(request=request, obj=post.user)
@@ -189,12 +190,12 @@ class FindUserAPIView(APIView):
 		find_users = UserService.filter_find(request=request)
 
 		if not find_users:
-			return Response({"ok": False, \
-		    	"error_message": "Not found users."}, \
-				status=status.HTTP_404_NOT_FOUND)
+			return Response({"ok": False, "error_message": "Not found users."}, \
+					status=status.HTTP_404_NOT_FOUND)
 		
-		return Response({"ok": True, "users": UserSerializer(find_users, many=True).data}, \
-			status=status.HTTP_200_OK)
+		return Response({"ok": True, "users": \
+					UserSerializer(find_users, many=True).data}, \
+						status=status.HTTP_200_OK)
 
 
 class SubscriberAPIView(APIView):
@@ -204,22 +205,7 @@ class SubscriberAPIView(APIView):
 
 	def get(self, request: Request, pk: int) -> Response:
 		self.check_permissions(request=request)
-		
-		user_1 = SubscriberService.filter(user_id=request.user.id, subscribe_id=pk) \
-			.only("pk").exists()
-		
-		user_2 = SubscriberService.filter(user_id=pk, subscribe_id=request.user.id) \
-			.only("pk").exists()
-
-		# If we are friends, I can see his blog.
-		if user_1 and user_2:
-			data = "is_my_friend"
-		elif user_1:
-			data = "i_am_subscriber"
-		elif user_2:
-			data = "he_is_subscriber"
-		else:
-			data = "no_data"
+		data = SubscriberService.get_user_status(request=request, pk=pk)
 
 		return Response({"ok": True, "status": data}, status=status.HTTP_200_OK)
 
@@ -231,23 +217,11 @@ class SubscriberAPIView(APIView):
 
 	def delete(self, request: Request, pk: int) -> Response:
 		self.check_permissions(request=request)
-		option = request.data.get("option", "")
-		subscribe = None
 
-		if option == "delete_friend":
-			subscribe = SubscriberService.filter(user_id=request.user.id, subscribe_id=pk)
-		elif option == "delete_subscriber":
-			subscribe = SubscriberService.filter(user_id=pk, subscribe_id=request.user.id)
-
-		if not subscribe:
-			return Response({"ok": False, \
-		    	"error_message": "Not found subscriber."}, \
-				status=status.HTTP_404_NOT_FOUND)
-	
-		subscribe = subscribe[0]
-		subscribe.delete()
-
-		return Response({"ok": True}, status=status.HTTP_200_OK)
+		resp = SubscriberService.delete_by_option(request=request, pk=pk)
+		if resp["ok"]:
+			return Response(resp, status=status.HTTP_200_OK)
+		return Response(resp, status=status.HTTP_404_NOT_FOUND)
 
 
 class FriendsAPIView(APIView):
@@ -257,12 +231,12 @@ class FriendsAPIView(APIView):
 
 	def get(self, request: Request, option: str) -> Response:
 		self.check_permissions(request=request)
-		query = SubscriberService.filter_by_option(pk=request.user.id, option=option, serializer=True)
+		query = SubscriberService \
+			.filter_by_option(pk=request.user.id, option=option, serializer=True)
 
 		if not query:
-			return Response({"ok": False, \
-		    	"error_message": "Not found users."}, \
-				status=status.HTTP_404_NOT_FOUND)
+			return Response({"ok": False, "error_message": "Not found users."}, \
+					status=status.HTTP_404_NOT_FOUND)
 		
 		return Response({"ok": True, "query": query}, status=status.HTTP_200_OK)
 
@@ -276,19 +250,19 @@ class NewsAPIView(APIView):
 		self.check_permissions(request=request)
 
 		friends = SubscriberService.filter_by_option(pk=request.user.id, \
-			option="friends", serializer=False) \
-			.only("pk") \
-			.values_list("pk", flat=True)
+											option="friends", serializer=False) \
+												.only("pk") \
+													.values_list("pk", flat=True)
 		
-		posts = BlogService.filter_by_friends(friends=friends, loaded_posts=loaded_posts)
+		posts = BlogService. \
+			filter_by_friends(friends=friends, loaded_posts=loaded_posts)
 
 		if not posts.exists():
-			return Response({"ok": False, \
-				"error_message": "Not found posts."}, \
-				status=status.HTTP_404_NOT_FOUND)
+			return Response({"ok": False, "error_message": "Not found posts."}, \
+					status=status.HTTP_404_NOT_FOUND)
 		
 		return Response({"ok": True, "posts": BlogSerializer(posts, many=True).data}, \
-			status=status.HTTP_200_OK)
+				status=status.HTTP_200_OK)
 
 
 class RoomsAPIView(APIView):
@@ -301,25 +275,22 @@ class RoomsAPIView(APIView):
 		rooms = RoomService.filter_by_subscriber(pk=request.user.id)
 
 		if not rooms.exists():
-			return Response({"ok": False, \
-		    	"error_message": "Not found rooms."}, \
-				status=status.HTTP_404_NOT_FOUND)
+			return Response({"ok": False, "error_message": "Not found rooms."}, \
+						status=status.HTTP_404_NOT_FOUND)
 			
 		return Response({"ok": True, "rooms": RoomSerializer(rooms, many=True).data}, \
-			status=status.HTTP_200_OK)
+				status=status.HTTP_200_OK)
 
 	def post(self, request: Request) -> Response:
 		self.check_permissions(request=request)
 		room = RoomService.create(request=request)
 
 		if not room:
-			return Response({"ok": False, \
-		    	"error_message": "Not found room."}, \
-				status=status.HTTP_404_NOT_FOUND)
+			return Response({"ok": False, "error_message": "Not found room."}, \
+					status=status.HTTP_404_NOT_FOUND)
 
-		return Response({"ok": True, \
-			"room": RoomSerializer(room).data}, \
-			status=status.HTTP_200_OK)
+		return Response({"ok": True, "room": RoomSerializer(room).data}, \
+				status=status.HTTP_200_OK)
 
 
 class ChatAPIView(APIView):
@@ -332,17 +303,15 @@ class ChatAPIView(APIView):
 		room = RoomService.filter(pk=pk)
 
 		if not room.exists():
-			return Response({"ok": False, \
-		    	"error_message": "Not found room."}, \
-				status=status.HTTP_404_NOT_FOUND)
+			return Response({"ok": False, "error_message": "Not found room."}, \
+					status=status.HTTP_404_NOT_FOUND)
 
 		room = room[0]
 		creator = RoomCreatorService.filter(pk=room.pk)
 
 		if not creator:
-			return Response({"ok": False, \
-		    	"error_message": "Not found room creator."}, \
-				status=status.HTTP_404_NOT_FOUND)
+			return Response({"ok": False, "error_message": "Not found room creator."}, \
+					status=status.HTTP_404_NOT_FOUND)
 
 		creator = creator[0].creator
 		is_creator = creator == request.user
@@ -358,9 +327,8 @@ class ChatAPIView(APIView):
 		room = RoomService.put(pk=pk, request=request)
 
 		if not room:
-			return Response({"ok": False, \
-		    	"error_message": "Not found room."}, \
-				status=status.HTTP_404_NOT_FOUND)
+			return Response({"ok": False, "error_message": "Not found room."}, \
+					status=status.HTTP_404_NOT_FOUND)
 
 		return Response({"ok": True}, status=status.HTTP_200_OK)
 
@@ -375,11 +343,9 @@ class MessagesAPIView(APIView):
 		messages = MessageService.filter(room_id=pk, loaded_messages=loaded_messages)
 
 		if not messages.exists():
-			return Response({"ok": False, \
-		    	"error_message": "Not found messages."}, \
-				status=status.HTTP_404_NOT_FOUND)
+			return Response({"ok": False, "error_message": "Not found messages."}, \
+					status=status.HTTP_404_NOT_FOUND)
 
-		return Response({	
-			"ok": True,
-			"messages": MessageSerializer(messages, many=True).data,
-		}, status=status.HTTP_200_OK)
+		return Response({"ok": True, \
+				"messages": MessageSerializer(messages, many=True).data}, \
+					status=status.HTTP_200_OK)

@@ -16,36 +16,36 @@ POST http://127.0.0.1:8000/auth/token/logout/
 
 from django.urls import path, include
 from .views import (
-    UserAPIView,
-    BlogAPIView,
-    NewsAPIView,
-    FindUserAPIView,
-    SubscriberAPIView,
-    FriendsAPIView,
-    RoomsAPIView,
-    ChatAPIView,
-    MessagesAPIView
+	UserAPIView,
+	BlogAPIView,
+	NewsAPIView,
+	FindUserAPIView,
+	SubscriberAPIView,
+	FriendsAPIView,
+	RoomsAPIView,
+	ChatAPIView,
+	MessagesAPIView
 )
 
 
 urlpatterns = [
-    path("auth/", include("djoser.urls")),
+	path("auth/", include("djoser.urls")),
 
-    path("user/<str:username>/", UserAPIView.as_view()),
+	path("user/<str:username>/", UserAPIView.as_view()),
 
-    path("blog/", BlogAPIView.as_view()),
-    path("blog/<int:pk>/", BlogAPIView.as_view()),
-    path("blog/<str:username>/<int:loaded_posts>/", BlogAPIView.as_view()),
+	path("blog/", BlogAPIView.as_view()),
+	path("blog/<int:pk>/", BlogAPIView.as_view()),
+	path("blog/<str:username>/<int:loaded_posts>/", BlogAPIView.as_view()),
 
-    path("news/<int:loaded_posts>/", NewsAPIView.as_view()),
+	path("news/<int:loaded_posts>/", NewsAPIView.as_view()),
 
-    path("find/", FindUserAPIView.as_view()),
+	path("find/", FindUserAPIView.as_view()),
 
-    path("subscriber/<int:pk>/", SubscriberAPIView.as_view()),
+	path("subscriber/<int:pk>/", SubscriberAPIView.as_view()),
 
-    path("friends/<str:option>/", FriendsAPIView.as_view()),
+	path("friends/<str:option>/", FriendsAPIView.as_view()),
 
-    path("room/", RoomsAPIView.as_view()),
-    path("room/<int:pk>/", ChatAPIView.as_view()),
-    path("room/<int:pk>/<int:loaded_messages>/", MessagesAPIView.as_view()),
+	path("room/", RoomsAPIView.as_view()),
+	path("room/<int:pk>/", ChatAPIView.as_view()),
+	path("room/<int:pk>/<int:loaded_messages>/", MessagesAPIView.as_view()),
 ]
