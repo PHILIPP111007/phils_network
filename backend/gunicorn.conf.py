@@ -15,6 +15,7 @@ pkill -f gunicorn
 """
 
 import os
+# import psutil
 import logging
 
 import django
@@ -27,26 +28,44 @@ from conf import (
 )
 
 from gunicorn.arbiter import Arbiter
+import signal
+
+from backend.workers import UvicornWorker
 
 
 Server: Arbiter | None = None
 
 
-def when_ready(server):
+def when_ready(server: Arbiter):
 	global Server
 
 	Server = server
 
-def on_reload(server):
+def on_reload(server: Arbiter):
 	global Server
+	print('on_reload')
+
+	print(server)
 
 	Server = server
 	# Server.manage_workers()
+
+	print(list(Server.WORKERS.items()))
 
 	# Server.reexec()
 	# Server.murder_workers()
 	# Server.reap_workers()
 	# Server.manage_workers()
+	
+	
+	# workers = list(Server.WORKERS.items())
+	# print(workers)
+
+	# for i in workers:
+	# 	pid = i[0]
+	# 	obj = i[1]
+	# 	print(pid)
+	# 	print(obj)
 
 def pre_fork(server, worker):
 	print('pre_fork')
@@ -54,8 +73,9 @@ def pre_fork(server, worker):
 def post_fork(server, worker):
 	print('post_fork')
 
+
 # TODO: gunicorn does not reboot uvicorn workers on file change
-def worker_int(worker): # Called just after a worker exited on SIGINT or SIGQUIT
+def worker_int(worker: UvicornWorker): # Called just after a worker exited on SIGINT or SIGQUIT
 	print('worker_int')
 
 	# print(type(worker)) # <class 'backend.workers.UvicornWorker'>
@@ -66,6 +86,7 @@ def worker_int(worker): # Called just after a worker exited on SIGINT or SIGQUIT
 	
 
 	# Server.reexec()
+	# Server.reload()
 	# os.system('pkill gunicorn')
 
 
@@ -81,12 +102,42 @@ def worker_int(worker): # Called just after a worker exited on SIGINT or SIGQUIT
 	# print(Server)
 
 	# workers = list(Server.WORKERS.items())
+	# print(Server.WORKERS)
 
 	# for i in workers:
 	# 	pid = i[0]
 	# 	obj = i[1]
 	# 	print(pid)
-	# 	print(obj.cfg)
+	# 	print(obj)
+	
+	# print(Server.WORKERS, Server.num_workers)
+	# Server.reexec()
+	# Server.stop()
+	# print(Server.WORKERS)
+
+
+
+	PROCNAME = "gunicorn"
+
+	with open('tmp/gunicorn.pid', 'r') as f:
+		pid = int(f.read())
+	
+	# os.kill(pid, signal.SIGQUIT)
+	print('12312312')
+	# os.system('./gunicorn_rc')
+
+	# os.kill()
+
+	# for proc in psutil.process_iter(attrs=['pid', 'name']):
+	# 	if PROCNAME in proc.info['name']:
+	# 		# proc.kill()
+	# 		print(proc)
+	# 	else:
+	# 		print(proc.name())
+
+
+
+
 
 def worker_abort(worker):
 	print('worker_abort')
