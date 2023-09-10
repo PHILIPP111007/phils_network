@@ -43,35 +43,41 @@ class UserService:
 		return User.objects.filter(username=username) \
 			.only("username", "first_name", "last_name")
 
-	# TODO: Change this weak method
 	@staticmethod
 	def filter_find(request: Request) -> QuerySet[User] | User | None:
 		"""Find users in the network."""
 
 		username: str | None = request.data.get("username", None)
-		find_users = None
+
 		if username:
-			find_users = User.objects.filter(username__icontains=username) \
-				.only("username", "first_name", "last_name")
+			query_full = User.objects.filter(username__icontains=username) \
+				.only("username", "first_name", "last_name") \
+					.exclude(pk=request.user.id)
+			return query_full
+
 		else:
-			query = "User.objects"
 			first_name: str | None = request.data.get("first_name", None)
 			last_name: str | None = request.data.get("last_name", None)
 
+			if not (first_name and last_name):
+				return
+
 			if first_name:
-				query += f".filter(first_name__icontains=\"{first_name}\")"
-
+				query_1 = User.objects.filter(first_name__icontains=first_name)
 			if last_name:
-				query += f".filter(last_name__icontains=\"{last_name}\")"
+				query_2 = User.objects.filter(last_name__icontains=last_name)
 
-			if query != "User.objects":
-				query += ".only(\"username\", \"first_name\", \"last_name\")"
-				find_users = eval(query)
+			if first_name and last_name:
+				query_full = query_1 & query_2
+			elif first_name:
+				query_full = query_1
+			elif last_name:
+				query_full = query_2
 
-		if find_users:
-			find_users = find_users.exclude(pk=request.user.id)
+			query_full = query_full.only("username", "first_name", "last_name") \
+				.exclude(pk=request.user.id)
 
-		return find_users
+			return query_full
 
 	@staticmethod
 	def put(user: User, request: Request) -> User:

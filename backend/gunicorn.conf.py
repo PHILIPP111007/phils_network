@@ -118,9 +118,9 @@ bind: str = os.environ.get("DJANGO_HOST", "0.0.0.0") + \
 # - reload when file has changed
 #
 
-preload_app = True
+preload_app: bool = True
 reload: bool = True
-reload_extra_files = make_reload_files_list()
+reload_extra_files: list[str] = make_reload_files_list()
 
 
 #

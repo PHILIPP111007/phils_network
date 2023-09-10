@@ -103,7 +103,7 @@ CHANNEL_LAYERS = {
 			"hosts": [
 				(
 					environ.get("CHANNEL_LAYERS_HOST", default="127.0.0.1"),
-	 				int(environ.get("CHANNEL_LAYERS_PORT", default="6379"))
+					int(environ.get("CHANNEL_LAYERS_PORT", default="6379"))
 				)
 			],
 		},
