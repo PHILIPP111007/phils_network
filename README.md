@@ -84,7 +84,7 @@ python manage.py runserver
 
 * Run backend app with `gunicorn`:
 ```sh
-gunicorn -c gunicorn.conf.py
+bash ./gunicorn_rc
 ```
 
 \
