@@ -8,30 +8,38 @@
 #################################################
 
 ### Gunicorn + Uvicorn workers run:
-gunicorn -c gunicorn.conf.py
+*	$ gunicorn -c gunicorn.conf.py
+
+or:
+
+*	$ bash ./gunicorn_rc
 
 ### Close gunicorn daemon:
-pkill -f gunicorn
+*	$ pkill -f gunicorn
 """
 
 import os
-# import psutil
-import logging
+import signal
 
-import django
 from django.conf import settings
 
-from conf import (
+from server_conf import (
 	read_and_set_env,
 	settings_and_django_setup,
-	get_workers_count
+	get_workers_count,
+	get_threads_count,
+	print_server_info,
+	make_reload_files_list
 )
 
 from gunicorn.arbiter import Arbiter
-import signal
 
 from backend.workers import UvicornWorker
 
+
+#####################
+# Gunicorn functions
+#####################
 
 Server: Arbiter | None = None
 
@@ -41,150 +49,26 @@ def when_ready(server: Arbiter):
 
 	Server = server
 
-def on_reload(server: Arbiter):
-	global Server
-	print('on_reload')
 
-	print(server)
-
-	Server = server
-	# Server.manage_workers()
-
-	print(list(Server.WORKERS.items()))
-
-	# Server.reexec()
-	# Server.murder_workers()
-	# Server.reap_workers()
-	# Server.manage_workers()
+# Called just after a worker exited on SIGINT or SIGQUIT
+# For example after file has changed
+def worker_int(worker: UvicornWorker):
+	# with open('tmp/gunicorn.pid', 'r') as f:
+	# 	pid = int(f.read())
 	
-	
-	# workers = list(Server.WORKERS.items())
-	# print(workers)
-
-	# for i in workers:
-	# 	pid = i[0]
-	# 	obj = i[1]
-	# 	print(pid)
-	# 	print(obj)
-
-def pre_fork(server, worker):
-	print('pre_fork')
-
-def post_fork(server, worker):
-	print('post_fork')
-
-
-# TODO: gunicorn does not reboot uvicorn workers on file change
-def worker_int(worker: UvicornWorker): # Called just after a worker exited on SIGINT or SIGQUIT
-	print('worker_int')
-
-	# print(type(worker)) # <class 'backend.workers.UvicornWorker'>
-	# os.system('sudo kill -SIGHUP')
-
-	# Server.murder_workers()
-	# Server.reap_workers()
-	
-
-	# Server.reexec()
-	# Server.reload()
-	# os.system('pkill gunicorn')
-
-
-	# Server.murder_workers()
-	# Server.stop()
-	# os.system('gunicorn -c gunicorn.conf.py')
-	# Server.manage_workers()
-
-	# print(Server.cfg.workers)
-
-	# w = Server.WORKERS # {18106: <backend.workers.UvicornWorker object at 0x1093f9010>}
-
-	# print(Server)
-
-	# workers = list(Server.WORKERS.items())
-	# print(Server.WORKERS)
-
-	# for i in workers:
-	# 	pid = i[0]
-	# 	obj = i[1]
-	# 	print(pid)
-	# 	print(obj)
-	
-	# print(Server.WORKERS, Server.num_workers)
-	# Server.reexec()
-	# Server.stop()
-	# print(Server.WORKERS)
-
-
-
-	PROCNAME = "gunicorn"
-
-	with open('tmp/gunicorn.pid', 'r') as f:
-		pid = int(f.read())
-	
+	# # Need some time to quit
 	# os.kill(pid, signal.SIGQUIT)
-	print('12312312')
-	# os.system('./gunicorn_rc')
 
-	# os.kill()
+	# while True:
+	# 	exit_code = os.system('bash ./gunicorn_rc')
+	# 	if exit_code == 0:
+	# 		break
 
-	# for proc in psutil.process_iter(attrs=['pid', 'name']):
-	# 	if PROCNAME in proc.info['name']:
-	# 		# proc.kill()
-	# 		print(proc)
-	# 	else:
-	# 		print(proc.name())
-
-
-
-
-
-def worker_abort(worker):
-	print('worker_abort')
-
-def child_exit(server, worker):
-	print('child_exit')
-
-
-def print_server_info():
-	"""Print server info. Called when gunicorn is starting."""
-
-	url: str = os.environ.get("DJANGO_HOST", "") + ":" + os.environ.get("DJANGO_PORT", "")
-
-	server: str = f"Starting ASGI/Gunicorn development server at {url}"
-	app_ver: str = os.environ.get("version", "undefined")
-	django_ver: str = f"Django version {django.get_version()}, using settings 'backend.settings'"
-	workers_count: str = f"Workers count: {get_workers_count()}."
-	quit_server: str = "Quit the server with "
-
-	if settings.DEBUG:
-		other = "DEBUG: True. Gunicorn daemon: OFF. Logging: console, tmp/server_debug.log"
-		quit_server += "CONTROL-C."
-	else:
-		other = "DEBUG: False. Gunicorn daemon: ON. Logging: console, tmp/server_prod.log"
-		quit_server += "`pkill -f gunicorn`."
-
-	info: str = f"\n\nApp version {app_ver}\n{django_ver}\n{server}\n{other}\n{workers_count}\n{quit_server}\n"
-	mouse_logger = logging.getLogger("Mouse")
-	
-	print(info)
-	mouse_logger.info(info)
-
-
-def add_to_reload_list(path) -> None:
-	"""Add to `reload_extra_files` recursively files.py"""
-
-	for name in os.listdir(path):
-		name = os.path.join(path, name)
-		if os.path.isfile(name):
-			if name.endswith('.py'):
-				reload_extra_files.append(name)
-		else:
-			add_to_reload_list(name)
+	Server.kill_worker(worker.pid, signal.SIGTERM)
 
 
 ##########################
-# Setting env and django #
+# Setting env and django
 ##########################
 
 read_and_set_env()
@@ -192,7 +76,7 @@ settings_and_django_setup()
 
 
 #####################
-# Gunicorn settings #
+# Gunicorn settings
 #####################
 
 command: str = "venv/bin/gunicorn"
@@ -231,25 +115,27 @@ bind: str = os.environ.get("DJANGO_HOST", "0.0.0.0") + \
 
 #
 # Reloading
+# - reload when file has changed
 #
 
-# TODO: reloading does not work with uvicorn workers 
-reload: bool = True  # reload when file changes
-reload_extra_files = []
-add_to_reload_list(settings.BASE_DIR)
+preload_app = True
+reload: bool = True
+reload_extra_files = make_reload_files_list()
 
 
 #
 # Worker processes
 #
 # Custom uvicorn worker.
-# See `backend/workers.py`
+#  - see `backend/workers.py`
 
 worker_class: str = "backend.workers.UvicornWorker"
 worker_connections: int = 1000
 max_requests: int = 1000
 timeout: int = 30
+
 workers: int = get_workers_count()
+threads: int = 1 # get_threads_count()
 
 
 #
@@ -259,6 +145,13 @@ workers: int = get_workers_count()
 #       terminal with a standard fork/fork sequence.
 #
 #       True or False
+#
+# Load application code before the worker processes are forked.
+#
+# By preloading an application you can save some RAM resources 
+# as well as speed up server boot times. Although, if you defer 
+# application loading to each worker process, you can reload your 
+# application code easily by restarting workers.
 #
 
 daemon: bool = False if settings.DEBUG else True
@@ -272,4 +165,4 @@ daemon: bool = False if settings.DEBUG else True
 
 print_config: bool = False
 
-print_server_info()
+print_server_info(workers_count=workers, threads_count=threads)

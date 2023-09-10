@@ -4,6 +4,8 @@
 
 PID=$PWD/tmp/gunicorn.pid
 
+source venv/bin/activate
+
 if [ -f $PID ]; then rm $PID; fi
 
 gunicorn -c $PWD/gunicorn.conf.py --pid=$PID

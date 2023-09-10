@@ -7,6 +7,8 @@ class UvicornWorker(BaseUvicornWorker):
 		"loop": "auto",
 		"http": "auto",
 		"lifespan": "off",
-		"app": "backend.asgi",
-		"reload": True,
+
+		# Optional:
+		# "app": "backend.asgi",
+		# "reload": True,
 	}

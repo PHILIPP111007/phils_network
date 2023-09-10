@@ -3,7 +3,7 @@
 import os
 import sys
 
-from conf import read_and_set_env
+from server_conf import read_and_set_env
 
 
 def main() -> None:
