@@ -7,9 +7,9 @@ Minimalistic social network written using Django and React.
 
 2. Dark theme.
 
-3. Lazy loading of pages, posts and messages.
+3. You can create a conversation and chat with friends.
 
-4. You can create a conversation and chat with friends.
+4. Lazy loading of pages, posts and messages.
 
 \
 Have fun and if you want please leave feedback!
@@ -48,16 +48,6 @@ First of all you need to run Postgres server. Then go to backend directory.
 cd backend
 ```
 
-Run `setup.sh` script to create venv, DB migrations, superuser and collect static files.
-```sh
-bash setup.sh
-```
-
-Activate python virtual enviroment.
-```sh
-source venv/bin/activate
-```
-
 Install redis.
 ```sh
 brew install redis
@@ -66,6 +56,16 @@ brew install redis
 Run redis server in the new terminal window (to run the chat).
 ```sh
 redis-server
+```
+
+Run `setup.sh` script to create venv, DB migrations, superuser and collect static files.
+```sh
+bash setup.sh
+```
+
+Activate python virtual enviroment.
+```sh
+source venv/bin/activate
 ```
 
 If you want to test data base, run:

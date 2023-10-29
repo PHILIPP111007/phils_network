@@ -32,7 +32,6 @@ DJANGO_APPS: list[str] = [
 ]
 
 THIRD_PARTY_APPS: list[str] = [
-
 	# Servers
 	"daphne",
 	"gunicorn",
@@ -96,18 +95,26 @@ TEMPLATES: list[dict] = [
 
 WSGI_APPLICATION: str = "backend.wsgi.application"
 ASGI_APPLICATION: str = "backend.asgi.application"
+
+#! If you need to use Redis:
+#
+# CHANNEL_LAYERS = {
+# 	"default": {
+# 		"BACKEND": "channels_redis.core.RedisChannelLayer",
+# 		"CONFIG": {
+# 			"hosts": [
+# 				(
+# 					environ.get("CHANNEL_LAYERS_HOST", default="127.0.0.1"),
+# 					int(environ.get("CHANNEL_LAYERS_PORT", default="6379"))
+# 				)
+# 			],
+# 		},
+# 	},
+# }
 CHANNEL_LAYERS = {
-	"default": {
-		"BACKEND": "channels_redis.core.RedisChannelLayer",
-		"CONFIG": {
-			"hosts": [
-				(
-					environ.get("CHANNEL_LAYERS_HOST", default="127.0.0.1"),
-					int(environ.get("CHANNEL_LAYERS_PORT", default="6379"))
-				)
-			],
-		},
-	},
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
 }
 
 

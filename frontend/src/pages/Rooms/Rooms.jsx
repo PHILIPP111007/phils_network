@@ -1,19 +1,25 @@
 import "./styles/Rooms.css"
 import { useContext, useEffect, useState } from "react"
-import { UserContext } from "../../data/context"
+import { UserContext, AuthContext } from "../../data/context"
+import { useParams } from "react-router-dom"
 import Fetch from "../../API/Fetch"
 import ModalRoomCreate from "./components/modals/ModalRoomCreate"
 import RoomCard from "./components/RoomCard"
 import MainComponents from "../components/MainComponents/MainComponents"
 import Modal from "../components/Modal"
+import ScrollToTopOrBottom from "../components/MainComponents/components/ScrollToTopOrBottom"
 import Button from "../components/UI/Button"
 
 export default function Rooms() {
 
-    const { user } = useContext(UserContext)
+    const { setIsAuth } = useContext(AuthContext)
+    const { user, setUser } = useContext(UserContext)
     const [rooms, setRooms] = useState([])
     const [modalRoomCreate, setModalRoomCreate] = useState(false)
     const [loading, setLoading] = useState(true)
+    const params = useParams()
+
+    localStorage.setItem("path", "/chats/")
 
     async function createRoom(room) {
         room.subscribers.push(user.pk)
@@ -36,9 +42,25 @@ export default function Rooms() {
             })
     }, [])
 
+    useEffect(() => {
+        const token = localStorage.getItem("token")
+        if (token === null) {
+            setIsAuth(false)
+        }
+
+        Fetch({ action: `api/user/${params.username}/`, method: "GET" })
+            .then((data) => {
+                if (data && data.global_user) {
+                    setUser(data.global_user)
+                }
+            })
+    }, [params.username])
+
     return (
         <div className="Rooms">
             <MainComponents user={user} loading={loading} />
+
+            <ScrollToTopOrBottom bottom={false} />
 
             <Modal modal={modalRoomCreate} setModal={setModalRoomCreate}>
                 <ModalRoomCreate createRoom={createRoom} />

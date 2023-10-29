@@ -1,19 +1,25 @@
 import "../styles/Posts.css"
-import { useState, useContext } from "react"
+import { useState, useContext, useEffect } from "react"
 import { useInView } from "react-intersection-observer"
-import { UserContext } from "../data/context"
+import { UserContext, AuthContext } from "../data/context"
+import { useParams } from "react-router-dom"
 import useObserver from "../hooks/useObserver"
 import Fetch from "../API/Fetch"
 import MainComponents from "./components/MainComponents/MainComponents"
 import Post from "./components/Post"
 import LazyDiv from "./components/LazyDiv"
+import ScrollToTopOrBottom from "./components/MainComponents/components/ScrollToTopOrBottom"
 
 export default function News() {
 
-    const { user } = useContext(UserContext)
+    const { setIsAuth } = useContext(AuthContext)
+    const { user, setUser } = useContext(UserContext)
     const [posts, setPosts] = useState([])
     const [loading, setLoading] = useState(true)
     const [ref, inView] = useInView()
+    const params = useParams()
+
+    localStorage.setItem("path", "/news/")
 
     async function fetchAddPosts() {
         setLoading(true)
@@ -29,9 +35,25 @@ export default function News() {
 
     useObserver({ inView: inView, func: fetchAddPosts })
 
+    useEffect(() => {
+        const token = localStorage.getItem("token")
+        if (token === null) {
+            setIsAuth(false)
+        }
+
+        Fetch({ action: `api/user/${params.username}/`, method: "GET" })
+            .then((data) => {
+                if (data && data.global_user) {
+                    setUser(data.global_user)
+                }
+            })
+    }, [params.username])
+
     return (
         <div className="News">
             <MainComponents user={user} loading={loading} />
+
+            <ScrollToTopOrBottom bottom={false} />
 
             <div className="Posts">
                 {posts.map((post) =>

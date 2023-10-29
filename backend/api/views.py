@@ -102,7 +102,7 @@ class BlogAPIView(APIView):
 			return Response({"ok": False, "error_message": "Not found user."}, \
 						status=status.HTTP_404_NOT_FOUND)
 
-		unknown_id: int = unknown[0].id
+		unknown_id: int = unknown[0].pk
 
 		if request.user.id != unknown_id:
 			data = SubscriberService.get_user_status(request=request, pk=unknown_id)

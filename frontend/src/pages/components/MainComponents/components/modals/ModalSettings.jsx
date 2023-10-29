@@ -55,7 +55,7 @@ export default function ModalSettings(props) {
                 <Input
                     type="reset"
                     value="reset"
-                    onClick={() => setUserNew({})}
+                    onClick={() => setUserNew({ ...user })}
                 />
             </form>
 

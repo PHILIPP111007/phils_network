@@ -8,6 +8,7 @@ import Fetch from "../../API/Fetch"
 import MainComponents from "../components/MainComponents/MainComponents"
 import Modal from "../components/Modal"
 import LazyDiv from "../components/LazyDiv"
+import ScrollToTopOrBottom from "../components/MainComponents/components/ScrollToTopOrBottom"
 import ModalRoomEdit from "./components/modals/ModalRoomEdit"
 import Message from "./components/Message"
 import sendIcon from "../../images/send-icon.svg"
@@ -141,6 +142,7 @@ export default function Chat() {
             if (data) {
                 setMessages([...messages, data.message])
             }
+            scrollToBottom()
         }
     }, [messages])
 
@@ -155,6 +157,8 @@ export default function Chat() {
     return (
         <div className="Chat">
             <MainComponents user={user} roomName={mainSets.room.name} loading={mainSets.loading} />
+
+            <ScrollToTopOrBottom bottom={true} />
 
             <Modal modal={modalRoomEdit} setModal={setModalRoomEdit}>
                 <ModalRoomEdit mainSets={mainSets} setMainSets={setMainSets} me={user} editRoom={editRoom} />

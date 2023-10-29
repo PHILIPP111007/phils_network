@@ -7,6 +7,7 @@ import MainComponents from "./components/MainComponents/MainComponents"
 import FriendCard from "./components/FriendCard"
 import FriendsNavBar from "./components/FriendsNavBar"
 import FindUser from "./components/FindUser"
+import ScrollToTopOrBottom from "./components/MainComponents/components/ScrollToTopOrBottom"
 
 export default function SubscriptionsSection() {
 
@@ -27,6 +28,8 @@ export default function SubscriptionsSection() {
     return (
         <div className="Friends">
             <MainComponents user={user} loading={loading} />
+
+            <ScrollToTopOrBottom bottom={false} />
 
             <FriendsNavBar />
 

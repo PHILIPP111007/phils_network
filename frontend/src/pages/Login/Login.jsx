@@ -19,7 +19,14 @@ export default function Login() {
         if (data && !data.detail && data.username) {
             setUser({ ...user, ...data })
             setIsAuth(true)
-            navigate(`/user/${data.username}/`)
+
+            let path
+            if (localStorage.getItem("path") !== null) {
+                path = `${localStorage.getItem("path")}${data.username}`
+            } else {
+                path = `/user/${data.username}`
+            }
+            navigate(path)
         }
     }
 

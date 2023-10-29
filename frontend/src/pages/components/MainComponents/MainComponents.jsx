@@ -5,7 +5,6 @@ import UpperLine from "./components/UpperLine"
 import ModalSettings from "./components/modals/ModalSettings"
 import ModalDelAcc from "./components/modals/ModalDelAcc"
 import NavBar from "./components/NavBar"
-import ScrollToTop from "./components/ScrollToTop"
 
 export default function MainComponents(props) {
 
@@ -28,8 +27,6 @@ export default function MainComponents(props) {
             <Modal modal={modalDelAcc} setModal={setModalDelAcc}>
                 <ModalDelAcc />
             </Modal>
-
-            <ScrollToTop />
         </div>
     )
 }

@@ -13,6 +13,7 @@ import MainComponents from "../components/MainComponents/MainComponents"
 import Post from "../components/Post"
 import UserStatus from "../components/UserStatus"
 import LazyDiv from "../components/LazyDiv"
+import ScrollToTopOrBottom from "../components/MainComponents/components/ScrollToTopOrBottom"
 import plusIcon from "../../images/plus-icon.svg"
 
 export default function User() {
@@ -35,9 +36,11 @@ export default function User() {
         loading: true,
     })
 
+    localStorage.setItem("path", "/user/")
+
     async function getPosts(postsLength) {
         setMainSets({ ...mainSets, loading: true })
-        
+
         if (postsLength === undefined) {
             postsLength = posts.length
         }
@@ -61,16 +64,17 @@ export default function User() {
     }
 
     async function createPost(text) {
-        setMainSets({ ...mainSets, text: "" })
+        setMainSets({ ...mainSets, text: "" });
         setModalPostCreate(false)
-        const newPost = {
+        let newPost = {
             user: user.pk,
             content: text,
-        }
+        };
 
         const data = await Fetch({ action: "api/blog/", method: "POST", body: newPost })
         if (data && data.ok) {
-            setPosts([data.post, ...posts])
+            newPost = { ...data.post, postLen500: data.post.content.length > 500, btnFlag: true }
+            setPosts([newPost, ...posts])
         }
     }
 
@@ -94,18 +98,16 @@ export default function User() {
 
     function showPosts() {
         if (posts && (isUserGlobal || status === "is_my_friend")) {
-            return posts.map((post) =>
-                <Post
-                    key={post.id}
-                    post={post}
-                    linkShow={false}
-                    settings={isUserGlobal}
-                    posts={posts}
-                    setPosts={setPosts}
-                    mainSets={mainSets}
-                    setMainSets={setMainSets}
-                    setModalPost={setModalPostEdit}
-                />
+            return posts.map((post) => <Post
+                key={post.id}
+                post={post}
+                linkShow={false}
+                settings={isUserGlobal}
+                posts={posts}
+                setPosts={setPosts}
+                mainSets={mainSets}
+                setMainSets={setMainSets}
+                setModalPost={setModalPostEdit} />
             )
         }
     }
@@ -128,7 +130,6 @@ export default function User() {
 
         setPosts([])
         getPosts(0)
-
     }, [params.username])
 
     useObserver({ inView: inView, func: getPosts })
@@ -136,6 +137,8 @@ export default function User() {
     return (
         <div className="User">
             <MainComponents user={user} loading={mainSets.loading} />
+
+            <ScrollToTopOrBottom bottom={false} />
 
             <Modal modal={modalPostEdit} setModal={setModalPostEdit}>
                 <ModalPostEdit mainSets={mainSets} setMainSets={setMainSets} editPost={editPost} deletePost={deletePost} />
@@ -149,8 +152,7 @@ export default function User() {
                 <div className="UserBtns">
                     {!isUserGlobal
                         &&
-                        <UserStatus pk={userLocal.pk} status={status} setStatus={setStatus} />
-                    }
+                        <UserStatus pk={userLocal.pk} status={status} setStatus={setStatus} />}
                 </div>
             </div>
 
@@ -162,8 +164,7 @@ export default function User() {
                 &&
                 <div className="PostCreate">
                     <img src={plusIcon} onClick={() => setModalPostCreate(true)} alt="menu logo" />
-                </div>
-            }
+                </div>}
 
             <div className="Posts">
                 {showPosts()}
@@ -171,5 +172,5 @@ export default function User() {
 
             <LazyDiv Ref={ref} />
         </div>
-    )
+    );
 }
