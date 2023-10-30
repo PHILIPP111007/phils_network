@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState } from "react"
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import { AuthContext, UserContext, ThemeContext } from "./data/context"
 import { PrivateRoutes, PublicRoutes } from "./data/routes"
+import { useAuth } from "./hooks/useAuth"
 import SuspenseLoading from "./pages/components/SuspenseLoading"
 import Error from "./pages/Error/Error"
 
@@ -24,13 +25,7 @@ export default function App() {
         }
     }, [theme])
 
-    useEffect(() => {
-        const token = localStorage.getItem("token")
-        if (token === null) {
-            setIsAuth(false)
-        }
-        setIsAuth(true)
-    }, [user.username])
+    useAuth({ username: user.username, setIsAuth: setIsAuth })
 
     return (
         <AuthContext.Provider value={{ isAuth, setIsAuth }}>
@@ -59,7 +54,6 @@ export default function App() {
                                             exact
                                         />
                                     )}
-
                                     <Route path="*" element={<Error />} />
                                 </Routes>
                             </Suspense>

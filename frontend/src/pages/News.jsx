@@ -1,8 +1,9 @@
 import "../styles/Posts.css"
-import { useState, useContext, useEffect } from "react"
+import { useState, useContext } from "react"
 import { useInView } from "react-intersection-observer"
 import { UserContext, AuthContext } from "../data/context"
 import { useParams } from "react-router-dom"
+import { useAuth, useSetUser } from "../hooks/useAuth"
 import useObserver from "../hooks/useObserver"
 import Fetch from "../API/Fetch"
 import MainComponents from "./components/MainComponents/MainComponents"
@@ -35,19 +36,9 @@ export default function News() {
 
     useObserver({ inView: inView, func: fetchAddPosts })
 
-    useEffect(() => {
-        const token = localStorage.getItem("token")
-        if (token === null) {
-            setIsAuth(false)
-        }
+    useAuth({ username: params.username, setIsAuth: setIsAuth })
 
-        Fetch({ action: `api/user/${params.username}/`, method: "GET" })
-            .then((data) => {
-                if (data && data.global_user) {
-                    setUser(data.global_user)
-                }
-            })
-    }, [params.username])
+    useSetUser({ username: params.username, setUser: setUser })
 
     return (
         <div className="News">

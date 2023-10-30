@@ -113,9 +113,7 @@ export default function Chat() {
 
     useEffect(() => {
         const socket = new WebSocket(
-            "ws://"
-            + process.env.REACT_APP_SERVER_WEBSOCKET_URL
-            + "/ws/chat/"
+            process.env.REACT_APP_SERVER_WEBSOCKET_URL
             + params.room_id
             + "/"
         )

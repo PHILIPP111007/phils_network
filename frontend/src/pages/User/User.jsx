@@ -4,6 +4,7 @@ import { useContext, useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { useInView } from "react-intersection-observer"
 import { UserContext, AuthContext } from "../../data/context"
+import { useAuth, useSetUser } from "../../hooks/useAuth"
 import useObserver from "../../hooks/useObserver"
 import Fetch from "../../API/Fetch"
 import Modal from "../components/Modal"
@@ -98,39 +99,31 @@ export default function User() {
 
     function showPosts() {
         if (posts && (isUserGlobal || status === "is_my_friend")) {
-            return posts.map((post) => <Post
-                key={post.id}
-                post={post}
-                linkShow={false}
-                settings={isUserGlobal}
-                posts={posts}
-                setPosts={setPosts}
-                mainSets={mainSets}
-                setMainSets={setMainSets}
-                setModalPost={setModalPostEdit} />
+            return posts.map((post) =>
+                <Post
+                    key={post.id}
+                    post={post}
+                    linkShow={false}
+                    settings={isUserGlobal}
+                    posts={posts}
+                    setPosts={setPosts}
+                    mainSets={mainSets}
+                    setMainSets={setMainSets}
+                    setModalPost={setModalPostEdit}
+                />
             )
         }
     }
 
     useEffect(() => {
-        const token = localStorage.getItem("token")
-        if (token === null) {
-            setIsAuth(false)
-        }
-
-        Fetch({ action: `api/user/${params.username}/`, method: "GET" })
-            .then((data) => {
-                if (data && data.global_user) {
-                    setUser(data.global_user)
-                    if (data.local_user) {
-                        setUserLocal(data.local_user)
-                    }
-                }
-            })
-
         setPosts([])
         getPosts(0)
     }, [params.username])
+
+
+    useAuth({ username: params.username, setIsAuth: setIsAuth })
+
+    useSetUser({ username: params.username, setUser: setUser, setUserLocal: setUserLocal })
 
     useObserver({ inView: inView, func: getPosts })
 

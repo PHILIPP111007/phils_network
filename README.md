@@ -105,7 +105,7 @@ npm install
 ```
 
 \
-By default, django server runs on the 0.0.0.0 host and 8000 port (see `/phils_network/backend/.env.toml` file). So make sure that SERVER_HOST variable in the `/phils_network/frontend/.env` file is similar to your server IP.
+By default, django server runs on the 0.0.0.0 host and 8000 port (see `/phils_network/backend/.env.toml` file). So make sure that SERVER_HOST and SERVER_PORT variables in the `/phils_network/frontend/.env` file are similar to your backend.
 
 Create production frontend app.
 ```sh

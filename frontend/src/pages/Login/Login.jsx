@@ -22,9 +22,9 @@ export default function Login() {
 
             let path
             if (localStorage.getItem("path") !== null) {
-                path = `${localStorage.getItem("path")}${data.username}`
+                path = `${localStorage.getItem("path")}${data.username}/`
             } else {
-                path = `/user/${data.username}`
+                path = `/user/${data.username}/`
             }
             navigate(path)
         }

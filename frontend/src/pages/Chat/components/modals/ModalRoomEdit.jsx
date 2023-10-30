@@ -104,6 +104,8 @@ export default function ModalRoomEdit({ mainSets, setMainSets, me, editRoom }) {
 
     return (
         <div className="ModalRoomEdit">
+            <h3>{mainSets.room.name}</h3>
+            <br />
             <Button onClick={() => editRoom()} >edit</Button>
             <br />
             <br />
@@ -112,14 +114,14 @@ export default function ModalRoomEdit({ mainSets, setMainSets, me, editRoom }) {
 
             {mainSets.isCreator === true && mainSets.invitationChanges.friends.length > 0
                 &&
-                <div>
+                <>
                     <br />
                     <hr />
                     <br />
-                    <h3>friends</h3>
+                    <h3>invite friends</h3>
                     {friendsShow()}
                     {loading && <Loading />}
-                </div>
+                </>
             }
         </div>
     )
