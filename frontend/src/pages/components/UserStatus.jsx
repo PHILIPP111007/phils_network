@@ -1,5 +1,6 @@
 import "./styles/UserStatus.css"
 import { useEffect } from "react"
+import { UserStatusEnum } from "../../data/userStatus"
 import Fetch from "../../API/Fetch"
 import Button from "./UI/Button"
 import Subscribe from "../../hooks/Subscribe"
@@ -16,7 +17,7 @@ export default function UserStatus(props) {
     }, [props.status])
 
     switch (props.status) {
-        case "is_my_friend":
+        case UserStatusEnum.IS_FRIEND:
             return (
                 <div className="UserStatus" >
                     <Button onClick={() => {
@@ -28,7 +29,7 @@ export default function UserStatus(props) {
                     } >delete friend</Button>
                 </div>
             )
-        case "i_am_subscriber":
+        case UserStatusEnum.ME_SUBSCRIBER:
             return (
                 <div className="UserStatus" >
                     <Button onClick={() => {
@@ -40,7 +41,7 @@ export default function UserStatus(props) {
                     } >delete subscription</Button>
                 </div>
             )
-        case "he_is_subscriber":
+        case UserStatusEnum.HE_SUBSCRIBER:
             return (
                 <div className="UserStatus" >
                     <Button onClick={() => {
@@ -60,7 +61,7 @@ export default function UserStatus(props) {
                     } >add</Button>
                 </div>
             )
-        case "no_data":
+        case UserStatusEnum.NO_DATA:
             return (
                 <div className="UserStatus" >
                     <Button onClick={() => {

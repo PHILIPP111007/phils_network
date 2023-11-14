@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom"
 import { useInView } from "react-intersection-observer"
 import { UserContext, AuthContext } from "../../data/context"
 import { useAuth, useSetUser } from "../../hooks/useAuth"
+import { UserStatusEnum } from "../../data/userStatus"
 import useObserver from "../../hooks/useObserver"
 import Fetch from "../../API/Fetch"
 import Modal from "../components/Modal"
@@ -98,7 +99,7 @@ export default function User() {
     }
 
     function showPosts() {
-        if (posts && (isUserGlobal || status === "is_my_friend")) {
+        if (posts && (isUserGlobal || status === UserStatusEnum.IS_FRIEND)) {
             return posts.map((post) =>
                 <Post
                     key={post.id}

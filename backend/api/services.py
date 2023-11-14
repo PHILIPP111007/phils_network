@@ -20,10 +20,10 @@ from .models import Subscriber, Blog, RoomCreator, Room, Message
 class SubscriberStatus(enum.Enum):
 	"""Implements subscriber status."""
 
-	IS_FRIEND = "is_my_friend"
-	ME_SUBSCRIBER = "i_am_subscriber"
-	HE_SUBSCRIBER = "he_is_subscriber"
-	NO_DATA = "no_data"
+	IS_FRIEND = 1
+	ME_SUBSCRIBER = 2
+	HE_SUBSCRIBER = 3
+	NO_DATA = 4
 
 
 class UserService:
