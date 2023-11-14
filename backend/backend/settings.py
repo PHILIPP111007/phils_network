@@ -36,13 +36,11 @@ THIRD_PARTY_APPS: list[str] = [
 	"daphne",
 	"gunicorn",
 	"uvicorn",
-
 	# REST API
 	"corsheaders",
 	"rest_framework",
 	"rest_framework.authtoken",
 	"djoser",
-
 	"debug_toolbar",
 ]
 
@@ -64,13 +62,15 @@ DJANGO_MIDDLEWARE: list[str] = [
 ]
 
 THIRD_PARTY_MIDDLEWARE: list[str] = [
-	"corsheaders.middleware.CorsMiddleware", # for working Django REST
-	"whitenoise.middleware.WhiteNoiseMiddleware", # for servers to work with static files
+	"corsheaders.middleware.CorsMiddleware",  # for working Django REST
+	"whitenoise.middleware.WhiteNoiseMiddleware",  # for servers to work with static files
 	"debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 # DEBUG TOOLBAR
-INTERNAL_IPS: list[str] = environ.get("DEBUG_TOOLBAR_INTERNAL_IPS", default="127.0.0.1").split(",")
+INTERNAL_IPS: list[str] = environ.get(
+	"DEBUG_TOOLBAR_INTERNAL_IPS", default="127.0.0.1"
+).split(",")
 
 MIDDLEWARE = DJANGO_MIDDLEWARE + THIRD_PARTY_MIDDLEWARE
 
@@ -80,7 +80,7 @@ ROOT_URLCONF: str = "backend.urls"
 TEMPLATES: list[dict] = [
 	{
 		"BACKEND": "django.template.backends.django.DjangoTemplates",
-		"DIRS": [ BASE_DIR / "backend/templates" ],
+		"DIRS": [BASE_DIR / "backend/templates"],
 		"APP_DIRS": True,
 		"OPTIONS": {
 			"context_processors": [
@@ -111,11 +111,7 @@ ASGI_APPLICATION: str = "backend.asgi.application"
 # 		},
 # 	},
 # }
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer"
-    }
-}
+CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
 
 
 # Database
@@ -171,9 +167,7 @@ STATIC_URL: str = "static/"
 STATIC_ROOT: str = "static"
 
 
-STATICFILES_DIRS: list[Path] = [
-	BASE_DIR / "backend/static"
-]
+STATICFILES_DIRS: list[Path] = [BASE_DIR / "backend/static"]
 
 
 # Default primary key field type
@@ -195,7 +189,6 @@ REST_FRAMEWORK: dict[str, list[str]] = {
 	"DEFAULT_RENDERER_CLASSES": [
 		"rest_framework.renderers.JSONRenderer",
 	],
-
 	"DEFAULT_AUTHENTICATION_CLASSES": [
 		"rest_framework.authentication.BasicAuthentication",
 		"rest_framework.authentication.SessionAuthentication",
@@ -204,15 +197,16 @@ REST_FRAMEWORK: dict[str, list[str]] = {
 }
 
 if DEBUG:
-	REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] \
-		.append("rest_framework.renderers.BrowsableAPIRenderer")
+	REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"].append(
+		"rest_framework.renderers.BrowsableAPIRenderer"
+	)
 
 
 # DJOSER settings
 
 DJOSER: dict[str, str] = {
-   "USER_ID_FIELD": "pk",
-   "LOGIN_FIELD": "username",
+	"USER_ID_FIELD": "pk",
+	"LOGIN_FIELD": "username",
 }
 
 
@@ -242,7 +236,7 @@ LOGGING = {
 	},
 	"loggers": {
 		"Mouse": {
-			"handlers": ["File"], 
+			"handlers": ["File"],
 			"level": "DEBUG",
 			"propagate": True,
 		},
@@ -250,57 +244,63 @@ LOGGING = {
 }
 
 if DEBUG:
-
 	log_file = BASE_DIR / "tmp/server_debug.log"
 
-	LOGGING["handlers"].update({
-		"File": {
-			"level": "INFO",
-			"class": "logging.FileHandler",
-			"formatter": "simple",
-			"filename": log_file,
-		},
-		"Main": {
-			"level": "DEBUG",
-			"class": "logging.handlers.RotatingFileHandler",
-			"formatter": "verbose",
-			"filename": log_file,
-		},
-	})
+	LOGGING["handlers"].update(
+		{
+			"File": {
+				"level": "INFO",
+				"class": "logging.FileHandler",
+				"formatter": "simple",
+				"filename": log_file,
+			},
+			"Main": {
+				"level": "DEBUG",
+				"class": "logging.handlers.RotatingFileHandler",
+				"formatter": "verbose",
+				"filename": log_file,
+			},
+		}
+	)
 
-	LOGGING["loggers"].update({
-		"Django": {
-			"level": "DEBUG",
-			"handlers": ["Console", "Main"],
-			"propagate": True,
-		},
-	})
+	LOGGING["loggers"].update(
+		{
+			"Django": {
+				"level": "DEBUG",
+				"handlers": ["Console", "Main"],
+				"propagate": True,
+			},
+		}
+	)
 else:
-
 	log_file = BASE_DIR / "tmp/server_prod.log"
 
-	LOGGING["handlers"].update({
-		"File": {
-			"level": "INFO",
-			"class": "logging.FileHandler",
-			"formatter": "simple",
-			"filename": log_file,
-		},
-		"Main": {
-			"level": "ERROR",
-			"class": "logging.handlers.RotatingFileHandler",
-			"formatter": "verbose",
-			"filename": log_file,
-		},
-	})
+	LOGGING["handlers"].update(
+		{
+			"File": {
+				"level": "INFO",
+				"class": "logging.FileHandler",
+				"formatter": "simple",
+				"filename": log_file,
+			},
+			"Main": {
+				"level": "ERROR",
+				"class": "logging.handlers.RotatingFileHandler",
+				"formatter": "verbose",
+				"filename": log_file,
+			},
+		}
+	)
 
-	LOGGING["loggers"].update({
-		"Django": {
-			"level": "ERROR",
-			"handlers": ["Main"],
-			"propagate": True,
-		},
-	})
+	LOGGING["loggers"].update(
+		{
+			"Django": {
+				"level": "ERROR",
+				"handlers": ["Main"],
+				"propagate": True,
+			},
+		}
+	)
 
 
 # Lazy loading settings

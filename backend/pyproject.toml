@@ -32,11 +32,15 @@
 	line-length = 88
 	indent-width = 4
 
-	# Assume Python 3.11
-	target-version = "py311"
+	# Assume Python 3.12
+	target-version = "py312"
 
-	# Allow fix for all enabled rules (when `--fix`) is provided.
-	fixable = ["ALL"]
+	# Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default. 
+	select = ["E", "F"] 
+	ignore = ["F403"] 
+	
+	# Allow autofix for all enabled rules (when `--fix`) is provided. 
+	fixable = ["A", "B", "C", "D", "E", "F", "G", "I", "N", "Q", "S", "T", "W", "ANN", "ARG", "BLE", "COM", "DJ", "DTZ", "EM", "ERA", "EXE", "FBT", "ICN", "INP", "ISC", "NPY", "PD", "PGH", "PIE", "PL", "PT", "PTH", "PYI", "RET", "RSE", "RUF", "SIM", "SLF", "TCH", "TID", "TRY", "UP", "YTT"] 
 	unfixable = []
 
 	exclude = [

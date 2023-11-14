@@ -3,6 +3,7 @@ Business logic of the application.
 """
 
 from typing import Callable
+import enum
 
 from django.conf import settings
 from django.db.models.query import QuerySet
@@ -16,7 +17,7 @@ from .serializers import UserSerializer
 from .models import Subscriber, Blog, RoomCreator, Room, Message
 
 
-class SubscriberStatus:
+class SubscriberStatus(enum.Enum):
 	"""Implements subscriber status."""
 
 	IS_FRIEND = "is_my_friend"
@@ -214,13 +215,13 @@ class SubscriberService:
 
 		# If we are friends, I can see his blog.
 		if user_1 and user_2:
-			return SubscriberStatus.IS_FRIEND
+			return SubscriberStatus.IS_FRIEND.value
 		elif user_1:
-			return SubscriberStatus.ME_SUBSCRIBER
+			return SubscriberStatus.ME_SUBSCRIBER.value
 		elif user_2:
-			return SubscriberStatus.HE_SUBSCRIBER
+			return SubscriberStatus.HE_SUBSCRIBER.value
 		else:
-			return SubscriberStatus.NO_DATA
+			return SubscriberStatus.NO_DATA.value
 
 
 class BlogService:

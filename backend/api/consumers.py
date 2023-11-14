@@ -8,13 +8,13 @@ from .services import MessageService
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
-
 	@database_sync_to_async
 	def _create_message(self, message):
 		"""Create message."""
 
-		msg = MessageService.create(room_id=self.room, \
-			sender_id=message["sender_id"], text=message["text"])
+		msg = MessageService.create(
+			room_id=self.room, sender_id=message["sender_id"], text=message["text"]
+		)
 
 		return MessageSerializer(msg).data
 
@@ -22,8 +22,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 	def _check_permission(self, pk):
 		"""Check if user is this room subscriber."""
 
-		return MessageService.check_permission(room_id=self.room, \
-			subscriber_id=pk)
+		return MessageService.check_permission(room_id=self.room, subscriber_id=pk)
 
 	async def connect(self):
 		"""Join room group."""
@@ -40,8 +39,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		Leave room group.
 		"""
 
-		await self.channel_layer.group_discard(self.room_group, \
-			self.channel_name)
+		await self.channel_layer.group_discard(self.room_group, self.channel_name)
 
 	async def receive(self, text_data):
 		"""
@@ -60,11 +58,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 			# Send message to room group
 			await self.channel_layer.group_send(
-				self.room_group, 
-				{
-					"type": "chat_message",
-					"message": message
-				}
+				self.room_group, {"type": "chat_message", "message": message}
 			)
 		else:
 			self.disconnect()
@@ -72,9 +66,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
 	async def chat_message(self, event):
 		"""Receive message from room group and send it to WebSocket."""
 
-		await self.send(text_data=json.dumps(
-			{
-				"status": True,
-				"message": event["message"],
-			}
-		))
+		await self.send(
+			text_data=json.dumps(
+				{
+					"status": True,
+					"message": event["message"],
+				}
+			)
+		)

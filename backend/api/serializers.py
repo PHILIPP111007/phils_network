@@ -14,9 +14,13 @@ class UserSerializer(serializers.ModelSerializer):
 
 class BlogSerializer(serializers.ModelSerializer):
 	username = serializers.StringRelatedField(source="user.username", read_only=True)
-	first_name = serializers.StringRelatedField(source="user.first_name", read_only=True)
+	first_name = serializers.StringRelatedField(
+		source="user.first_name", read_only=True
+	)
 	last_name = serializers.StringRelatedField(source="user.last_name", read_only=True)
-	timestamp = serializers.DateTimeField(read_only=True, format=settings.DATETIME_FORMAT)
+	timestamp = serializers.DateTimeField(
+		read_only=True, format=settings.DATETIME_FORMAT
+	)
 	# user = serializers.PrimaryKeyRelatedField(read_only=True)
 	# user_info = UserSerializer(source="user", read_only=True)
 
@@ -33,17 +37,24 @@ class BlogSerializer(serializers.ModelSerializer):
 
 class RoomSerializer(serializers.ModelSerializer):
 	subscribers_info = UserSerializer(source="subscribers", many=True, read_only=True)
+
 	class Meta:
 		model = Room
-		exclude = ("subscribers", )
+		exclude = ("subscribers",)
 
 
 class MessageSerializer(serializers.ModelSerializer):
 	sender = serializers.PrimaryKeyRelatedField(read_only=True)
 	username = serializers.StringRelatedField(source="sender.username", read_only=True)
-	first_name = serializers.StringRelatedField(source="sender.first_name", read_only=True)
-	last_name = serializers.StringRelatedField(source="sender.last_name", read_only=True)
-	timestamp = serializers.DateTimeField(read_only=True, format=settings.DATETIME_FORMAT)
+	first_name = serializers.StringRelatedField(
+		source="sender.first_name", read_only=True
+	)
+	last_name = serializers.StringRelatedField(
+		source="sender.last_name", read_only=True
+	)
+	timestamp = serializers.DateTimeField(
+		read_only=True, format=settings.DATETIME_FORMAT
+	)
 	# sender_info = UserSerializer(source="sender", read_only=True)
 
 	class Meta:
