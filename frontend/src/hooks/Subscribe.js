@@ -1,9 +1,10 @@
 import Fetch from "../API/Fetch"
+import { DeleteOptionEnum } from "../data/enums"
 
 export default class Subscribe {
 
     static deleteFriend(props) {
-        const body = { option: "delete_friend" }
+        const body = { option: DeleteOptionEnum.DELETE_FRIEND }
         Fetch({ action: `api/subscriber/${props.pk}/`, method: "DELETE", body: body })
             .then(() => {
                 props.setStatus(undefined)
@@ -11,7 +12,7 @@ export default class Subscribe {
     }
 
     static deleteSubscriber(props) {
-        const body = { option: "delete_subscriber" }
+        const body = { option: DeleteOptionEnum.DELETE_SUBSCRIBER }
         Fetch({ action: `api/subscriber/${props.pk}/`, method: "DELETE", body: body })
             .then(() => {
                 props.setStatus(undefined)

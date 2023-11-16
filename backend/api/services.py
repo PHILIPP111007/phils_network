@@ -26,6 +26,11 @@ class SubscriberStatus(enum.Enum):
 	NO_DATA = 4
 
 
+class DeleteOption(enum.Enum):
+	DELETE_FRIEND = 1
+	DELETE_SUBSCRIBER = 2
+
+
 class UserService:
 	@staticmethod
 	def filter(pk: int) -> QuerySet[User]:
@@ -186,20 +191,19 @@ class SubscriberService:
 	def delete_by_option(
 		cls, request: Request, pk: int
 	) -> dict[str, bool | str] | dict[str, bool]:
-		option: str | None = request.data.get("option", None)
+		option: int | None = int(request.data.get("option", None))
 		if not option:
 			return {"ok": False, "error_message": "Not provided an option."}
 
 		subscribe = None
-		if option == "delete_friend":
-			subscribe = cls.filter(user_id=request.user.id, subscribe_id=pk)
-		elif option == "delete_subscriber":
-			subscribe = cls.filter(user_id=pk, subscribe_id=request.user.id)
+		if option == DeleteOption.DELETE_FRIEND.value:
+			subscribe = cls.filter(user_id=request.user.id, subscribe_id=pk).first()
+		elif option == DeleteOption.DELETE_SUBSCRIBER.value:
+			subscribe = cls.filter(user_id=pk, subscribe_id=request.user.id).first()
 
-		if not subscribe:
+		if subscribe is None:
 			return {"ok": False, "error_message": "Not found subscriber."}
 
-		subscribe = subscribe[0]
 		subscribe.delete()
 		return {"ok": True}
 
@@ -309,10 +313,8 @@ class RoomService:
 		friends: list | None = request.data.get("friends", None)
 		subscribers: list | None = request.data.get("subscribers", None)
 
-		room = Room.objects.filter(pk=pk)
-		if room.exists():
-			room = room[0]
-
+		room = Room.objects.filter(pk=pk).first()
+		if room is not None:
 			if friends:
 				room.subscribers.add(*friends)
 
@@ -328,28 +330,26 @@ class RoomService:
 	@staticmethod
 	def create(request: Request) -> Room | None:
 		room_name: str | None = request.data.get("name", None)
+		if room_name is None:
+			return None
+
 		pk_list: list[int] | None = request.data.get("subscribers", None)
+		room = Room(name=room_name)
+		room.save()
 
-		if room_name:
-			room = Room(name=room_name)
-			room.save()
-
-			if pk_list:
-				subscribers = (
-					User.objects.filter(pk__in=pk_list)
-					.only("pk")
-					.values_list("pk", flat=True)
-				)
-
-				if subscribers:
-					room.subscribers.add(*subscribers)
-
-			RoomCreator.objects.get_or_create(
-				room_id=room.id, creator_id=request.user.id
+		if pk_list:
+			subscribers = (
+				User.objects.filter(pk__in=pk_list)
+				.only("pk")
+				.values_list("pk", flat=True)
 			)
 
-			return room
-		return None
+			if subscribers:
+				room.subscribers.add(*subscribers)
+
+		RoomCreator.objects.get_or_create(room_id=room.pk, creator_id=request.user.id)
+
+		return room
 
 
 class MessageService:

@@ -44,10 +44,10 @@ class UserAPIView(APIView):
 			)
 
 		query = {"ok": True, "global_user": UserSerializer(global_user[0]).data}
-		local_user = UserService.filter_by_username(username=username)
+		local_user = UserService.filter_by_username(username=username).first()
 
-		if local_user.exists():
-			query["local_user"] = UserSerializer(local_user[0]).data
+		if local_user is not None:
+			query["local_user"] = UserSerializer(local_user).data
 
 		return Response(query, status=status.HTTP_200_OK)
 
@@ -55,15 +55,14 @@ class UserAPIView(APIView):
 		"""Updating user info."""
 
 		self.check_permissions(request=request)
-		user = UserService.filter(pk=request.user.id)
+		user = UserService.filter(pk=request.user.id).first()
 
-		if not user.exists():
+		if user is None:
 			return Response(
 				{"ok": False, "error_message": "Not found the user."},
 				status=status.HTTP_404_NOT_FOUND,
 			)
 
-		user = user[0]
 		self.check_object_permissions(request=request, obj=user)
 		user = UserService.put(user=user, request=request)
 
@@ -73,15 +72,14 @@ class UserAPIView(APIView):
 
 	def delete(self, request: Request, **kwargs) -> Response:
 		self.check_permissions(request=request)
-		user = UserService.filter(pk=request.user.id)
+		user = UserService.filter(pk=request.user.id).first()
 
-		if not user.exists():
+		if user is None:
 			return Response(
 				{"ok": False, "error_message": "Not found the user."},
 				status=status.HTTP_404_NOT_FOUND,
 			)
 
-		user = user[0]
 		self.check_object_permissions(request=request, obj=user)
 		user.delete()
 
@@ -103,16 +101,15 @@ class BlogAPIView(APIView):
 				status=status.HTTP_404_NOT_FOUND,
 			)
 
-		unknown = UserService.filter_by_username(username=username)
-		if not unknown.exists():
+		unknown = UserService.filter_by_username(username=username).first()
+		if unknown is None:
 			return Response(
 				{"ok": False, "error_message": "Not found user."},
 				status=status.HTTP_404_NOT_FOUND,
 			)
 
-		unknown_id: int = unknown[0].pk
-		if request.user.id != unknown_id:
-			data = SubscriberService.get_user_status(request=request, pk=unknown_id)
+		if request.user.id != unknown.pk:
+			data = SubscriberService.get_user_status(request=request, pk=unknown.pk)
 
 			if data != SubscriberStatus.IS_FRIEND.value:
 				return Response(
@@ -153,14 +150,13 @@ class BlogAPIView(APIView):
 				status=status.HTTP_404_NOT_FOUND,
 			)
 
-		post = BlogService.filter(pk=pk)
-		if not post.exists():
+		post = BlogService.filter(pk=pk).first()
+		if post is None:
 			return Response(
 				{"ok": False, "error_message": "Not found the post."},
 				status=status.HTTP_404_NOT_FOUND,
 			)
 
-		post = post[0]
 		serializer = BlogSerializer(data=request.data, instance=post)
 		serializer.is_valid(raise_exception=True)
 		user = serializer.validated_data.get("user")
@@ -180,14 +176,13 @@ class BlogAPIView(APIView):
 				status=status.HTTP_404_NOT_FOUND,
 			)
 
-		post = BlogService.filter(pk=pk)
-		if not post.exists():
+		post = BlogService.filter(pk=pk).first()
+		if post is None:
 			return Response(
 				{"ok": False, "error_message": "Not found the post."},
 				status=status.HTTP_404_NOT_FOUND,
 			)
 
-		post = post[0]
 		self.check_object_permissions(request=request, obj=post.user)
 		post.delete()
 
@@ -248,7 +243,7 @@ class FriendsAPIView(APIView):
 	authentication_classes = (TokenAuthentication,)
 	permission_classes = (IsAuthenticated,)
 
-	def get(self, request: Request, option: str) -> Response:
+	def get(self, request: Request, option: int) -> Response:
 		self.check_permissions(request=request)
 		query = SubscriberService.filter_by_option(
 			pk=request.user.id, option=option, serializer=True
@@ -337,26 +332,22 @@ class ChatAPIView(APIView):
 
 	def get(self, request: Request, pk: int) -> Response:
 		self.check_permissions(request=request)
-		room = RoomService.filter(pk=pk)
+		room = RoomService.filter(pk=pk).first()
 
-		if not room.exists():
+		if room is None:
 			return Response(
 				{"ok": False, "error_message": "Not found room."},
 				status=status.HTTP_404_NOT_FOUND,
 			)
 
-		room = room[0]
-		creator = RoomCreatorService.filter(pk=room.pk)
-
-		if not creator:
+		creator_obj = RoomCreatorService.filter(pk=room.pk).first()
+		if creator_obj is None:
 			return Response(
 				{"ok": False, "error_message": "Not found room creator."},
 				status=status.HTTP_404_NOT_FOUND,
 			)
 
-		creator = creator[0].creator
-		is_creator = creator == request.user
-
+		is_creator = creator_obj.creator == request.user
 		return Response(
 			{"ok": True, "isCreator": is_creator, "room": RoomSerializer(room).data},
 			status=status.HTTP_200_OK,

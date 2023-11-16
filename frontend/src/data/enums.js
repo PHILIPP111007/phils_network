@@ -4,3 +4,8 @@ export const UserStatusEnum = {
     HE_SUBSCRIBER: 3,
     NO_DATA: 4
 }
+
+export const DeleteOptionEnum = {
+    DELETE_FRIEND: 1,
+    DELETE_SUBSCRIBER: 2
+}
