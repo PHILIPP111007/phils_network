@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom"
 import { useInView } from "react-intersection-observer"
 import { UserContext, AuthContext } from "../../data/context"
 import { useAuth, useSetUser } from "../../hooks/useAuth"
-import { UserStatusEnum } from "../../data/enums"
+import { HttpMethod, UserStatusEnum } from "../../data/enums"
 import useObserver from "../../hooks/useObserver"
 import Fetch from "../../API/Fetch"
 import Modal from "../components/Modal"
@@ -47,7 +47,7 @@ export default function User() {
             postsLength = posts.length
         }
 
-        const data = await Fetch({ action: `api/blog/${params.username}/${postsLength}/`, method: "GET" })
+        const data = await Fetch({ action: `api/blog/${params.username}/${postsLength}/`, method: HttpMethod.GET })
         if (data && data.ok) {
             const newPosts = data.posts.map(post => {
                 return { ...post, postLen500: post.content.length > 500, btnFlag: true }
@@ -58,7 +58,7 @@ export default function User() {
     }
 
     async function deletePost(oldPost) {
-        const data = await Fetch({ action: `api/blog/${oldPost.id}/`, method: "DELETE" })
+        const data = await Fetch({ action: `api/blog/${oldPost.id}/`, method: HttpMethod.DELETE })
         if (data && data.ok) {
             setPosts(posts.filter(post => post.id !== oldPost.id))
             setModalPostEdit(false)
@@ -73,7 +73,7 @@ export default function User() {
             content: text,
         };
 
-        const data = await Fetch({ action: "api/blog/", method: "POST", body: newPost })
+        const data = await Fetch({ action: "api/blog/", method: HttpMethod.POST, body: newPost })
         if (data && data.ok) {
             newPost = { ...data.post, postLen500: data.post.content.length > 500, btnFlag: true }
             setPosts([newPost, ...posts])
@@ -85,7 +85,7 @@ export default function User() {
             setModalPostEdit(false)
             newPost.changed = true
 
-            const data = await Fetch({ action: `api/blog/${newPost.id}/`, method: "PUT", body: newPost })
+            const data = await Fetch({ action: `api/blog/${newPost.id}/`, method: HttpMethod.PUT, body: newPost })
             if (data && data.ok) {
                 setPosts(posts.map(post => {
                     if (post.id === newPost.id) {
@@ -139,10 +139,8 @@ export default function User() {
             </Modal>
 
             <div className="UserCard">
-                <div>
-                    <h3>{userLocal.first_name} {userLocal.last_name}</h3>
-                    <div>@{userLocal.username}</div>
-                </div>
+                <h3>{userLocal.first_name} {userLocal.last_name}</h3>
+                <div>@{userLocal.username}</div>
                 <div className="UserBtns">
                     {!isUserGlobal
                         &&

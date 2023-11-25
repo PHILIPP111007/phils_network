@@ -2,6 +2,7 @@ import "./Login/styles/Login.css"
 import { useState, useContext, useEffect } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { UserContext, AuthContext } from "../data/context"
+import { HttpMethod } from "../data/enums"
 import Fetch from "../API/Fetch"
 import Input from "./components/UI/Input"
 
@@ -18,7 +19,7 @@ export default function Register() {
 
     async function auth() {
         const token = localStorage.getItem("token")
-        const data = await Fetch({ action: "api/auth/users/me/", method: "GET", token: token })
+        const data = await Fetch({ action: "api/auth/users/me/", method: HttpMethod.GET, token: token })
 
         if (data && !data.detail && data.username) {
             setUser({ ...user, ...data })
@@ -35,7 +36,7 @@ export default function Register() {
         event.preventDefault()
 
         if (registerForm.password === registerForm.password2) {
-            const data = await Fetch({ action: "api/auth/users/", method: "POST", body: registerForm, token: "" })
+            const data = await Fetch({ action: "api/auth/users/", method: HttpMethod.POST, body: registerForm, token: "" })
             if (typeof data.username === "string") {
                 setUser(data)
                 navigate("/login/")

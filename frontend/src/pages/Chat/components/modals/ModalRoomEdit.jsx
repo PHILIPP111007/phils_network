@@ -1,5 +1,6 @@
 import "./styles/ModalRoomEdit.css"
 import { useEffect, useState } from "react"
+import { HttpMethod } from "../../../../data/enums"
 import Fetch from "../../../../API/Fetch"
 import Loading from "../../../components/Loading"
 import Button from "../../../components/UI/Button"
@@ -84,7 +85,7 @@ export default function ModalRoomEdit({ mainSets, setMainSets, me, editRoom }) {
         if (mainSets.isCreator) {
             setLoading(true)
 
-            Fetch({ action: "api/friends/friends/", method: "GET" })
+            Fetch({ action: "api/friends/friends/", method: HttpMethod.GET })
                 .then((data) => {
                     if (data.ok) {
                         let response = data.query

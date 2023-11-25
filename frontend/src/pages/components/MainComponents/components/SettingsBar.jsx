@@ -1,6 +1,7 @@
 import "./styles/SettingsBar.css"
 import { useContext } from "react"
 import { AuthContext, ThemeContext } from "../../../../data/context"
+import { HttpMethod } from "../../../../data/enums"
 import Fetch from "../../../../API/Fetch"
 import Button from "../../UI/Button"
 
@@ -20,7 +21,7 @@ export default function SettingsBar(props) {
     }
 
     async function logout() {
-        await Fetch({ action: "auth/token/logout/", method: "POST" })
+        await Fetch({ action: "auth/token/logout/", method: HttpMethod.POST })
             .then(() => {
                 localStorage.removeItem("token")
                 setIsAuth(false)

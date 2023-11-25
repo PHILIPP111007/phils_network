@@ -2,6 +2,7 @@ import "./styles/Chat.css"
 import { useContext, useEffect, useRef, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { useInView } from "react-intersection-observer"
+import { HttpMethod } from "../../data/enums"
 import { UserContext } from "../../data/context"
 import useObserver from "../../hooks/useObserver"
 import Fetch from "../../API/Fetch"
@@ -66,7 +67,7 @@ export default function Chat() {
         if (friends.length > 0 || subscribers.length > 0) {
             const body = { subscribers: subscribers, friends: friends }
 
-            const data = await Fetch({ action: `api/room/${params.room_id}/`, method: "PUT", body: body })
+            const data = await Fetch({ action: `api/room/${params.room_id}/`, method: HttpMethod.PUT, body: body })
             if (data && data.ok) {
                 navigate(`/chats/${user.username}/`)
             }
@@ -77,7 +78,7 @@ export default function Chat() {
         if (bool || messages.length > 0) {
             setMainSets({ ...mainSets, loading: true })
 
-            const data = await Fetch({ action: `api/room/${params.room_id}/${messages.length}/`, method: "GET" })
+            const data = await Fetch({ action: `api/room/${params.room_id}/${messages.length}/`, method: HttpMethod.GET })
             if (data && data.ok) {
                 setMessages([...data.messages.reverse(), ...messages])
             }
@@ -95,7 +96,7 @@ export default function Chat() {
             }
         }
 
-        Fetch({ action: `api/room/${params.room_id}/`, method: "GET" })
+        Fetch({ action: `api/room/${params.room_id}/`, method: HttpMethod.GET })
             .then((data) => {
                 if (data && data.ok) {
                     setMainSets({ ...mainSets, isCreator: data.isCreator, room: data.room })

@@ -3,6 +3,7 @@ import { useState, useContext } from "react"
 import { useInView } from "react-intersection-observer"
 import { UserContext, AuthContext } from "../data/context"
 import { useParams } from "react-router-dom"
+import { HttpMethod } from "../data/enums"
 import { useAuth, useSetUser } from "../hooks/useAuth"
 import useObserver from "../hooks/useObserver"
 import Fetch from "../API/Fetch"
@@ -24,7 +25,7 @@ export default function News() {
 
     async function fetchAddPosts() {
         setLoading(true)
-        const data = await Fetch({ action: `api/news/${posts.length}/`, method: "GET" })
+        const data = await Fetch({ action: `api/news/${posts.length}/`, method: HttpMethod.GET })
         if (data && data.ok) {
             const newPosts = data.posts.map(post => {
                 return { ...post, postLen500: post.content.length > 500, btnFlag: true }

@@ -1,3 +1,5 @@
+import {HttpMethod} from "../data/enums"
+
 export default async function Fetch({ action, method, body, token }) {
 
     // External token gives by auth() func
@@ -7,7 +9,7 @@ export default async function Fetch({ action, method, body, token }) {
 
     const url = `${process.env.REACT_APP_SERVER_URL}${action}`
 
-    if (method === "GET") {
+    if (method === HttpMethod.GET) {
         const data = await fetch(url, {
             method: "GET",
             credentials: "same-origin",

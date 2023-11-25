@@ -2,6 +2,7 @@ import "./styles/Friends.css"
 import { useContext, useState } from "react"
 import { UserContext, AuthContext } from "../../data/context"
 import { useParams } from "react-router-dom"
+import { HttpMethod } from "../../data/enums"
 import { useAuth, useSetUser } from "../../hooks/useAuth"
 import Fetch from "../../API/Fetch"
 import MainComponents from "../components/MainComponents/MainComponents"
@@ -26,7 +27,7 @@ export default function Friends() {
         if (findUser.username || findUser.first_name || findUser.last_name) {
             setLoading(true)
 
-            const data = await Fetch({ action: "api/find/", method: "POST", body: findUser })
+            const data = await Fetch({ action: "api/find/", method: HttpMethod.POST, body: findUser })
             if (data && data.ok) {
                 setUsers(data.users)
             }
@@ -37,12 +38,12 @@ export default function Friends() {
     function showUsers() {
         if (users.length > 0) {
             return (
-                <div>
+                <>
                     <h3>Found: {users.length}</h3>
                     {users.map(user =>
                         <FriendCard key={user.username} user={user} />
                     )}
-                </div>
+                </>
             )
         }
     }

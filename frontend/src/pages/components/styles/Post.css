@@ -3,7 +3,7 @@
     padding: 20px;
     word-break: break-word;
 }
-.Post .link a {
+.Post .link {
     text-decoration: none;
 }
 .Post .content {

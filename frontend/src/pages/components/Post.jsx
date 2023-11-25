@@ -19,19 +19,19 @@ export default function Post({ post, ...props }) {
         if (post.postLen500) {
             if (post.btnFlag) {
                 return (
-                    <div>
-                        <Button onClick={() => setFlag(false)} >read more</Button>
+                    <>
+                        <Button onClick={() => setFlag(false)} >more</Button>
                         <br />
                         <br />
-                    </div>
+                    </>
                 )
             } else {
                 return (
-                    <div>
-                        <Button onClick={() => setFlag(true)} >read less</Button>
+                    <>
+                        <Button onClick={() => setFlag(true)} >less</Button>
                         <br />
                         <br />
-                    </div>
+                    </>
                 )
             }
         }
@@ -42,28 +42,24 @@ export default function Post({ post, ...props }) {
             <div className="title">
                 {props.linkShow
                     ?
-                    <div className="link">
-                        <Link to={`/user/${post.username}/`} >
-                            <p>{post.first_name ? post.first_name : "No name"} {post.last_name ? post.last_name : "No name"} @{post.username}</p>
-                            <p>{post.timestamp} {post.changed && "Modified"}</p>
-                        </Link>
-                    </div>
+                    <Link className="link" to={`/user/${post.username}/`} >
+                        <p>{post.first_name ? post.first_name : "No name"} {post.last_name ? post.last_name : "No name"} @{post.username}</p>
+                        <p>{post.timestamp} {post.changed && "Modified"}</p>
+                    </Link>
                     :
                     <p>{post.timestamp} {post.changed && "Modified"}</p>
                 }
             </div>
             <br />
             <div className="content">
-                <p>
-                    <ReactLinkify>
-                        {(post.postLen500 && post.btnFlag)
-                            ?
-                            post.content.substring(0, 499) + "..."
-                            :
-                            post.content
-                        }
-                    </ReactLinkify>
-                </p>
+                <ReactLinkify>
+                    {(post.postLen500 && post.btnFlag)
+                        ?
+                        post.content.substring(0, 499) + "..."
+                        :
+                        post.content
+                    }
+                </ReactLinkify>
             </div>
             <br />
 

@@ -2,6 +2,7 @@ import "./styles/Login.css"
 import { useState, useContext, useEffect } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import { AuthContext, UserContext } from "../../data/context"
+import { HttpMethod } from "../../data/enums"
 import Fetch from "../../API/Fetch"
 import Input from "../components/UI/Input"
 
@@ -14,7 +15,7 @@ export default function Login() {
 
     async function auth() {
         const token = localStorage.getItem("token")
-        const data = await Fetch({ action: "api/auth/users/me/", method: "GET", token: token })
+        const data = await Fetch({ action: "api/auth/users/me/", method: HttpMethod.GET, token: token })
 
         if (data && !data.detail && data.username) {
             setUser({ ...user, ...data })
@@ -32,7 +33,7 @@ export default function Login() {
 
     async function login(event) {
         event.preventDefault()
-        const data = await Fetch({ action: "auth/token/login/", method: "POST", body: loginForm, token: "" })
+        const data = await Fetch({ action: "auth/token/login/", method: HttpMethod.POST, body: loginForm, token: "" })
 
         if (data && !data.detail && data.auth_token) {
             localStorage.setItem("token", data.auth_token)

@@ -2,6 +2,7 @@ import "./styles/Rooms.css"
 import { useContext, useEffect, useState } from "react"
 import { UserContext, AuthContext } from "../../data/context"
 import { useParams } from "react-router-dom"
+import { HttpMethod } from "../../data/enums"
 import { useAuth, useSetUser } from "../../hooks/useAuth"
 import Fetch from "../../API/Fetch"
 import ModalRoomCreate from "./components/modals/ModalRoomCreate"
@@ -25,7 +26,7 @@ export default function Rooms() {
     async function createRoom(room) {
         room.subscribers.push(user.pk)
 
-        const data = await Fetch({ action: "api/room/", method: "POST", body: room })
+        const data = await Fetch({ action: "api/room/", method: HttpMethod.POST, body: room })
         if (data && data.ok) {
             setRooms([data.room, ...rooms])
         }
@@ -34,7 +35,7 @@ export default function Rooms() {
 
     useEffect(() => {
         setLoading(true)
-        Fetch({ action: "api/room/", method: "GET" })
+        Fetch({ action: "api/room/", method: HttpMethod.GET })
             .then((data) => {
                 if (data && data.ok) {
                     setRooms(data.rooms)

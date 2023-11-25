@@ -1,6 +1,7 @@
 import "./styles/ModalSettings.css"
 import { useContext, useEffect, useState } from "react"
 import { UserContext } from "../../../../../data/context"
+import { HttpMethod } from "../../../../../data/enums"
 import Fetch from "../../../../../API/Fetch"
 import Button from "../../../UI/Button"
 import Input from "../../../UI/Input"
@@ -13,7 +14,7 @@ export default function ModalSettings(props) {
     async function userUpdate(event) {
         event.preventDefault()
         if (userNew.first_name || userNew.last_name || userNew.email) {
-            const data = await Fetch({ action: `api/user/${user.pk}/`, method: "PUT", body: userNew })
+            const data = await Fetch({ action: `api/user/${user.pk}/`, method: HttpMethod.PUT, body: userNew })
             if (data.ok) {
                 setUser(data.user)
             }
