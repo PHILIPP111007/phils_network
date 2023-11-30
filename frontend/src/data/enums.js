@@ -16,3 +16,9 @@ export const HttpMethod = {
     PUT: "PUT",
     DELETE: "DELETE"
 }
+
+export const Theme = {
+    NAME: "theme", 
+    LIGHT: "light",
+    DARK: "dark"
+}

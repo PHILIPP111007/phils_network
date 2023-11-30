@@ -1,5 +1,6 @@
 import "./styles/Chat.css"
 import { useContext, useEffect, useRef, useState } from "react"
+import { useSignal } from "@preact/signals-react"
 import { useNavigate, useParams } from "react-router-dom"
 import { useInView } from "react-intersection-observer"
 import { HttpMethod } from "../../data/enums"
@@ -11,24 +12,20 @@ import Modal from "../components/Modal"
 import LazyDiv from "../components/LazyDiv"
 import ScrollToTopOrBottom from "../components/MainComponents/components/ScrollToTopOrBottom"
 import ModalRoomEdit from "./components/modals/ModalRoomEdit"
-import Message from "./components/Message"
-import sendIcon from "../../images/send-icon.svg"
-import settingsLogo from "../../images/three_points_gray.svg"
+import Messages from "./components/Messages"
+import UserInput from "./components/UserInput"
 
 export default function Chat() {
 
     const { user } = useContext(UserContext)
-    const [messages, setMessages] = useState([])
+    const messages = useSignal([])
     const [modalRoomEdit, setModalRoomEdit] = useState(false)
-
-    const [mainSets, setMainSets] = useState({
+    const mainSets = useSignal({
         room: { id: undefined, name: "", subscribers_info: [] },
         isCreator: false,
         loading: false,
-        text: "",
         invitationChanges: { friends: [], subscribers: [] },
     })
-
     const params = useParams()
     const navigate = useNavigate()
     const chatSocket = useRef(null)
@@ -45,9 +42,8 @@ export default function Chat() {
         }
     }
 
-    async function sendMessage() {
-        const sendingText = mainSets.text.trim()
-        setMainSets({ ...mainSets, text: "" })
+    async function sendMessage(text) {
+        const sendingText = text.trim()
         if (sendingText.length > 0) {
             const message = { sender_id: user.pk, text: sendingText }
             await chatSocket.current.send(JSON.stringify({ message: message }))
@@ -55,8 +51,8 @@ export default function Chat() {
     }
 
     async function editRoom() {
-        let subscribers = mainSets.invitationChanges.subscribers.filter((user) => user.isInRoom === false)
-        let friends = mainSets.invitationChanges.friends.filter((user) => user.isInRoom === true)
+        let subscribers = mainSets.value.invitationChanges.subscribers.filter((user) => user.isInRoom === false)
+        let friends = mainSets.value.invitationChanges.friends.filter((user) => user.isInRoom === true)
         subscribers = subscribers.map((user) => {
             return user.pk
         })
@@ -75,14 +71,14 @@ export default function Chat() {
     }
 
     async function fetchAddMessages(bool) {
-        if (bool || messages.length > 0) {
-            setMainSets({ ...mainSets, loading: true })
-
-            const data = await Fetch({ action: `api/room/${params.room_id}/${messages.length}/`, method: HttpMethod.GET })
+        const msgs_len = messages.value.length
+        if (bool || msgs_len > 0) {
+            mainSets.value.loading = true
+            const data = await Fetch({ action: `api/room/${params.room_id}/${msgs_len}/`, method: HttpMethod.GET })
             if (data && data.ok) {
-                setMessages([...data.messages.reverse(), ...messages])
+                messages.value = [...data.messages.reverse(), ...messages.value]
             }
-            setMainSets({ ...mainSets, loading: false })
+            mainSets.value.loading = false
         }
     }
 
@@ -99,14 +95,14 @@ export default function Chat() {
         Fetch({ action: `api/room/${params.room_id}/`, method: HttpMethod.GET })
             .then((data) => {
                 if (data && data.ok) {
-                    setMainSets({ ...mainSets, isCreator: data.isCreator, room: data.room })
-
-                    mainSets.invitationChanges.subscribers = data.room.subscribers_info.map((user) => {
+                    mainSets.value.isCreator = data.isCreator
+                    mainSets.value.room = data.room
+                    mainSets.value.invitationChanges.subscribers = data.room.subscribers_info.map((user) => {
                         return { ...user, isInRoom: true }
                     })
                 }
             })
-    }, [mainSets.room.id])
+    }, [mainSets.value.room.id])
 
     useEffect(() => {
         fetchAddMessages(true)
@@ -139,53 +135,35 @@ export default function Chat() {
         chatSocket.current.onmessage = (e) => {
             const data = JSON.parse(e.data)
             if (data) {
-                setMessages([...messages, data.message])
+                messages.value = [...messages.value, data.message]
             }
             scrollToBottom()
         }
-    }, [messages])
+    }, [messages.value])
 
     useEffect(() => {
         if (inViewWrapper) {
             scrollToBottom()
         }
-    }, [inViewWrapper, messages.length])
+    }, [inViewWrapper, messages.value.length])
 
     useObserver({ inView: inViewLazyDiv, func: fetchAddMessages })
 
     return (
         <div className="Chat">
-            <MainComponents user={user} roomName={mainSets.room.name} loading={mainSets.loading} />
+            <MainComponents user={user} roomName={mainSets.value.room.name} loading={mainSets.value.loading} />
 
             <ScrollToTopOrBottom bottom={true} />
 
             <Modal modal={modalRoomEdit} setModal={setModalRoomEdit}>
-                <ModalRoomEdit mainSets={mainSets} setMainSets={setMainSets} me={user} editRoom={editRoom} />
+                <ModalRoomEdit mainSets={mainSets} me={user} editRoom={editRoom} />
             </Modal>
 
             <LazyDiv Ref={refLazyDivinView} />
 
-            <div className="Messages">
-                {messages.map((message) =>
-                    <Message key={message.id} message={message} />
-                )}
-            </div>
+            <Messages messages={messages.value} />
 
-            <div className="UserInput">
-                <img
-                    id="SettingsButton"
-                    src={settingsLogo}
-                    onClick={() => setModalRoomEdit(true)} alt="settings button"
-                />
-                <textarea
-                    className="TextArea"
-                    maxLength="5000"
-                    placeholder="type text..."
-                    value={mainSets.text}
-                    onChange={(e) => setMainSets({ ...mainSets, text: e.target.value })}
-                />
-                <img id="SendButton" src={sendIcon} onClick={() => sendMessage()} alt="send button" />
-            </div>
+            <UserInput sendMessage={sendMessage} setModalRoomEdit={setModalRoomEdit} />
 
             <div className="Wrapper-InView" ref={wrapperRef} ></div>
 
