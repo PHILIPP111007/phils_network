@@ -18,7 +18,7 @@ export default function ScrollToTopOrBottom({ bottom }) {
 
     return (
         <div id="srollToTopBtn">
-            <Button onClick={() => myScroll()} >{bottom ? "To bottom" : "To top"}</Button>
+            <Button onClick={() => myScroll()} >{bottom ? "bottom" : "top"}</Button>
         </div>
     )
 }

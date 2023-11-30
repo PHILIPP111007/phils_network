@@ -12,7 +12,7 @@ export default function SettingsBar(props) {
     const theme = useSignal(Theme.LIGHT)
     const body = document.getElementsByTagName("body")[0]
 
-    if (localStorage.getItem(Theme.NAME) !== undefined) {
+    if (localStorage.getItem(Theme.NAME) !== null) {
         body.className = localStorage.getItem(Theme.NAME)
         theme.value = localStorage.getItem(Theme.NAME)
     } else {

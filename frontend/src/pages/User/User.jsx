@@ -24,19 +24,26 @@ export default function User() {
     const { user, setUser } = useContext(UserContext)
     const [ref, inView] = useInView()
     const params = useParams()
-
     const [userLocal, setUserLocal] = useState(user)
     const [posts, setPosts] = useState([])
     const [status, setStatus] = useState("")
     const [modalPostEdit, setModalPostEdit] = useState(false)
     const [modalPostCreate, setModalPostCreate] = useState(false)
-    let isUserGlobal = user.username === userLocal.username
-
     const [mainSets, setMainSets] = useState({
-        post: {},
-        text: "",
+        post: {
+            btnFlag: false,
+            changed: false,
+            user: 0,
+            timestamp: "",
+            username: "",
+            first_name: "",
+            last_name: "",
+            content: "",
+            postLen500: false
+        },
         loading: true,
     })
+    let isUserGlobal = user.username === userLocal.username
 
     localStorage.setItem("path", "/user/")
 
@@ -66,7 +73,6 @@ export default function User() {
     }
 
     async function createPost(text) {
-        setMainSets({ ...mainSets, text: "" });
         setModalPostCreate(false)
         let newPost = {
             user: user.pk,
@@ -134,10 +140,6 @@ export default function User() {
 
             <ScrollToTopOrBottom bottom={false} />
 
-            <Modal modal={modalPostEdit} setModal={setModalPostEdit}>
-                <ModalPostEdit mainSets={mainSets} setMainSets={setMainSets} editPost={editPost} deletePost={deletePost} />
-            </Modal>
-
             <div className="UserCard">
                 <h3>{userLocal.first_name} {userLocal.last_name}</h3>
                 <div>@{userLocal.username}</div>
@@ -149,7 +151,11 @@ export default function User() {
             </div>
 
             <Modal modal={modalPostCreate} setModal={setModalPostCreate}>
-                <ModalPostCreate mainSets={mainSets} setMainSets={setMainSets} createPost={createPost} />
+                <ModalPostCreate createPost={createPost} />
+            </Modal>
+
+            <Modal modal={modalPostEdit} setModal={setModalPostEdit}>
+                <ModalPostEdit mainSets={mainSets} setMainSets={setMainSets} editPost={editPost} deletePost={deletePost} />
             </Modal>
 
             {(isUserGlobal && !mainSets.loading)

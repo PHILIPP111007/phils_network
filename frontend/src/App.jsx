@@ -12,7 +12,7 @@ import Error from "./pages/Error/Error"
 export default function App() {
 
     const body = document.getElementsByTagName("body")[0]
-    if (localStorage.getItem(Theme.NAME) !== undefined) {
+    if (localStorage.getItem(Theme.NAME) !== null) {
         body.className = localStorage.getItem(Theme.NAME)
     } else {
         body.className = Theme.LIGHT
