@@ -113,6 +113,7 @@ export default function Chat() {
             process.env.REACT_APP_SERVER_WEBSOCKET_URL
             + params.room_id
             + "/"
+            + `?token=${localStorage.getItem('token')}`
         )
         socket.onopen = function (e) {
             console.log(`chatSocket: The connection in room ${params.room_id} was setup successfully!`)

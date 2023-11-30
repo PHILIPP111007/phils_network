@@ -1,5 +1,7 @@
 import json
 
+from rest_framework.authtoken.models import Token
+
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 
@@ -8,30 +10,21 @@ from .services import MessageService
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
-	@database_sync_to_async
-	def _create_message(self, message):
-		"""Create message."""
-
-		msg = MessageService.create(
-			room_id=self.room, sender_id=message["sender_id"], text=message["text"]
-		)
-
-		return MessageSerializer(msg).data
-
-	@database_sync_to_async
-	def _check_permission(self, pk):
-		"""Check if user is this room subscriber."""
-
-		return MessageService.check_permission(room_id=self.room, subscriber_id=pk)
-
 	async def connect(self):
 		"""Join room group."""
+
+		token_key = self.scope["query_string"].decode().split("=")[-1]
+		pk = await _get_user_pk(token_key)
+		flag = await _check_permission(self, pk)
 
 		self.room = self.scope["url_route"]["kwargs"]["room"]
 		self.room_group = self.room
 
-		await self.channel_layer.group_add(self.room_group, self.channel_name)
-		await self.accept()
+		if flag:
+			await self.channel_layer.group_add(self.room_group, self.channel_name)
+			await self.accept()
+		else:
+			await self.close()
 
 	async def disconnect(self, close_code):
 		"""
@@ -50,18 +43,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		"""
 
 		text_data = json.loads(text_data)
-		pk = text_data["message"]["sender_id"]
-		flag = await self._check_permission(pk)
+		message = await _create_message(self, text_data["message"])
 
-		if flag:
-			message = await self._create_message(text_data["message"])
-
-			# Send message to room group
-			await self.channel_layer.group_send(
-				self.room_group, {"type": "chat_message", "message": message}
-			)
-		else:
-			self.disconnect()
+		# Send message to room group
+		await self.channel_layer.group_send(
+			self.room_group, {"type": "chat_message", "message": message}
+		)
 
 	async def chat_message(self, event):
 		"""Receive message from room group and send it to WebSocket."""
@@ -74,3 +61,32 @@ class ChatConsumer(AsyncWebsocketConsumer):
 				}
 			)
 		)
+
+
+@database_sync_to_async
+def _get_user_pk(token_key: str) -> int | None:
+	token = Token.objects.filter(key=token_key).first()
+
+	if token:
+		return token.user_id
+	return
+
+
+@database_sync_to_async
+def _check_permission(self, pk):
+	"""Check if user is this room subscriber."""
+
+	room_id = int(self.scope["url_route"]["kwargs"]["room"])
+
+	return MessageService.check_permission(room_id=room_id, subscriber_id=pk)
+
+
+@database_sync_to_async
+def _create_message(self, message):
+	"""Create message."""
+
+	msg = MessageService.create(
+		room_id=self.room, sender_id=message["sender_id"], text=message["text"]
+	)
+
+	return MessageSerializer(msg).data
