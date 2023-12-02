@@ -1,14 +1,14 @@
 import { lazy } from "react"
-const User = lazy(() => import("../pages/User/User"))
-const Rooms = lazy(() => import("../pages/Rooms/Rooms"))
-const News = lazy(() => import("../pages/News"))
-const Friends = lazy(() => import("../pages/Friends/Friends"))
-const FriendsSection = lazy(() => import("../pages/FriendsSection"))
-const SubscriptionsSection = lazy(() => import("../pages/SubscriptionsSection"))
-const SubscribersSection = lazy(() => import("../pages/SubscribersSection"))
-const Chat = lazy(() => import("../pages/Chat/Chat"))
-const Login = lazy(() => import("../pages/Login/Login"))
-const Register = lazy(() => import("../pages/Register"))
+const User = lazy(() => import("@pages/User/User"))
+const Rooms = lazy(() => import("@pages/Rooms/Rooms"))
+const News = lazy(() => import("@pages/News"))
+const Friends = lazy(() => import("@pages/Friends/Friends"))
+const FriendsSection = lazy(() => import("@pages/FriendsSection"))
+const SubscriptionsSection = lazy(() => import("@pages/SubscriptionsSection"))
+const SubscribersSection = lazy(() => import("@pages/SubscribersSection"))
+const Chat = lazy(() => import("@pages/Chat/Chat"))
+const Login = lazy(() => import("@pages/Login/Login"))
+const Register = lazy(() => import("@pages/Register"))
 
 export const PublicRoutes = [
     {

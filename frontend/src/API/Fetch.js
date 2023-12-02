@@ -1,4 +1,4 @@
-import {HttpMethod} from "../data/enums"
+import { HttpMethod } from "@data/enums"
 
 export default async function Fetch({ action, method, body, token }) {
 

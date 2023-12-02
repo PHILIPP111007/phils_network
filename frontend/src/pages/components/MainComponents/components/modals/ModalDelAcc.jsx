@@ -1,9 +1,9 @@
 import "./styles/ModalDelAcc.css"
 import { useContext } from "react"
-import { HttpMethod } from "../../../../../data/enums"
-import { AuthContext, UserContext } from "../../../../../data/context"
-import Fetch from "../../../../../API/Fetch"
-import Button from "../../../UI/Button"
+import { HttpMethod } from "@data/enums"
+import { AuthContext, UserContext } from "@data/context"
+import Fetch from "@API/Fetch"
+import Button from "@pages/components/UI/Button"
 
 export default function ModalDelAcc() {
 

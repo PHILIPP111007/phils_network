@@ -1,7 +1,7 @@
 import "./styles/FindUser.css"
 import { useState } from "react"
-import Button from "./UI/Button"
-import Input from "./UI/Input"
+import Button from "@pages/components/UI/Button"
+import Input from "@pages/components/UI/Input"
 
 export default function FindUser(props) {
 

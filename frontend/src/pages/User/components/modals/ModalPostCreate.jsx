@@ -1,6 +1,6 @@
 import "./styles/ModalPostEdit.css"
 import { useState } from "react"
-import Button from "../../../components/UI/Button"
+import Button from "@pages/components/UI/Button"
 
 export default function ModalPostCreate(props) {
 

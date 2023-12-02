@@ -1,4 +1,4 @@
-import Message from "./Message"
+import Message from "@pages/Chat/components/Message"
 
 export default function Messages({ messages }) {
     return (

@@ -1,9 +1,9 @@
 import "./styles/ModalRoomEdit.css"
 import { useEffect, useState } from "react"
-import { HttpMethod } from "../../../../data/enums"
-import Fetch from "../../../../API/Fetch"
-import Loading from "../../../components/Loading"
-import Button from "../../../components/UI/Button"
+import { HttpMethod } from "@data/enums"
+import Fetch from "@API/Fetch"
+import Loading from "@pages/components/Loading"
+import Button from "@pages/components/UI/Button"
 
 export default function ModalRoomEdit({ mainSets, me, editRoom }) {
 

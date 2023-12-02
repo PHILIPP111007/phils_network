@@ -1,5 +1,5 @@
 import "./styles/ScrollToTopOrBottom.css"
-import Button from "../../UI/Button"
+import Button from "@pages/components/UI/Button"
 
 export default function ScrollToTopOrBottom({ bottom }) {
 

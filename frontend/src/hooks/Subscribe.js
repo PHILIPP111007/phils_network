@@ -1,6 +1,5 @@
-import { HttpMethod } from "../data/enums"
-import Fetch from "../API/Fetch"
-import { DeleteOptionEnum } from "../data/enums"
+import { HttpMethod, DeleteOptionEnum } from "@data/enums"
+import Fetch from "@API/Fetch"
 
 export default class Subscribe {
 

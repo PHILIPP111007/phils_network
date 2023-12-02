@@ -1,7 +1,7 @@
 import "./styles/UpperLine.css"
-import Loading from "../../Loading"
-import showHideBar from "../../../../modules/showHideBar"
-import menuLogo from "../../../../images/lines_menu_burger_icon.svg"
+import Loading from "@pages/components/Loading"
+import showHideBar from "@modules/showHideBar"
+import menuLogo from "@images/lines_menu_burger_icon.svg"
 
 export default function UpperLine(props) {
     return (

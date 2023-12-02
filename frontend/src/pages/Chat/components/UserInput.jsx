@@ -1,6 +1,6 @@
 import { useSignal } from "@preact/signals-react"
-import settingsLogo from "../../../images/three_points_gray.svg"
-import sendIcon from "../../../images/send-icon.svg"
+import settingsLogo from "@images/three_points_gray.svg"
+import sendIcon from "@images/send-icon.svg"
 
 export default function UserInput({ sendMessage, setModalRoomEdit }) {
 

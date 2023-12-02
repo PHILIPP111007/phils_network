@@ -1,8 +1,8 @@
 import "./styles/Post.css"
 import { Link } from "react-router-dom"
 import ReactLinkify from "react-linkify"
-import settingsLogo from "../../images/three_points.svg"
-import Button from "./UI/Button"
+import settingsLogo from "@images/three_points.svg"
+import Button from "@pages/components/UI/Button"
 
 export default function Post({ post, ...props }) {
 
