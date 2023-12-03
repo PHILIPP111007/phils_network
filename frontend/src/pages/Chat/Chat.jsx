@@ -122,10 +122,10 @@ export default function Chat() {
             + `?token=${localStorage.getItem('token')}`
         )
         socket.onopen = () => {
-            console.log(`chatSocket: The connection in room was setup successfully.`)
+            console.log(`chatSocket: The connection was setup successfully.`)
         }
         socket.onclose = () => {
-            console.log(`chatSocket: room has already closed.`)
+            console.log(`chatSocket: Has already closed.`)
         }
         socket.onerror = (e) => {
             console.error(e)
