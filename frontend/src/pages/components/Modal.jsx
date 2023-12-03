@@ -29,7 +29,7 @@ export default function Modal(props) {
             )
         }
 
-    }, [props.modal])
+    }, [props.modal, props.children])
 
     return showModalChildren
 }
