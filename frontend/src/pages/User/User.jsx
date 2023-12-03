@@ -7,12 +7,13 @@ import { UserContext, AuthContext } from "@data/context"
 import { useAuth, useSetUser } from "@hooks/useAuth"
 import { HttpMethod } from "@data/enums"
 import useObserver from "@hooks/useObserver"
+import rememberPage from "@hooks/rememberPage"
 import Fetch from "@API/Fetch"
 import MainComponents from "@pages/components/MainComponents/MainComponents"
 import Modal from "@pages/components/Modal"
 import ModalPostEdit from "@pages/User/components/modals/ModalPostEdit"
 import ModalPostCreate from "@pages/User/components/modals/ModalPostCreate"
-import Post from "@pages/components/Post"
+import Posts from "@pages/components/Posts"
 import UserStatus from "@pages/components/UserStatus"
 import LazyDiv from "@pages/components/LazyDiv"
 import ScrollToTopOrBottom from "@pages/components/MainComponents/components/ScrollToTopOrBottom"
@@ -20,7 +21,7 @@ import plusIcon from "@images/plus-icon.svg"
 
 export default function User() {
 
-    localStorage.setItem("path", "/user/")
+    rememberPage("/user/")
 
     const { setIsAuth } = useContext(AuthContext)
     const { user, setUser } = useContext(UserContext)
@@ -58,7 +59,7 @@ export default function User() {
             const newPosts = data.posts.map(post => {
                 return { ...post, postLen500: post.content.length > 500 }
             })
-            setPosts([...posts, ...newPosts])
+            setPosts((prev) => [...prev, ...newPosts])
         }
         setMainSets({ ...mainSets, loading: false })
     }
@@ -66,7 +67,7 @@ export default function User() {
     async function deletePost(oldPost) {
         const data = await Fetch({ action: `api/blog/${oldPost.id}/`, method: HttpMethod.DELETE })
         if (data && data.ok) {
-            setPosts(posts.filter(post => post.id !== oldPost.id))
+            setPosts((prev) => prev.filter(post => post.id !== oldPost.id))
             setModalPostEdit(false)
         }
     }
@@ -104,25 +105,8 @@ export default function User() {
         }
     }
 
-    const showPosts = useMemo(() => {
-        return posts.map((post) =>
-            <Post
-                key={post.id}
-                post={post}
-                linkShow={false}
-                settings={isUserGlobal}
-                mainSets={mainSets}
-                setMainSets={setMainSets}
-                setModalPost={setModalPostEdit}
-            />
-        )
-    }, [posts])
-
-    useMemo(() => {
-        setPosts([])
-    }, [params.username])
-
     useEffect(() => {
+        setPosts((prev) => [])
         getPosts(0)
     }, [params.username])
 
@@ -130,7 +114,7 @@ export default function User() {
 
     useSetUser({ username: params.username, setUser: setUser, setUserLocal: setUserLocal })
 
-    useObserver({ inView: inView, func: getPosts })
+    useObserver({ inView: inView, func: getPosts, flag: !mainSets.loading })
 
     return (
         <div className="User">
@@ -162,9 +146,14 @@ export default function User() {
                     <img src={plusIcon} onClick={() => setModalPostCreate(true)} alt="menu logo" />
                 </div>}
 
-            <div className="Posts">
-                {showPosts}
-            </div>
+            <Posts
+                posts={posts}
+                linkShow={false}
+                settings={isUserGlobal}
+                mainSets={mainSets}
+                setMainSets={setMainSets}
+                setModalPost={setModalPostEdit}
+            />
 
             <LazyDiv Ref={ref} />
         </div>
