@@ -1,5 +1,5 @@
 import { useMemo } from "react"
-import Post from "@pages/components/Post"
+import Post from "@pages/components/components/Post"
 
 export default function Posts({ posts, ...props }) {
 
@@ -15,7 +15,7 @@ export default function Posts({ posts, ...props }) {
                 setModalPost={props.setModalPost}
             />
         )
-    }, [posts])
+    }, [posts, props.settings])
 
     return (
         <div className="Posts">
