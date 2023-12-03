@@ -3,8 +3,8 @@ import { HttpMethod } from "@data/enums"
 import Fetch from "@API/Fetch"
 
 export function useAuth({ username, setIsAuth }) {
-    const Func = useEffect(() => {
-        const token = localStorage.getItem("token")
+    var Func = useEffect(() => {
+        var token = localStorage.getItem("token")
         if (token === null) {
             setIsAuth(false)
         } else {
@@ -15,7 +15,7 @@ export function useAuth({ username, setIsAuth }) {
 }
 
 export function useSetUser({ username, setUser, setUserLocal }) {
-    const Func = useEffect(() => {
+    var Func = useEffect(() => {
         Fetch({ action: `api/user/${username}/`, method: HttpMethod.GET })
             .then((data) => {
                 if (data && data.global_user) {

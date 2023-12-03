@@ -3,7 +3,7 @@ import { useMemo } from "react"
 export default function useFriends(users, filter) {
 
     function lambda(user) {
-        let flag = true
+        var flag = true
 
         if (filter.username && !user.username.toLowerCase().includes(filter.username.toLowerCase())) {
             flag = false
@@ -21,7 +21,7 @@ export default function useFriends(users, filter) {
         return false
     }
 
-    const searchedFriends = useMemo(() => {
+    var searchedFriends = useMemo(() => {
         return users.filter(user => lambda(user))
     }, [filter, users])
 

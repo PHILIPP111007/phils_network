@@ -7,7 +7,7 @@ import Button from "@pages/components/UI/Button"
 
 export default function Post({ post, ...props }) {
 
-    const btnFlag = useSignal(true)
+    var btnFlag = useSignal(true)
 
     function showButton() {
         if (post.postLen500) {

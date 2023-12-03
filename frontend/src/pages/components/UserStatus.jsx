@@ -18,7 +18,7 @@ export default function UserStatus(props) {
         }
     }, [props.status])
 
-    const DictUserStatusDiv = {
+    var DictUserStatusDiv = {
         [UserStatusEnum.IS_FRIEND]: (
             <Button onClick={() => {
                 Subscribe.deleteFriend({

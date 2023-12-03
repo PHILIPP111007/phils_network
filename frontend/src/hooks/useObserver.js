@@ -2,7 +2,7 @@ import { useEffect } from "react"
 
 export default function useObserver(props) {
 
-    const ObserveFunc = useEffect(() => {
+    var ObserveFunc = useEffect(() => {
         if (props.inView) {
             if (props.flag !== undefined) {
                 if (props.flag) {

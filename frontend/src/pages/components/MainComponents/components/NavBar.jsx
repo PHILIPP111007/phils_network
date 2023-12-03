@@ -5,7 +5,7 @@ import { UserContext } from "@data/context"
 
 export default function NavBar() {
 
-    const { user } = useContext(UserContext)
+    var { user } = useContext(UserContext)
 
     return (
         <aside className="NavBar">

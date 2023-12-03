@@ -17,10 +17,10 @@ import UserInput from "@pages/Chat/components/UserInput"
 
 export default function Chat() {
 
-    const { user } = useContext(UserContext)
-    const messages = useSignal([])
-    const [modalRoomEdit, setModalRoomEdit] = useState(false)
-    const mainSets = useSignal({
+    var { user } = useContext(UserContext)
+    var messages = useSignal([])
+    var [modalRoomEdit, setModalRoomEdit] = useState(false)
+    var mainSets = useSignal({
         room: {
             id: undefined,
             name: "",
@@ -33,12 +33,12 @@ export default function Chat() {
             subscribers: []
         }
     })
-    const params = useParams()
-    const navigate = useNavigate()
-    const chatSocket = useRef(null)
-    const wrapperRef = useRef(null)
-    const [refLazyDivinView, inViewLazyDiv] = useInView()
-    const [refWrapperinView, inViewWrapper] = useInView()
+    var params = useParams()
+    var navigate = useNavigate()
+    var chatSocket = useRef(null)
+    var wrapperRef = useRef(null)
+    var [refLazyDivinView, inViewLazyDiv] = useInView()
+    var [refWrapperinView, inViewWrapper] = useInView()
 
     function scrollToBottom() {
         if (wrapperRef.current) {
@@ -50,16 +50,16 @@ export default function Chat() {
     }
 
     async function sendMessage(text) {
-        const sendingText = text.trim()
+        var sendingText = text.trim()
         if (sendingText.length > 0) {
-            const message = { sender_id: user.pk, text: sendingText }
+            var message = { sender_id: user.pk, text: sendingText }
             await chatSocket.current.send(JSON.stringify({ message: message }))
         }
     }
 
     async function editRoom() {
-        let subscribers = mainSets.value.invitationChanges.subscribers.filter((user) => user.isInRoom === false)
-        let friends = mainSets.value.invitationChanges.friends.filter((user) => user.isInRoom === true)
+        var subscribers = mainSets.value.invitationChanges.subscribers.filter((user) => user.isInRoom === false)
+        var friends = mainSets.value.invitationChanges.friends.filter((user) => user.isInRoom === true)
         subscribers = subscribers.map((user) => {
             return user.pk
         })
@@ -68,9 +68,9 @@ export default function Chat() {
         })
 
         if (friends.length > 0 || subscribers.length > 0) {
-            const body = { subscribers: subscribers, friends: friends }
+            var body = { subscribers: subscribers, friends: friends }
 
-            const data = await Fetch({ action: `api/room/${params.room_id}/`, method: HttpMethod.PUT, body: body })
+            var data = await Fetch({ action: `api/room/${params.room_id}/`, method: HttpMethod.PUT, body: body })
             if (data && data.ok) {
                 navigate(`/chats/${user.username}/`)
             }
@@ -78,10 +78,10 @@ export default function Chat() {
     }
 
     async function fetchAddMessages(flag) {
-        const msgs_len = messages.value.length
+        var msgs_len = messages.value.length
         if (flag || msgs_len > 0) {
             mainSets.value.loading = true
-            const data = await Fetch({ action: `api/room/${params.room_id}/${msgs_len}/`, method: HttpMethod.GET })
+            var data = await Fetch({ action: `api/room/${params.room_id}/${msgs_len}/`, method: HttpMethod.GET })
             if (data && data.ok) {
                 messages.value = [...data.messages.reverse(), ...messages.value]
             }
@@ -90,8 +90,8 @@ export default function Chat() {
     }
 
     useEffect(() => {
-        const textArea = document.getElementsByClassName("TextArea").item(0)
-        const sendButton = document.getElementById("SendButton")
+        var textArea = document.getElementsByClassName("TextArea").item(0)
+        var sendButton = document.getElementById("SendButton")
         textArea.focus()
         textArea.onkeyup = function (e) {
             if (e.keyCode === 13) {
@@ -116,7 +116,7 @@ export default function Chat() {
     }, [])
 
     useEffect(() => {
-        const socket = new WebSocket(
+        var socket = new WebSocket(
             process.env.REACT_APP_SERVER_WEBSOCKET_URL
             + `chat/${params.room_id}/`
             + `?token=${localStorage.getItem('token')}`
@@ -140,7 +140,7 @@ export default function Chat() {
 
     useEffect(() => {
         chatSocket.current.onmessage = (e) => {
-            const data = JSON.parse(e.data)
+            var data = JSON.parse(e.data)
             if (data) {
                 messages.value = [...messages.value, data.message]
             }

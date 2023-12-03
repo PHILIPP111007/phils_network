@@ -3,7 +3,7 @@ import { useMemo } from "react"
 
 export default function Messages({ messages }) {
 
-    const showMessages = useMemo(() => {
+    var showMessages = useMemo(() => {
         return (
             messages.map((message) =>
                 <Message key={message.id} message={message} />

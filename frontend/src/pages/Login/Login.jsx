@@ -8,20 +8,20 @@ import Input from "@pages/components/UI/Input"
 
 export default function Login() {
 
-    const { setIsAuth } = useContext(AuthContext)
-    const { user, setUser } = useContext(UserContext)
-    const [loginForm, setLoginForm] = useState({ username: "", password: "" })
-    const navigate = useNavigate()
+    var { setIsAuth } = useContext(AuthContext)
+    var { user, setUser } = useContext(UserContext)
+    var [loginForm, setLoginForm] = useState({ username: "", password: "" })
+    var navigate = useNavigate()
 
     async function auth() {
-        const token = localStorage.getItem("token")
-        const data = await Fetch({ action: "api/auth/users/me/", method: HttpMethod.GET, token: token })
+        var token = localStorage.getItem("token")
+        var data = await Fetch({ action: "api/auth/users/me/", method: HttpMethod.GET, token: token })
 
         if (data && !data.detail && data.username) {
             setUser({ ...user, ...data })
             setIsAuth(true)
 
-            let path
+            var path
             if (localStorage.getItem("path") !== null) {
                 path = `${localStorage.getItem("path")}${data.username}/`
             } else {
@@ -33,7 +33,7 @@ export default function Login() {
 
     async function login(event) {
         event.preventDefault()
-        const data = await Fetch({ action: "auth/token/login/", method: HttpMethod.POST, body: loginForm, token: "" })
+        var data = await Fetch({ action: "auth/token/login/", method: HttpMethod.POST, body: loginForm, token: "" })
 
         if (data && !data.detail && data.auth_token) {
             localStorage.setItem("token", data.auth_token)

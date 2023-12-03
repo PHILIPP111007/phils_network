@@ -5,7 +5,7 @@ import UserStatus from "@pages/components/UserStatus"
 
 export default function FriendCard({ user }) {
 
-    const [status, setStatus] = useState("")
+    var [status, setStatus] = useState("")
 
     return (
         <div className="FriendCard">

@@ -7,10 +7,10 @@ export default async function Fetch({ action, method, body, token }) {
         token = localStorage.getItem("token")
     }
 
-    const url = `${process.env.REACT_APP_SERVER_URL}${action}`
+    var url = `${process.env.REACT_APP_SERVER_URL}${action}`
 
     if (method === HttpMethod.GET) {
-        const data = await fetch(url, {
+        var data = await fetch(url, {
             method: "GET",
             credentials: "same-origin",
             headers: {
@@ -30,7 +30,7 @@ export default async function Fetch({ action, method, body, token }) {
         return data
 
     } else {
-        const data = await fetch(url, {
+        var data = await fetch(url, {
             method: method,
             credentials: "same-origin",
             headers: {

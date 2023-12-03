@@ -3,7 +3,7 @@ import Post from "@pages/components/components/Post"
 
 export default function Posts({ posts, ...props }) {
 
-    const showPosts = useMemo(() => {
+    var showPosts = useMemo(() => {
         return posts.map((post) =>
             <Post
                 key={post.id}

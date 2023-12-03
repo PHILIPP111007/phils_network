@@ -5,7 +5,7 @@ import Input from "@pages/components/UI/Input"
 
 export default function FindUser(props) {
 
-    const [findUser, setFindUser] = useState({ username: "", first_name: "", last_name: "" })
+    var [findUser, setFindUser] = useState({ username: "", first_name: "", last_name: "" })
 
     return (
         <div className="FindUser">

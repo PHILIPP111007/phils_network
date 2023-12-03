@@ -10,11 +10,11 @@ export default function Modal(props) {
         }
     }
 
-    const showModalChildren = useMemo(() => {
+    var showModalChildren = useMemo(() => {
         document.addEventListener("keyup", closeModalByESC)
 
         if (props.modal === true) {
-            const rootClass = [cl.Modal]
+            var rootClass = [cl.Modal]
             rootClass.push(cl.active)
 
             return (

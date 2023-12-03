@@ -7,9 +7,9 @@ import Input from "@pages/components/UI/Input"
 
 export default function ModalRoomCreate(props) {
 
-    const [room, setRoom] = useState({ name: "", subscribers: [] })
-    const [friends, setFriends] = useState([])
-    const [loading, setLoading] = useState(true)
+    var [room, setRoom] = useState({ name: "", subscribers: [] })
+    var [friends, setFriends] = useState([])
+    var [loading, setLoading] = useState(true)
 
     function friendsShow() {
         return friends.map((user) =>

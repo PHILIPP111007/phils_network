@@ -4,7 +4,7 @@ import Fetch from "@API/Fetch"
 export default class Subscribe {
 
     static deleteFriend(props) {
-        const body = { option: DeleteOptionEnum.DELETE_FRIEND }
+        var body = { option: DeleteOptionEnum.DELETE_FRIEND }
         Fetch({ action: `api/subscriber/${props.pk}/`, method: HttpMethod.DELETE, body: body })
             .then(() => {
                 props.setStatus(undefined)
@@ -12,7 +12,7 @@ export default class Subscribe {
     }
 
     static deleteSubscriber(props) {
-        const body = { option: DeleteOptionEnum.DELETE_SUBSCRIBER }
+        var body = { option: DeleteOptionEnum.DELETE_SUBSCRIBER }
         Fetch({ action: `api/subscriber/${props.pk}/`, method: HttpMethod.DELETE, body: body })
             .then(() => {
                 props.setStatus(undefined)

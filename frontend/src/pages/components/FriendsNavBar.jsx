@@ -7,8 +7,8 @@ import Fetch from "@API/Fetch"
 
 export default function FriendsNavBar() {
 
-    const { user } = useContext(UserContext)
-    const [subscribersCount, setSubscribersCount] = useState(0)
+    var { user } = useContext(UserContext)
+    var [subscribersCount, setSubscribersCount] = useState(0)
 
     useEffect(() => {
         Fetch({ action: "api/friends/subscribers_count/", method: HttpMethod.GET })

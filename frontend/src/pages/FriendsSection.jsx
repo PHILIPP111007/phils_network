@@ -11,11 +11,11 @@ import ScrollToTopOrBottom from "@pages/components/MainComponents/components/Scr
 
 export default function FriendsSection() {
 
-    const { user } = useContext(UserContext)
-    const [friends, setFriends] = useState([])
-    const [filter, setFilter] = useState({ username: "", first_name: "", last_name: "" })
-    const searchedFriends = useFriends(friends, filter)  // custom hook
-    const [loading, setLoading] = useState(true)
+    var { user } = useContext(UserContext)
+    var [friends, setFriends] = useState([])
+    var [filter, setFilter] = useState({ username: "", first_name: "", last_name: "" })
+    var searchedFriends = useFriends(friends, filter)  // custom hook
+    var [loading, setLoading] = useState(true)
 
     async function findFunc(query) {
         setFilter({ ...filter, ...query })

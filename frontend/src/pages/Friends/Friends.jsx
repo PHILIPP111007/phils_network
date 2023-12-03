@@ -17,18 +17,18 @@ export default function Friends() {
 
     rememberPage("/friends/")
 
-    const { setIsAuth } = useContext(AuthContext)
-    const { user, setUser } = useContext(UserContext)
-    const [users, setUsers] = useState([])
-    const [loading, setLoading] = useState(false)
-    const params = useParams()
+    var { setIsAuth } = useContext(AuthContext)
+    var { user, setUser } = useContext(UserContext)
+    var [users, setUsers] = useState([])
+    var [loading, setLoading] = useState(false)
+    var params = useParams()
 
     async function findFunc(findUser) {
         setUsers([])
         if (findUser.username || findUser.first_name || findUser.last_name) {
             setLoading(true)
 
-            const data = await Fetch({ action: "api/find/", method: HttpMethod.POST, body: findUser })
+            var data = await Fetch({ action: "api/find/", method: HttpMethod.POST, body: findUser })
             if (data && data.ok) {
                 setUsers(data.users)
             }

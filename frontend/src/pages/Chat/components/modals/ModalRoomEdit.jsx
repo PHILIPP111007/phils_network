@@ -7,7 +7,7 @@ import Button from "@pages/components/UI/Button"
 
 export default function ModalRoomEdit({ mainSets, me, editRoom }) {
 
-    const [loading, setLoading] = useState(true)
+    var [loading, setLoading] = useState(true)
 
     async function editSubscribers(subscriber) {
         mainSets.value = {
@@ -88,9 +88,9 @@ export default function ModalRoomEdit({ mainSets, me, editRoom }) {
             Fetch({ action: "api/friends/friends/", method: HttpMethod.GET })
                 .then((data) => {
                     if (data.ok) {
-                        let response = data.query
+                        var response = data.query
                         response = response.filter((friend) => {
-                            const hasMatch = mainSets.value.room.subscribers_info.some(user => friend.pk === user.pk)
+                            var hasMatch = mainSets.value.room.subscribers_info.some(user => friend.pk === user.pk)
                             return !hasMatch
                         })
                         response = response.map((user) => {

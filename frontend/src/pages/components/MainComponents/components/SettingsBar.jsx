@@ -8,9 +8,9 @@ import Button from "@pages/components/UI/Button"
 
 export default function SettingsBar(props) {
 
-    const { setIsAuth } = useContext(AuthContext)
-    const theme = useSignal(Theme.LIGHT)
-    const body = document.getElementsByTagName("body")[0]
+    var { setIsAuth } = useContext(AuthContext)
+    var theme = useSignal(Theme.LIGHT)
+    var body = document.getElementsByTagName("body")[0]
 
     if (localStorage.getItem(Theme.NAME) !== null) {
         body.className = localStorage.getItem(Theme.NAME)

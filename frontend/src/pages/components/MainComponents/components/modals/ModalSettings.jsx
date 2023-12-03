@@ -8,13 +8,13 @@ import Input from "@pages/components/UI/Input"
 
 export default function ModalSettings(props) {
 
-    const { user, setUser } = useContext(UserContext)
-    const [userNew, setUserNew] = useState({ first_name: "", last_name: "", email: "" })
+    var { user, setUser } = useContext(UserContext)
+    var [userNew, setUserNew] = useState({ first_name: "", last_name: "", email: "" })
 
     async function userUpdate(event) {
         event.preventDefault()
         if (userNew.first_name || userNew.last_name || userNew.email) {
-            const data = await Fetch({ action: `api/user/${user.pk}/`, method: HttpMethod.PUT, body: userNew })
+            var data = await Fetch({ action: `api/user/${user.pk}/`, method: HttpMethod.PUT, body: userNew })
             if (data.ok) {
                 setUser(data.user)
             }

@@ -23,16 +23,16 @@ export default function User() {
 
     rememberPage("/user/")
 
-    const { setIsAuth } = useContext(AuthContext)
-    const { user, setUser } = useContext(UserContext)
-    const [ref, inView] = useInView()
-    const params = useParams()
-    const [userLocal, setUserLocal] = useState(user)
-    const [posts, setPosts] = useState([])
-    const [status, setStatus] = useState("")
-    const [modalPostEdit, setModalPostEdit] = useState(false)
-    const [modalPostCreate, setModalPostCreate] = useState(false)
-    const [mainSets, setMainSets] = useState({
+    var { setIsAuth } = useContext(AuthContext)
+    var { user, setUser } = useContext(UserContext)
+    var [ref, inView] = useInView()
+    var params = useParams()
+    var [userLocal, setUserLocal] = useState(user)
+    var [posts, setPosts] = useState([])
+    var [status, setStatus] = useState("")
+    var [modalPostEdit, setModalPostEdit] = useState(false)
+    var [modalPostCreate, setModalPostCreate] = useState(false)
+    var [mainSets, setMainSets] = useState({
         post: {
             btnFlag: false,
             changed: false,
@@ -45,7 +45,7 @@ export default function User() {
         },
         loading: true,
     })
-    let isUserGlobal = user.username === userLocal.username
+    var isUserGlobal = user.username === userLocal.username
 
     async function getPosts(postsLength) {
         setMainSets({ ...mainSets, loading: true })
@@ -54,9 +54,9 @@ export default function User() {
             postsLength = posts.length
         }
 
-        const data = await Fetch({ action: `api/blog/${params.username}/${postsLength}/`, method: HttpMethod.GET })
+        var data = await Fetch({ action: `api/blog/${params.username}/${postsLength}/`, method: HttpMethod.GET })
         if (data && data.ok) {
-            const newPosts = data.posts.map(post => {
+            var newPosts = data.posts.map(post => {
                 return { ...post, postLen500: post.content.length > 500 }
             })
             setPosts((prev) => [...prev, ...newPosts])
@@ -65,7 +65,7 @@ export default function User() {
     }
 
     async function deletePost(oldPost) {
-        const data = await Fetch({ action: `api/blog/${oldPost.id}/`, method: HttpMethod.DELETE })
+        var data = await Fetch({ action: `api/blog/${oldPost.id}/`, method: HttpMethod.DELETE })
         if (data && data.ok) {
             setPosts((prev) => prev.filter(post => post.id !== oldPost.id))
             setModalPostEdit(false)
@@ -74,12 +74,12 @@ export default function User() {
 
     async function createPost(text) {
         setModalPostCreate(false)
-        let newPost = {
+        var newPost = {
             user: user.pk,
             content: text,
         }
 
-        const data = await Fetch({ action: "api/blog/", method: HttpMethod.POST, body: newPost })
+        var data = await Fetch({ action: "api/blog/", method: HttpMethod.POST, body: newPost })
         if (data && data.ok) {
             newPost = { ...data.post, postLen500: data.post.content.length > 500, btnFlag: true }
             setPosts([newPost, ...posts])
@@ -92,7 +92,7 @@ export default function User() {
             setModalPostEdit(false)
             newPost.changed = true
 
-            const data = await Fetch({ action: `api/blog/${newPost.id}/`, method: HttpMethod.PUT, body: newPost })
+            var data = await Fetch({ action: `api/blog/${newPost.id}/`, method: HttpMethod.PUT, body: newPost })
             if (data && data.ok) {
                 setPosts(posts.map(post => {
                     if (post.id === newPost.id) {

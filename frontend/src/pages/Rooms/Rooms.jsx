@@ -17,25 +17,25 @@ export default function Rooms() {
 
     rememberPage("/chats/")
 
-    const { setIsAuth } = useContext(AuthContext)
-    const { user, setUser } = useContext(UserContext)
-    const [rooms, setRooms] = useState([])
-    const [modalRoomCreate, setModalRoomCreate] = useState(false)
-    const [loading, setLoading] = useState(true)
-    const params = useParams()
-    const roomSocket = useRef(null)
+    var { setIsAuth } = useContext(AuthContext)
+    var { user, setUser } = useContext(UserContext)
+    var [rooms, setRooms] = useState([])
+    var [modalRoomCreate, setModalRoomCreate] = useState(false)
+    var [loading, setLoading] = useState(true)
+    var params = useParams()
+    var roomSocket = useRef(null)
 
     async function createRoom(room) {
         room.subscribers.push(user.pk)
 
-        const data = await Fetch({ action: "api/room/", method: HttpMethod.POST, body: room })
+        var data = await Fetch({ action: "api/room/", method: HttpMethod.POST, body: room })
         if (data && data.ok) {
             setRooms([data.room, ...rooms])
         }
         setModalRoomCreate(false)
     }
 
-    const showRooms = useMemo(() => {
+    var showRooms = useMemo(() => {
         return (
             rooms.map((room) =>
                 <RoomCard
@@ -49,9 +49,9 @@ export default function Rooms() {
 
     function updateRoomLastMessage(data) {
         if (data.status) {
-            const room_id = Number(data.message.room)
-            const newRoom = rooms.filter((room) => room.id === room_id)[0]
-            let text = data.message.text
+            var room_id = Number(data.message.room)
+            var newRoom = rooms.filter((room) => room.id === room_id)[0]
+            var text = data.message.text
             newRoom.last_sender = data.message.username
             if (text.length > 30) {
                 text = text.substring(0, 30) + "..."
@@ -77,7 +77,7 @@ export default function Rooms() {
     useEffect(() => {
         roomSocket.current = rooms.map((room) => {
 
-            const socket = new WebSocket(
+            var socket = new WebSocket(
                 process.env.REACT_APP_SERVER_WEBSOCKET_URL
                 + `chat/${room.id}/`
                 + `?token=${localStorage.getItem('token')}`
@@ -92,7 +92,7 @@ export default function Rooms() {
                 console.error(e)
             }
             socket.onmessage = (e) => {
-                const data = JSON.parse(e.data)
+                var data = JSON.parse(e.data)
                 updateRoomLastMessage(data)
             }
 

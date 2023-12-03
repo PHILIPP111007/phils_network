@@ -4,7 +4,7 @@ import sendIcon from "@images/send-icon.svg"
 
 export default function UserInput({ sendMessage, setModalRoomEdit }) {
 
-    const text = useSignal("")
+    var text = useSignal("")
 
     return (
         <div className="UserInput">

@@ -1,16 +1,16 @@
 import { lazy } from "react"
-const User = lazy(() => import("@pages/User/User"))
-const Rooms = lazy(() => import("@pages/Rooms/Rooms"))
-const News = lazy(() => import("@pages/News"))
-const Friends = lazy(() => import("@pages/Friends/Friends"))
-const FriendsSection = lazy(() => import("@pages/FriendsSection"))
-const SubscriptionsSection = lazy(() => import("@pages/SubscriptionsSection"))
-const SubscribersSection = lazy(() => import("@pages/SubscribersSection"))
-const Chat = lazy(() => import("@pages/Chat/Chat"))
-const Login = lazy(() => import("@pages/Login/Login"))
-const Register = lazy(() => import("@pages/Register"))
+var User = lazy(() => import("@pages/User/User"))
+var Rooms = lazy(() => import("@pages/Rooms/Rooms"))
+var News = lazy(() => import("@pages/News"))
+var Friends = lazy(() => import("@pages/Friends/Friends"))
+var FriendsSection = lazy(() => import("@pages/FriendsSection"))
+var SubscriptionsSection = lazy(() => import("@pages/SubscriptionsSection"))
+var SubscribersSection = lazy(() => import("@pages/SubscribersSection"))
+var Chat = lazy(() => import("@pages/Chat/Chat"))
+var Login = lazy(() => import("@pages/Login/Login"))
+var Register = lazy(() => import("@pages/Register"))
 
-export const PublicRoutes = [
+export var PublicRoutes = [
     {
         path: "/",
         element: <Login />
@@ -25,7 +25,7 @@ export const PublicRoutes = [
     },
 ]
 
-export const PrivateRoutes = [
+export var PrivateRoutes = [
     {
         path: "/user/:username/",
         name: "User",

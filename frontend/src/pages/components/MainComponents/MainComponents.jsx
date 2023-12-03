@@ -8,9 +8,9 @@ import NavBar from "@pages/components/MainComponents/components/NavBar"
 
 export default function MainComponents(props) {
 
-    const [modalSettings, setModalSettings] = useState(false)
-    const [modalDelAcc, setModalDelAcc] = useState(false)
-    const setBarRef = useRef()
+    var [modalSettings, setModalSettings] = useState(false)
+    var [modalDelAcc, setModalDelAcc] = useState(false)
+    var setBarRef = useRef()
 
     return (
         <div className="MainComponents">

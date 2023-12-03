@@ -8,18 +8,18 @@ import Input from "@pages/components/UI/Input"
 
 export default function Register() {
 
-    const { setIsAuth } = useContext(AuthContext)
-    const { user, setUser } = useContext(UserContext)
-    const [registerForm, setRegisterForm] = useState({
+    var { setIsAuth } = useContext(AuthContext)
+    var { user, setUser } = useContext(UserContext)
+    var [registerForm, setRegisterForm] = useState({
         username: "",
         password: "",
         password2: ""
     })
-    const navigate = useNavigate()
+    var navigate = useNavigate()
 
     async function auth() {
-        const token = localStorage.getItem("token")
-        const data = await Fetch({ action: "api/auth/users/me/", method: HttpMethod.GET, token: token })
+        var token = localStorage.getItem("token")
+        var data = await Fetch({ action: "api/auth/users/me/", method: HttpMethod.GET, token: token })
 
         if (data && !data.detail && data.username) {
             setUser({ ...user, ...data })
@@ -36,7 +36,7 @@ export default function Register() {
         event.preventDefault()
 
         if (registerForm.password === registerForm.password2) {
-            const data = await Fetch({ action: "api/auth/users/", method: HttpMethod.POST, body: registerForm, token: "" })
+            var data = await Fetch({ action: "api/auth/users/", method: HttpMethod.POST, body: registerForm, token: "" })
             if (typeof data.username === "string") {
                 setUser(data)
                 navigate("/login/")

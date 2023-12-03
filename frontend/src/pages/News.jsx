@@ -17,18 +17,18 @@ export default function News() {
 
     rememberPage("/news/")
 
-    const { setIsAuth } = useContext(AuthContext)
-    const { user, setUser } = useContext(UserContext)
-    const [posts, setPosts] = useState([])
-    const [loading, setLoading] = useState(true)
-    const [ref, inView] = useInView()
-    const params = useParams()
+    var { setIsAuth } = useContext(AuthContext)
+    var { user, setUser } = useContext(UserContext)
+    var [posts, setPosts] = useState([])
+    var [loading, setLoading] = useState(true)
+    var [ref, inView] = useInView()
+    var params = useParams()
 
     async function fetchAddPosts() {
         setLoading(true)
-        const data = await Fetch({ action: `api/news/${posts.length}/`, method: HttpMethod.GET })
+        var data = await Fetch({ action: `api/news/${posts.length}/`, method: HttpMethod.GET })
         if (data && data.ok) {
-            const newPosts = data.posts.map(post => {
+            var newPosts = data.posts.map(post => {
                 return { ...post, postLen500: post.content.length > 500 }
             })
             setPosts([...posts, ...newPosts])

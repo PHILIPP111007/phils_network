@@ -4,7 +4,7 @@ import Button from "@pages/components/UI/Button"
 
 export default function ModalPostCreate(props) {
 
-    const [text, setText] = useState("")
+    var [text, setText] = useState("")
 
     return (
         <div className="ModalPostEdit">
