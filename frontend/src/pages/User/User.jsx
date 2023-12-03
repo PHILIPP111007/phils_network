@@ -1,11 +1,11 @@
 import "./styles/User.css"
 import "../../styles/Posts.css"
-import { useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useMemo, useState } from "react"
 import { useParams } from "react-router-dom"
 import { useInView } from "react-intersection-observer"
 import { UserContext, AuthContext } from "@data/context"
 import { useAuth, useSetUser } from "@hooks/useAuth"
-import { HttpMethod, UserStatusEnum } from "@data/enums"
+import { HttpMethod } from "@data/enums"
 import useObserver from "@hooks/useObserver"
 import Fetch from "@API/Fetch"
 import MainComponents from "@pages/components/MainComponents/MainComponents"
@@ -20,6 +20,8 @@ import plusIcon from "@images/plus-icon.svg"
 
 export default function User() {
 
+    localStorage.setItem("path", "/user/")
+
     const { setIsAuth } = useContext(AuthContext)
     const { user, setUser } = useContext(UserContext)
     const [ref, inView] = useInView()
@@ -33,7 +35,6 @@ export default function User() {
         post: {
             btnFlag: false,
             changed: false,
-            user: 0,
             timestamp: "",
             username: "",
             first_name: "",
@@ -45,8 +46,6 @@ export default function User() {
     })
     let isUserGlobal = user.username === userLocal.username
 
-    localStorage.setItem("path", "/user/")
-
     async function getPosts(postsLength) {
         setMainSets({ ...mainSets, loading: true })
 
@@ -57,7 +56,7 @@ export default function User() {
         const data = await Fetch({ action: `api/blog/${params.username}/${postsLength}/`, method: HttpMethod.GET })
         if (data && data.ok) {
             const newPosts = data.posts.map(post => {
-                return { ...post, postLen500: post.content.length > 500, btnFlag: true }
+                return { ...post, postLen500: post.content.length > 500 }
             })
             setPosts([...posts, ...newPosts])
         }
@@ -77,7 +76,7 @@ export default function User() {
         let newPost = {
             user: user.pk,
             content: text,
-        };
+        }
 
         const data = await Fetch({ action: "api/blog/", method: HttpMethod.POST, body: newPost })
         if (data && data.ok) {
@@ -87,6 +86,7 @@ export default function User() {
     }
 
     async function editPost(newPost) {
+        newPost.content = newPost.content.trim()
         if (newPost.content.length > 0) {
             setModalPostEdit(false)
             newPost.changed = true
@@ -104,29 +104,27 @@ export default function User() {
         }
     }
 
-    function showPosts() {
-        if (posts && (isUserGlobal || status === UserStatusEnum.IS_FRIEND)) {
-            return posts.map((post) =>
-                <Post
-                    key={post.id}
-                    post={post}
-                    linkShow={false}
-                    settings={isUserGlobal}
-                    posts={posts}
-                    setPosts={setPosts}
-                    mainSets={mainSets}
-                    setMainSets={setMainSets}
-                    setModalPost={setModalPostEdit}
-                />
-            )
-        }
-    }
+    const showPosts = useMemo(() => {
+        return posts.map((post) =>
+            <Post
+                key={post.id}
+                post={post}
+                linkShow={false}
+                settings={isUserGlobal}
+                mainSets={mainSets}
+                setMainSets={setMainSets}
+                setModalPost={setModalPostEdit}
+            />
+        )
+    }, [posts])
 
-    useEffect(() => {
+    useMemo(() => {
         setPosts([])
-        getPosts(0)
     }, [params.username])
 
+    useEffect(() => {
+        getPosts(0)
+    }, [params.username])
 
     useAuth({ username: params.username, setIsAuth: setIsAuth })
 
@@ -165,10 +163,10 @@ export default function User() {
                 </div>}
 
             <div className="Posts">
-                {showPosts()}
+                {showPosts}
             </div>
 
             <LazyDiv Ref={ref} />
         </div>
-    );
+    )
 }

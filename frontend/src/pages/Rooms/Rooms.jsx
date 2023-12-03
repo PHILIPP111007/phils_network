@@ -14,14 +14,14 @@ import Button from "@pages/components/UI/Button"
 
 export default function Rooms() {
 
+    localStorage.setItem("path", "/chats/")
+
     const { setIsAuth } = useContext(AuthContext)
     const { user, setUser } = useContext(UserContext)
     const [rooms, setRooms] = useState([])
     const [modalRoomCreate, setModalRoomCreate] = useState(false)
     const [loading, setLoading] = useState(true)
     const params = useParams()
-
-    localStorage.setItem("path", "/chats/")
 
     async function createRoom(room) {
         room.subscribers.push(user.pk)
@@ -62,7 +62,11 @@ export default function Rooms() {
 
             <div className="list">
                 {rooms.map((room) =>
-                    <RoomCard key={room.id} room={room} link={`/chats/${user.username}/${room.id}/`} />
+                    <RoomCard
+                        key={room.id}
+                        room={room}
+                        link={`/chats/${user.username}/${room.id}/`}
+                    />
                 )}
             </div>
         </div>

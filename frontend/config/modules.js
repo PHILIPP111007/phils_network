@@ -6,7 +6,9 @@ const paths = require('./paths');
 const chalk = require('react-dev-utils/chalk');
 const resolve = require('resolve');
 
-// converts "src/components/*" to "src/components"
+/**
+ * converts "src/components/*" to "src/components"
+ */
 const removeWildcardPart = p => p.replace('/*', '');
 
 /**

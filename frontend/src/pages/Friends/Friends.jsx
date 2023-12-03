@@ -14,13 +14,13 @@ import ScrollToTopOrBottom from "@pages/components/MainComponents/components/Scr
 
 export default function Friends() {
 
+    localStorage.setItem("path", "/friends/")
+
     const { setIsAuth } = useContext(AuthContext)
     const { user, setUser } = useContext(UserContext)
     const [users, setUsers] = useState([])
     const [loading, setLoading] = useState(false)
     const params = useParams()
-
-    localStorage.setItem("path", "/friends/")
 
     async function findFunc(findUser) {
         setUsers([])

@@ -21,10 +21,17 @@ export default function Chat() {
     const messages = useSignal([])
     const [modalRoomEdit, setModalRoomEdit] = useState(false)
     const mainSets = useSignal({
-        room: { id: undefined, name: "", subscribers_info: [] },
+        room: {
+            id: undefined,
+            name: "",
+            subscribers_info: []
+        },
         isCreator: false,
         loading: false,
-        invitationChanges: { friends: [], subscribers: [] },
+        invitationChanges: {
+            friends: [],
+            subscribers: []
+        }
     })
     const params = useParams()
     const navigate = useNavigate()

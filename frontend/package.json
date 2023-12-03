@@ -72,9 +72,9 @@
     "workbox-webpack-plugin": "^6.6.0"
   },
   "scripts": {
-    "start": "bun scripts/start.js",
+    "start": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "bun scripts/test.js"
+    "test": "node scripts/test.js"
   },
   "eslintConfig": {
     "extends": [

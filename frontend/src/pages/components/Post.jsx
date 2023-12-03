@@ -1,4 +1,5 @@
 import "./styles/Post.css"
+import { useSignal } from "@preact/signals-react"
 import { Link } from "react-router-dom"
 import ReactLinkify from "react-linkify"
 import settingsLogo from "@images/three_points.svg"
@@ -6,21 +7,14 @@ import Button from "@pages/components/UI/Button"
 
 export default function Post({ post, ...props }) {
 
-    function setFlag(bool) {
-        props.setPosts([
-            ...props.posts.map((p) => {
-                if (p.id === post.id) { return { ...p, btnFlag: bool } }
-                return p
-            })
-        ])
-    }
+    const btnFlag = useSignal(true)
 
     function showButton() {
         if (post.postLen500) {
-            if (post.btnFlag) {
+            if (btnFlag.value) {
                 return (
                     <>
-                        <Button onClick={() => setFlag(false)} >more</Button>
+                        <Button onClick={() => btnFlag.value = false} >more</Button>
                         <br />
                         <br />
                     </>
@@ -28,7 +22,7 @@ export default function Post({ post, ...props }) {
             } else {
                 return (
                     <>
-                        <Button onClick={() => setFlag(true)} >less</Button>
+                        <Button onClick={() => btnFlag.value = true} >less</Button>
                         <br />
                         <br />
                     </>
@@ -53,7 +47,7 @@ export default function Post({ post, ...props }) {
             <br />
             <div className="content">
                 <ReactLinkify>
-                    {(post.postLen500 && post.btnFlag)
+                    {(post.postLen500 && btnFlag.value)
                         ?
                         post.content.substring(0, 499) + "..."
                         :

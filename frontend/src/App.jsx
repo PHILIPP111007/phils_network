@@ -18,7 +18,13 @@ export default function App() {
         body.className = Theme.LIGHT
     }
     const [isAuth, setIsAuth] = useState(false)
-    const [user, setUser] = useState({})
+    const [user, setUser] = useState({
+        pk: 0,
+        username: "",
+        email: "",
+        first_name: "",
+        last_name: ""
+    })
 
     useAuth({ username: user.username, setIsAuth: setIsAuth })
 
