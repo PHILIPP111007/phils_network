@@ -123,10 +123,10 @@ export default function Chat() {
             + `?token=${localStorage.getItem('token')}`
         )
         socket.onopen = function (e) {
-            console.log(`chatSocket: The connection in room ${params.room_id} was setup successfully!`)
+            console.log(`chatSocket: The connection in room was setup successfully.`)
         }
         socket.onclose = function (e) {
-            console.warn(`chatSocket: room ${params.room_id} has already closed.`)
+            console.log(`chatSocket: room has already closed.`)
         }
         socket.onerror = function (e) {
             console.error(e)
