@@ -8,6 +8,10 @@ export default function RoomCard({ room, link }) {
                 <Link to={link} >
                     <div className="text">
                         <h4>{room.name}</h4>
+                        <br />
+                        {room.last_sender &&
+                            <div><strong>{room.last_sender}:</strong> {room.last_message}</div>
+                        }
                     </div>
                 </Link>
             </div>

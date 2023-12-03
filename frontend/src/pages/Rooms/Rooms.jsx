@@ -1,5 +1,5 @@
 import "./styles/Rooms.css"
-import { useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useMemo, useRef, useState } from "react"
 import { useParams } from "react-router-dom"
 import { UserContext, AuthContext } from "@data/context"
 import { HttpMethod } from "@data/enums"
@@ -23,6 +23,7 @@ export default function Rooms() {
     const [modalRoomCreate, setModalRoomCreate] = useState(false)
     const [loading, setLoading] = useState(true)
     const params = useParams()
+    const roomSocket = useRef(null)
 
     async function createRoom(room) {
         room.subscribers.push(user.pk)
@@ -32,6 +33,34 @@ export default function Rooms() {
             setRooms([data.room, ...rooms])
         }
         setModalRoomCreate(false)
+    }
+
+    const showRooms = useMemo(() => {
+        return (
+            rooms.map((room) =>
+                <RoomCard
+                    key={room.id}
+                    room={room}
+                    link={`/chats/${user.username}/${room.id}/`}
+                />
+            )
+        )
+    }, [rooms])
+
+    function updateRoomLastMessage(data) {
+        if (data.status) {
+            const room_id = Number(data.message.room)
+            const newRoom = rooms.filter((room) => room.id === room_id)[0]
+            let text = data.message.text
+            newRoom.last_sender = data.message.username
+            if (text.length > 30) {
+                text = text.substring(0, 30) + "..."
+            }
+            newRoom.last_message = text
+            setRooms((prev) => {
+                return [newRoom, ...prev.filter((room) => room.id !== room_id)]
+            })
+        }
     }
 
     useEffect(() => {
@@ -44,6 +73,41 @@ export default function Rooms() {
                 setLoading(false)
             })
     }, [])
+
+    useEffect(() => {
+        roomSocket.current = rooms.map((room) => {
+
+            const socket = new WebSocket(
+                process.env.REACT_APP_SERVER_WEBSOCKET_URL
+                + `chat/${room.id}/`
+                + `?token=${localStorage.getItem('token')}`
+            )
+            socket.onopen = () => {
+                console.log(`roomSocket: The connection was setup successfully.`)
+            }
+            socket.onclose = () => {
+                console.log(`roomSocket: Has already closed.`)
+            }
+            socket.onerror = (e) => {
+                console.error(e)
+            }
+            socket.onmessage = (e) => {
+                const data = JSON.parse(e.data)
+                updateRoomLastMessage(data)
+            }
+
+            return {
+                room_id: room.id,
+                socket: socket
+            }
+        })
+
+        return () => {
+            roomSocket.current.map((room) => {
+                room.socket.close()
+            })
+        }
+    }, [rooms.length])
 
     useAuth({ username: params.username, setIsAuth: setIsAuth })
 
@@ -62,13 +126,7 @@ export default function Rooms() {
             <Button onClick={() => setModalRoomCreate(true)} >add room</Button>
 
             <div className="list">
-                {rooms.map((room) =>
-                    <RoomCard
-                        key={room.id}
-                        room={room}
-                        link={`/chats/${user.username}/${room.id}/`}
-                    />
-                )}
+                {showRooms}
             </div>
         </div>
     )
