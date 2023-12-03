@@ -11,20 +11,27 @@ from .services import MessageService
 
 class ChatConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
-		"""Join room group."""
-
-		token_key = self.scope["query_string"].decode().split("=")[-1]
-		pk = await _get_user_pk(token_key)
-		flag = await _check_permission(self, pk)
+		"""
+		Join room group.
+		If the user is not a subscriber to the conversation,
+		he will be disconnected.
+		"""
 
 		self.room = self.scope["url_route"]["kwargs"]["room"]
 		self.room_group = self.room
 
-		if flag:
-			await self.channel_layer.group_add(self.room_group, self.channel_name)
-			await self.accept()
-		else:
+		token_key = self.scope["query_string"].decode().split("=")[-1]
+		pk = await _get_user_pk(token_key)
+
+		if not pk:
 			await self.close()
+		else:
+			flag = await _check_permission(self, pk)
+			if flag:
+				await self.channel_layer.group_add(self.room_group, self.channel_name)
+				await self.accept()
+			else:
+				await self.close()
 
 	async def disconnect(self, close_code):
 		"""
@@ -37,9 +44,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 	async def receive(self, text_data):
 		"""
 		Called with a decoded WebSocket frame.
-		Receive message from WebSocket and send it to room group.
-		If the user is not a subscriber to the conversation,
-		he will be disconnected.
+		Receive message from WebSocket, create message in the DB
+		and send it to room group.
 		"""
 
 		text_data = json.loads(text_data)
@@ -73,7 +79,7 @@ def _get_user_pk(token_key: str) -> int | None:
 
 
 @database_sync_to_async
-def _check_permission(self, pk):
+def _check_permission(self, pk) -> bool:
 	"""Check if user is this room subscriber."""
 
 	room_id = int(self.scope["url_route"]["kwargs"]["room"])
