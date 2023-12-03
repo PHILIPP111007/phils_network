@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom"
 import { UserContext, AuthContext } from "@data/context"
 import { HttpMethod } from "@data/enums"
 import { useAuth, useSetUser } from "@hooks/useAuth"
+import rememberPage from "@hooks/rememberPage"
 import Fetch from "@API/Fetch"
 import MainComponents from "@pages/components/MainComponents/MainComponents"
 import FriendCard from "@pages/components/FriendCard"
@@ -14,7 +15,7 @@ import ScrollToTopOrBottom from "@pages/components/MainComponents/components/Scr
 
 export default function Friends() {
 
-    localStorage.setItem("path", "/friends/")
+    rememberPage("/friends/")
 
     const { setIsAuth } = useContext(AuthContext)
     const { user, setUser } = useContext(UserContext)

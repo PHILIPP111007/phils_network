@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom"
 import { UserContext, AuthContext } from "@data/context"
 import { HttpMethod } from "@data/enums"
 import { useAuth, useSetUser } from "@hooks/useAuth"
+import rememberPage from "@hooks/rememberPage"
 import Fetch from "@API/Fetch"
 import ModalRoomCreate from "@pages/Rooms/components/modals/ModalRoomCreate"
 import RoomCard from "@pages/Rooms/components/RoomCard"
@@ -14,7 +15,7 @@ import Button from "@pages/components/UI/Button"
 
 export default function Rooms() {
 
-    localStorage.setItem("path", "/chats/")
+    rememberPage("/chats/")
 
     const { setIsAuth } = useContext(AuthContext)
     const { user, setUser } = useContext(UserContext)
