@@ -77,9 +77,9 @@ export default function Chat() {
         }
     }
 
-    async function fetchAddMessages(bool) {
+    async function fetchAddMessages(flag) {
         const msgs_len = messages.value.length
-        if (bool || msgs_len > 0) {
+        if (flag || msgs_len > 0) {
             mainSets.value.loading = true
             const data = await Fetch({ action: `api/room/${params.room_id}/${msgs_len}/`, method: HttpMethod.GET })
             if (data && data.ok) {
@@ -118,17 +118,16 @@ export default function Chat() {
     useEffect(() => {
         const socket = new WebSocket(
             process.env.REACT_APP_SERVER_WEBSOCKET_URL
-            + params.room_id
-            + "/"
+            + `chat/${params.room_id}/`
             + `?token=${localStorage.getItem('token')}`
         )
-        socket.onopen = function (e) {
+        socket.onopen = () => {
             console.log(`chatSocket: The connection in room was setup successfully.`)
         }
-        socket.onclose = function (e) {
+        socket.onclose = () => {
             console.log(`chatSocket: room has already closed.`)
         }
-        socket.onerror = function (e) {
+        socket.onerror = (e) => {
             console.error(e)
         }
 
