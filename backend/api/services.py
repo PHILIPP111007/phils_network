@@ -31,6 +31,13 @@ class DeleteOption(enum.Enum):
 	DELETE_SUBSCRIBER = 2
 
 
+class FilterOption(enum.Enum):
+	FRIENDS = 1
+	SUBSCRIPTIONS = 2
+	SUBSCRIBERS = 3
+	SUBSCRIBERS_COUNT = 4
+
+
 class UserService:
 	@staticmethod
 	def filter(pk: int) -> QuerySet[User]:
@@ -158,7 +165,7 @@ class SubscriberService:
 
 	@classmethod
 	def filter_by_option(
-		cls, pk: int, option: str, serializer: bool = True
+		cls, pk: int, option: int, serializer: bool = True
 	) -> QuerySet[User] | ReturnList | int | None:
 		"""
 		Returns subscribers count or
@@ -166,10 +173,12 @@ class SubscriberService:
 		"""
 
 		options = {
-			"friends": lambda pk: cls._get_friends(pk=pk),
-			"subscriptions": lambda pk: cls._get_subscriptions(pk=pk),
-			"subscribers": lambda pk: cls._get_subscribers(pk=pk),
-			"subscribers_count": lambda pk: cls._get_subscribers(pk=pk).count(),
+			FilterOption.FRIENDS.value: lambda pk: cls._get_friends(pk=pk),
+			FilterOption.SUBSCRIPTIONS.value: lambda pk: cls._get_subscriptions(pk=pk),
+			FilterOption.SUBSCRIBERS.value: lambda pk: cls._get_subscribers(pk=pk),
+			FilterOption.SUBSCRIBERS_COUNT.value: lambda pk: cls._get_subscribers(
+				pk=pk
+			).count(),
 		}
 
 		option_func: Callable[[int], QuerySet[User] | int] | None = options.get(
