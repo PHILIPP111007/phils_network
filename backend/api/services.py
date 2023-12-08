@@ -3,7 +3,6 @@ Business logic of the application.
 """
 
 from typing import Callable
-import enum
 
 from django.conf import settings
 from django.db.models.query import QuerySet
@@ -16,26 +15,7 @@ from rest_framework.utils.serializer_helpers import ReturnList
 from .serializers import UserSerializer
 from .models import Subscriber, Blog, RoomCreator, Room, Message
 
-
-class SubscriberStatus(enum.Enum):
-	"""Implements subscriber status."""
-
-	IS_FRIEND = 1
-	ME_SUBSCRIBER = 2
-	HE_SUBSCRIBER = 3
-	NO_DATA = 4
-
-
-class DeleteOption(enum.Enum):
-	DELETE_FRIEND = 1
-	DELETE_SUBSCRIBER = 2
-
-
-class FilterOption(enum.Enum):
-	FRIENDS = 1
-	SUBSCRIPTIONS = 2
-	SUBSCRIBERS = 3
-	SUBSCRIBERS_COUNT = 4
+from .enums import SubscriberStatus, DeleteOption, FilterOption
 
 
 class UserService:

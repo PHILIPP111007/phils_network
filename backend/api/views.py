@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework import status
 
+from .enums import FilterOption
 from .permissions import IsOwnerOrReadOnly
 from .serializers import (
 	UserSerializer,
@@ -20,7 +21,6 @@ from .services import (
 	RoomCreatorService,
 	RoomService,
 	MessageService,
-	FilterOption,
 )
 
 
