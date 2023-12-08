@@ -33,7 +33,7 @@ export default function Login() {
 
     async function login(event) {
         event.preventDefault()
-        var data = await Fetch({ action: "auth/token/login/", method: HttpMethod.POST, body: loginForm, token: "" })
+        var data = await Fetch({ action: "auth/token/login/", method: HttpMethod.POST, body: loginForm })
 
         if (data && !data.detail && data.auth_token) {
             localStorage.setItem("token", data.auth_token)
