@@ -1,5 +1,6 @@
 import "./Friends/styles/Friends.css"
 import { useEffect, useState, useContext } from "react"
+import { FilterOption } from "@data/enums"
 import { UserContext } from "@data/context"
 import useFriends from "@hooks/useFriends"
 import UserSection from "@hooks/UserSection"
@@ -22,7 +23,7 @@ export default function SubscriptionsSection() {
     }
 
     useEffect(() => {
-        UserSection({ option: "subscriptions", setUserSection: setSubscriptions, setLoading: setLoading })
+        UserSection({ option: FilterOption.SUBSCRIPTIONS, setUserSection: setSubscriptions, setLoading: setLoading })
     }, [])
 
     return (

@@ -18,7 +18,15 @@ export var HttpMethod = {
 }
 
 export var Theme = {
-    NAME: "theme", 
+    NAME: "theme",
     LIGHT: "light",
     DARK: "dark"
+}
+
+export var FilterOption = {
+    FRIENDS: 1,
+    SUBSCRIPTIONS: 2,
+    SUBSCRIBERS: 3,
+    SUBSCRIBERS_COUNT: 4
+
 }

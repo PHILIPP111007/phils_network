@@ -1,6 +1,7 @@
 import "./Friends/styles/Friends.css"
 import { useEffect, useState, useContext } from "react"
 import { UserContext } from "@data/context"
+import { FilterOption } from "@data/enums"
 import useFriends from "@hooks/useFriends"
 import UserSection from "@hooks/UserSection"
 import MainComponents from "@pages/components/MainComponents/MainComponents"
@@ -22,7 +23,7 @@ export default function FriendsSection() {
     }
 
     useEffect(() => {
-        UserSection({ option: "friends", setUserSection: setFriends, setLoading: setLoading })
+        UserSection({ option: FilterOption.FRIENDS, setUserSection: setFriends, setLoading: setLoading })
     }, [])
 
     return (

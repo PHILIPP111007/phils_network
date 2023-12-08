@@ -8,6 +8,7 @@ import FriendCard from "@pages/components/FriendCard"
 import FriendsNavBar from "@pages/components/FriendsNavBar"
 import FindUser from "@pages/components/FindUser"
 import ScrollToTopOrBottom from "@pages/components/MainComponents/components/ScrollToTopOrBottom"
+import { FilterOption } from "@data/enums"
 
 export default function SubscribersSection() {
 
@@ -22,7 +23,7 @@ export default function SubscribersSection() {
     }
 
     useEffect(() => {
-        UserSection({ option: "subscribers", setUserSection: setSubscribers, setLoading: setLoading })
+        UserSection({ option: FilterOption.SUBSCRIBERS, setUserSection: setSubscribers, setLoading: setLoading })
     }, [])
 
     return (
