@@ -34,7 +34,7 @@ auth_patterns = [
 user_patterns = [
 	path("user/<str:username>/", UserAPIView.as_view()),
 	path("subscriber/<int:pk>/", SubscriberAPIView.as_view()),
-	path("friends/<str:option>/", FriendsAPIView.as_view()),
+	path("friends/<int:option>/", FriendsAPIView.as_view()),
 ]
 blog_patterns = [
 	path("blog/", BlogAPIView.as_view()),

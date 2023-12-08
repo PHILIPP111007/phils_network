@@ -20,6 +20,7 @@ from .services import (
 	RoomCreatorService,
 	RoomService,
 	MessageService,
+	FilterOption,
 )
 
 
@@ -268,7 +269,7 @@ class NewsAPIView(APIView):
 
 		friends = (
 			SubscriberService.filter_by_option(
-				pk=request.user.id, option="friends", serializer=False
+				pk=request.user.id, option=FilterOption.FRIENDS.value, serializer=False
 			)
 			.only("pk")
 			.values_list("pk", flat=True)
