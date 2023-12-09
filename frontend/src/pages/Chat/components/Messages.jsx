@@ -1,4 +1,4 @@
-import Message from "@pages/Chat/components/Message"
+import Message from "@pages/Chat/components/components/Message"
 import { useMemo } from "react"
 
 export default function Messages({ messages }) {

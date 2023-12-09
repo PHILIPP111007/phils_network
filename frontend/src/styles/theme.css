@@ -95,7 +95,7 @@
         color: var(--l-list-color);
     }
 
-    .RoomCard .link a,
+    .RoomCard a,
     .Message a {
         color: var(--l-color);
     }
@@ -187,7 +187,7 @@
         color: var(--d-list-color);
     }
 
-    .RoomCard .link a,
+    .RoomCard .link,
     .Message a {
         color: var(--d-color);
     }

@@ -6,6 +6,7 @@ import { useInView } from "react-intersection-observer"
 import { HttpMethod } from "@data/enums"
 import { UserContext } from "@data/context"
 import useObserver from "@hooks/useObserver"
+import getSocket from "@modules/websocket"
 import Fetch from "@API/Fetch"
 import MainComponents from "@pages/components/MainComponents/MainComponents"
 import Modal from "@pages/components/Modal"
@@ -112,29 +113,10 @@ export default function Chat() {
     }, [mainSets.value.room.id])
 
     useEffect(() => {
+        chatSocket.current = getSocket({ socket_name: "chatSocket", path: `chat/${params.room_id}/` })
         fetchAddMessages(true)
-    }, [])
-
-    useEffect(() => {
-        var socket = new WebSocket(
-            process.env.REACT_APP_SERVER_WEBSOCKET_URL
-            + `chat/${params.room_id}/`
-            + `?token=${localStorage.getItem('token')}`
-        )
-        socket.onopen = () => {
-            console.log(`chatSocket: The connection was setup successfully.`)
-        }
-        socket.onclose = () => {
-            console.log(`chatSocket: Has already closed.`)
-        }
-        socket.onerror = (e) => {
-            console.error(e)
-        }
-
-        chatSocket.current = socket
-
         return () => {
-            socket.close()
+            chatSocket.current.close()
         }
     }, [])
 

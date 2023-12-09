@@ -5,6 +5,7 @@ import { UserContext, AuthContext } from "@data/context"
 import { HttpMethod } from "@data/enums"
 import { useAuth, useSetUser } from "@hooks/useAuth"
 import rememberPage from "@modules/rememberPage"
+import getSocket from "@modules/websocket"
 import Fetch from "@API/Fetch"
 import ModalRoomCreate from "@pages/Rooms/components/modals/ModalRoomCreate"
 import RoomCard from "@pages/Rooms/components/RoomCard"
@@ -76,32 +77,15 @@ export default function Rooms() {
 
     useEffect(() => {
         roomSocket.current = rooms.map((room) => {
-
-            var socket = new WebSocket(
-                process.env.REACT_APP_SERVER_WEBSOCKET_URL
-                + `chat/${room.id}/`
-                + `?token=${localStorage.getItem('token')}`
-            )
-            socket.onopen = () => {
-                console.log(`roomSocket: The connection was setup successfully.`)
-            }
-            socket.onclose = () => {
-                console.log(`roomSocket: Has already closed.`)
-            }
-            socket.onerror = (e) => {
-                console.error(e)
-            }
+            var socket = getSocket({ socket_name: "roomSocket", path: `chat/${room.id}/` })
             socket.onmessage = (e) => {
-                var data = JSON.parse(e.data)
-                updateRoomLastMessage(data)
+                updateRoomLastMessage(JSON.parse(e.data))
             }
-
             return {
                 room_id: room.id,
                 socket: socket
             }
         })
-
         return () => {
             roomSocket.current.map((room) => {
                 room.socket.close()
