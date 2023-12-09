@@ -154,7 +154,7 @@ export default function Chat() {
         }
     }, [inViewWrapper, messages.value.length])
 
-    useObserver({ inView: inViewLazyDiv, func: fetchAddMessages })
+    useObserver({ inView: inViewLazyDiv, func: fetchAddMessages, flag: !mainSets.value.loading })
 
     return (
         <div className="Chat">
