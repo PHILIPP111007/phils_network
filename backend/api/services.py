@@ -46,7 +46,7 @@ class UserService:
 			first_name: str | None = request.data.get("first_name", None)
 			last_name: str | None = request.data.get("last_name", None)
 
-			if not (first_name and last_name):
+			if not (first_name or last_name):
 				return
 
 			if first_name:
@@ -94,13 +94,13 @@ class SubscriberService:
 	def _get_subscribers_sets(
 		pk: int
 	) -> tuple[QuerySet[Subscriber], QuerySet[Subscriber]]:
-		set_1 = (
+		set_1 = Subquery(
 			Subscriber.objects.filter(user_id=pk)
 			.only("subscribe")
 			.values_list("subscribe", flat=True)
 		)
 
-		set_2 = (
+		set_2 = Subquery(
 			Subscriber.objects.filter(subscribe_id=pk)
 			.only("user")
 			.values_list("user", flat=True)
@@ -282,20 +282,24 @@ class RoomService:
 	def filter_by_subscriber(pk: int) -> QuerySet[Room]:
 		"""Return Rooms ordered by last messages timestamp."""
 
-		messages = Message.objects.filter(room_id=OuterRef("pk")).only(
+		last_message = Message.objects.filter(room_id=OuterRef("pk")).only(
 			"sender", "timestamp", "text"
-		)
+		)[:1]
+
 		rooms = (
 			Room.objects.filter(subscribers=pk)
 			.annotate(
-				last_message_sender=Subquery(messages.values("sender__username")[:1]),
-				last_message_timestamp=Subquery(messages.values("timestamp")[:1]),
-				last_message_text=Subquery(messages.values("text")[:1]),
+				last_message_sender=Subquery(last_message.values("sender__username")),
+				last_message_timestamp=Subquery(last_message.values("timestamp")),
+				last_message_text=Subquery(last_message.values("text")),
 			)
 			.order_by("-timestamp")
 			.order_by("-last_message_timestamp")
 			.prefetch_related("subscribers")
 		)
+
+		print("\n\n\n", rooms.query, "\n\n\n")
+		print(vars(rooms[0]), "\n\n\n")
 
 		return rooms
 
