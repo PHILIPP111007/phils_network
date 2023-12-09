@@ -1,6 +1,6 @@
 import "./styles/ModalRoomEdit.css"
 import { useEffect, useState } from "react"
-import { HttpMethod } from "@data/enums"
+import { FilterOption, HttpMethod } from "@data/enums"
 import Fetch from "@API/Fetch"
 import Loading from "@pages/components/Loading"
 import Button from "@pages/components/UI/Button"
@@ -85,9 +85,9 @@ export default function ModalRoomEdit({ mainSets, me, editRoom }) {
         if (mainSets.value.isCreator) {
             setLoading(true)
 
-            Fetch({ action: "api/friends/friends/", method: HttpMethod.GET })
+            Fetch({ action: `api/friends/${FilterOption.FRIENDS}/`, method: HttpMethod.GET })
                 .then((data) => {
-                    if (data.ok) {
+                    if (data && data.ok) {
                         var response = data.query
                         response = response.filter((friend) => {
                             var hasMatch = mainSets.value.room.subscribers_info.some(user => friend.pk === user.pk)

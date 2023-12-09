@@ -1,5 +1,6 @@
 import "./styles/ModalRoomCreate.css"
 import { useEffect, useState } from "react"
+import { FilterOption } from "@data/enums"
 import UserSection from "@hooks/UserSection"
 import Loading from "@pages/components/Loading"
 import Button from "@pages/components/UI/Button"
@@ -30,7 +31,7 @@ export default function ModalRoomCreate(props) {
     }
 
     useEffect(() => {
-        UserSection({ option: "friends", setUserSection: setFriends, setLoading: setLoading })
+        UserSection({ option: FilterOption.FRIENDS, setUserSection: setFriends, setLoading: setLoading })
     }, [])
 
     return (
