@@ -37,6 +37,7 @@ export default function ModalRoomCreate(props) {
         <div className="ModalRoomCreate">
 
             <Button onClick={() => {
+                room.name = room.name.trim()
                 if (room.name.length > 0) {
                     props.createRoom(room)
                 }
