@@ -37,6 +37,8 @@ class BlogSerializer(serializers.ModelSerializer):
 
 class RoomSerializer(serializers.ModelSerializer):
 	subscribers_info = UserSerializer(source="subscribers", many=True, read_only=True)
+	last_message_text = serializers.CharField()
+	last_message_sender = serializers.CharField()
 
 	class Meta:
 		model = Room

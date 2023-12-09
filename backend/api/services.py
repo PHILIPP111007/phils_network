@@ -3,10 +3,11 @@ Business logic of the application.
 """
 
 from typing import Callable
+from .enums import SubscriberStatus, DeleteOption, FilterOption
 
 from django.conf import settings
 from django.db.models.query import QuerySet
-from django.db.models import Q, Max
+from django.db.models import Q, Subquery, OuterRef
 from django.contrib.auth.models import User
 
 from rest_framework.request import Request
@@ -14,8 +15,6 @@ from rest_framework.utils.serializer_helpers import ReturnList
 
 from .serializers import UserSerializer
 from .models import Subscriber, Blog, RoomCreator, Room, Message
-
-from .enums import SubscriberStatus, DeleteOption, FilterOption
 
 
 class UserService:
@@ -283,12 +282,27 @@ class RoomService:
 	def filter_by_subscriber(pk: int) -> QuerySet[Room]:
 		"""Return Rooms ordered by last messages timestamp."""
 
+		# rooms = (
+		# 	Room.objects.filter(subscribers=pk)
+		# 	.annotate(last_message=Max("message__timestamp"))
+		# 	.order_by("-last_message")
+		# 	.prefetch_related("subscribers")
+		# )
+
+		messages = Message.objects.filter(room_id=OuterRef("pk")).only(
+			"sender", "timestamp", "text"
+		)
 		rooms = (
 			Room.objects.filter(subscribers=pk)
-			.annotate(last_message=Max("message__timestamp"))
-			.order_by("-last_message")
-			.prefetch_related("subscribers")
+			.annotate(
+				last_message_sender=Subquery(messages.values("sender__username")[:1]),
+				last_message_timestamp=Subquery(messages.values("timestamp")[:1]),
+				last_message_text=Subquery(messages.values("text")[:1]),
+			)
+			.order_by("-last_message_timestamp")
 		)
+
+		print(rooms)
 
 		return rooms
 
