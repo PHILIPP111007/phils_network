@@ -10,7 +10,8 @@ from .permissions import IsOwnerOrReadOnly
 from .serializers import (
 	UserSerializer,
 	BlogSerializer,
-	RoomSerializer,
+	RoomsSerializer,
+	ChatSerializer,
 	MessageSerializer,
 )
 from .services import (
@@ -292,7 +293,7 @@ class NewsAPIView(APIView):
 
 
 class RoomsAPIView(APIView):
-	serializer_class = RoomSerializer
+	serializer_class = RoomsSerializer
 	authentication_classes = (TokenAuthentication,)
 	permission_classes = (IsAuthenticated,)
 
@@ -307,7 +308,7 @@ class RoomsAPIView(APIView):
 			)
 
 		return Response(
-			{"ok": True, "rooms": RoomSerializer(rooms, many=True).data},
+			{"ok": True, "rooms": RoomsSerializer(rooms, many=True).data},
 			status=status.HTTP_200_OK,
 		)
 
@@ -322,7 +323,7 @@ class RoomsAPIView(APIView):
 			)
 
 		return Response(
-			{"ok": True, "room": RoomSerializer(room).data}, status=status.HTTP_200_OK
+			{"ok": True, "room": RoomsSerializer(room).data}, status=status.HTTP_200_OK
 		)
 
 
@@ -350,7 +351,7 @@ class ChatAPIView(APIView):
 
 		is_creator = creator_obj.creator == request.user
 		return Response(
-			{"ok": True, "isCreator": is_creator, "room": RoomSerializer(room).data},
+			{"ok": True, "isCreator": is_creator, "room": ChatSerializer(room).data},
 			status=status.HTTP_200_OK,
 		)
 

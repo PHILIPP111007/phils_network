@@ -35,10 +35,18 @@ class BlogSerializer(serializers.ModelSerializer):
 		fields = "__all__"
 
 
-class RoomSerializer(serializers.ModelSerializer):
+class RoomsSerializer(serializers.ModelSerializer):
+	last_message_sender = serializers.CharField(read_only=True)
+	last_message_text = serializers.CharField(read_only=True)
 	subscribers_info = UserSerializer(source="subscribers", many=True, read_only=True)
-	last_message_text = serializers.CharField()
-	last_message_sender = serializers.CharField()
+
+	class Meta:
+		model = Room
+		exclude = ("subscribers",)
+
+
+class ChatSerializer(serializers.ModelSerializer):
+	subscribers_info = UserSerializer(source="subscribers", many=True, read_only=True)
 
 	class Meta:
 		model = Room
