@@ -37,7 +37,7 @@ class UserAPIView(APIView):
 		"""
 
 		self.check_permissions(request=request)
-		global_user = UserService.filter(pk=request.user.id)
+		global_user = UserService.filter(pk=request.user.pk)
 
 		if not global_user.exists():
 			return Response(
@@ -57,7 +57,7 @@ class UserAPIView(APIView):
 		"""Updating user info."""
 
 		self.check_permissions(request=request)
-		user = UserService.filter(pk=request.user.id).first()
+		user = UserService.filter(pk=request.user.pk).first()
 
 		if user is None:
 			return Response(
@@ -74,7 +74,7 @@ class UserAPIView(APIView):
 
 	def delete(self, request: Request, **kwargs) -> Response:
 		self.check_permissions(request=request)
-		user = UserService.filter(pk=request.user.id).first()
+		user = UserService.filter(pk=request.user.pk).first()
 
 		if user is None:
 			return Response(
@@ -110,7 +110,7 @@ class BlogAPIView(APIView):
 				status=status.HTTP_404_NOT_FOUND,
 			)
 
-		if request.user.id != unknown.pk:
+		if request.user.pk != unknown.pk:
 			data = SubscriberService.get_user_status(request=request, pk=unknown.pk)
 
 			if data != SubscriberStatus.IS_FRIEND.value:
@@ -227,7 +227,7 @@ class SubscriberAPIView(APIView):
 
 	def post(self, request: Request, pk: int) -> Response:
 		self.check_permissions(request=request)
-		SubscriberService.create(user_id=request.user.id, subscribe_id=pk)
+		SubscriberService.create(user_id=request.user.pk, subscribe_id=pk)
 
 		return Response({"ok": True}, status=status.HTTP_200_OK)
 
@@ -248,7 +248,7 @@ class FriendsAPIView(APIView):
 	def get(self, request: Request, option: int) -> Response:
 		self.check_permissions(request=request)
 		query = SubscriberService.filter_by_option(
-			pk=request.user.id, option=option, serializer=True
+			pk=request.user.pk, option=option, serializer=True
 		)
 
 		if not query:
@@ -270,7 +270,7 @@ class NewsAPIView(APIView):
 
 		friends = (
 			SubscriberService.filter_by_option(
-				pk=request.user.id, option=FilterOption.FRIENDS.value, serializer=False
+				pk=request.user.pk, option=FilterOption.FRIENDS.value, serializer=False
 			)
 			.only("pk")
 			.values_list("pk", flat=True)
@@ -299,7 +299,7 @@ class RoomsAPIView(APIView):
 
 	def get(self, request: Request) -> Response:
 		self.check_permissions(request=request)
-		rooms = RoomService.filter_by_subscriber(pk=request.user.id)
+		rooms = RoomService.filter_by_subscriber(pk=request.user.pk)
 
 		if not rooms.exists():
 			return Response(

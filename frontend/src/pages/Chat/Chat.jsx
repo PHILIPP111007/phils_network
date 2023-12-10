@@ -91,15 +91,6 @@ export default function Chat() {
     }
 
     useEffect(() => {
-        var textArea = document.getElementsByClassName("TextArea").item(0)
-        var sendButton = document.getElementById("SendButton")
-        textArea.focus()
-        textArea.onkeyup = function (e) {
-            if (e.keyCode === 13) {
-                sendButton.click()
-            }
-        }
-
         Fetch({ action: `api/room/${params.room_id}/`, method: HttpMethod.GET })
             .then((data) => {
                 if (data && data.ok) {
@@ -110,10 +101,18 @@ export default function Chat() {
                     })
                 }
             })
-    }, [mainSets.value.room.id])
 
-    useEffect(() => {
         chatSocket.current = getSocket({ socket_name: "chatSocket", path: `chat/${params.room_id}/` })
+
+        var textArea = document.getElementsByClassName("TextArea").item(0)
+        var sendButton = document.getElementById("SendButton")
+        textArea.focus()
+        textArea.onkeyup = function (e) {
+            if (e.keyCode === 13) {
+                sendButton.click()
+            }
+        }
+
         fetchAddMessages(true)
         return () => {
             chatSocket.current.close()

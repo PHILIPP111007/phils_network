@@ -38,7 +38,7 @@ class UserService:
 			query_full = (
 				User.objects.filter(username__icontains=username)
 				.only("username", "first_name", "last_name")
-				.exclude(pk=request.user.id)
+				.exclude(pk=request.user.pk)
 			)
 			return query_full
 
@@ -62,7 +62,7 @@ class UserService:
 				query_full = query_2
 
 			query_full = query_full.only("username", "first_name", "last_name").exclude(
-				pk=request.user.id
+				pk=request.user.pk
 			)
 
 			return query_full
@@ -185,9 +185,9 @@ class SubscriberService:
 
 		subscribe = None
 		if option == DeleteOption.DELETE_FRIEND.value:
-			subscribe = cls.filter(user_id=request.user.id, subscribe_id=pk).first()
+			subscribe = cls.filter(user_id=request.user.pk, subscribe_id=pk).first()
 		elif option == DeleteOption.DELETE_SUBSCRIBER.value:
-			subscribe = cls.filter(user_id=pk, subscribe_id=request.user.id).first()
+			subscribe = cls.filter(user_id=pk, subscribe_id=request.user.pk).first()
 
 		if subscribe is None:
 			return {"ok": False, "error_message": "Not found subscriber."}
@@ -198,11 +198,11 @@ class SubscriberService:
 	@classmethod
 	def get_user_status(cls, request: Request, pk: int):
 		user_1 = (
-			cls.filter(user_id=request.user.id, subscribe_id=pk).only("pk").exists()
+			cls.filter(user_id=request.user.pk, subscribe_id=pk).only("pk").exists()
 		)
 
 		user_2 = (
-			cls.filter(user_id=pk, subscribe_id=request.user.id).only("pk").exists()
+			cls.filter(user_id=pk, subscribe_id=request.user.pk).only("pk").exists()
 		)
 
 		# If we are friends, I can see his blog.
@@ -266,7 +266,11 @@ class BlogService:
 class RoomCreatorService:
 	@staticmethod
 	def filter(pk: int) -> QuerySet[RoomCreator]:
-		return RoomCreator.objects.filter(room_id=pk).select_related("creator")
+		return (
+			RoomCreator.objects.filter(room_id=pk)
+			.select_related("creator")
+			.only("creator__username")
+		)
 
 
 class RoomService:
@@ -293,13 +297,9 @@ class RoomService:
 				last_message_timestamp=Subquery(last_message.values("timestamp")),
 				last_message_text=Subquery(last_message.values("text")),
 			)
-			.order_by("-timestamp")
 			.order_by("-last_message_timestamp")
 			.prefetch_related("subscribers")
 		)
-
-		print("\n\n\n", rooms.query, "\n\n\n")
-		print(vars(rooms[0]), "\n\n\n")
 
 		return rooms
 
@@ -347,7 +347,7 @@ class RoomService:
 			if subscribers:
 				room.subscribers.add(*subscribers)
 
-		RoomCreator.objects.get_or_create(room_id=room.pk, creator_id=request.user.id)
+		RoomCreator.objects.get_or_create(room_id=room.pk, creator_id=request.user.pk)
 
 		return room
 
