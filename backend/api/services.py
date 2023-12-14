@@ -92,7 +92,7 @@ class UserService:
 class SubscriberService:
 	@staticmethod
 	def _get_subscribers_sets(
-		pk: int
+		pk: int,
 	) -> tuple[QuerySet[Subscriber], QuerySet[Subscriber]]:
 		set_1 = Subquery(
 			Subscriber.objects.filter(user_id=pk)
@@ -181,7 +181,7 @@ class SubscriberService:
 	) -> dict[str, bool | str] | dict[str, bool]:
 		option: int | None = int(request.data.get("option", None))
 		if not option:
-			return {"ok": False, "error_message": "Not provided an option."}
+			return {"ok": False, "error": "Not provided an option."}
 
 		subscribe = None
 		if option == DeleteOption.DELETE_FRIEND.value:
@@ -190,7 +190,7 @@ class SubscriberService:
 			subscribe = cls.filter(user_id=pk, subscribe_id=request.user.pk).first()
 
 		if subscribe is None:
-			return {"ok": False, "error_message": "Not found subscriber."}
+			return {"ok": False, "error": "Not found subscriber."}
 
 		subscribe.delete()
 		return {"ok": True}

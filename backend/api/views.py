@@ -41,7 +41,7 @@ class UserAPIView(APIView):
 
 		if not global_user.exists():
 			return Response(
-				{"ok": False, "error_message": "Not found the global user."},
+				{"ok": False, "error": "Not found the global user."},
 				status=status.HTTP_404_NOT_FOUND,
 			)
 
@@ -61,7 +61,7 @@ class UserAPIView(APIView):
 
 		if user is None:
 			return Response(
-				{"ok": False, "error_message": "Not found the user."},
+				{"ok": False, "error": "Not found the user."},
 				status=status.HTTP_404_NOT_FOUND,
 			)
 
@@ -78,7 +78,7 @@ class UserAPIView(APIView):
 
 		if user is None:
 			return Response(
-				{"ok": False, "error_message": "Not found the user."},
+				{"ok": False, "error": "Not found the user."},
 				status=status.HTTP_404_NOT_FOUND,
 			)
 
@@ -99,14 +99,14 @@ class BlogAPIView(APIView):
 		username: str | None = kwargs.get("username", None)
 		if not username:
 			return Response(
-				{"ok": False, "error_message": "No username provided."},
+				{"ok": False, "error": "No username provided."},
 				status=status.HTTP_404_NOT_FOUND,
 			)
 
 		unknown = UserService.filter_by_username(username=username).first()
 		if unknown is None:
 			return Response(
-				{"ok": False, "error_message": "Not found user."},
+				{"ok": False, "error": "Not found user."},
 				status=status.HTTP_404_NOT_FOUND,
 			)
 
@@ -115,14 +115,14 @@ class BlogAPIView(APIView):
 
 			if data != SubscriberStatus.IS_FRIEND.value:
 				return Response(
-					{"ok": False, "error_message": "Make friends to see his blog."},
+					{"ok": False, "error": "Make friends to see his blog."},
 					status=status.HTTP_404_NOT_FOUND,
 				)
 
 		posts = BlogService.filter_by_username(**kwargs)
 		if not posts.exists():
 			return Response(
-				{"ok": False, "error_message": "Not found user posts."},
+				{"ok": False, "error": "Not found user posts."},
 				status=status.HTTP_404_NOT_FOUND,
 			)
 
@@ -148,14 +148,14 @@ class BlogAPIView(APIView):
 		pk = kwargs.get("pk", None)
 		if pk is None:
 			return Response(
-				{"ok": False, "error_message": "You didn't submit a post id."},
+				{"ok": False, "error": "You didn't submit a post id."},
 				status=status.HTTP_404_NOT_FOUND,
 			)
 
 		post = BlogService.filter(pk=pk).first()
 		if post is None:
 			return Response(
-				{"ok": False, "error_message": "Not found the post."},
+				{"ok": False, "error": "Not found the post."},
 				status=status.HTTP_404_NOT_FOUND,
 			)
 
@@ -174,14 +174,14 @@ class BlogAPIView(APIView):
 		pk = kwargs.get("pk", None)
 		if pk is None:
 			return Response(
-				{"ok": False, "error_message": "You didn't submit a post id."},
+				{"ok": False, "error": "You didn't submit a post id."},
 				status=status.HTTP_404_NOT_FOUND,
 			)
 
 		post = BlogService.filter(pk=pk).first()
 		if post is None:
 			return Response(
-				{"ok": False, "error_message": "Not found the post."},
+				{"ok": False, "error": "Not found the post."},
 				status=status.HTTP_404_NOT_FOUND,
 			)
 
@@ -204,7 +204,7 @@ class FindUserAPIView(APIView):
 
 		if not find_users:
 			return Response(
-				{"ok": False, "error_message": "Not found users."},
+				{"ok": False, "error": "Not found users."},
 				status=status.HTTP_404_NOT_FOUND,
 			)
 
@@ -253,7 +253,7 @@ class FriendsAPIView(APIView):
 
 		if not query:
 			return Response(
-				{"ok": False, "error_message": "Not found users."},
+				{"ok": False, "error": "Not found users."},
 				status=status.HTTP_404_NOT_FOUND,
 			)
 
@@ -282,7 +282,7 @@ class NewsAPIView(APIView):
 
 		if not posts.exists():
 			return Response(
-				{"ok": False, "error_message": "Not found posts."},
+				{"ok": False, "error": "Not found posts."},
 				status=status.HTTP_404_NOT_FOUND,
 			)
 
@@ -303,7 +303,7 @@ class RoomsAPIView(APIView):
 
 		if not rooms.exists():
 			return Response(
-				{"ok": False, "error_message": "Not found rooms."},
+				{"ok": False, "error": "Not found rooms."},
 				status=status.HTTP_404_NOT_FOUND,
 			)
 
@@ -318,7 +318,7 @@ class RoomsAPIView(APIView):
 
 		if not room:
 			return Response(
-				{"ok": False, "error_message": "Not found room."},
+				{"ok": False, "error": "Not found room."},
 				status=status.HTTP_404_NOT_FOUND,
 			)
 
@@ -338,14 +338,14 @@ class ChatAPIView(APIView):
 
 		if room is None:
 			return Response(
-				{"ok": False, "error_message": "Not found room."},
+				{"ok": False, "error": "Not found room."},
 				status=status.HTTP_404_NOT_FOUND,
 			)
 
 		creator_obj = RoomCreatorService.filter(pk=room.pk).first()
 		if creator_obj is None:
 			return Response(
-				{"ok": False, "error_message": "Not found room creator."},
+				{"ok": False, "error": "Not found room creator."},
 				status=status.HTTP_404_NOT_FOUND,
 			)
 
@@ -361,7 +361,7 @@ class ChatAPIView(APIView):
 
 		if not room:
 			return Response(
-				{"ok": False, "error_message": "Not found room."},
+				{"ok": False, "error": "Not found room."},
 				status=status.HTTP_404_NOT_FOUND,
 			)
 
@@ -379,7 +379,7 @@ class MessagesAPIView(APIView):
 
 		if not messages.exists():
 			return Response(
-				{"ok": False, "error_message": "Not found messages."},
+				{"ok": False, "error": "Not found messages."},
 				status=status.HTTP_404_NOT_FOUND,
 			)
 

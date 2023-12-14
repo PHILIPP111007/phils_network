@@ -21,7 +21,7 @@ export default async function Fetch({ action, method, body, token }) {
             .then((response) => response.json())
             .then((data) => {
                 if (!data.ok) {
-                    console.error(`Not 2xx response, cause: ${data.error_message}`)
+                    console.error(`Not 2xx response, cause: ${data.error}`)
                 }
                 return data
             })
@@ -42,7 +42,7 @@ export default async function Fetch({ action, method, body, token }) {
             .then((response) => response.json())
             .then((data) => {
                 if (!data.ok) {
-                    console.error(`Not 2xx response, cause: ${data.error_message}`)
+                    console.error(`Not 2xx response, cause: ${data.error}`)
                 }
                 return data
             })
