@@ -104,13 +104,13 @@ CHANNEL_LAYERS = {
 			"hosts": [
 				(
 					environ.get("CHANNEL_LAYERS_HOST", default="127.0.0.1"),
-					int(environ.get("CHANNEL_LAYERS_PORT", default="6379"))
+					int(environ.get("CHANNEL_LAYERS_PORT", default="6379")),
 				)
 			],
+			"symmetric_encryption_keys": [SECRET_KEY],
 		},
 	},
 }
-# CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
 
 
 # Database
@@ -125,6 +125,13 @@ DATABASES = {
 		"PORT": int(environ.get("PG_PORT", default="5432")),
 		"PASSWORD": environ.get("PG_PASSWORD"),
 	},
+}
+
+CACHES = {
+	"default": {
+		"BACKEND": "django.core.cache.backends.redis.RedisCache",
+		"LOCATION": "redis://127.0.0.1:6379",
+	}
 }
 
 

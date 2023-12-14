@@ -6,6 +6,7 @@ from typing import Callable
 from .enums import SubscriberStatus, DeleteOption, FilterOption
 
 from django.conf import settings
+from django.core.cache import cache
 from django.db.models.query import QuerySet
 from django.db.models import Q, Subquery, OuterRef
 from django.contrib.auth.models import User
@@ -15,6 +16,8 @@ from rest_framework.utils.serializer_helpers import ReturnList
 
 from .serializers import UserSerializer
 from .models import Subscriber, Blog, RoomCreator, Room, Message
+from .serializers import BlogSerializer
+from .cache import get_user_cache
 
 
 class UserService:
@@ -222,11 +225,17 @@ class BlogService:
 		return Blog.objects.filter(pk=pk)
 
 	@staticmethod
-	def filter_by_username(**kwargs: dict) -> QuerySet[Blog]:
+	def filter_by_username(**kwargs: dict) -> ReturnList:
 		"""Lazy loading of posts on the user page."""
 
-		username: str | None = kwargs.get("username", None)
-		loaded_posts: int | None = kwargs.get("loaded_posts", None)
+		username: str = kwargs.get("username")
+		loaded_posts: int = kwargs.get("loaded_posts")
+
+		user_cache: dict = get_user_cache(username=username)
+		if user_cache:
+			blog_cache = user_cache.get("blog")
+			if blog_cache:
+				return blog_cache[loaded_posts : loaded_posts + settings.POSTS_TO_LOAD]
 
 		posts = (
 			Blog.objects.filter(user_id__username=username)
@@ -238,8 +247,12 @@ class BlogService:
 				"user__username",
 				"user__first_name",
 				"user__last_name",
-			)[loaded_posts : loaded_posts + settings.POSTS_TO_LOAD]
+			)
 		)
+		posts = BlogSerializer(posts, many=True).data
+
+		user_cache["blog"] = posts
+		cache.set(username, user_cache)
 
 		return posts
 

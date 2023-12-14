@@ -1,3 +1,5 @@
+from django.core.cache import cache
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.request import Request
@@ -23,6 +25,7 @@ from .services import (
 	RoomService,
 	MessageService,
 )
+from .cache import get_user_cache
 
 
 class UserAPIView(APIView):
@@ -120,14 +123,14 @@ class BlogAPIView(APIView):
 				)
 
 		posts = BlogService.filter_by_username(**kwargs)
-		if not posts.exists():
+		if not posts:
 			return Response(
 				{"ok": False, "error": "Not found user posts."},
 				status=status.HTTP_404_NOT_FOUND,
 			)
 
 		return Response(
-			{"ok": True, "posts": BlogSerializer(posts, many=True).data},
+			{"ok": True, "posts": posts},
 			status=status.HTTP_200_OK,
 		)
 
@@ -136,6 +139,11 @@ class BlogAPIView(APIView):
 		serializer = BlogSerializer(data=request.data)
 		serializer.is_valid(raise_exception=True)
 		serializer.save()
+
+		user_cache: dict = get_user_cache(username=request.user)
+		if user_cache:
+			user_cache["blog"] = []
+			cache.set(request.user, user_cache)
 
 		return Response(
 			{"ok": True, "post": serializer.data}, status=status.HTTP_200_OK
@@ -165,6 +173,11 @@ class BlogAPIView(APIView):
 		self.check_object_permissions(request=request, obj=user)
 		serializer.save()
 
+		user_cache: dict = get_user_cache(username=request.user)
+		if user_cache:
+			user_cache["blog"] = []
+			cache.set(request.user, user_cache)
+
 		return Response(
 			{"ok": True, "post": serializer.data}, status=status.HTTP_200_OK
 		)
@@ -187,6 +200,11 @@ class BlogAPIView(APIView):
 
 		self.check_object_permissions(request=request, obj=post.user)
 		post.delete()
+
+		user_cache: dict = get_user_cache(username=request.user)
+		if user_cache:
+			user_cache["blog"] = []
+			cache.set(request.user, user_cache)
 
 		return Response({"ok": True}, status=status.HTTP_200_OK)
 
