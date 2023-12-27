@@ -3,7 +3,7 @@
 	email = "r.phil@yandex.ru"
 
 ["app"]
-	version = "0.5.5"
+	version = "0.6.0"
 
 ["app-settings"]
 	DJANGO_HOST = "0.0.0.0"
