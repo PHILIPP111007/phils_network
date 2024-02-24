@@ -43,34 +43,39 @@ https://react.dev/learn
 
 ## Installation
 
-First of all you need to run Postgres server. Then go to backend directory.
+Postgres.
 ```sh
-cd backend
+brew install postgresql@15
+brew services run postgresql@15
+
+createuser -s postgres
+createdb phils_network --owner=postgres --username=postgres
+psql phils_network --username=postgres
 ```
 
-Install redis.
+Redis.
 ```sh
 brew install redis
 ```
 
-Run redis server in the new terminal window (to run the chat).
+Run redis server in the new terminal window (to use the chat).
 ```sh
 redis-server
 ```
 
 Run `setup.sh` script to create venv, DB migrations, superuser and collect static files.
 ```sh
-bash setup.sh
+bash backend/setup.sh
 ```
 
-Activate python virtual enviroment.
+Activate mamba enviroment.
 ```sh
-source venv/bin/activate
+mamba activate django
 ```
 
 If you want to test data base, run:
 ```sh
-python manage.py shell < test_db.py
+python backend/manage.py shell < test_db.py
 ```
 
 \
@@ -79,12 +84,12 @@ python manage.py shell < test_db.py
 
 * Run backend app with `daphne`:
 ```sh
-python manage.py runserver
+python backend/manage.py runserver
 ```
 
 * Run backend app with `gunicorn`:
 ```sh
-bash ./gunicorn_rc
+bash backend/gunicorn_rc
 ```
 
 \
