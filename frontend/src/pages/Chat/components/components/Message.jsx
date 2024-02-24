@@ -7,7 +7,7 @@ export default function Message({ message }) {
         <div className="Message">
             <div className="info">
                 <Link to={`/user/${message.username}/`} >
-                    <p>{message.first_name} {message.last_name} <div className="timestamp">{message.timestamp}</div></p>
+                    <p>{message.sender.first_name} {message.sender.last_name} <div className="timestamp">{message.timestamp}</div></p>
                 </Link>
             </div>
             <div className="text">

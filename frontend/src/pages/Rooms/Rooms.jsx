@@ -53,7 +53,7 @@ export default function Rooms() {
             var room_id = Number(data.message.room)
             var newRoom = rooms.filter((room) => room.id === room_id)[0]
             var text = data.message.text
-            newRoom.last_message_sender = data.message.username
+            newRoom.last_message_sender = data.message.sender.username
             if (text.length > 30) {
                 text = text.substring(0, 30) + "..."
             }
