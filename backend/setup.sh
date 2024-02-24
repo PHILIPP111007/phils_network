@@ -1,15 +1,17 @@
 #!/bin/bash
 
-venv=""
+env=""
 migrations=""
 static=""
 superuser=""
 
-read -p "[1 / 4] Create venv and download packages? [y / n] : " venv
+read -p "[1 / 4] Create mamba env and download packages? [y / n] : " env
 read -p "[2 / 4] Create migrations? [y / n] : " migrations
 read -p "[3 / 4] Collect static files? [y / n] : " static
 read -p "[4 / 4] Create superuser? [y / n] : " superuser
 
+mamba init
+mamba deactivate
 
 # `tmp` directory is for Django logging
 #
@@ -30,62 +32,26 @@ logging() {
 	fi
 }
 
-create_venv() {
-	if [ ! -d "venv" ]
-		then
-			python3 -m venv venv
-	fi
-
-	source $PWD/venv/bin/activate
-	pip install --upgrade pip
-
-	if [ -f "requirements.in" ]
-		then
-			pip install -r requirements.in
-			pip freeze > requirements.txt
-		else
-			if [ -f "requirements.txt" ]
-				then
-					pip install -r requirements.txt
-				else
-					echo "Venv script: requirements file does not exist."
-			fi
-	fi
-
+create_env() {
+	mamba env remove -n django
+	mamba env create -f ./env.yml
+	mamba activate django
 	pip list
-	echo "Venv script: venv created."
+	echo "Env script: venv created."
 }
 
 create_migrations() {
-	if [ -d "venv" ]
-		then
-			source $PWD/venv/bin/activate
-			python manage.py makemigrations
-			python manage.py migrate
-			echo "Migrations script: migrations created."
-		else
-			echo "Migrations script: you dont have venv."
-	fi
+	python manage.py makemigrations
+	python manage.py migrate
+	echo "Migrations script: migrations created."
 }
 
 collect_static() {
-	if [ -d "venv" ]
-		then
-			source $PWD/venv/bin/activate
-			python manage.py collectstatic
-		else
-			echo "Static script: you dont have venv."
-	fi
+	python manage.py collectstatic
 }
 
 create_superuser() {
-	if [ -d "venv" ]
-		then
-			source $PWD/venv/bin/activate
-			python manage.py createsuperuser
-		else
-			echo "Migrations script: you dont have venv."
-	fi
+	python manage.py createsuperuser
 }
 
 
@@ -95,10 +61,12 @@ if [ ! -d "tmp" ]
 fi
 
 # Create venv and install packages
-if [ $venv = "y" ]
+if [ $env = "y" ]
 	then
-		create_venv
+		create_env
 fi
+
+mamba activate django
 
 # Make migrations
 if [ $migrations = "y" ]
