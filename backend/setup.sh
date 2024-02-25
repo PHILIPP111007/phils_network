@@ -10,8 +10,8 @@ read -p "[2 / 4] Create migrations? [y / n] : " migrations
 read -p "[3 / 4] Collect static files? [y / n] : " static
 read -p "[4 / 4] Create superuser? [y / n] : " superuser
 
-mamba init
-mamba deactivate
+micromamba init
+micromamba deactivate
 
 # `tmp` directory is for Django logging
 #
@@ -33,9 +33,9 @@ logging() {
 }
 
 create_env() {
-	mamba env remove -n django
-	mamba env create -f ./env.yml
-	mamba activate django
+	micromamba env remove -n phils_network
+	micromamba env create -f ./env.yml
+	micromamba activate phils_network
 	pip list
 	echo "Env script: venv created."
 }
@@ -66,7 +66,7 @@ if [ $env = "y" ]
 		create_env
 fi
 
-mamba activate django
+micromamba activate phils_network
 
 # Make migrations
 if [ $migrations = "y" ]

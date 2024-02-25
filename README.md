@@ -63,14 +63,19 @@ Run redis server in the new terminal window (to use the chat).
 redis-server
 ```
 
+Install micromamba
+```sh
+brew install micromamba
+```
+
 Run `setup.sh` script to create venv, DB migrations, superuser and collect static files.
 ```sh
 bash backend/setup.sh
 ```
 
-Activate mamba enviroment.
+Activate micromamba enviroment.
 ```sh
-mamba activate django
+micromamba activate django
 ```
 
 If you want to test data base, run:
