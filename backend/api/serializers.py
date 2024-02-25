@@ -13,22 +13,30 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class BlogSerializer(serializers.ModelSerializer):
-	user = serializers.BindingDict(
-		{
-			"username": serializers.StringRelatedField(
-				source="user.username", read_only=True
-			),
-			"first_name": serializers.StringRelatedField(
-				source="user.first_name", read_only=True
-			),
-			"last_name": serializers.StringRelatedField(
-				source="user.last_name", read_only=True
-			),
-		}
+	username = serializers.StringRelatedField(source="user.username", read_only=True)
+	first_name = serializers.StringRelatedField(
+		source="user.first_name", read_only=True
 	)
+	last_name = serializers.StringRelatedField(source="user.last_name", read_only=True)
+
 	timestamp = serializers.DateTimeField(
 		read_only=True, format=settings.DATETIME_FORMAT
 	)
+	# user = UserSerializer(read_only=True)
+	# user = serializers.BindingDict(
+	# 	{
+	# 		"user_id": serializers.IntegerField(source="user.pk", read_only=True),
+	# 		# "username": serializers.StringRelatedField(
+	# 		# 	source="user.username", read_only=True
+	# 		# ),
+	# 		# "first_name": serializers.StringRelatedField(
+	# 		# 	source="user.first_name", read_only=True
+	# 		# ),
+	# 		# "last_name": serializers.StringRelatedField(
+	# 		# 	source="user.last_name", read_only=True
+	# 		# ),
+	# 	}
+	# )
 
 	class Meta:
 		model = Blog
