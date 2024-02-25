@@ -37,9 +37,11 @@ export default function User() {
             btnFlag: false,
             changed: false,
             timestamp: "",
-            username: "",
-            first_name: "",
-            last_name: "",
+            user: {
+                username: "",
+                first_name: "",
+                last_name: ""
+            },
             content: "",
             postLen500: false
         },
