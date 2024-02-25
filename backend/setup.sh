@@ -10,8 +10,7 @@ read -p "[2 / 4] Create migrations? [y / n] : " migrations
 read -p "[3 / 4] Collect static files? [y / n] : " static
 read -p "[4 / 4] Create superuser? [y / n] : " superuser
 
-micromamba init
-micromamba deactivate
+eval "$(micromamba shell hook --shell bash)"
 
 # `tmp` directory is for Django logging
 #
@@ -33,6 +32,7 @@ logging() {
 }
 
 create_env() {
+	micromamba deactivate
 	micromamba env remove -n phils_network
 	micromamba env create -f ./env.yml
 	micromamba activate phils_network
