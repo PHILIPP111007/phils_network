@@ -75,7 +75,7 @@ bash backend/setup.sh
 
 Activate micromamba enviroment.
 ```sh
-micromamba activate django
+micromamba activate phils_network
 ```
 
 If you want to test data base, run:
