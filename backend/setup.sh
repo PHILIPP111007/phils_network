@@ -41,16 +41,19 @@ create_env() {
 }
 
 create_migrations() {
+	micromamba activate phils_network
 	python manage.py makemigrations
 	python manage.py migrate
 	echo "Migrations script: migrations created."
 }
 
 collect_static() {
+	micromamba activate phils_network
 	python manage.py collectstatic
 }
 
 create_superuser() {
+	micromamba activate phils_network
 	python manage.py createsuperuser
 }
 
@@ -65,8 +68,6 @@ if [ $env = "y" ]
 	then
 		create_env
 fi
-
-micromamba activate phils_network
 
 # Make migrations
 if [ $migrations = "y" ]
