@@ -42,6 +42,7 @@ THIRD_PARTY_APPS: list[str] = [
 	"rest_framework.authtoken",
 	"djoser",
 	"debug_toolbar",
+	"django_extensions",
 ]
 
 LOCAL_APPS: list[str] = [
