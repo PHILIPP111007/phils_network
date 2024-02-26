@@ -12,7 +12,7 @@ export default function FriendCard({ user }) {
             <Link to={`/user/${user.username}/`} >
                 <div className="info">
                     <div className="name">
-                        <p>{user.first_name} {user.last_name}</p>
+                        <p>{user.first_name ? user.first_name : "No name"} {user.last_name ? user.last_name : "No name"}</p>
                     </div>
 
                     <div className="username">
