@@ -48,11 +48,11 @@ class UserAPIView(APIView):
 				status=status.HTTP_404_NOT_FOUND,
 			)
 
-		query = {"ok": True, "global_user": UserSerializer(global_user[0]).data}
+		query = {"ok": True, "global_user": self.serializer_class(global_user[0]).data}
 		local_user = UserService.filter_by_username(username=username).first()
 
 		if local_user is not None:
-			query["local_user"] = UserSerializer(local_user).data
+			query["local_user"] = self.serializer_class(local_user).data
 
 		return Response(query, status=status.HTTP_200_OK)
 
@@ -72,7 +72,8 @@ class UserAPIView(APIView):
 		user = UserService.put(user=user, request=request)
 
 		return Response(
-			{"ok": True, "user": UserSerializer(user).data}, status=status.HTTP_200_OK
+			{"ok": True, "user": self.serializer_class(user).data},
+			status=status.HTTP_200_OK,
 		)
 
 	def delete(self, request: Request, **kwargs) -> Response:
@@ -136,7 +137,7 @@ class BlogAPIView(APIView):
 
 	def post(self, request: Request, **kwargs) -> Response:
 		self.check_permissions(request=request)
-		serializer = BlogSerializer(data=request.data)
+		serializer = self.serializer_class(data=request.data)
 		serializer.is_valid(raise_exception=True)
 		serializer.save()
 
@@ -167,7 +168,7 @@ class BlogAPIView(APIView):
 				status=status.HTTP_404_NOT_FOUND,
 			)
 
-		serializer = BlogSerializer(data=request.data, instance=post)
+		serializer = self.serializer_class(data=request.data, instance=post)
 		serializer.is_valid(raise_exception=True)
 		user = serializer.validated_data.get("user")
 		self.check_object_permissions(request=request, obj=user)
@@ -227,13 +228,12 @@ class FindUserAPIView(APIView):
 			)
 
 		return Response(
-			{"ok": True, "users": UserSerializer(find_users, many=True).data},
+			{"ok": True, "users": self.serializer_class(find_users, many=True).data},
 			status=status.HTTP_200_OK,
 		)
 
 
 class SubscriberAPIView(APIView):
-	serializer_class = UserSerializer
 	authentication_classes = (TokenAuthentication,)
 	permission_classes = (IsAuthenticated,)
 
@@ -259,7 +259,6 @@ class SubscriberAPIView(APIView):
 
 
 class FriendsAPIView(APIView):
-	serializer_class = UserSerializer
 	authentication_classes = (TokenAuthentication,)
 	permission_classes = (IsAuthenticated,)
 
@@ -305,7 +304,7 @@ class NewsAPIView(APIView):
 			)
 
 		return Response(
-			{"ok": True, "posts": BlogSerializer(posts, many=True).data},
+			{"ok": True, "posts": self.serializer_class(posts, many=True).data},
 			status=status.HTTP_200_OK,
 		)
 
@@ -326,7 +325,7 @@ class RoomsAPIView(APIView):
 			)
 
 		return Response(
-			{"ok": True, "rooms": RoomsSerializer(rooms, many=True).data},
+			{"ok": True, "rooms": self.serializer_class(rooms, many=True).data},
 			status=status.HTTP_200_OK,
 		)
 
@@ -341,12 +340,13 @@ class RoomsAPIView(APIView):
 			)
 
 		return Response(
-			{"ok": True, "room": RoomsSerializer(room).data}, status=status.HTTP_200_OK
+			{"ok": True, "room": self.serializer_class(room).data},
+			status=status.HTTP_200_OK,
 		)
 
 
 class ChatAPIView(APIView):
-	serializer_class = MessageSerializer
+	serializer_class = ChatSerializer
 	authentication_classes = (TokenAuthentication,)
 	permission_classes = (IsAuthenticated,)
 
@@ -369,7 +369,11 @@ class ChatAPIView(APIView):
 
 		is_creator = creator_obj.creator == request.user
 		return Response(
-			{"ok": True, "isCreator": is_creator, "room": ChatSerializer(room).data},
+			{
+				"ok": True,
+				"isCreator": is_creator,
+				"room": self.serializer_class(room).data,
+			},
 			status=status.HTTP_200_OK,
 		)
 
@@ -402,6 +406,6 @@ class MessagesAPIView(APIView):
 			)
 
 		return Response(
-			{"ok": True, "messages": MessageSerializer(messages, many=True).data},
+			{"ok": True, "messages": self.serializer_class(messages, many=True).data},
 			status=status.HTTP_200_OK,
 		)
