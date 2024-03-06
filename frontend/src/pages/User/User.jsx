@@ -21,8 +21,6 @@ import plusIcon from "@images/plus-icon.svg"
 
 export default function User() {
 
-    rememberPage("/user/")
-
     var { setIsAuth } = useContext(AuthContext)
     var { user, setUser } = useContext(UserContext)
     var [ref, inView] = useInView()
@@ -108,6 +106,7 @@ export default function User() {
     }
 
     useEffect(() => {
+        rememberPage(`/user/${params.username}/`)
         setPosts((prev) => [])
         getPosts(0)
     }, [params.username])

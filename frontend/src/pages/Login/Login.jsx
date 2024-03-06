@@ -23,7 +23,13 @@ export default function Login() {
 
             var path
             if (localStorage.getItem("path") !== null) {
-                path = `${localStorage.getItem("path")}${data.username}/`
+                var s = localStorage.getItem("path")
+                if (s.split("/").length == 4) {
+                    path = s
+                } else {
+                    path = `${localStorage.getItem("path")}${data.username}/`
+                }
+
             } else {
                 path = `/user/${data.username}/`
             }
