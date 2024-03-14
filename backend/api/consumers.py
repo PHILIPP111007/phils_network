@@ -5,8 +5,8 @@ from rest_framework.authtoken.models import Token
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 
-from .serializers import MessageSerializer
-from .services import MessageService
+from api.serializers import MessageSerializer
+from api.services import MessageService
 
 
 class ChatConsumer(AsyncWebsocketConsumer):

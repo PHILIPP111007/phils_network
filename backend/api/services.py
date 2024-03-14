@@ -3,7 +3,6 @@ Business logic of the application.
 """
 
 from typing import Callable
-from .enums import SubscriberStatus, DeleteOption, FilterOption
 
 from django.conf import settings
 from django.core.cache import cache
@@ -14,10 +13,11 @@ from django.contrib.auth.models import User
 from rest_framework.request import Request
 from rest_framework.utils.serializer_helpers import ReturnList
 
-from .serializers import UserSerializer
-from .models import Subscriber, Blog, RoomCreator, Room, Message
-from .serializers import BlogSerializer
-from .cache import get_user_cache
+from api.enums import SubscriberStatus, DeleteOption, FilterOption
+from api.serializers import UserSerializer
+from api.models import Subscriber, Blog, RoomCreator, Room, Message
+from api.serializers import BlogSerializer
+from api.cache import get_user_cache
 
 
 class UserService:

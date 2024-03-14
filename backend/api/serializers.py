@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 from rest_framework import serializers
 
-from .models import Blog, Room, Message
+from api.models import Blog, Room, Message
 
 
 class UserSerializer(serializers.ModelSerializer):

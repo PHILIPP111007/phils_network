@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Blog, Subscriber, Room, RoomCreator, Message
+from api.models import Blog, Subscriber, Room, RoomCreator, Message
 
 
 @admin.register(Blog)
