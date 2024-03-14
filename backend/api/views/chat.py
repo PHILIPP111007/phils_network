@@ -5,8 +5,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework import status
 
-from backend.api.serializers import ChatSerializer
-from backend.api.services import RoomCreatorService, RoomService
+from api.serializers import ChatSerializer
+from api.services import RoomCreatorService, RoomService
 
 
 class ChatAPIView(APIView):

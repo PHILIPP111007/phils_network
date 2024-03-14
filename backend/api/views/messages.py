@@ -5,8 +5,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework import status
 
-from backend.api.serializers import MessageSerializer
-from backend.api.services import MessageService
+from api.serializers import MessageSerializer
+from api.services import MessageService
 
 
 class MessagesAPIView(APIView):

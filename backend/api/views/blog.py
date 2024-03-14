@@ -7,15 +7,15 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework import status
 
-from backend.api.permissions import IsOwnerOrReadOnly
-from backend.api.serializers import BlogSerializer
-from backend.api.services import (
+from api.permissions import IsOwnerOrReadOnly
+from api.serializers import BlogSerializer
+from api.services import (
 	SubscriberStatus,
 	UserService,
 	SubscriberService,
 	BlogService,
 )
-from backend.api.cache import get_user_cache
+from api.cache import get_user_cache
 
 
 class BlogAPIView(APIView):

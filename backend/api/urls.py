@@ -15,7 +15,7 @@ POST http://127.0.0.1:8000/auth/token/logout/
 """
 
 from django.urls import path, include
-from backend.api.views import (
+from api.views import (
 	UserAPIView,
 	BlogAPIView,
 	NewsAPIView,

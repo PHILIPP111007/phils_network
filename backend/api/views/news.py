@@ -5,9 +5,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework import status
 
-from backend.api.enums import FilterOption
-from backend.api.serializers import BlogSerializer
-from backend.api.services import SubscriberService, BlogService
+from api.enums import FilterOption
+from api.serializers import BlogSerializer
+from api.services import SubscriberService, BlogService
 
 
 class NewsAPIView(APIView):

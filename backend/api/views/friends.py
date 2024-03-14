@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework import status
 
-from backend.api.services import SubscriberService
+from api.services import SubscriberService
 
 
 class FriendsAPIView(APIView):
