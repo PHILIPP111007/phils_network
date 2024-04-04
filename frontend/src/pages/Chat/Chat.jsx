@@ -50,10 +50,46 @@ export default function Chat() {
         }
     }
 
+    class MessagesByRoomLocalStorage {
+        static get() {
+            var messages_by_room = localStorage.getItem(`messages_${mainSets.value.room.id}`)
+            return JSON.parse(messages_by_room)
+        }
+        static save(messages) {
+            var msgs_slice = 30
+            try {
+                localStorage.setItem(`messages_${mainSets.value.room.id}`, JSON.stringify(messages.slice(-msgs_slice)))
+            } catch (e) {
+                console.error(e)
+            }
+        }
+        static delete() {
+            localStorage.removeItem(`messages_${mainSets.value.room.id}`)
+        }
+    }
+
+    class RoomLocalStorage {
+        static update(username, text) {
+            var rooms = localStorage.getItem('rooms')
+            if (rooms !== null) {
+                rooms = JSON.parse(rooms)
+                var current_room = rooms.filter((room) => room.id === mainSets.value.room.id)[0]
+                current_room.last_message_sender = username
+                current_room.last_message_text = text
+                rooms = [current_room, ...rooms.filter((room) => room.id !== mainSets.value.room.id)]
+                localStorage.setItem('rooms', JSON.stringify(rooms))
+            }
+        }
+        static delete() {
+            localStorage.removeItem('rooms')
+        }
+    }
+
     async function sendMessage(text) {
-        var sendingText = text.trim()
+        var sendingText = await text.trim()
         if (sendingText.length > 0) {
             var message = { sender_id: user.pk, text: sendingText }
+            RoomLocalStorage.update(user.username, sendingText)
             await chatSocket.current.send(JSON.stringify({ message: message }))
         }
     }
@@ -73,6 +109,7 @@ export default function Chat() {
 
             var data = await Fetch({ action: `api/room/${params.room_id}/`, method: HttpMethod.PUT, body: body })
             if (data && data.ok) {
+                RoomLocalStorage.delete()
                 navigate(`/chats/${user.username}/`)
             }
         }
@@ -83,8 +120,15 @@ export default function Chat() {
         if (flag || msgs_len > 0) {
             mainSets.value.loading = true
             var data = await Fetch({ action: `api/room/${params.room_id}/${msgs_len}/`, method: HttpMethod.GET })
-            if (data && data.ok) {
-                messages.value = [...data.messages.reverse(), ...messages.value]
+
+            if (data) {
+                if (data.ok) {
+                    messages.value = [...data.messages.reverse(), ...messages.value]
+                    MessagesByRoomLocalStorage.save(messages.value)
+                } else {
+                    MessagesByRoomLocalStorage.delete()
+                    RoomLocalStorage.delete()
+                }
             }
             mainSets.value.loading = false
         }
@@ -99,6 +143,13 @@ export default function Chat() {
                     mainSets.value.invitationChanges.subscribers = data.room.subscribers_info.map((user) => {
                         return { ...user, isInRoom: true }
                     })
+
+                    var messages_by_room = MessagesByRoomLocalStorage.get()
+                    if (messages_by_room !== null) {
+                        messages.value = messages_by_room
+                    }
+
+                    fetchAddMessages(true)
                 }
             })
 
@@ -113,7 +164,6 @@ export default function Chat() {
             }
         }
 
-        fetchAddMessages(true)
         return () => {
             chatSocket.current.close()
         }
@@ -124,6 +174,8 @@ export default function Chat() {
             var data = JSON.parse(e.data)
             if (data) {
                 messages.value = [...messages.value, data.message]
+                MessagesByRoomLocalStorage.save(messages.value)
+                RoomLocalStorage.update(data.message.sender.username, data.message.text)
             }
             scrollToBottom()
         }

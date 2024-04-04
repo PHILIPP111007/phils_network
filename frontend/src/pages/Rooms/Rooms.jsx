@@ -26,12 +26,27 @@ export default function Rooms() {
     var params = useParams()
     var roomSocket = useRef(null)
 
+    class Rooms {
+        static get() {
+            return localStorage.getItem('rooms')
+        }
+        static save(rooms) {
+            try {
+                localStorage.setItem('rooms', JSON.stringify(rooms))
+            } catch (e) {
+                console.error(e)
+            }
+        }
+    }
+
     async function createRoom(room) {
         room.subscribers.push(user.pk)
 
         var data = await Fetch({ action: "api/room/", method: HttpMethod.POST, body: room })
         if (data && data.ok) {
-            setRooms([data.room, ...rooms])
+            var newRooms = [data.room, ...rooms]
+            Rooms.save(newRooms)
+            setRooms(newRooms)
         }
         setModalRoomCreate(false)
     }
@@ -49,7 +64,8 @@ export default function Rooms() {
     }, [rooms])
 
     function updateRoomLastMessage(data) {
-        if (data.status) {
+        data = JSON.parse(data)
+        if (data && data.status) {
             var room_id = Number(data.message.room)
             var newRoom = rooms.filter((room) => room.id === room_id)[0]
             var text = data.message.text
@@ -58,28 +74,38 @@ export default function Rooms() {
                 text = text.substring(0, 30) + "..."
             }
             newRoom.last_message_text = text
+
             setRooms((prev) => {
-                return [newRoom, ...prev.filter((room) => room.id !== room_id)]
+                var newRooms = [newRoom, ...prev.filter((room) => room.id !== room_id)]
+                Rooms.save(newRooms)
+                return newRooms
             })
         }
     }
 
     useEffect(() => {
         setLoading(true)
-        Fetch({ action: "api/room/", method: HttpMethod.GET })
-            .then((data) => {
-                if (data && data.ok) {
-                    setRooms(data.rooms)
-                }
-                setLoading(false)
-            })
+        var rooms = Rooms.get()
+        if (rooms !== null) {
+            rooms = JSON.parse(rooms)
+            setRooms(rooms)
+        } else {
+            Fetch({ action: "api/room/", method: HttpMethod.GET })
+                .then((data) => {
+                    if (data && data.ok) {
+                        setRooms(data.rooms)
+                        Rooms.save(data.rooms)
+                    }
+                })
+        }
+        setLoading(false)
     }, [])
 
     useEffect(() => {
         roomSocket.current = rooms.map((room) => {
             var socket = getSocket({ socket_name: "roomSocket", path: `chat/${room.id}/` })
             socket.onmessage = (e) => {
-                updateRoomLastMessage(JSON.parse(e.data))
+                updateRoomLastMessage(e.data)
             }
             return {
                 room_id: room.id,
