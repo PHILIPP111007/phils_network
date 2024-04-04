@@ -17,6 +17,15 @@ class MessagesAPIView(APIView):
 
 	def get(self, request: Request, pk: int, loaded_messages: int) -> Response:
 		self.check_permissions(request=request)
+
+		if not MessageService.check_permission(
+			room_id=pk, subscriber_id=request.user.pk
+		):
+			return Response(
+				{"ok": False, "error": "Access denied."},
+				status=status.HTTP_404_NOT_FOUND,
+			)
+
 		messages = self.service_class.filter(
 			room_id=pk, loaded_messages=loaded_messages
 		)
