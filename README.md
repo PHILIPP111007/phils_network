@@ -11,6 +11,8 @@ Minimalistic social network written using Django and React.
 
 4. Lazy loading of pages, posts and messages.
 
+5. Browser caching lists of user rooms and first N messages in each room.
+
 \
 Have fun and if you want please leave feedback!
 
