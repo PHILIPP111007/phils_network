@@ -51,37 +51,44 @@ export default function Chat() {
     }
 
     class MessagesByRoomLocalStorage {
+        static get_message_key() {
+            return `messages_${mainSets.value.room.id}`
+        }
         static get() {
-            var messages_by_room = localStorage.getItem(`messages_${mainSets.value.room.id}`)
+            var messages_by_room = localStorage.getItem(this.get_message_key())
             return JSON.parse(messages_by_room)
         }
         static save(messages) {
             var msgs_slice = 30
             try {
-                localStorage.setItem(`messages_${mainSets.value.room.id}`, JSON.stringify(messages.slice(-msgs_slice)))
+                localStorage.setItem(this.get_message_key(), JSON.stringify(messages.slice(-msgs_slice)))
             } catch (e) {
+                localStorage.removeItem('rooms')
                 console.error(e)
             }
         }
         static delete() {
-            localStorage.removeItem(`messages_${mainSets.value.room.id}`)
+            localStorage.removeItem(this.get_message_key())
         }
     }
 
     class RoomLocalStorage {
+        static get_room_key() {
+            return 'rooms'
+        }
         static update(username, text) {
-            var rooms = localStorage.getItem('rooms')
+            var rooms = localStorage.getItem(this.get_room_key())
             if (rooms !== null) {
                 rooms = JSON.parse(rooms)
                 var current_room = rooms.filter((room) => room.id === mainSets.value.room.id)[0]
                 current_room.last_message_sender = username
                 current_room.last_message_text = text
                 rooms = [current_room, ...rooms.filter((room) => room.id !== mainSets.value.room.id)]
-                localStorage.setItem('rooms', JSON.stringify(rooms))
+                localStorage.setItem(this.get_room_key(), JSON.stringify(rooms))
             }
         }
         static delete() {
-            localStorage.removeItem('rooms')
+            localStorage.removeItem(this.get_room_key())
         }
     }
 

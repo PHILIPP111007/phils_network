@@ -27,13 +27,17 @@ export default function Rooms() {
     var roomSocket = useRef(null)
 
     class Rooms {
+        static get_room_key() {
+            return 'rooms'
+        }
         static get() {
-            return localStorage.getItem('rooms')
+            return localStorage.getItem(this.get_room_key())
         }
         static save(rooms) {
             try {
-                localStorage.setItem('rooms', JSON.stringify(rooms))
+                localStorage.setItem(this.get_room_key(), JSON.stringify(rooms))
             } catch (e) {
+                localStorage.removeItem(this.get_room_key())
                 console.error(e)
             }
         }
