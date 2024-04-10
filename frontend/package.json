@@ -14,7 +14,8 @@
   },
   "dependencies": {
     "@babel/core": "^7.23.5",
-    "@babel/plugin-transform-private-property-in-object": "^7.21.11",
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@babel/plugin-transform-private-property-in-object": "^7.24.1",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.11",
     "@preact/signals-react": "^2.0.1",
     "@svgr/webpack": "^5.5.0",
