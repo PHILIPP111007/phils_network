@@ -1,10 +1,10 @@
-import { useSignal } from "@preact/signals-react"
+import { useState } from "react"
 import settingsLogo from "@images/three_points_gray.svg"
 import sendIcon from "@images/send-icon.svg"
 
 export default function UserInput({ sendMessage, setModalRoomEdit }) {
 
-    var text = useSignal("")
+    var [text, setText] = useState("")
 
     return (
         <div className="UserInput">
@@ -17,12 +17,12 @@ export default function UserInput({ sendMessage, setModalRoomEdit }) {
                 className="TextArea"
                 maxLength="5000"
                 placeholder="type text..."
-                value={text.value}
-                onChange={(e) => text.value = e.target.value}
+                value={text}
+                onChange={(e) => setText(e.target.value)}
             />
             <img id="SendButton" src={sendIcon} onClick={() => {
-                sendMessage(text.value)
-                text.value = ""
+                sendMessage(text)
+                setText("")
             }} alt="send button" />
         </div>
     )

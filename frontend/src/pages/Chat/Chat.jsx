@@ -19,7 +19,7 @@ import UserInput from "@pages/Chat/components/UserInput"
 export default function Chat() {
 
     var { user } = useContext(UserContext)
-    var messages = useSignal([])
+    var [messages, setMessages] = useState([])
     var [modalRoomEdit, setModalRoomEdit] = useState(false)
     var mainSets = useSignal({
         room: {
@@ -123,15 +123,15 @@ export default function Chat() {
     }
 
     async function fetchAddMessages(flag) {
-        var msgs_len = messages.value.length
+        var msgs_len = messages.length
         if (flag || msgs_len > 0) {
             mainSets.value.loading = true
             var data = await Fetch({ action: `api/room/${params.room_id}/${msgs_len}/`, method: HttpMethod.GET })
 
             if (data) {
                 if (data.ok) {
-                    messages.value = [...data.messages.reverse(), ...messages.value]
-                    MessagesByRoomLocalStorage.save(messages.value)
+                    setMessages((prev) => [...data.messages.reverse(), ...messages])
+                    MessagesByRoomLocalStorage.save(messages)
                 } else {
                     MessagesByRoomLocalStorage.delete()
                     RoomLocalStorage.delete()
@@ -153,9 +153,8 @@ export default function Chat() {
 
                     var messages_by_room = MessagesByRoomLocalStorage.get()
                     if (messages_by_room !== null) {
-                        messages.value = messages_by_room
+                        setMessages(messages_by_room)
                     }
-
                     fetchAddMessages(true)
                 }
             })
@@ -180,19 +179,19 @@ export default function Chat() {
         chatSocket.current.onmessage = (e) => {
             var data = JSON.parse(e.data)
             if (data) {
-                messages.value = [...messages.value, data.message]
-                MessagesByRoomLocalStorage.save(messages.value)
+                setMessages((prev) => [...messages, data.message])
+                MessagesByRoomLocalStorage.save(messages)
                 RoomLocalStorage.update(data.message.sender.username, data.message.text)
             }
             scrollToBottom()
         }
-    }, [messages.value])
+    }, [messages])
 
     useEffect(() => {
         if (inViewWrapper) {
             scrollToBottom()
         }
-    }, [inViewWrapper, messages.value.length])
+    }, [inViewWrapper, messages.length])
 
     useObserver({ inView: inViewLazyDiv, func: fetchAddMessages, flag: !mainSets.value.loading })
 
@@ -208,7 +207,7 @@ export default function Chat() {
 
             <LazyDiv Ref={refLazyDivinView} />
 
-            <Messages messages={messages.value} />
+            <Messages messages={messages} />
 
             <UserInput sendMessage={sendMessage} setModalRoomEdit={setModalRoomEdit} />
 
@@ -218,3 +217,7 @@ export default function Chat() {
         </div>
     )
 }
+
+
+
+

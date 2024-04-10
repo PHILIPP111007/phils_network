@@ -9,7 +9,7 @@ export default function Messages({ messages }) {
                 <Message key={message.id} message={message} />
             )
         )
-    }, [messages])
+    }, [messages.length])
 
     return (
         <div className="Messages">

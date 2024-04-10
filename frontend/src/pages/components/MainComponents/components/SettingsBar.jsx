@@ -1,6 +1,5 @@
 import "./styles/SettingsBar.css"
-import { useContext } from "react"
-import { useSignal } from "@preact/signals-react"
+import { useContext, useEffect, useState } from "react"
 import { AuthContext } from "@data/context"
 import { HttpMethod, Theme } from "@data/enums"
 import Fetch from "@API/Fetch"
@@ -9,26 +8,24 @@ import Button from "@pages/components/UI/Button"
 export default function SettingsBar(props) {
 
     var { setIsAuth } = useContext(AuthContext)
-    var theme = useSignal(Theme.LIGHT)
+    var [theme, setTheme] = useState(Theme.LIGHT)
     var body = document.getElementsByTagName("body")[0]
 
-    if (localStorage.getItem(Theme.NAME) !== null) {
-        body.className = localStorage.getItem(Theme.NAME)
-        theme.value = localStorage.getItem(Theme.NAME)
-    } else {
-        body.className = Theme.LIGHT
-    }
-
-    body.className = theme.value
+    useEffect(() => {
+        if (localStorage.getItem(Theme.NAME) !== null) {
+            setTheme(localStorage.getItem(Theme.NAME))
+        }
+        body.className = theme
+    }, [theme])
 
     function changeTheme() {
-        switch (theme.value) {
+        switch (theme) {
             case Theme.LIGHT:
-                theme.value = Theme.DARK
+                setTheme(Theme.DARK)
                 localStorage.setItem(Theme.NAME, Theme.DARK)
                 break
             case Theme.DARK:
-                theme.value = Theme.LIGHT
+                setTheme(Theme.LIGHT)
                 localStorage.setItem(Theme.NAME, Theme.LIGHT)
                 break
             default:
