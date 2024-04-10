@@ -16,7 +16,7 @@ import Button from "@pages/components/UI/Button"
 
 export default function Rooms() {
 
-    rememberPage("/chats/")
+    rememberPage("chats")
 
     var { setIsAuth } = useContext(AuthContext)
     var { user, setUser } = useContext(UserContext)

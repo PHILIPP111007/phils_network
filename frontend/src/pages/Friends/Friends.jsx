@@ -15,7 +15,7 @@ import ScrollToTopOrBottom from "@pages/components/MainComponents/components/Scr
 
 export default function Friends() {
 
-    rememberPage("/friends/")
+    rememberPage("friends")
 
     var { setIsAuth } = useContext(AuthContext)
     var { user, setUser } = useContext(UserContext)

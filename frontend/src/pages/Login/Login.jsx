@@ -21,15 +21,9 @@ export default function Login() {
             setUser({ ...user, ...data })
             setIsAuth(true)
 
-            var path
-            if (localStorage.getItem("path") !== null) {
-                var s = localStorage.getItem("path")
-                if (s.split("/").length == 4) {
-                    path = s
-                } else {
-                    path = `${localStorage.getItem("path")}${data.username}/`
-                }
-
+            var path = localStorage.getItem("path")
+            if (path !== null) {
+                path = `/${path}/${data.username}/`
             } else {
                 path = `/user/${data.username}/`
             }
