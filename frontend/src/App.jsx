@@ -4,19 +4,16 @@ import { Suspense, useState } from "react"
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import { AuthContext, UserContext } from "@data/context"
 import { PrivateRoutes, PublicRoutes } from "@data/routes"
-import { Theme } from "@data/enums"
 import { useAuth } from "@hooks/useAuth"
+import useTheme from "@hooks/useTheme"
 import SuspenseLoading from "@pages/components/SuspenseLoading"
 import Error from "@pages/Error/Error"
 
 export default function App() {
 
     var body = document.getElementsByTagName("body")[0]
-    if (localStorage.getItem(Theme.NAME) !== null) {
-        body.className = localStorage.getItem(Theme.NAME)
-    } else {
-        body.className = Theme.LIGHT
-    }
+    useTheme(body)
+
     var [isAuth, setIsAuth] = useState(false)
     var [user, setUser] = useState({
         pk: 0,
