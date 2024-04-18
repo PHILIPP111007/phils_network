@@ -22,9 +22,9 @@ export default function Rooms() {
     var [loading, setLoading] = useState(true)
     var roomSocket = useRef(null)
 
-    class Rooms {
+    class RoomsLocalStorage {
         static get_room_key() {
-            return 'rooms'
+            return "rooms"
         }
         static get() {
             return localStorage.getItem(this.get_room_key())
@@ -45,7 +45,7 @@ export default function Rooms() {
         var data = await Fetch({ action: "api/room/", method: HttpMethod.POST, body: room })
         if (data && data.ok) {
             var newRooms = [data.room, ...rooms]
-            Rooms.save(newRooms)
+            RoomsLocalStorage.save(newRooms)
             setRooms(newRooms)
         }
         setModalRoomCreate(false)
@@ -77,7 +77,7 @@ export default function Rooms() {
 
             setRooms((prev) => {
                 var newRooms = [newRoom, ...prev.filter((room) => room.id !== room_id)]
-                Rooms.save(newRooms)
+                RoomsLocalStorage.save(newRooms)
                 return newRooms
             })
         }
@@ -85,7 +85,7 @@ export default function Rooms() {
 
     useEffect(() => {
         setLoading(true)
-        var rooms = Rooms.get()
+        var rooms = RoomsLocalStorage.get()
         if (rooms !== null) {
             rooms = JSON.parse(rooms)
             setRooms(rooms)
@@ -94,7 +94,7 @@ export default function Rooms() {
                 .then((data) => {
                     if (data && data.ok) {
                         setRooms(data.rooms)
-                        Rooms.save(data.rooms)
+                        RoomsLocalStorage.save(data.rooms)
                     }
                 })
         }

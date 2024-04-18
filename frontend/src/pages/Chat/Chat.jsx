@@ -9,10 +9,8 @@ import useObserver from "@hooks/useObserver"
 import getSocket from "@modules/websocket"
 import Fetch from "@API/Fetch"
 import MainComponents from "@pages/components/MainComponents/MainComponents"
-import Modal from "@pages/components/Modal"
 import LazyDiv from "@pages/components/LazyDiv"
 import ScrollToTopOrBottom from "@pages/components/MainComponents/components/ScrollToTopOrBottom"
-import ModalRoomEdit from "@pages/Chat/components/modals/ModalRoomEdit"
 import Messages from "@pages/Chat/components/Messages"
 import UserInput from "@pages/Chat/components/UserInput"
 
@@ -20,7 +18,6 @@ export default function Chat() {
 
     var { user } = useContext(UserContext)
     var [messages, setMessages] = useState([])
-    var [modalRoomEdit, setModalRoomEdit] = useState(false)
     var mainSets = useSignal({
         room: {
             id: undefined,
@@ -63,7 +60,7 @@ export default function Chat() {
             try {
                 localStorage.setItem(this.get_message_key(), JSON.stringify(messages.slice(-msgs_slice)))
             } catch (e) {
-                localStorage.removeItem('rooms')
+                localStorage.removeItem("rooms")
                 console.error(e)
             }
         }
@@ -74,7 +71,7 @@ export default function Chat() {
 
     class RoomLocalStorage {
         static get_room_key() {
-            return 'rooms'
+            return "rooms"
         }
         static update(username, text) {
             var rooms = localStorage.getItem(this.get_room_key())
@@ -152,7 +149,7 @@ export default function Chat() {
                     })
 
                     var messages_by_room = MessagesByRoomLocalStorage.get()
-                    if (messages_by_room !== null) {
+                    if (messages_by_room && messages_by_room.length > 0) {
                         setMessages(messages_by_room)
                     }
                     fetchAddMessages(true)
@@ -201,15 +198,11 @@ export default function Chat() {
 
             <ScrollToTopOrBottom bottom={true} />
 
-            <Modal modal={modalRoomEdit} setModal={setModalRoomEdit}>
-                <ModalRoomEdit mainSets={mainSets} me={user} editRoom={editRoom} />
-            </Modal>
-
             <LazyDiv Ref={refLazyDivinView} />
 
             <Messages messages={messages} />
 
-            <UserInput sendMessage={sendMessage} setModalRoomEdit={setModalRoomEdit} />
+            <UserInput mainSets={mainSets} sendMessage={sendMessage} editRoom={editRoom} />
 
             <div className="Wrapper-InView" ref={wrapperRef} ></div>
 

@@ -1,5 +1,6 @@
 import "./styles/ModalRoomEdit.css"
 import { useEffect, useState } from "react"
+import { Link } from "react-router-dom"
 import { FilterOption, HttpMethod } from "@data/enums"
 import Fetch from "@API/Fetch"
 import Loading from "@pages/components/Loading"
@@ -19,7 +20,7 @@ export default function ModalRoomEdit({ mainSets, me, editRoom }) {
                         return { ...user, isInRoom: user.isInRoom ? false : true }
                     }
                     return user
-                }),
+                })
             }
         }
     }
@@ -34,7 +35,7 @@ export default function ModalRoomEdit({ mainSets, me, editRoom }) {
                         return { ...user, isInRoom: user.isInRoom ? false : true }
                     }
                     return user
-                }),
+                })
             }
         }
     }
@@ -44,7 +45,9 @@ export default function ModalRoomEdit({ mainSets, me, editRoom }) {
             <div key={user.username} className="card">
                 <div className="info">
                     <div>
-                        {user.first_name ? user.first_name : "No name"} {user.last_name ? user.last_name : "No name"} @{user.username}
+                        <Link to={`/user/${user.username}/`} >
+                            {user.first_name ? user.first_name : "No name"} {user.last_name ? user.last_name : "No name"} @{user.username}
+                        </Link>
                     </div>
 
                     {me.pk === user.pk &&
@@ -67,7 +70,9 @@ export default function ModalRoomEdit({ mainSets, me, editRoom }) {
             <div key={user.username} className="card">
                 <div className="info">
                     <div>
-                        {user.first_name} {user.last_name} @{user.username}
+                        <Link to={`/user/${user.username}/`} >
+                            {user.first_name} {user.last_name} @{user.username}
+                        </Link>
                     </div>
                 </div>
 
@@ -111,6 +116,7 @@ export default function ModalRoomEdit({ mainSets, me, editRoom }) {
             <br />
             <br />
             <h3>room users</h3>
+
             {subscribersShow()}
 
             {mainSets.value.isCreator === true && mainSets.value.invitationChanges.friends.length > 0
