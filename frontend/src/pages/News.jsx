@@ -1,10 +1,7 @@
 import "../styles/Posts.css"
-import { useState, useContext } from "react"
+import { useState } from "react"
 import { useInView } from "react-intersection-observer"
-import { useParams } from "react-router-dom"
-import { UserContext, AuthContext } from "@data/context"
 import { HttpMethod } from "@data/enums"
-import { useAuth, useSetUser } from "@hooks/useAuth"
 import rememberPage from "@modules/rememberPage"
 import useObserver from "@hooks/useObserver"
 import Fetch from "@API/Fetch"
@@ -17,12 +14,9 @@ export default function News() {
 
     rememberPage("news")
 
-    var { setIsAuth } = useContext(AuthContext)
-    var { user, setUser } = useContext(UserContext)
     var [posts, setPosts] = useState([])
     var [loading, setLoading] = useState(true)
     var [ref, inView] = useInView()
-    var params = useParams()
 
     async function fetchAddPosts() {
         setLoading(true)
@@ -38,13 +32,9 @@ export default function News() {
 
     useObserver({ inView: inView, func: fetchAddPosts })
 
-    useAuth({ username: params.username, setIsAuth: setIsAuth })
-
-    useSetUser({ username: params.username, setUser: setUser })
-
     return (
         <div className="News">
-            <MainComponents user={user} loading={loading} />
+            <MainComponents loading={loading} />
 
             <ScrollToTopOrBottom bottom={false} />
 

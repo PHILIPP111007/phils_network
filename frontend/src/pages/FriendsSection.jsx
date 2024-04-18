@@ -1,6 +1,5 @@
 import "./Friends/styles/Friends.css"
-import { useEffect, useState, useContext } from "react"
-import { UserContext } from "@data/context"
+import { useEffect, useState } from "react"
 import { FilterOption } from "@data/enums"
 import useFriends from "@hooks/useFriends"
 import UserSection from "@hooks/UserSection"
@@ -12,7 +11,6 @@ import ScrollToTopOrBottom from "@pages/components/MainComponents/components/Scr
 
 export default function FriendsSection() {
 
-    var { user } = useContext(UserContext)
     var [friends, setFriends] = useState([])
     var [filter, setFilter] = useState({ username: "", first_name: "", last_name: "" })
     var searchedFriends = useFriends(friends, filter)  // custom hook
@@ -28,7 +26,7 @@ export default function FriendsSection() {
 
     return (
         <div className="Friends">
-            <MainComponents user={user} loading={loading} />
+            <MainComponents loading={loading} />
 
             <ScrollToTopOrBottom bottom={false} />
 

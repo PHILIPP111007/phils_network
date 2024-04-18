@@ -1,6 +1,5 @@
 import "./Friends/styles/Friends.css"
-import { useEffect, useState, useContext } from "react"
-import { UserContext } from "@data/context"
+import { useEffect, useState } from "react"
 import useFriends from "@hooks/useFriends"
 import UserSection from "@hooks/UserSection"
 import MainComponents from "@pages/components/MainComponents/MainComponents"
@@ -12,7 +11,6 @@ import { FilterOption } from "@data/enums"
 
 export default function SubscribersSection() {
 
-    var { user } = useContext(UserContext)
     var [subscribers, setSubscribers] = useState([])
     var [filter, setFilter] = useState({ username: "", first_name: "", last_name: "" })
     var searchedSubscribers = useFriends(subscribers, filter)  // custom hook
@@ -28,7 +26,7 @@ export default function SubscribersSection() {
 
     return (
         <div className="Friends">
-            <MainComponents user={user} loading={loading} />
+            <MainComponents oading={loading} />
 
             <ScrollToTopOrBottom bottom={false} />
 

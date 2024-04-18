@@ -3,8 +3,8 @@ import "../../styles/Posts.css"
 import { useContext, useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { useInView } from "react-intersection-observer"
-import { UserContext, AuthContext } from "@data/context"
-import { useAuth, useSetUser } from "@hooks/useAuth"
+import { UserContext } from "@data/context"
+import { useSetUser } from "@hooks/useAuth"
 import { HttpMethod } from "@data/enums"
 import useObserver from "@hooks/useObserver"
 import rememberPage from "@modules/rememberPage"
@@ -21,7 +21,6 @@ import plusIcon from "@images/plus-icon.svg"
 
 export default function User() {
 
-    var { setIsAuth } = useContext(AuthContext)
     var { user, setUser } = useContext(UserContext)
     var [ref, inView] = useInView()
     var params = useParams()
@@ -111,15 +110,13 @@ export default function User() {
         getPosts(0)
     }, [params.username])
 
-    useAuth({ username: params.username, setIsAuth: setIsAuth })
-
     useSetUser({ username: params.username, setUser: setUser, setUserLocal: setUserLocal })
 
     useObserver({ inView: inView, func: getPosts, flag: !mainSets.loading })
 
     return (
         <div className="User">
-            <MainComponents user={user} loading={mainSets.loading} />
+            <MainComponents loading={mainSets.loading} />
 
             <ScrollToTopOrBottom bottom={false} />
 

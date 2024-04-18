@@ -197,7 +197,7 @@ export default function Chat() {
 
     return (
         <div className="Chat">
-            <MainComponents user={user} roomName={mainSets.value.room.name} loading={mainSets.value.loading} />
+            <MainComponents roomName={mainSets.value.room.name} loading={mainSets.value.loading} />
 
             <ScrollToTopOrBottom bottom={true} />
 

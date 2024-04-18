@@ -1,9 +1,6 @@
 import "./styles/Friends.css"
-import { useContext, useState } from "react"
-import { useParams } from "react-router-dom"
-import { UserContext, AuthContext } from "@data/context"
+import { useState } from "react"
 import { HttpMethod } from "@data/enums"
-import { useAuth, useSetUser } from "@hooks/useAuth"
 import rememberPage from "@modules/rememberPage"
 import Fetch from "@API/Fetch"
 import MainComponents from "@pages/components/MainComponents/MainComponents"
@@ -17,11 +14,8 @@ export default function Friends() {
 
     rememberPage("friends")
 
-    var { setIsAuth } = useContext(AuthContext)
-    var { user, setUser } = useContext(UserContext)
     var [users, setUsers] = useState([])
     var [loading, setLoading] = useState(false)
-    var params = useParams()
 
     async function findFunc(findUser) {
         setUsers([])
@@ -49,13 +43,10 @@ export default function Friends() {
         }
     }
 
-    useAuth({ username: params.username, setIsAuth: setIsAuth })
-
-    useSetUser({ username: params.username, setUser: setUser })
 
     return (
         <div className="Friends">
-            <MainComponents user={user} />
+            <MainComponents />
 
             <ScrollToTopOrBottom bottom={false} />
 

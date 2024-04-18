@@ -1,9 +1,7 @@
 import "./styles/Rooms.css"
 import { useContext, useEffect, useMemo, useRef, useState } from "react"
-import { useParams } from "react-router-dom"
-import { UserContext, AuthContext } from "@data/context"
+import { UserContext } from "@data/context"
 import { HttpMethod } from "@data/enums"
-import { useAuth, useSetUser } from "@hooks/useAuth"
 import rememberPage from "@modules/rememberPage"
 import getSocket from "@modules/websocket"
 import Fetch from "@API/Fetch"
@@ -18,12 +16,10 @@ export default function Rooms() {
 
     rememberPage("chats")
 
-    var { setIsAuth } = useContext(AuthContext)
-    var { user, setUser } = useContext(UserContext)
+    var { user } = useContext(UserContext)
     var [rooms, setRooms] = useState([])
     var [modalRoomCreate, setModalRoomCreate] = useState(false)
     var [loading, setLoading] = useState(true)
-    var params = useParams()
     var roomSocket = useRef(null)
 
     class Rooms {
@@ -123,13 +119,9 @@ export default function Rooms() {
         }
     }, [rooms.length])
 
-    useAuth({ username: params.username, setIsAuth: setIsAuth })
-
-    useSetUser({ username: params.username, setUser: setUser })
-
     return (
         <div className="Rooms">
-            <MainComponents user={user} loading={loading} />
+            <MainComponents loading={loading} />
 
             <ScrollToTopOrBottom bottom={false} />
 
