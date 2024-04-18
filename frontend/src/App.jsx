@@ -11,8 +11,7 @@ import Error from "@pages/Error/Error"
 
 export default function App() {
 
-    var body = document.getElementsByTagName("body")[0]
-    useTheme(body)
+    useTheme()
 
     var [isAuth, setIsAuth] = useState(false)
     var [user, setUser] = useState({
