@@ -2,6 +2,7 @@
 
 Minimalistic social network written using Django and React.
 
+
 ## What supports this app
 1. Accounts and adding friends. Each user has the opportunity to maintain their own blog, subscribe to other people and see their blogs.
 
@@ -15,6 +16,7 @@ Minimalistic social network written using Django and React.
 
 \
 Have fun and if you want please leave feedback!
+
 
 ## Technologies used
 
@@ -43,7 +45,7 @@ https://www.postgresql.org/
 https://react.dev/learn
 
 
-## Installation
+## Development installation
 
 Postgres.
 ```sh
@@ -87,12 +89,12 @@ micromamba activate phils_network
 
 * Run backend app with `daphne`:
 ```sh
-python settings/manage.py runserver
+bash settings/daphne.sh
 ```
 
 * Run backend app with `gunicorn`:
 ```sh
-bash settings/gunicorn_rc
+bash settings/gunicorn.sh
 ```
 
 \
@@ -118,3 +120,6 @@ Run the frontend app.
 ```sh
 serve -s build
 ```
+
+
+## Production installation
