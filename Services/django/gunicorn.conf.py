@@ -3,16 +3,12 @@
 #################################################
 #
 # env vars settings and
-# gunicorn WSGI + uvicorn server configuration.
+# gunicorn WSGI + uvicorn configuration.
 #
 #################################################
 
-### Gunicorn + Uvicorn workers run:
-*	$ gunicorn -c gunicorn.conf.py
-
-or:
-
-*	$ bash ./gunicorn_rc
+### Gunicorn + Uvicorn workers:
+*	$ bash ./gunicorn.sh
 
 ### Close gunicorn daemon:
 *	$ pkill -f gunicorn
@@ -65,10 +61,6 @@ def worker_int(worker: UvicornWorker):
 #####################
 # Gunicorn settings
 #####################
-
-command: str = "venv/bin/gunicorn"
-pythonpath: str = "venv"
-
 
 #
 # Process naming
