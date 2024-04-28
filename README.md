@@ -78,7 +78,7 @@ bash setup.sh
 
 Activate micromamba enviroment.
 ```sh
-micromamba activate phils_network_2
+micromamba activate phils_network
 ```
 
 \
@@ -96,10 +96,10 @@ bash settings/gunicorn_rc
 ```
 
 \
-By default debug is True, so if needed, go to the `phils_network_2/Services/django/pyproject.toml` file and replace `DEBUG` variable from `“1”` to `“0"`. With `DEBUG == False` gunicorn starts in daemonized mode. See `phils_network_2/Services/django/gunicorn.conf.py` file for more information about gunicorn configuration.
+By default debug is True, so if needed, go to the `phils_network/Services/django/pyproject.toml` file and replace `DEBUG` variable from `“1”` to `“0"`. With `DEBUG == False` gunicorn starts in daemonized mode. See `phils_network/Services/django/gunicorn.conf.py` file for more information about gunicorn configuration.
 
 \
-Then go to the frontend directory `phils_network_2/Front/react/`.
+Then go to the frontend directory `phils_network/Front/react/`.
 
 Install npm packages.
 ```sh
@@ -107,7 +107,7 @@ npm install
 ```
 
 \
-By default, django server runs on the 0.0.0.0 host and 8000 port (see `phils_network_2/Services/django/pyproject.toml` file). So make sure that SERVER_HOST and SERVER_PORT variables in the `phils_network_2/Front/react/src/data/constants.js` file are similar to your backend.
+By default, django server runs on the 0.0.0.0 host and 8000 port (see `phils_network/Services/django/pyproject.toml` file). So make sure that SERVER_HOST and SERVER_PORT variables in the `phils_network/Front/react/src/data/constants.js` file are similar to your backend.
 
 Create production frontend app.
 ```sh
