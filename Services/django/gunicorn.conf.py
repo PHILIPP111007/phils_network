@@ -19,6 +19,7 @@ import signal
 
 
 from settings.server_conf import (
+	read_and_set_env,
 	get_workers_count,
 	get_threads_count,
 )
@@ -56,6 +57,9 @@ def worker_int(worker: UvicornWorker):
 	# 		break
 
 	Server.kill_worker(worker.pid, signal.SIGTERM)
+
+
+read_and_set_env()
 
 
 #####################
