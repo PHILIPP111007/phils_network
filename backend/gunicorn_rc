@@ -1,9 +1,0 @@
-#!/bin/sh
-
-# Runs gunicorn
-
-PID=$PWD/tmp/gunicorn.pid
-
-if [ -f $PID ]; then rm $PID; fi
-
-gunicorn -c $PWD/gunicorn.conf.py --pid=$PID
