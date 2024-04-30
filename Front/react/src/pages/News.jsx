@@ -6,7 +6,7 @@ import rememberPage from "@modules/rememberPage"
 import useObserver from "@hooks/useObserver"
 import Fetch from "@API/Fetch"
 import MainComponents from "@pages/components/MainComponents/MainComponents"
-import Posts from "./components/Posts"
+import Posts from "@pages/components/Posts"
 import LazyDiv from "@pages/components/LazyDiv"
 import ScrollToTopOrBottom from "@pages/components/MainComponents/components/ScrollToTopOrBottom"
 
