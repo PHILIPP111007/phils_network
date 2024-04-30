@@ -14,7 +14,6 @@
 *	$ pkill -f gunicorn
 """
 
-import os
 import signal
 
 
@@ -87,16 +86,6 @@ proc_name: str = "gunicorn"
 #
 
 wsgi_app: str = "settings.asgi"
-
-#
-# Server socket
-#
-
-bind: str = (
-	os.environ.get("DJANGO_HOST", "0.0.0.0")
-	+ ":"
-	+ os.environ.get("DJANGO_PORT", "8000")
-)
 
 
 #
