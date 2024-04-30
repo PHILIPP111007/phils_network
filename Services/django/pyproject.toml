@@ -6,25 +6,6 @@
 	name = "phils_network"
 	version = "2.0.0"
 
-["app-settings"]
-	SECRET_KEY = "12345"
-	DEBUG = "1"
-	ALLOWED_HOSTS = "*"
-
-	PG_NAME = "phils_network"
-	PG_USER = "postgres"
-	PG_HOST = "localhost"
-	PG_PORT = "5432"
-	PG_PASSWORD = "12345"
-
-	CHANNEL_LAYERS_HOST = "127.0.0.1"
-	CHANNEL_LAYERS_PORT = "6379"
-	DEBUG_TOOLBAR_INTERNAL_IPS = "127.0.0.1"
-
-	POSTS_TO_LOAD = "20"
-	MESSAGES_TO_LOAD = "30"
-	DATETIME_FORMAT = "%Y-%m-%d %H:%M"
-
 [tool.ruff]
 	# Same as Black.
 	line-length = 88
