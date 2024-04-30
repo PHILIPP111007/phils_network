@@ -4,8 +4,6 @@
 import os
 import sys
 
-from settings.server_conf import read_and_set_env
-
 
 def main() -> None:
 	"""Run administrative tasks."""
@@ -23,5 +21,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-	read_and_set_env()
 	main()

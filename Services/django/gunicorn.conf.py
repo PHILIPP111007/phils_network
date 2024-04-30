@@ -16,13 +16,6 @@
 
 import signal
 
-
-from settings.server_conf import (
-	read_and_set_env,
-	get_workers_count,
-	get_threads_count,
-)
-
 from gunicorn.arbiter import Arbiter
 
 from settings.workers import UvicornWorker
@@ -58,12 +51,27 @@ def worker_int(worker: UvicornWorker):
 	Server.kill_worker(worker.pid, signal.SIGTERM)
 
 
-read_and_set_env()
-
-
 #####################
 # Gunicorn settings
 #####################
+
+
+def get_workers_count() -> int:
+	"""
+	See gunicorn workers documentation:
+	https://docs.gunicorn.org/en/stable/configure.html#:~:text=workers%20%3D%20multiprocessing.cpu_count()%20*%202%20%2B%201
+	"""
+
+	# return cpu_count() * 2 + 1
+	return 1
+
+
+def get_threads_count() -> int:
+	"""2-4 x $(NUM_CORES)"""
+
+	# return cpu_count() * 4
+	return 1
+
 
 #
 # Process naming
