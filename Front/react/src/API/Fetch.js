@@ -14,8 +14,8 @@ export default async function Fetch({ action, method, body, token }) {
     if (method === HttpMethod.GET) {
         data = await fetch(url, {
             method: "GET",
-            credentials: "same-origin",
             headers: {
+                "accept": "application/json; charset=utf-8",
                 "Content-Type": "application/json; charset=utf-8",
                 "Authorization": token ? `Token ${token}` : "",
             }
@@ -34,8 +34,8 @@ export default async function Fetch({ action, method, body, token }) {
     } else {
         data = await fetch(url, {
             method: method,
-            credentials: "same-origin",
             headers: {
+                "accept": "application/json; charset=utf-8",
                 "Content-Type": "application/json; charset=utf-8",
                 "Authorization": token ? `Token ${token}` : "",
             },
