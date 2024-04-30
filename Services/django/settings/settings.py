@@ -10,14 +10,13 @@ BASE_DIR: Path = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY: str = environ.get("SECRET_KEY", default="")
-
+SECRET_KEY: str = environ.get("SECRET_KEY", "12345")
 
 # SECURITY WARNING: don"t run with debug turned on in production!
-DEBUG: bool = not not int(environ.get("DEBUG", default="0"))
+DEBUG: bool = not not int(environ.get("DEBUG", "0"))
 
 
-ALLOWED_HOSTS: list[str] = environ.get("ALLOWED_HOSTS", default="*").split(",")
+ALLOWED_HOSTS: list[str] = environ.get("ALLOWED_HOSTS", "*").split(",")
 
 
 # Application definition
@@ -34,7 +33,6 @@ DJANGO_APPS: list[str] = [
 
 THIRD_PARTY_APPS: list[str] = [
 	# Servers
-	"daphne",
 	"gunicorn",
 	"uvicorn",
 	# REST API
@@ -98,8 +96,8 @@ CHANNEL_LAYERS = {
 		"CONFIG": {
 			"hosts": [
 				(
-					environ.get("CHANNEL_LAYERS_HOST", default="127.0.0.1"),
-					int(environ.get("CHANNEL_LAYERS_PORT", default="6379")),
+					environ.get("CHANNEL_LAYERS_HOST", "127.0.0.1"),
+					int(environ.get("CHANNEL_LAYERS_PORT", "6379")),
 				)
 			],
 			"symmetric_encryption_keys": [SECRET_KEY],
@@ -114,18 +112,19 @@ CHANNEL_LAYERS = {
 DATABASES = {
 	"default": {
 		"ENGINE": "django.db.backends.postgresql",
-		"NAME": environ.get("PG_NAME"),
-		"USER": environ.get("PG_USER"),
-		"HOST": environ.get("PG_HOST"),
-		"PORT": int(environ.get("PG_PORT", default="5432")),
-		"PASSWORD": environ.get("PG_PASSWORD"),
+		"NAME": environ.get("PG_NAME", "postgres"),
+		"USER": environ.get("PG_USER", "postgres"),
+		"HOST": environ.get("PG_HOST", "localhost"),
+		"PORT": int(environ.get("PG_PORT", "5432")),
+		"PASSWORD": environ.get("PG_PASSWORD", "postgres"),
 	},
 }
 
 CACHES = {
 	"default": {
 		"BACKEND": "django.core.cache.backends.redis.RedisCache",
-		"LOCATION": "redis://127.0.0.1:6379",
+		# "LOCATION": "redis://127.0.0.1:6379",
+		"LOCATION": "redis://redis:6379",
 	}
 }
 
@@ -209,8 +208,8 @@ DJOSER: dict[str, str] = {
 }
 
 # Lazy loading settings
-POSTS_TO_LOAD: int = int(environ.get("POSTS_TO_LOAD", default="20"))
-MESSAGES_TO_LOAD: int = int(environ.get("MESSAGES_TO_LOAD", default="30"))
+POSTS_TO_LOAD: int = int(environ.get("POSTS_TO_LOAD", "20"))
+MESSAGES_TO_LOAD: int = int(environ.get("MESSAGES_TO_LOAD", "30"))
 
 # Date time format
-DATETIME_FORMAT: str = environ.get("DATETIME_FORMAT", default="%Y-%m-%d %H:%M")
+DATETIME_FORMAT: str = environ.get("DATETIME_FORMAT", "%Y-%m-%d %H:%M")
