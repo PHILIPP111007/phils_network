@@ -29,6 +29,7 @@ DJANGO_APPS: list[str] = [
 	"django.contrib.sessions",
 	"django.contrib.messages",
 	"django.contrib.staticfiles",
+	"django.contrib.postgres",
 ]
 
 THIRD_PARTY_APPS: list[str] = [
@@ -112,7 +113,7 @@ CHANNEL_LAYERS = {
 
 DATABASES = {
 	"default": {
-		"ENGINE": "django.db.backends.postgresql_psycopg2",
+		"ENGINE": "django.db.backends.postgresql",
 		"NAME": environ.get("PG_NAME"),
 		"USER": environ.get("PG_USER"),
 		"HOST": environ.get("PG_HOST"),
