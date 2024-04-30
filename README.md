@@ -29,9 +29,6 @@ https://www.django-rest-framework.org/
 * django-channels \
 https://channels.readthedocs.io/en/stable/index.html
 
-* daphne \
-https://pypi.org/project/daphne/
-
 * gunicorn \
 https://docs.gunicorn.org/en/stable/index.html
 
@@ -44,6 +41,20 @@ https://www.postgresql.org/
 * React \
 https://react.dev/learn
 
+* Docker \
+https://www.docker.com/
+
+
+## Production installation
+
+```sh
+docker-compose up -d --build
+
+docker-compose run django python manage.py migrate
+
+docker-compose run django python manage.py createsuperuser
+```
+
 
 ## Development installation
 
@@ -54,8 +65,8 @@ brew link postgresql@15
 brew services run postgresql@15
 
 createuser -s postgres
-createdb phils_network --owner=postgres --username=postgres
-psql phils_network --username=postgres
+createdb postgres --owner=postgres --username=postgres
+psql postgres --username=postgres
 ```
 
 Redis.
@@ -83,33 +94,21 @@ Activate micromamba enviroment.
 micromamba activate phils_network
 ```
 
-\
-**Phils_network** supports two servers: `daphne` and `gunicorn` (with `uvicorn` async workers).
-
-
-* Run backend app with `daphne`:
-```sh
-bash settings/daphne.sh
-```
-
-* Run backend app with `gunicorn`:
+**Phils_network** supports `gunicorn` (with `uvicorn` async workers).
 ```sh
 bash settings/gunicorn.sh
 ```
 
 \
-By default debug is True, so if needed, go to the `phils_network/Services/django/pyproject.toml` file and replace `DEBUG` variable from `“1”` to `“0"`. With `DEBUG == False` gunicorn starts in daemonized mode. See `phils_network/Services/django/gunicorn.conf.py` file for more information about gunicorn configuration.
+See `phils_network/Services/django/gunicorn.conf.py` for more information about gunicorn configuration.
 
-\
-Then go to the frontend directory `phils_network/Front/react/`.
-
-Install npm packages.
+Then go to the frontend directory `phils_network/Front/react/`. Install npm packages.
 ```sh
 npm install
 ```
 
 \
-By default, django server runs on the 0.0.0.0 host and 8000 port (see `phils_network/Services/django/pyproject.toml` file). So make sure that SERVER_HOST and SERVER_PORT variables in the `phils_network/Front/react/src/data/constants.js` file are similar to your backend.
+By default, django server runs on the 0.0.0.0 host and 8000 port (see `phils_network/Services/django/gunicorn.sh` file). So make sure that SERVER_HOST and SERVER_PORT variables in the `phils_network/Front/react/src/data/constants.js` file are similar to your backend.
 
 Create production frontend app.
 ```sh
@@ -120,6 +119,3 @@ Run the frontend app.
 ```sh
 serve -s build
 ```
-
-
-## Production installation
