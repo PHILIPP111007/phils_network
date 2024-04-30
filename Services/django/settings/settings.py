@@ -96,8 +96,8 @@ CHANNEL_LAYERS = {
 		"CONFIG": {
 			"hosts": [
 				(
-					environ.get("CHANNEL_LAYERS_HOST", "127.0.0.1"),
-					int(environ.get("CHANNEL_LAYERS_PORT", "6379")),
+					environ.get("REDIS_HOST", "127.0.0.1"),
+					int(environ.get("REDIS_PORT", "6379")),
 				)
 			],
 			"symmetric_encryption_keys": [SECRET_KEY],
@@ -123,8 +123,10 @@ DATABASES = {
 CACHES = {
 	"default": {
 		"BACKEND": "django.core.cache.backends.redis.RedisCache",
-		# "LOCATION": "redis://127.0.0.1:6379",
-		"LOCATION": "redis://redis:6379",
+		"LOCATION": "redis://"
+		+ environ.get("REDIS_HOST", "127.0.0.1")
+		+ ":"
+		+ environ.get("REDIS_PORT", "6379"),
 	}
 }
 
