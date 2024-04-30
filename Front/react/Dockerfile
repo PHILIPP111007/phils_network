@@ -6,10 +6,6 @@ RUN npm install -g npm@latest
 COPY ./Front/react/*.json .
 RUN npm install
 
-# Добавляем каталоги public и src. 
-# можно воспользоваться командой COPY . . но если вы синхронизировали node_modules,
-# то будете ждать пока зальётся этот каталог целиком. 
-# да и потом могут возникнуть проблемы.
 COPY ./Front/react/config ./config
 COPY ./Front/react/scripts ./scripts
 COPY ./Front/react/public ./public
