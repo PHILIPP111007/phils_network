@@ -1,10 +1,10 @@
 import "./styles/Login.css"
 import { useState, useContext, useEffect } from "react"
 import { useNavigate, Link } from "react-router-dom"
-import { AuthContext, UserContext } from "../../data/context"
-import { HttpMethod } from "../../data/enums"
-import Fetch from "../../API/Fetch"
-import Input from "../components/UI/Input"
+import { AuthContext, UserContext } from "@data/context"
+import { HttpMethod } from "@data/enums"
+import Fetch from "@API/Fetch"
+import Input from "@pages/components/UI/Input"
 
 export default function Login() {
 

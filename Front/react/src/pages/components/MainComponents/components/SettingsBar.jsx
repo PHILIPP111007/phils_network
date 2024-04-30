@@ -1,9 +1,9 @@
 import "./styles/SettingsBar.css"
-import { useContext, useEffect, useState } from "react"
-import { AuthContext } from "../../../../data/context"
-import { HttpMethod, Theme } from "../../../../data/enums"
-import Fetch from "../../../../API/Fetch"
-import Button from "../../UI/Button"
+import { useContext, useState, useEffect } from "react"
+import { AuthContext } from "@data/context"
+import { HttpMethod, Theme } from "@data/enums"
+import Fetch from "@API/Fetch"
+import Button from "@pages/components/UI/Button"
 
 export default function SettingsBar(props) {
 

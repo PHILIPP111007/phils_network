@@ -1,9 +1,9 @@
 import "./styles/UserStatus.css"
 import { useEffect } from "react"
-import { HttpMethod, UserStatusEnum } from "../../data/enums"
-import Subscribe from "../../hooks/Subscribe"
-import Fetch from "../../API/Fetch"
-import Button from "./UI/Button"
+import { HttpMethod, UserStatusEnum } from "@data/enums"
+import Subscribe from "@hooks/Subscribe"
+import Fetch from "@API/Fetch"
+import Button from "@pages/components/UI/Button"
 
 export default function UserStatus(props) {
 

@@ -1,5 +1,5 @@
-import { HttpMethod } from "../data/enums"
-import { FETCH_URL } from "../data/constants"
+import { HttpMethod } from "@data/enums"
+import { FETCH_URL } from "@data/constants"
 
 export default async function Fetch({ action, method, body, token }) {
 

@@ -1,5 +1,5 @@
-import Message from "./components/Message"
 import { useMemo } from "react"
+import Message from "./components/Message"
 
 export default function Messages({ messages }) {
 

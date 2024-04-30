@@ -1,14 +1,14 @@
 import "../styles/Posts.css"
 import { useState } from "react"
 import { useInView } from "react-intersection-observer"
-import { HttpMethod } from "../data/enums"
-import rememberPage from "../modules/rememberPage"
-import useObserver from "../hooks/useObserver"
-import Fetch from "../API/Fetch"
-import MainComponents from "./components/MainComponents/MainComponents"
+import { HttpMethod } from "@data/enums"
+import rememberPage from "@modules/rememberPage"
+import useObserver from "@hooks/useObserver"
+import Fetch from "@API/Fetch"
+import MainComponents from "@pages/components/MainComponents/MainComponents"
 import Posts from "./components/Posts"
-import LazyDiv from "./components/LazyDiv"
-import ScrollToTopOrBottom from "./components/MainComponents/components/ScrollToTopOrBottom"
+import LazyDiv from "@pages/components/LazyDiv"
+import ScrollToTopOrBottom from "@pages/components/MainComponents/components/ScrollToTopOrBottom"
 
 export default function News() {
 

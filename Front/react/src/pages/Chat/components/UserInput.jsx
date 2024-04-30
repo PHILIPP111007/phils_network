@@ -1,5 +1,5 @@
 import { useContext, useState } from "react"
-import { UserContext } from "../../../data/context"
+import { UserContext } from "@data/context"
 import Modal from "../../components/Modal"
 import ModalRoomEdit from "./modals/ModalRoomEdit"
 import settingsLogo from "@images/three_points_gray.svg"

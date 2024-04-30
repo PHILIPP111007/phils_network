@@ -2,12 +2,12 @@ import "./styles/App.css"
 import "./styles/theme.css"
 import { Suspense, useState } from "react"
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
-import { AuthContext, UserContext } from "./data/context"
-import { PrivateRoutes, PublicRoutes } from "./data/routes"
-import { useAuth } from "./hooks/useAuth"
-import useTheme from "./hooks/useTheme"
-import SuspenseLoading from "./pages/components/SuspenseLoading"
-import Error from "./pages/Error/Error"
+import { AuthContext, UserContext } from "@data/context"
+import { PrivateRoutes, PublicRoutes } from "@data/routes"
+import { useAuth } from "@hooks/useAuth"
+import useTheme from "@hooks/useTheme"
+import SuspenseLoading from "@pages/components/SuspenseLoading"
+import Error from "@pages/Error/Error"
 
 export default function App() {
 

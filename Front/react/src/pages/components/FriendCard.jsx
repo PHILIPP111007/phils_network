@@ -1,7 +1,7 @@
 import "./styles/FriendCard.css"
 import { useState } from "react"
 import { Link } from "react-router-dom"
-import UserStatus from "./UserStatus"
+import UserStatus from "@pages/components/UserStatus"
 
 export default function FriendCard({ user }) {
 

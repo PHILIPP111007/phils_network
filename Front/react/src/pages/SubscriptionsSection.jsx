@@ -1,13 +1,13 @@
 import "./Friends/styles/Friends.css"
 import { useEffect, useState } from "react"
-import { FilterOption } from "../data/enums"
-import useFriends from "../hooks/useFriends"
-import UserSection from "../hooks/UserSection"
-import MainComponents from "./components/MainComponents/MainComponents"
-import FriendCard from "./components/FriendCard"
-import FriendsNavBar from "./components/FriendsNavBar"
-import FindUser from "./components/FindUser"
-import ScrollToTopOrBottom from "./components/MainComponents/components/ScrollToTopOrBottom"
+import { FilterOption } from "@data/enums"
+import useFriends from "@hooks/useFriends"
+import UserSection from "@hooks/UserSection"
+import MainComponents from "@pages/components/MainComponents/MainComponents"
+import FriendCard from "@pages/components/FriendCard"
+import FriendsNavBar from "@pages/components/FriendsNavBar"
+import FindUser from "@pages/components/FindUser"
+import ScrollToTopOrBottom from "@pages/components/MainComponents/components/ScrollToTopOrBottom"
 
 export default function SubscriptionsSection() {
 
