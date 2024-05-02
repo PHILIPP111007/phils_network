@@ -25,7 +25,7 @@ services:
       SECRET_KEY: weofjweifjewifjewifjewfewf
       DEBUG: "0"
       ALLOWED_HOSTS: "*"
-      REDIS_HOST: "redis"
+      REDIS_HOST: "cache"
       REDIS_PORT: "6379"
       POSTS_TO_LOAD: "20"
       MESSAGES_TO_LOAD: "30"
