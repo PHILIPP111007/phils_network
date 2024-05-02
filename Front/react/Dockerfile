@@ -1,4 +1,4 @@
-FROM node:20.12.2-alpine as build_frontend
+FROM node:20.12.2-alpine as client
 WORKDIR /usr/src/app
 
 RUN npm install -g npm@latest
@@ -16,6 +16,8 @@ RUN npm run build
 
 FROM nginx:stable-alpine
 
+RUN rm /usr/share/nginx/html/*
+COPY --from=client /usr/src/app/build /usr/share/nginx/html
 RUN rm /etc/nginx/conf.d/default.conf
 COPY ./Front/react/nginx.conf /etc/nginx/conf.d
 
