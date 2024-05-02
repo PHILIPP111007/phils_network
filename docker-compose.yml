@@ -1,8 +1,8 @@
 version: "3.8"
 
 services:
-  django:
-    container_name: django
+  server:
+    container_name: server
     restart: unless-stopped
     build:
       context: .
@@ -10,8 +10,8 @@ services:
     ports:
       - 8000:8000
     depends_on: 
-      - pgdb
-      - redis
+      - db
+      - cache
     command: >
       sh -c "python manage.py collectstatic --noinput &&
              python manage.py migrate &&
@@ -19,7 +19,7 @@ services:
     environment:
       PG_NAME: postgres
       PG_USER: postgres
-      PG_HOST: pgdb
+      PG_HOST: db
       PG_PORT: "5432"
       PG_PASSWORD: postgres
       SECRET_KEY: weofjweifjewifjewifjewfewf
@@ -31,8 +31,8 @@ services:
       MESSAGES_TO_LOAD: "30"
       DATETIME_FORMAT: "%Y-%m-%d %H:%M"
   
-  redis:
-    container_name: redis
+  cache:
+    container_name: cache
     restart: unless-stopped
     image: redis:7.2-alpine 
     ports:
@@ -41,9 +41,9 @@ services:
     volumes: 
       - cache:/data
   
-  pgdb:
+  db:
     # Задание имени контейнера для сервиса pgdb
-    container_name: pgdb
+    container_name: db
     # Использование готового образа postgres
     image: postgres
     restart: unless-stopped
@@ -54,24 +54,24 @@ services:
       - POSTGRES_PASSWORD=postgres
      # Связывание тома с директорией в контейнере для сохранения данных postgres
     volumes:
-      - pgdbdata:/var/lib/postgresql/data/
+      - dbdata:/var/lib/postgresql/data/
     ports:
       - 5432:5432
 
-  react:
-    container_name: react
+  client:
+    container_name: client
     build:
       context: .
       dockerfile: ./Front/react/Dockerfile
     ports:
       - 80:80
     depends_on:
-      - django
+      - server
     environment:
       REACT_APP_SERVER_HostIp: "0.0.0.0"
       REACT_APP_SERVER_HostPort: "8000"
 
 volumes:
-  pgdbdata: null
+  dbdata: null
   cache:
     driver: local
