@@ -50,10 +50,6 @@ https://www.docker.com/
 ```sh
 docker-compose up -d
 
-docker-compose run django python manage.py collectstatic
-
-docker-compose run django python manage.py migrate
-
 docker-compose run django python manage.py createsuperuser
 ```
 
