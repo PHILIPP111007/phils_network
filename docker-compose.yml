@@ -12,6 +12,10 @@ services:
     depends_on: 
       - pgdb
       - redis
+    command: >
+      sh -c "python manage.py collectstatic --noinput &&
+             python manage.py migrate &&
+             bash gunicorn.sh"
     environment:
       PG_NAME: postgres
       PG_USER: postgres
@@ -19,7 +23,7 @@ services:
       PG_PORT: "5432"
       PG_PASSWORD: postgres
       SECRET_KEY: weofjweifjewifjewifjewfewf
-      DEBUG: "1"
+      DEBUG: "0"
       ALLOWED_HOSTS: "*"
       REDIS_HOST: "redis"
       REDIS_PORT: "6379"
