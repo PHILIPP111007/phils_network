@@ -45,7 +45,7 @@ services:
     # Задание имени контейнера для сервиса pgdb
     container_name: pgdb
     # Использование готового образа postgres
-    image: postgres:16.2-alpine
+    image: postgres
     restart: unless-stopped
     # Задание переменных окружения для контейнера с postgres
     environment:
