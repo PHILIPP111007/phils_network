@@ -1,5 +1,5 @@
-var SERVER_HOST = process.env.REACT_APP_SERVER_HOST || "0.0.0.0"
-var SERVER_PORT = process.env.REACT_APP_SERVER_PORT || "8000"
+var SERVER_HostIp = process.env.REACT_APP_SERVER_HostIp || "0.0.0.0"
+var SERVER_HostPort = process.env.REACT_APP_SERVER_HostPort || "8000"
 
-export var FETCH_URL = `http://${SERVER_HOST}:${SERVER_PORT}/`
-export var WEBSOCKET_URL = `ws://${SERVER_HOST}:${SERVER_PORT}/ws/`
+export var FETCH_URL = `http://${SERVER_HostIp}:${SERVER_HostPort}/`
+export var WEBSOCKET_URL = `ws://${SERVER_HostIp}:${SERVER_HostPort}/ws/`
