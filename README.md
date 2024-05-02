@@ -48,7 +48,9 @@ https://www.docker.com/
 ## Production installation
 
 ```sh
-docker-compose up -d --build
+docker-compose up -d
+
+docker-compose run django python manage.py collectstatic
 
 docker-compose run django python manage.py migrate
 
@@ -117,5 +119,6 @@ npm run build
 
 Run the frontend app.
 ```sh
+npm install -g serve
 serve -s build
 ```
