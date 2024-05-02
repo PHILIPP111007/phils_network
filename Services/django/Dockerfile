@@ -13,5 +13,3 @@ COPY ./Services/django/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY ./Services/django/ .
-
-CMD bash gunicorn.sh
