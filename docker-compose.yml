@@ -34,7 +34,7 @@ services:
   redis:
     container_name: redis
     restart: unless-stopped
-    image: redis:7.2.4-alpine 
+    image: redis:7.2-alpine 
     ports:
       - 6379:6379
     command: redis-server
@@ -45,7 +45,7 @@ services:
     # Задание имени контейнера для сервиса pgdb
     container_name: pgdb
     # Использование готового образа postgres
-    image: postgres
+    image: postgres:16.2-alpine
     restart: unless-stopped
     # Задание переменных окружения для контейнера с postgres
     environment:
