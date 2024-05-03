@@ -48,44 +48,44 @@ export default function Chat() {
     }
 
     class MessagesByRoomLocalStorage {
-        static get_message_key() {
+        static get_key() {
             return `messages_${mainSets.value.room.id}`
         }
         static get() {
-            var messages_by_room = localStorage.getItem(this.get_message_key())
+            var messages_by_room = localStorage.getItem(this.get_key())
             return JSON.parse(messages_by_room)
         }
         static save(messages) {
             var msgs_slice = 30
             try {
-                localStorage.setItem(this.get_message_key(), JSON.stringify(messages.slice(-msgs_slice)))
+                localStorage.setItem(this.get_key(), JSON.stringify(messages.slice(-msgs_slice)))
             } catch (e) {
-                localStorage.removeItem("rooms")
+                this.delete()
                 console.error(e)
             }
         }
         static delete() {
-            localStorage.removeItem(this.get_message_key())
+            localStorage.removeItem(this.get_key())
         }
     }
 
-    class RoomLocalStorage {
-        static get_room_key() {
-            return "rooms"
+    class RoomsLocalStorage {
+        static get_key() {
+            return `rooms_${user.username}`
         }
         static update(username, text) {
-            var rooms = localStorage.getItem(this.get_room_key())
+            var rooms = localStorage.getItem(this.get_key())
             if (rooms !== null) {
                 rooms = JSON.parse(rooms)
                 var current_room = rooms.filter((room) => room.id === mainSets.value.room.id)[0]
                 current_room.last_message_sender = username
                 current_room.last_message_text = text
                 rooms = [current_room, ...rooms.filter((room) => room.id !== mainSets.value.room.id)]
-                localStorage.setItem(this.get_room_key(), JSON.stringify(rooms))
+                localStorage.setItem(this.get_key(), JSON.stringify(rooms))
             }
         }
         static delete() {
-            localStorage.removeItem(this.get_room_key())
+            localStorage.removeItem(this.get_key())
         }
     }
 
@@ -93,7 +93,7 @@ export default function Chat() {
         var sendingText = await text.trim()
         if (sendingText.length > 0) {
             var message = { sender_id: user.pk, text: sendingText }
-            RoomLocalStorage.update(user.username, sendingText)
+            RoomsLocalStorage.update(user.username, sendingText)
             await chatSocket.current.send(JSON.stringify({ message: message }))
         }
     }
@@ -113,7 +113,7 @@ export default function Chat() {
 
             var data = await Fetch({ action: `api/room/${params.room_id}/`, method: HttpMethod.PUT, body: body })
             if (data && data.ok) {
-                RoomLocalStorage.delete()
+                RoomsLocalStorage.delete()
                 navigate(`/chats/${user.username}/`)
             }
         }
@@ -131,7 +131,7 @@ export default function Chat() {
                     MessagesByRoomLocalStorage.save(messages)
                 } else {
                     MessagesByRoomLocalStorage.delete()
-                    RoomLocalStorage.delete()
+                    RoomsLocalStorage.delete()
                 }
             }
             mainSets.value.loading = false
@@ -178,7 +178,7 @@ export default function Chat() {
             if (data) {
                 setMessages((prev) => [...messages, data.message])
                 MessagesByRoomLocalStorage.save(messages)
-                RoomLocalStorage.update(data.message.sender.username, data.message.text)
+                RoomsLocalStorage.update(data.message.sender.username, data.message.text)
             }
             scrollToBottom()
         }
