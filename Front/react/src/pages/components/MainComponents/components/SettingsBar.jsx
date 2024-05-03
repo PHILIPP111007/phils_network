@@ -2,7 +2,7 @@ import "./styles/SettingsBar.css"
 import { useContext, useState, useEffect } from "react"
 import { AuthContext } from "@data/context"
 import { HttpMethod, Theme } from "@data/enums"
-import { rootElementTheme } from "@data/constants"
+import { ROOT_ELEMENT_THEME } from "@data/constants"
 import Fetch from "@API/Fetch"
 import Button from "@pages/components/UI/Button"
 
@@ -15,7 +15,7 @@ export default function SettingsBar(props) {
         if (localStorage.getItem(Theme.NAME) !== null) {
             setTheme(localStorage.getItem(Theme.NAME))
         }
-        rootElementTheme.className = theme
+        ROOT_ELEMENT_THEME.className = theme
     }, [theme])
 
     function changeTheme() {

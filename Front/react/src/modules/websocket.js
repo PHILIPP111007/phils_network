@@ -1,4 +1,4 @@
-import { WEBSOCKET_URL } from "../data/constants"
+import { WEBSOCKET_URL } from "@data/constants"
 
 export default function getWebSocket({ socket_name, path }) {
     var socket = new WebSocket(
