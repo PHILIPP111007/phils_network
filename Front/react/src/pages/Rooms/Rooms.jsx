@@ -24,7 +24,7 @@ export default function Rooms() {
 
     class RoomsLocalStorage {
         static get_room_key() {
-            return "rooms"
+            return `rooms_${user.username}`
         }
         static get() {
             return localStorage.getItem(this.get_room_key())
