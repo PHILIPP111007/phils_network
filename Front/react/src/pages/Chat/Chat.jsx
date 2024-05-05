@@ -3,7 +3,7 @@ import { useContext, useEffect, useRef, useState } from "react"
 import { useSignal } from "@preact/signals-react"
 import { useNavigate, useParams } from "react-router-dom"
 import { useInView } from "react-intersection-observer"
-import { HttpMethod } from "@data/enums"
+import { HttpMethod, LocalStorageKeys } from "@data/enums"
 import { UserContext } from "@data/context"
 import useObserver from "@hooks/useObserver"
 import getWebSocket from "@modules/websocket"
@@ -49,7 +49,7 @@ export default function Chat() {
 
     class MessagesByRoomLocalStorage {
         static get_key() {
-            return `messages_${mainSets.value.room.id}`
+            return `${LocalStorageKeys.MESSAGES}_${mainSets.value.room.id}`
         }
         static get() {
             var messages_by_room = localStorage.getItem(this.get_key())
@@ -71,7 +71,7 @@ export default function Chat() {
 
     class RoomsLocalStorage {
         static get_key() {
-            return `rooms_${user.username}`
+            return `${LocalStorageKeys.ROOMS}_${user.username}`
         }
         static update(username, text) {
             var rooms = localStorage.getItem(this.get_key())
@@ -210,7 +210,3 @@ export default function Chat() {
         </div>
     )
 }
-
-
-
-

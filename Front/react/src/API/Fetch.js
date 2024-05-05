@@ -1,11 +1,11 @@
-import { HttpMethod } from "@data/enums"
+import { HttpMethod, LocalStorageKeys } from "@data/enums"
 import { FETCH_URL } from "@data/constants"
 
 export default async function Fetch({ action, method, body, token }) {
 
     // External token gives by auth() func
     if (token === undefined) {
-        token = localStorage.getItem("token")
+        token = localStorage.getItem(LocalStorageKeys.TOKEN)
     }
 
     var data
@@ -23,7 +23,7 @@ export default async function Fetch({ action, method, body, token }) {
             .then((response) => response.json())
             .then((data) => {
                 if (!data.ok) {
-                    console.error(`Not 2xx response, cause: ${data.error}`)
+                    console.warn(`Not 2xx response: ${data.error}`)
                 }
                 return data
             })
@@ -44,7 +44,7 @@ export default async function Fetch({ action, method, body, token }) {
             .then((response) => response.json())
             .then((data) => {
                 if (!data.ok) {
-                    console.error(`Not 2xx response, cause: ${data.error}`)
+                    console.warn(`Not 2xx response: ${data.error}`)
                 }
                 return data
             })

@@ -1,7 +1,7 @@
 import "./styles/Rooms.css"
 import { useContext, useEffect, useMemo, useRef, useState } from "react"
 import { UserContext } from "@data/context"
-import { HttpMethod } from "@data/enums"
+import { HttpMethod, LocalStorageKeys } from "@data/enums"
 import rememberPage from "@modules/rememberPage"
 import getWebSocket from "@modules/websocket"
 import Fetch from "@API/Fetch"
@@ -24,7 +24,7 @@ export default function Rooms() {
 
     class RoomsLocalStorage {
         static get_key() {
-            return `rooms_${user.username}`
+            return `${LocalStorageKeys.ROOMS}_${user.username}`
         }
         static get() {
             return localStorage.getItem(this.get_key())

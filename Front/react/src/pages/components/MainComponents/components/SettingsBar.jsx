@@ -1,7 +1,7 @@
 import "./styles/SettingsBar.css"
 import { useContext, useState, useEffect } from "react"
 import { AuthContext } from "@data/context"
-import { HttpMethod, Theme } from "@data/enums"
+import { HttpMethod, LocalStorageKeys, Theme } from "@data/enums"
 import { ROOT_ELEMENT_THEME } from "@data/constants"
 import Fetch from "@API/Fetch"
 import Button from "@pages/components/UI/Button"
@@ -12,8 +12,8 @@ export default function SettingsBar(props) {
     var [theme, setTheme] = useState(Theme.LIGHT)
 
     useEffect(() => {
-        if (localStorage.getItem(Theme.NAME) !== null) {
-            setTheme(localStorage.getItem(Theme.NAME))
+        if (localStorage.getItem(LocalStorageKeys.THEME) !== null) {
+            setTheme(localStorage.getItem(LocalStorageKeys.THEME))
         }
         ROOT_ELEMENT_THEME.className = theme
     }, [theme])
@@ -22,11 +22,11 @@ export default function SettingsBar(props) {
         switch (theme) {
             case Theme.LIGHT:
                 setTheme(Theme.DARK)
-                localStorage.setItem(Theme.NAME, Theme.DARK)
+                localStorage.setItem(LocalStorageKeys.THEME, Theme.DARK)
                 break
             case Theme.DARK:
                 setTheme(Theme.LIGHT)
-                localStorage.setItem(Theme.NAME, Theme.LIGHT)
+                localStorage.setItem(LocalStorageKeys.THEME, Theme.LIGHT)
                 break
             default:
                 break

@@ -18,7 +18,6 @@ export var HttpMethod = {
 }
 
 export var Theme = {
-    NAME: "theme",
     LIGHT: "light",
     DARK: "dark"
 }
@@ -28,5 +27,12 @@ export var FilterOption = {
     SUBSCRIPTIONS: 2,
     SUBSCRIBERS: 3,
     SUBSCRIBERS_COUNT: 4
+}
 
+export var LocalStorageKeys = {
+    TOKEN: "token",
+    THEME: "theme",
+    REMEMBER_PAGE: "rememberPage",
+    MESSAGES: "messages",
+    ROOMS: "rooms",
 }
