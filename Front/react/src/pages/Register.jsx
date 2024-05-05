@@ -2,8 +2,9 @@ import "./Login/styles/Login.css"
 import { useState, useContext, useEffect } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { UserContext, AuthContext } from "@data/context"
-import { HttpMethod, LocalStorageKeys } from "@data/enums"
+import { HttpMethod } from "@data/enums"
 import Fetch from "@API/Fetch"
+import getToken from "@modules/getToken"
 import Input from "@pages/components/UI/Input"
 
 export default function Register() {
@@ -18,7 +19,7 @@ export default function Register() {
     var navigate = useNavigate()
 
     async function auth() {
-        var token = localStorage.getItem(LocalStorageKeys.TOKEN)
+        var token = getToken()
         var data = await Fetch({ action: "api/auth/users/me/", method: HttpMethod.GET, token: token })
 
         if (data && !data.detail && data.username) {

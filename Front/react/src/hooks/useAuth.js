@@ -1,10 +1,11 @@
 import { useEffect } from "react"
-import { HttpMethod, LocalStorageKeys } from "@data/enums"
+import { HttpMethod } from "@data/enums"
 import Fetch from "@API/Fetch"
+import getToken from "@modules/getToken"
 
 export function useAuth({ username, setIsAuth }) {
     var Func = useEffect(() => {
-        var token = localStorage.getItem(LocalStorageKeys.TOKEN)
+        var token = getToken()
         if (token === null) {
             setIsAuth(false)
         } else {

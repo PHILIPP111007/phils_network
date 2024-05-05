@@ -1,11 +1,12 @@
-import { HttpMethod, LocalStorageKeys } from "@data/enums"
+import { HttpMethod } from "@data/enums"
 import { FETCH_URL } from "@data/constants"
+import getToken from "@modules/getToken"
 
 export default async function Fetch({ action, method, body, token }) {
 
     // External token gives by auth() func
     if (token === undefined) {
-        token = localStorage.getItem(LocalStorageKeys.TOKEN)
+        token = getToken()
     }
 
     var data

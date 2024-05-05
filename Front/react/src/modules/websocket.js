@@ -1,11 +1,11 @@
 import { WEBSOCKET_URL } from "@data/constants"
-import { LocalStorageKeys } from "@data/enums"
+import getToken from "@modules/getToken"
 
 export default function getWebSocket({ socket_name, path }) {
     var socket = new WebSocket(
         WEBSOCKET_URL
         + path
-        + `?token=${localStorage.getItem(LocalStorageKeys.TOKEN)}`
+        + `?token=${getToken()}`
     )
     socket.onopen = () => {
         console.log(`${socket_name}: The connection was setup successfully.`)
