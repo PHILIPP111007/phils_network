@@ -48,7 +48,7 @@ Have fun and if you want please leave feedback!
 ```sh
 docker-compose up -d
 
-docker-compose run phils_network_service python manage.py createsuperuser
+docker-compose run service python manage.py createsuperuser
 ```
 
 ## Development installation
