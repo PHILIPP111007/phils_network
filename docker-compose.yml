@@ -1,8 +1,8 @@
 version: "3.8"
 
 services:
-  phils_network_service:
-    container_name: phils_network_service
+  service:
+    container_name: service
     restart: unless-stopped
     build:
       context: .
@@ -10,8 +10,8 @@ services:
     ports:
       - 8000:8000
     depends_on:
-      - phils_network_db
-      - phils_network_cache
+      - db
+      - cache
     command: >
       sh -c "python manage.py collectstatic --noinput &&
              python manage.py migrate &&
@@ -19,31 +19,31 @@ services:
     environment:
       PG_NAME: postgres
       PG_USER: postgres
-      PG_HOST: phils_network_db
+      PG_HOST: db
       PG_PORT: "5432"
       PG_PASSWORD: postgres
       SECRET_KEY: weofjweifjewifjewifjewfewf
       DEBUG: "0"
       ALLOWED_HOSTS: "*"
-      REDIS_HOST: "phils_network_cache"
+      REDIS_HOST: "cache"
       REDIS_PORT: "6379"
       POSTS_TO_LOAD: "20"
       MESSAGES_TO_LOAD: "30"
       DATETIME_FORMAT: "%Y-%m-%d %H:%M"
 
-  phils_network_cache:
-    container_name: phils_network_cache
+  cache:
+    container_name: cache
     restart: unless-stopped
     image: redis:7.2-alpine 
     ports:
       - 6379:6379
     command: redis-server
     volumes: 
-      - phils_network_cache:/data
+      - cache:/data
 
-  phils_network_db:
+  db:
     # Задание имени контейнера для сервиса pgdb
-    container_name: phils_network_db
+    container_name: db
     # Использование готового образа postgres
     image: postgres
     restart: unless-stopped
@@ -54,24 +54,24 @@ services:
       - POSTGRES_PASSWORD=postgres
      # Связывание тома с директорией в контейнере для сохранения данных postgres
     volumes:
-      - phils_network_dbdata:/var/lib/postgresql/data/
+      - dbdata:/var/lib/postgresql/data/
     ports:
       - 5432:5432
 
-  phils_network_client:
-    container_name: phils_network_client
+  client:
+    container_name: client
     build:
       context: .
       dockerfile: ./Front/react/Dockerfile
     ports:
       - 80:80
     depends_on:
-      - phils_network_service
+      - service
     environment:
       REACT_APP_SERVER_HostIp: "0.0.0.0"
       REACT_APP_SERVER_HostPort: "8000"
 
 volumes:
-  phils_network_dbdata: null
-  phils_network_cache:
+  dbdata: null
+  cache:
     driver: local
