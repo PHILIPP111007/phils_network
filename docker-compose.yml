@@ -42,17 +42,13 @@ services:
       - cache:/data
 
   db:
-    # Задание имени контейнера для сервиса pgdb
     container_name: db
-    # Использование готового образа postgres
     image: postgres
     restart: unless-stopped
-    # Задание переменных окружения для контейнера с postgres
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-     # Связывание тома с директорией в контейнере для сохранения данных postgres
     volumes:
       - dbdata:/var/lib/postgresql/data/
     ports:
