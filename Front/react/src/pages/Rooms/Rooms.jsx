@@ -1,7 +1,8 @@
 import "./styles/Rooms.css"
 import { useContext, useEffect, useMemo, useRef, useState } from "react"
 import { UserContext } from "@data/context"
-import { HttpMethod, LocalStorageKeys } from "@data/enums"
+import { HttpMethod } from "@data/enums"
+import { RoomsLocalCache } from "@modules/cache"
 import rememberPage from "@modules/rememberPage"
 import getWebSocket from "@modules/getWebSocket"
 import Fetch from "@API/Fetch"
@@ -22,33 +23,13 @@ export default function Rooms() {
     var [loading, setLoading] = useState(true)
     var roomSocket = useRef(null)
 
-    class RoomsLocalStorage {
-        static get_key() {
-            return `${LocalStorageKeys.ROOMS}_${user.username}`
-        }
-        static get() {
-            return localStorage.getItem(this.get_key())
-        }
-        static save(rooms) {
-            try {
-                localStorage.setItem(this.get_key(), JSON.stringify(rooms))
-            } catch (e) {
-                this.delete()
-                console.error(e)
-            }
-        }
-        static delete() {
-            localStorage.removeItem(this.get_key())
-        }
-    }
-
     async function createRoom(room) {
         room.subscribers.push(user.pk)
 
-        var data = await Fetch({ action: "api/room/", method: HttpMethod.POST, body: room })
+        var data = await Fetch({ action: "room/", method: HttpMethod.POST, body: room })
         if (data && data.ok) {
             var newRooms = [data.room, ...rooms]
-            RoomsLocalStorage.save(newRooms)
+            RoomsLocalCache.save(user.username, newRooms)
             setRooms(newRooms)
         }
         setModalRoomCreate(false)
@@ -80,7 +61,7 @@ export default function Rooms() {
 
             setRooms((prev) => {
                 var newRooms = [newRoom, ...prev.filter((room) => room.id !== room_id)]
-                RoomsLocalStorage.save(newRooms)
+                RoomsLocalCache.save(user.username, newRooms)
                 return newRooms
             })
         }
@@ -88,16 +69,16 @@ export default function Rooms() {
 
     useEffect(() => {
         setLoading(true)
-        var rooms = RoomsLocalStorage.get()
+        var rooms = RoomsLocalCache.get(user.username)
         if (rooms !== null) {
             rooms = JSON.parse(rooms)
             setRooms(rooms)
         } else {
-            Fetch({ action: "api/room/", method: HttpMethod.GET })
+            Fetch({ action: "room/", method: HttpMethod.GET })
                 .then((data) => {
                     if (data && data.ok) {
                         setRooms(data.rooms)
-                        RoomsLocalStorage.save(data.rooms)
+                        RoomsLocalCache.save(user.username, data.rooms)
                     }
                 })
         }

@@ -17,7 +17,7 @@ export function useAuth({ username, setIsAuth }) {
 
 export function useSetUser({ username, setUser, setUserLocal }) {
     var Func = useEffect(() => {
-        Fetch({ action: `api/user/${username}/`, method: HttpMethod.GET })
+        Fetch({ action: `user/${username}/`, method: HttpMethod.GET })
             .then((data) => {
                 if (data && data.global_user) {
                     setUser(data.global_user)

@@ -29,7 +29,7 @@ export var FilterOption = {
     SUBSCRIBERS_COUNT: 4
 }
 
-export var LocalStorageKeys = {
+export var CacheKeys = {
     TOKEN: "token",
     THEME: "theme",
     REMEMBER_PAGE: "rememberPage",

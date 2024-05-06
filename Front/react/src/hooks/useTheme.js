@@ -1,15 +1,15 @@
 import { useEffect } from "react"
-import { Theme, LocalStorageKeys } from "@data/enums"
+import { Theme, CacheKeys } from "@data/enums"
 import { ROOT_ELEMENT_THEME } from "@data/constants"
 
 export default function useTheme() {
 
     var ThemeFunc = useEffect(() => {
-        if (localStorage.getItem(LocalStorageKeys.THEME) === null) {
+        if (localStorage.getItem(CacheKeys.THEME) === null) {
             ROOT_ELEMENT_THEME.className = Theme.LIGHT
-            localStorage.setItem(LocalStorageKeys.THEME, Theme.LIGHT)
+            localStorage.setItem(CacheKeys.THEME, Theme.LIGHT)
         } else {
-            ROOT_ELEMENT_THEME.className = localStorage.getItem(LocalStorageKeys.THEME)
+            ROOT_ELEMENT_THEME.className = localStorage.getItem(CacheKeys.THEME)
         }
     }, [])
 

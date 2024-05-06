@@ -1,5 +1,5 @@
-import { LocalStorageKeys } from "@data/enums"
+import { CacheKeys } from "@data/enums"
 
 export default function getToken() {
-    return localStorage.getItem(LocalStorageKeys.TOKEN)
+    return localStorage.getItem(CacheKeys.TOKEN)
 }

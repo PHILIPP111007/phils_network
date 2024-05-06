@@ -53,7 +53,7 @@ export default function User() {
             postsLength = posts.length
         }
 
-        var data = await Fetch({ action: `api/blog/${params.username}/${postsLength}/`, method: HttpMethod.GET })
+        var data = await Fetch({ action: `blog/${params.username}/${postsLength}/`, method: HttpMethod.GET })
         if (data && data.ok) {
             var newPosts = data.posts.map(post => {
                 return { ...post, postLen500: post.content.length > 500 }
@@ -64,7 +64,7 @@ export default function User() {
     }
 
     async function deletePost(oldPost) {
-        var data = await Fetch({ action: `api/blog/${oldPost.id}/`, method: HttpMethod.DELETE })
+        var data = await Fetch({ action: `blog/${oldPost.id}/`, method: HttpMethod.DELETE })
         if (data && data.ok) {
             setPosts((prev) => prev.filter(post => post.id !== oldPost.id))
             setModalPostEdit(false)
@@ -78,7 +78,7 @@ export default function User() {
             content: text,
         }
 
-        var data = await Fetch({ action: "api/blog/", method: HttpMethod.POST, body: newPost })
+        var data = await Fetch({ action: "blog/", method: HttpMethod.POST, body: newPost })
         if (data && data.ok) {
             newPost = { ...data.post, postLen500: data.post.content.length > 500, btnFlag: true }
             setPosts([newPost, ...posts])
@@ -91,7 +91,7 @@ export default function User() {
             setModalPostEdit(false)
             newPost.changed = true
 
-            var data = await Fetch({ action: `api/blog/${newPost.id}/`, method: HttpMethod.PUT, body: newPost })
+            var data = await Fetch({ action: `blog/${newPost.id}/`, method: HttpMethod.PUT, body: newPost })
             if (data && data.ok) {
                 setPosts(posts.map(post => {
                     if (post.id === newPost.id) {

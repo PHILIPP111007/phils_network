@@ -1,6 +1,6 @@
 import "./styles/ModalDelAcc.css"
 import { useContext } from "react"
-import { HttpMethod, LocalStorageKeys } from "@data/enums"
+import { HttpMethod, CacheKeys } from "@data/enums"
 import { AuthContext, UserContext } from "@data/context"
 import Fetch from "@API/Fetch"
 import Button from "@pages/components/UI/Button"
@@ -11,9 +11,9 @@ export default function ModalDelAcc() {
     var { user } = useContext(UserContext)
 
     async function deleteAccount() {
-        var data = await Fetch({ action: `api/user/${user.pk}/`, method: HttpMethod.DELETE })
+        var data = await Fetch({ action: `user/${user.pk}/`, method: HttpMethod.DELETE })
         if (data.ok) {
-            localStorage.removeItem(LocalStorageKeys.TOKEN)
+            localStorage.removeItem(CacheKeys.TOKEN)
             setIsAuth(false)
         }
     }

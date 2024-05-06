@@ -2,7 +2,7 @@ import "./styles/Login.css"
 import { useState, useContext, useEffect } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import { AuthContext, UserContext } from "@data/context"
-import { HttpMethod, LocalStorageKeys } from "@data/enums"
+import { HttpMethod, CacheKeys } from "@data/enums"
 import Fetch from "@API/Fetch"
 import getToken from "@modules/getToken"
 import Input from "@pages/components/UI/Input"
@@ -16,13 +16,13 @@ export default function Login() {
 
     async function auth() {
         var token = getToken()
-        var data = await Fetch({ action: "api/auth/users/me/", method: HttpMethod.GET, token: token })
+        var data = await Fetch({ action: "auth/users/me/", method: HttpMethod.GET, token: token })
 
         if (data && !data.detail && data.username) {
             setUser({ ...user, ...data })
             setIsAuth(true)
 
-            var path = localStorage.getItem(LocalStorageKeys.REMEMBER_PAGE)
+            var path = localStorage.getItem(CacheKeys.REMEMBER_PAGE)
             if (path !== null) {
                 path = `/${path}/${data.username}/`
             } else {
@@ -34,10 +34,10 @@ export default function Login() {
 
     async function login(event) {
         event.preventDefault()
-        var data = await Fetch({ action: "auth/token/login/", method: HttpMethod.POST, body: loginForm, token: "" })
+        var data = await Fetch({ action: "token/token/login/", method: HttpMethod.POST, body: loginForm, token: "" })
 
         if (data && !data.detail && data.auth_token) {
-            localStorage.setItem(LocalStorageKeys.TOKEN, data.auth_token)
+            localStorage.setItem(CacheKeys.TOKEN, data.auth_token)
             setIsAuth(true)
             auth()
         }

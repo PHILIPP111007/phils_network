@@ -20,7 +20,7 @@ export default function Register() {
 
     async function auth() {
         var token = getToken()
-        var data = await Fetch({ action: "api/auth/users/me/", method: HttpMethod.GET, token: token })
+        var data = await Fetch({ action: "auth/users/me/", method: HttpMethod.GET, token: token })
 
         if (data && !data.detail && data.username) {
             setUser({ ...user, ...data })
@@ -37,7 +37,7 @@ export default function Register() {
         event.preventDefault()
 
         if (registerForm.password === registerForm.password2) {
-            var data = await Fetch({ action: "api/auth/users/", method: HttpMethod.POST, body: registerForm, token: "" })
+            var data = await Fetch({ action: "auth/users/", method: HttpMethod.POST, body: registerForm, token: "" })
             if (typeof data.username === "string") {
                 setUser(data)
                 navigate("/login/")

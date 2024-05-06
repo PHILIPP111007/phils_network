@@ -3,10 +3,11 @@ import { useContext, useEffect, useRef, useState } from "react"
 import { useSignal } from "@preact/signals-react"
 import { useNavigate, useParams } from "react-router-dom"
 import { useInView } from "react-intersection-observer"
-import { HttpMethod, LocalStorageKeys } from "@data/enums"
+import { HttpMethod } from "@data/enums"
 import { UserContext } from "@data/context"
 import useObserver from "@hooks/useObserver"
 import getWebSocket from "@modules/getWebSocket"
+import { MessagesByRoomCache, RoomsLocalCache } from "@modules/cache"
 import Fetch from "@API/Fetch"
 import MainComponents from "@pages/components/MainComponents/MainComponents"
 import LazyDiv from "@pages/components/LazyDiv"
@@ -47,53 +48,11 @@ export default function Chat() {
         }
     }
 
-    class MessagesByRoomLocalStorage {
-        static get_key() {
-            return `${LocalStorageKeys.MESSAGES}_${mainSets.value.room.id}`
-        }
-        static get() {
-            var messages_by_room = localStorage.getItem(this.get_key())
-            return JSON.parse(messages_by_room)
-        }
-        static save(messages) {
-            var msgs_slice = 30
-            try {
-                localStorage.setItem(this.get_key(), JSON.stringify(messages.slice(-msgs_slice)))
-            } catch (e) {
-                this.delete()
-                console.error(e)
-            }
-        }
-        static delete() {
-            localStorage.removeItem(this.get_key())
-        }
-    }
-
-    class RoomsLocalStorage {
-        static get_key() {
-            return `${LocalStorageKeys.ROOMS}_${user.username}`
-        }
-        static update(username, text) {
-            var rooms = localStorage.getItem(this.get_key())
-            if (rooms !== null) {
-                rooms = JSON.parse(rooms)
-                var current_room = rooms.filter((room) => room.id === mainSets.value.room.id)[0]
-                current_room.last_message_sender = username
-                current_room.last_message_text = text
-                rooms = [current_room, ...rooms.filter((room) => room.id !== mainSets.value.room.id)]
-                localStorage.setItem(this.get_key(), JSON.stringify(rooms))
-            }
-        }
-        static delete() {
-            localStorage.removeItem(this.get_key())
-        }
-    }
-
     async function sendMessage(text) {
         var sendingText = await text.trim()
         if (sendingText.length > 0) {
             var message = { sender_id: user.pk, text: sendingText }
-            RoomsLocalStorage.update(user.username, sendingText)
+            RoomsLocalCache.update(mainSets.value.room.id, user.username, sendingText)
             await chatSocket.current.send(JSON.stringify({ message: message }))
         }
     }
@@ -111,9 +70,9 @@ export default function Chat() {
         if (friends.length > 0 || subscribers.length > 0) {
             var body = { subscribers: subscribers, friends: friends }
 
-            var data = await Fetch({ action: `api/room/${params.room_id}/`, method: HttpMethod.PUT, body: body })
+            var data = await Fetch({ action: `room/${params.room_id}/`, method: HttpMethod.PUT, body: body })
             if (data && data.ok) {
-                RoomsLocalStorage.delete()
+                RoomsLocalCache.delete(user.username)
                 navigate(`/chats/${user.username}/`)
             }
         }
@@ -123,15 +82,15 @@ export default function Chat() {
         var msgs_len = messages.length
         if (flag || msgs_len > 0) {
             mainSets.value.loading = true
-            var data = await Fetch({ action: `api/room/${params.room_id}/${msgs_len}/`, method: HttpMethod.GET })
+            var data = await Fetch({ action: `room/${params.room_id}/${msgs_len}/`, method: HttpMethod.GET })
 
             if (data) {
                 if (data.ok) {
                     setMessages((prev) => [...data.messages.reverse(), ...messages])
-                    MessagesByRoomLocalStorage.save(messages)
+                    MessagesByRoomCache.save(mainSets.value.room.id, messages)
                 } else {
-                    MessagesByRoomLocalStorage.delete()
-                    RoomsLocalStorage.delete()
+                    MessagesByRoomCache.delete(mainSets.value.room.id)
+                    RoomsLocalCache.delete(user.username)
                 }
             }
             mainSets.value.loading = false
@@ -139,7 +98,7 @@ export default function Chat() {
     }
 
     useEffect(() => {
-        Fetch({ action: `api/room/${params.room_id}/`, method: HttpMethod.GET })
+        Fetch({ action: `room/${params.room_id}/`, method: HttpMethod.GET })
             .then((data) => {
                 if (data && data.ok) {
                     mainSets.value.isCreator = data.isCreator
@@ -148,7 +107,7 @@ export default function Chat() {
                         return { ...user, isInRoom: true }
                     })
 
-                    var messages_by_room = MessagesByRoomLocalStorage.get()
+                    var messages_by_room = MessagesByRoomCache.get(mainSets.value.room.id)
                     if (messages_by_room && messages_by_room.length > 0) {
                         setMessages(messages_by_room)
                     }
@@ -177,8 +136,8 @@ export default function Chat() {
             var data = JSON.parse(e.data)
             if (data) {
                 setMessages((prev) => [...messages, data.message])
-                MessagesByRoomLocalStorage.save(messages)
-                RoomsLocalStorage.update(data.message.sender.username, data.message.text)
+                MessagesByRoomCache.save(mainSets.value.room.id, messages)
+                RoomsLocalCache.update(mainSets.value.room.id, data.message.sender.username, data.message.text)
             }
             scrollToBottom()
         }

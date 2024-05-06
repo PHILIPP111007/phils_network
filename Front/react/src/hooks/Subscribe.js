@@ -5,7 +5,7 @@ export default class Subscribe {
 
     static deleteFriend(props) {
         var body = { option: DeleteOptionEnum.DELETE_FRIEND }
-        Fetch({ action: `api/subscriber/${props.pk}/`, method: HttpMethod.DELETE, body: body })
+        Fetch({ action: `subscriber/${props.pk}/`, method: HttpMethod.DELETE, body: body })
             .then(() => {
                 props.setStatus(undefined)
             })
@@ -13,14 +13,14 @@ export default class Subscribe {
 
     static deleteSubscriber(props) {
         var body = { option: DeleteOptionEnum.DELETE_SUBSCRIBER }
-        Fetch({ action: `api/subscriber/${props.pk}/`, method: HttpMethod.DELETE, body: body })
+        Fetch({ action: `subscriber/${props.pk}/`, method: HttpMethod.DELETE, body: body })
             .then(() => {
                 props.setStatus(undefined)
             })
     }
 
     static addSubscription(props) {
-        Fetch({ action: `api/subscriber/${props.pk}/`, method: HttpMethod.POST })
+        Fetch({ action: `subscriber/${props.pk}/`, method: HttpMethod.POST })
             .then(() => {
                 props.setStatus(undefined)
             })
