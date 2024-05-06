@@ -1,9 +1,9 @@
 FROM python:3.12.3-slim
 WORKDIR /usr/src/app
 
-# не создавать файлы кэша .pyc
+# do not create files .pyc
 ENV PYTHONDONTWRITEBYTECODE 1
-# не помещать в буфер потоки stdout и stderr
+# do not put stdout and stderr in a buffer
 ENV PYTHONUNBUFFERED 1
 
 
