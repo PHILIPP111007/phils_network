@@ -24,7 +24,7 @@ export class MessagesByRoomCache {
 
 export class RoomsLocalCache {
     static get_key(sender_username) {
-        return `${CacheKeys.ROOMS}_${sender_username}` // user.username
+        return `${CacheKeys.ROOMS}_${sender_username}`
     }
     static get(sender_username) {
         return localStorage.getItem(this.get_key(sender_username))
@@ -41,10 +41,10 @@ export class RoomsLocalCache {
         var rooms = localStorage.getItem(this.get_key(sender_username))
         if (rooms !== null) {
             rooms = JSON.parse(rooms)
-            var current_room = rooms.filter((room) => room.id === room_id)[0] // mainSets.value.room.id
+            var current_room = rooms.filter((room) => room.id === room_id)[0]
             current_room.last_message_sender = sender_username
             current_room.last_message_text = text
-            rooms = [current_room, ...rooms.filter((room) => room.id !== room_id)] // mainSets.value.room.id
+            rooms = [current_room, ...rooms.filter((room) => room.id !== room_id)]
             localStorage.setItem(this.get_key(), JSON.stringify(rooms))
         }
     }
