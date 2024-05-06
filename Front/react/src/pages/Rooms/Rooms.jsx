@@ -2,7 +2,7 @@ import "./styles/Rooms.css"
 import { useContext, useEffect, useMemo, useRef, useState } from "react"
 import { UserContext } from "@data/context"
 import { HttpMethod } from "@data/enums"
-import { RoomsLocalCache } from "@modules/cache"
+import { RoomsCache } from "@modules/cache"
 import rememberPage from "@modules/rememberPage"
 import getWebSocket from "@modules/getWebSocket"
 import Fetch from "@API/Fetch"
@@ -29,7 +29,7 @@ export default function Rooms() {
         var data = await Fetch({ action: "room/", method: HttpMethod.POST, body: room })
         if (data && data.ok) {
             var newRooms = [data.room, ...rooms]
-            RoomsLocalCache.save(user.username, newRooms)
+            RoomsCache.save(user.username, newRooms)
             setRooms(newRooms)
         }
         setModalRoomCreate(false)
@@ -61,7 +61,7 @@ export default function Rooms() {
 
             setRooms((prev) => {
                 var newRooms = [newRoom, ...prev.filter((room) => room.id !== room_id)]
-                RoomsLocalCache.save(user.username, newRooms)
+                RoomsCache.save(user.username, newRooms)
                 return newRooms
             })
         }
@@ -69,7 +69,7 @@ export default function Rooms() {
 
     useEffect(() => {
         setLoading(true)
-        var rooms = RoomsLocalCache.get(user.username)
+        var rooms = RoomsCache.get(user.username)
         if (rooms !== null) {
             rooms = JSON.parse(rooms)
             setRooms(rooms)
@@ -78,7 +78,7 @@ export default function Rooms() {
                 .then((data) => {
                     if (data && data.ok) {
                         setRooms(data.rooms)
-                        RoomsLocalCache.save(user.username, data.rooms)
+                        RoomsCache.save(user.username, data.rooms)
                     }
                 })
         }

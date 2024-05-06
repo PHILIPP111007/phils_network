@@ -22,33 +22,33 @@ export class MessagesByRoomCache {
     }
 }
 
-export class RoomsLocalCache {
-    static get_key(sender_username) {
-        return `${CacheKeys.ROOMS}_${sender_username}`
+export class RoomsCache {
+    static get_key(username) {
+        return `${CacheKeys.ROOMS}_${username}`
     }
-    static get(sender_username) {
-        return localStorage.getItem(this.get_key(sender_username))
+    static get(username) {
+        return localStorage.getItem(this.get_key(username))
     }
-    static save(sender_username, rooms) {
+    static save(username, rooms) {
         try {
-            localStorage.setItem(this.get_key(sender_username), JSON.stringify(rooms))
+            localStorage.setItem(this.get_key(username), JSON.stringify(rooms))
         } catch (e) {
-            this.delete(sender_username)
+            this.delete(username)
             console.warn(e)
         }
     }
-    static update(room_id, sender_username, text) {
-        var rooms = localStorage.getItem(this.get_key(sender_username))
+    static update(room_id, username, text) {
+        var rooms = localStorage.getItem(this.get_key(username))
         if (rooms !== null) {
             rooms = JSON.parse(rooms)
             var current_room = rooms.filter((room) => room.id === room_id)[0]
-            current_room.last_message_sender = sender_username
+            current_room.last_message_sender = username
             current_room.last_message_text = text
             rooms = [current_room, ...rooms.filter((room) => room.id !== room_id)]
-            localStorage.setItem(this.get_key(), JSON.stringify(rooms))
+            localStorage.setItem(this.get_key(username), JSON.stringify(rooms))
         }
     }
-    static delete(sender_username) {
-        localStorage.removeItem(this.get_key(sender_username))
+    static delete(username) {
+        localStorage.removeItem(this.get_key(username))
     }
 }

@@ -7,7 +7,7 @@ import { HttpMethod } from "@data/enums"
 import { UserContext } from "@data/context"
 import useObserver from "@hooks/useObserver"
 import getWebSocket from "@modules/getWebSocket"
-import { MessagesByRoomCache, RoomsLocalCache } from "@modules/cache"
+import { MessagesByRoomCache, RoomsCache } from "@modules/cache"
 import Fetch from "@API/Fetch"
 import MainComponents from "@pages/components/MainComponents/MainComponents"
 import LazyDiv from "@pages/components/LazyDiv"
@@ -52,7 +52,6 @@ export default function Chat() {
         var sendingText = await text.trim()
         if (sendingText.length > 0) {
             var message = { sender_id: user.pk, text: sendingText }
-            RoomsLocalCache.update(mainSets.value.room.id, user.username, sendingText)
             await chatSocket.current.send(JSON.stringify({ message: message }))
         }
     }
@@ -72,7 +71,7 @@ export default function Chat() {
 
             var data = await Fetch({ action: `room/${params.room_id}/`, method: HttpMethod.PUT, body: body })
             if (data && data.ok) {
-                RoomsLocalCache.delete(user.username)
+                RoomsCache.delete(user.username)
                 navigate(`/chats/${user.username}/`)
             }
         }
@@ -90,7 +89,7 @@ export default function Chat() {
                     MessagesByRoomCache.save(mainSets.value.room.id, messages)
                 } else {
                     MessagesByRoomCache.delete(mainSets.value.room.id)
-                    RoomsLocalCache.delete(user.username)
+                    RoomsCache.delete(user.username)
                 }
             }
             mainSets.value.loading = false
@@ -137,7 +136,7 @@ export default function Chat() {
             if (data) {
                 setMessages((prev) => [...messages, data.message])
                 MessagesByRoomCache.save(mainSets.value.room.id, messages)
-                RoomsLocalCache.update(mainSets.value.room.id, data.message.sender.username, data.message.text)
+                RoomsCache.update(mainSets.value.room.id, data.message.sender.username, data.message.text)
             }
             scrollToBottom()
         }
