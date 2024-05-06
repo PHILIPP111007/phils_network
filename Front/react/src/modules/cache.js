@@ -1,3 +1,4 @@
+import { MESSAGES_TO_CACHE } from "@data/constants"
 import { CacheKeys } from "@data/enums"
 
 export class MessagesByRoomCache {
@@ -9,9 +10,8 @@ export class MessagesByRoomCache {
         return JSON.parse(messages_by_room)
     }
     static save(room_id, messages) {
-        var msgs_slice = 25
         try {
-            localStorage.setItem(this.get_key(room_id), JSON.stringify(messages.slice(-msgs_slice)))
+            localStorage.setItem(this.get_key(room_id), JSON.stringify(messages.slice(-MESSAGES_TO_CACHE)))
         } catch (e) {
             this.delete()
             console.warn(e)

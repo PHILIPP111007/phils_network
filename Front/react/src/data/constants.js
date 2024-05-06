@@ -5,3 +5,4 @@ export var FETCH_URL = `http://${SERVER_HostIp}:${SERVER_HostPort}/api/`
 export var WEBSOCKET_URL = `ws://${SERVER_HostIp}:${SERVER_HostPort}/ws/`
 
 export var ROOT_ELEMENT_THEME = document.getElementsByTagName("html")[0]
+export var MESSAGES_TO_CACHE = 25
