@@ -2,6 +2,9 @@
 
 Minimalistic social network written using Django and React.
 
+You may donate to `phils_network` project: \
+Ethereum: 0xE2e2D675a3843f4ED211BB93847ad18b0A6fe7c6
+
 ## What supports this app
 
 1. Accounts and adding friends. Each user has the opportunity to maintain their own blog, subscribe to other people and see their blogs.
