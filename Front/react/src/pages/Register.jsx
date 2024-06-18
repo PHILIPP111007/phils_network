@@ -68,7 +68,13 @@ export default function Register() {
     var showErrors = useMemo(() => {
         return (
             <>
-                {errors.map((error) => <ErrorMessage errorMessage={error} />)}
+                {errors.map((error) =>
+                    <>
+                        <ErrorMessage errorMessage={error} />
+                        <br />
+                    </>
+
+                )}
             </>
         )
     }, [errors])
