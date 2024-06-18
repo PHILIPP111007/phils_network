@@ -1,4 +1,4 @@
-FROM node:20.12.2-alpine as client
+FROM node:22.3-alpine as client
 WORKDIR /usr/src/app
 
 RUN npm install -g npm@latest
