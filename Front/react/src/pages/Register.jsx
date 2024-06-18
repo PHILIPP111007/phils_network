@@ -27,7 +27,7 @@ export default function Register() {
         if (data && !data.detail && data.username) {
             setUser({ ...user, ...data })
             setIsAuth(true)
-            navigate(`/user/${data.username}/`)
+            navigate(`/users/${data.username}/`)
         }
     }
 

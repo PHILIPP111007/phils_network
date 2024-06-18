@@ -36,7 +36,7 @@ export default function Post({ post, ...props }) {
             <div className="title">
                 {props.linkShow
                     ?
-                    <Link className="link" to={`/user/${post.username}/`} >
+                    <Link className="link" to={`/users/${post.username}/`} >
                         <p>{post.first_name ? post.first_name : "No name"} {post.last_name ? post.last_name : "No name"} @{post.username}</p>
                         <p>{post.timestamp} {post.changed && "Modified"}</p>
                     </Link>

@@ -27,7 +27,7 @@ export var PublicRoutes = [
 
 export var PrivateRoutes = [
     {
-        path: "/user/:username/",
+        path: "/users/:username/",
         name: "User",
         element: <User />
     },

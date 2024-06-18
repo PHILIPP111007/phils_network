@@ -45,7 +45,7 @@ export default function ModalRoomEdit({ mainSets, me, editRoom }) {
             <div key={user.username} className="card">
                 <div className="info">
                     <div>
-                        <Link to={`/user/${user.username}/`} >
+                        <Link to={`/users/${user.username}/`} >
                             {user.first_name ? user.first_name : "No name"} {user.last_name ? user.last_name : "No name"} @{user.username}
                         </Link>
                     </div>
@@ -70,7 +70,7 @@ export default function ModalRoomEdit({ mainSets, me, editRoom }) {
             <div key={user.username} className="card">
                 <div className="info">
                     <div>
-                        <Link to={`/user/${user.username}/`} >
+                        <Link to={`/users/${user.username}/`} >
                             {user.first_name} {user.last_name} @{user.username}
                         </Link>
                     </div>

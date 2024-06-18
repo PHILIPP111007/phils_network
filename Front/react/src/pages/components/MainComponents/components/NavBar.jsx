@@ -11,7 +11,7 @@ export default function NavBar() {
         <aside className="NavBar">
             <nav>
                 <p>
-                    <Link to={`/user/${user.username}/`}>User</Link>
+                    <Link to={`/users/${user.username}/`}>User</Link>
                 </p>
                 <p>
                     <Link to={`/chats/${user.username}/`}>Chats</Link>

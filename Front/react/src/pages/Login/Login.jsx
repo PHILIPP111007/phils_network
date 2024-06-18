@@ -26,7 +26,7 @@ export default function Login() {
             if (path !== null) {
                 path = `/${path}/${data.username}/`
             } else {
-                path = `/user/${data.username}/`
+                path = `/users/${data.username}/`
             }
             navigate(path)
         }
