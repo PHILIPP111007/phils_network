@@ -8,7 +8,7 @@ services:
       context: .
       dockerfile: ./Services/django/Dockerfile
     ports:
-      - 8000:8000
+      - 8080:8080
     depends_on:
       - db
       - cache
@@ -73,12 +73,12 @@ services:
       context: .
       dockerfile: ./Front/react/Dockerfile
     ports:
-      - 8080:8080
+      - 80:80
     depends_on:
       - service
     environment:
       REACT_APP_SERVER_HostIp: "0.0.0.0"
-      REACT_APP_SERVER_HostPort: "8000"
+      REACT_APP_SERVER_HostPort: "8080"
 
 volumes:
   postgres-data: 
