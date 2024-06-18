@@ -1,10 +1,11 @@
 import "./Login/styles/Login.css"
-import { useState, useContext, useEffect } from "react"
+import { useState, useContext, useEffect, useMemo } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { UserContext, AuthContext } from "@data/context"
 import { HttpMethod } from "@data/enums"
 import Fetch from "@API/Fetch"
 import getToken from "@modules/getToken"
+import ErrorMessage from "@pages/components/ErrorMessage"
 import Input from "@pages/components/UI/Input"
 
 export default function Register() {
@@ -16,6 +17,7 @@ export default function Register() {
         password: "",
         password2: ""
     })
+    var [errors, setErrors] = useState([])
     var navigate = useNavigate()
 
     async function auth() {
@@ -38,23 +40,53 @@ export default function Register() {
 
         if (registerForm.password === registerForm.password2) {
             var data = await Fetch({ action: "auth/users/", method: HttpMethod.POST, body: registerForm, token: "" })
+
+            var new_errors = []
+            if (data.username) {
+                for (let i = 0; i < data.username.length; i++) {
+                    new_errors.push("Error: " + data.username[i])
+                }
+            }
+            if (data.password) {
+                for (let i = 0; i < data.password.length; i++) {
+                    new_errors.push("Error: " + data.password[i])
+                }
+            }
+            if (new_errors.length > 0) {
+                setErrors((prev) => new_errors)
+            }
+
             if (typeof data.username === "string") {
                 setUser(data)
                 navigate("/login/")
             }
+        } else {
+            setErrors(['Error: passwords must be equal'])
         }
     }
+
+    var showErrors = useMemo(() => {
+        return (
+            <>
+                {errors.map((error) => <ErrorMessage errorMessage={error} />)}
+            </>
+        )
+    }, [errors])
 
     return (
         <div className="Register">
             <div className="LoginForm">
                 <h2>Welcome to phils_network!</h2>
+
+                {showErrors}
+
                 <form onSubmit={e => register(e)}>
                     <Input
                         value={registerForm.username}
                         onChange={e => setRegisterForm({ ...registerForm, username: e.target.value })}
                         placeholder="username"
                         type="text"
+                        required
                     />
                     <br />
                     <Input
@@ -62,6 +94,7 @@ export default function Register() {
                         onChange={e => setRegisterForm({ ...registerForm, password: e.target.value })}
                         placeholder="password"
                         type="text"
+                        required
                     />
                     <br />
                     <Input
@@ -69,6 +102,7 @@ export default function Register() {
                         onChange={e => setRegisterForm({ ...registerForm, password2: e.target.value })}
                         placeholder="password confirmation"
                         type="text"
+                        required
                     />
                     <br />
                     <Input type="submit" value="register" />
