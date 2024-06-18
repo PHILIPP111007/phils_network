@@ -54,6 +54,8 @@ docker-compose up -d
 docker-compose run service python manage.py createsuperuser
 ```
 
+Then go to 0.0.0.0:8080
+
 ## Development installation
 
 Postgres.
