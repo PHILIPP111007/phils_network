@@ -1,6 +1,6 @@
-import "./styles/Error.css"
+import "./styles/ErrorPage.css"
 
-export default function Error() {
+export default function ErrorPage() {
     return (
         <div className="Error">
             <h2>Error</h2>

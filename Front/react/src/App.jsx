@@ -7,7 +7,7 @@ import { PrivateRoutes, PublicRoutes } from "@data/routes"
 import { useAuth } from "@hooks/useAuth"
 import useTheme from "@hooks/useTheme"
 import SuspenseLoading from "@pages/components/SuspenseLoading"
-import Error from "@pages/Error/Error"
+import ErrorPage from "@pages/ErrorPage/ErrorPage"
 
 export default function App() {
 
@@ -35,7 +35,7 @@ export default function App() {
                                     <Route
                                         key={route.path}
                                         path={route.path}
-                                        errorElement={<Error />}
+                                        errorElement={<ErrorPage />}
                                         element={isAuth ? route.element : <Navigate replace to="/login/" />}
                                         exact
                                     />
@@ -45,12 +45,12 @@ export default function App() {
                                     <Route
                                         key={route.path}
                                         path={route.path}
-                                        errorElement={<Error />}
+                                        errorElement={<ErrorPage />}
                                         element={route.element}
                                         exact
                                     />
                                 )}
-                                <Route path="*" element={<Error />} />
+                                <Route path="*" element={<ErrorPage />} />
                             </Routes>
                         </Suspense>
                     </div>
