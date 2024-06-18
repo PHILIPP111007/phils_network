@@ -57,6 +57,7 @@ export default function Login() {
                         onChange={e => setLoginForm({ ...loginForm, username: e.target.value })}
                         placeholder="username"
                         type="text"
+                        required
                     />
                     <br />
                     <Input
@@ -64,6 +65,7 @@ export default function Login() {
                         onChange={e => setLoginForm({ ...loginForm, password: e.target.value })}
                         placeholder="password"
                         type="password"
+                        required
                     />
                     <br />
                     <Input type="submit" value="log in" />
