@@ -75,7 +75,7 @@ services:
     ports:
       - 80:80
     depends_on:
-      - service
+      - django
     environment:
       REACT_APP_SERVER_HostIp: "0.0.0.0"
       REACT_APP_SERVER_HostPort: "80"
