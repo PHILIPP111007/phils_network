@@ -99,7 +99,7 @@ export default function Register() {
                         value={registerForm.password}
                         onChange={e => setRegisterForm({ ...registerForm, password: e.target.value })}
                         placeholder="password"
-                        type="text"
+                        type="password"
                         required
                     />
                     <br />
@@ -107,7 +107,7 @@ export default function Register() {
                         value={registerForm.password2}
                         onChange={e => setRegisterForm({ ...registerForm, password2: e.target.value })}
                         placeholder="password confirmation"
-                        type="text"
+                        type="password"
                         required
                     />
                     <br />
