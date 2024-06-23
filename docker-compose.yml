@@ -1,8 +1,8 @@
 version: "3.9"
 
 services:
-  service:
-    container_name: service
+  django:
+    container_name: django
     restart: unless-stopped
     build:
       context: .
@@ -78,7 +78,7 @@ services:
       - service
     environment:
       REACT_APP_SERVER_HostIp: "0.0.0.0"
-      REACT_APP_SERVER_HostPort: "8080"
+      REACT_APP_SERVER_HostPort: "80"
 
 volumes:
   postgres-data: 
