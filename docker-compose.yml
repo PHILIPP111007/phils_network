@@ -19,6 +19,7 @@ services:
     networks:
       - nginx_network
       - db_network
+      - cache_network
     environment:
       PG_NAME: postgres
       PG_USER: postgres
@@ -43,6 +44,8 @@ services:
     command: redis-server
     volumes: 
       - cache:/data
+    networks:
+      - cache_network
 
   db:
     container_name: db
@@ -93,4 +96,6 @@ networks:
   nginx_network:
     driver: bridge
   db_network:
+    driver: bridge
+  cache_network:
     driver: bridge
