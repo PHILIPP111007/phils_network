@@ -18,6 +18,8 @@ Minimalistic social network written using Django and React.
 
 * [x] Browser caching lists of user rooms and first N messages in each room.
 
+* [x] Markdown posts support
+
 \
 Have fun and if you want please leave feedback!
 
