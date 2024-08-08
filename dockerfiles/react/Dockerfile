@@ -19,7 +19,7 @@ FROM nginx:stable-alpine
 RUN rm /usr/share/nginx/html/*
 COPY --from=client /usr/src/app/build /usr/share/nginx/html
 RUN rm /etc/nginx/conf.d/default.conf
-COPY ./Front/react/nginx.conf /etc/nginx/conf.d
+COPY ./dockerfiles/react/nginx.conf /etc/nginx/conf.d
 
 EXPOSE 80
 

@@ -6,7 +6,7 @@ services:
     restart: unless-stopped
     build:
       context: .
-      dockerfile: ./Services/django/Dockerfile
+      dockerfile: ./dockerfiles/django/Dockerfile
     expose:
       - 8080
     depends_on:
@@ -79,7 +79,7 @@ services:
     container_name: client
     build:
       context: .
-      dockerfile: ./Front/react/Dockerfile
+      dockerfile: ./dockerfiles/react/Dockerfile
     ports:
       - 80:80
     depends_on:
