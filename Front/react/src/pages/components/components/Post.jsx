@@ -1,7 +1,7 @@
 import "./styles/Post.css"
 import { useState } from "react"
 import { Link } from "react-router-dom"
-import ReactLinkify from "react-linkify"
+import Markdown from 'react-markdown'
 import settingsLogo from "@images/three_points.svg"
 import Button from "@pages/components/UI/Button"
 
@@ -46,14 +46,14 @@ export default function Post({ post, ...props }) {
             </div>
             <br />
             <div className="content">
-                <ReactLinkify>
+                <Markdown>
                     {(post.postLen500 && btnFlag)
                         ?
                         post.content.substring(0, 499) + "..."
                         :
                         post.content
                     }
-                </ReactLinkify>
+                </Markdown>
             </div>
             <br />
 
