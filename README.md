@@ -54,7 +54,7 @@ Have fun and if you want please leave feedback!
 ```sh
 docker-compose up -d
 
-docker-compose run service python manage.py createsuperuser
+docker-compose run django python manage.py createsuperuser
 ```
 
 Then go to 0.0.0.0
