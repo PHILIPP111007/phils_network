@@ -10,11 +10,11 @@ from rest_framework import status
 from app.permissions import IsOwnerOrReadOnly
 from app.serializers import BlogSerializer
 from app.services import (
-	SubscriberStatus,
 	UserService,
 	SubscriberService,
 	BlogService,
 )
+from app.enums import SubscriberStatus
 from app.cache import get_user_cache
 
 
