@@ -106,7 +106,7 @@ micromamba activate phils_network
 **Phils_network** supports `gunicorn` (with `uvicorn` async workers).
 
 ```sh
-bash settings/gunicorn.sh
+bash gunicorn.sh
 ```
 
 \
