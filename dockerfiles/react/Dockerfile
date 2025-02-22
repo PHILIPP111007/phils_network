@@ -1,7 +1,7 @@
-FROM node:22.3-alpine as client
+FROM node:22.8-alpine as client
 WORKDIR /usr/src/app
 
-RUN npm install -g npm@latest
+RUN npm install -g npm
 
 COPY ./Front/react/*.json .
 RUN npm install
