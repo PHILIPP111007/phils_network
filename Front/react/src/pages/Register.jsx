@@ -21,9 +21,10 @@ export default function Register() {
     var navigate = useNavigate()
 
     async function auth() {
+        var token = getToken()
         var data = await Fetch({ action: "auth/users/me/", method: HttpMethod.GET })
 
-        if (data && !data.detail && data.username) {
+        if (data && !data.detail && data.username && token) {
             setUser({ ...user, ...data })
             setIsAuth(true)
             navigate(`/users/${data.username}/`)
