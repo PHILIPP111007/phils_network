@@ -105,7 +105,7 @@ export default function User() {
     }
 
     useEffect(() => {
-        rememberPage("users")
+        rememberPage(`users/${params.username}`)
         setPosts((prev) => [])
         getPosts(0)
     }, [params.username])

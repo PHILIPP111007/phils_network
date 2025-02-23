@@ -24,7 +24,7 @@ export default function Login() {
 
             var path = localStorage.getItem(CacheKeys.REMEMBER_PAGE)
             if (path !== null) {
-                path = `/${path}/${data.username}/`
+                path = `/${path}/`
             } else {
                 path = `/users/${data.username}/`
             }

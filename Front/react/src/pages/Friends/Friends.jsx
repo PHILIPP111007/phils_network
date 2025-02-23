@@ -1,5 +1,6 @@
 import "./styles/Friends.css"
 import { useState } from "react"
+import { useParams } from "react-router-dom"
 import { HttpMethod } from "@data/enums"
 import rememberPage from "@modules/rememberPage"
 import Fetch from "@API/Fetch"
@@ -12,7 +13,9 @@ import ScrollToTopOrBottom from "@pages/components/MainComponents/components/Scr
 
 export default function Friends() {
 
-    rememberPage("friends")
+    var params = useParams()
+    rememberPage(`friends/${params.username}`)
+
 
     var [users, setUsers] = useState([])
     var [loading, setLoading] = useState(false)

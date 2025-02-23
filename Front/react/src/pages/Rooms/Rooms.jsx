@@ -1,5 +1,6 @@
 import "./styles/Rooms.css"
 import { useContext, useEffect, useMemo, useRef, useState } from "react"
+import { useParams } from "react-router-dom"
 import { UserContext } from "@data/context"
 import { HttpMethod } from "@data/enums"
 import { RoomsCache } from "@modules/cache"
@@ -15,7 +16,8 @@ import Button from "@pages/components/UI/Button"
 
 export default function Rooms() {
 
-    rememberPage("chats")
+    var params = useParams()
+    rememberPage(`chats/${params.username}`)
 
     var { user } = useContext(UserContext)
     var [rooms, setRooms] = useState([])
