@@ -3,6 +3,7 @@ import { useState, useContext, useEffect } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import { AuthContext, UserContext } from "@data/context"
 import { HttpMethod, CacheKeys } from "@data/enums"
+import getToken from "@modules/getToken"
 import Fetch from "@API/Fetch"
 import Input from "@pages/components/UI/Input"
 
@@ -14,9 +15,10 @@ export default function Login() {
     var navigate = useNavigate()
 
     async function auth() {
+        var token = getToken()
         var data = await Fetch({ action: "auth/users/me/", method: HttpMethod.GET })
 
-        if (data && !data.detail && data.username) {
+        if (data && !data.detail && data.username && token) {
             setUser({ ...user, ...data })
             setIsAuth(true)
 
