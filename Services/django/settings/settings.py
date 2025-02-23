@@ -66,45 +66,6 @@ THIRD_PARTY_MIDDLEWARE: list[str] = [
 
 MIDDLEWARE = DJANGO_MIDDLEWARE + THIRD_PARTY_MIDDLEWARE
 
-CORS_ALLOWED_ORIGINS = [
-	"http://localhost:3000",
-	"http://localhost:8000",  # for localhost (Developlemt)
-	"http://localhost:80",
-	"http://0.0.0.0:80",
-]
-CORS_ALLOWED_ORIGIN_REGEXES = [
-	"http://localhost:3000",
-	"http://localhost:8000",  # for localhost (Developlemt)
-	"http://localhost:80",
-	"http://0.0.0.0:80",
-]
-CORS_ORIGIN_WHITELIST = (
-	"http://localhost:3000",  # for localhost (REACT Default)
-	"http://localhost:8000",  # for localhost (Developlemt)
-	"http://localhost:80",
-	"http://0.0.0.0:80",
-)
-CORS_ALLOWED_HOSTS = [
-	"localhost",
-]
-CORS_ORIGIN_WHITELIST = (
-	"http://localhost:3000",  # for localhost (REACT Default)
-	"http://localhost:8000",  # for localhost (Developlemt)
-	"http://localhost:80",
-	"http://0.0.0.0:80",
-)
-CSRF_TRUSTED_ORIGINS = [
-	"http://localhost:3000",  # for localhost (REACT Default)
-	"http://localhost:8000",  # for localhost (Developlemt)
-	"http://localhost:80",
-	"http://0.0.0.0:80",
-]
-
-CORS_ALLOW_HEADERS = ["*"]
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_CREDENTIALS = True
-CORS_ORIGIN_ALLOW_ALL = True
-
 
 ROOT_URLCONF: str = "settings.urls"
 
