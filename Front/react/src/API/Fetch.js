@@ -2,13 +2,11 @@ import { HttpMethod } from "@data/enums"
 import { FETCH_URL } from "@data/constants"
 import getToken from "@modules/getToken"
 
-export default async function Fetch({ action, method, body, token }) {
+export default async function Fetch({ action, method, body }) {
 
     // External token gives by auth() func
-    if (token === undefined) {
-        token = getToken()
-    }
 
+    var token = getToken()
     var data
     var url = `${FETCH_URL}${action}`
 

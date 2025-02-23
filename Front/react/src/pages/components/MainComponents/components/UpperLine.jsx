@@ -13,7 +13,7 @@ export default function UpperLine(props) {
     var { user, setUser } = useContext(UserContext)
     var params = useParams()
 
-    useAuth({ username: params.username, setIsAuth: setIsAuth })
+    useAuth({ username: user.username, setIsAuth: setIsAuth })
     useSetUser({ username: params.username, setUser: setUser })
 
     return (

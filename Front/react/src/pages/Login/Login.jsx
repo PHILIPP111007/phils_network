@@ -4,7 +4,6 @@ import { useNavigate, Link } from "react-router-dom"
 import { AuthContext, UserContext } from "@data/context"
 import { HttpMethod, CacheKeys } from "@data/enums"
 import Fetch from "@API/Fetch"
-import getToken from "@modules/getToken"
 import Input from "@pages/components/UI/Input"
 
 export default function Login() {
@@ -15,8 +14,7 @@ export default function Login() {
     var navigate = useNavigate()
 
     async function auth() {
-        var token = getToken()
-        var data = await Fetch({ action: "auth/users/me/", method: HttpMethod.GET, token: token })
+        var data = await Fetch({ action: "auth/users/me/", method: HttpMethod.GET })
 
         if (data && !data.detail && data.username) {
             setUser({ ...user, ...data })
@@ -34,7 +32,7 @@ export default function Login() {
 
     async function login(event) {
         event.preventDefault()
-        var data = await Fetch({ action: "token/token/login/", method: HttpMethod.POST, body: loginForm, token: "" })
+        var data = await Fetch({ action: "token/token/login/", method: HttpMethod.POST, body: loginForm })
 
         if (data && !data.detail && data.auth_token) {
             localStorage.setItem(CacheKeys.TOKEN, data.auth_token)
