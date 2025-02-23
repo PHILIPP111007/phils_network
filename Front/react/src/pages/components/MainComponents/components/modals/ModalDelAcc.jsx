@@ -22,7 +22,6 @@ export default function ModalDelAcc() {
                 first_name: "",
                 last_name: ""
             })
-            localStorage.removeItem(CacheKeys.REMEMBER_PAGE)
         }
     }
 
