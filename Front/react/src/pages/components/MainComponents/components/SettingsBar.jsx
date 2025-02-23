@@ -46,6 +46,7 @@ export default function SettingsBar(props) {
                     first_name: "",
                     last_name: ""
                 })
+                localStorage.removeItem(CacheKeys.REMEMBER_PAGE)
             })
     }
 

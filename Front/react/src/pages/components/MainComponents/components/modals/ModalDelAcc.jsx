@@ -1,6 +1,6 @@
 import "./styles/ModalDelAcc.css"
 import { useContext } from "react"
-import { HttpMethod } from "@data/enums"
+import { HttpMethod, CacheKeys } from "@data/enums"
 import { AuthContext, UserContext } from "@data/context"
 import Fetch from "@API/Fetch"
 import Button from "@pages/components/UI/Button"
@@ -22,6 +22,7 @@ export default function ModalDelAcc() {
                 first_name: "",
                 last_name: ""
             })
+            localStorage.removeItem(CacheKeys.REMEMBER_PAGE)
         }
     }
 
