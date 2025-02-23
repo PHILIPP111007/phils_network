@@ -19,8 +19,10 @@ export default async function Fetch({ action, method, body, token }) {
                 "Accept": "application/json; charset=utf-8",
                 "Content-Type": "application/json; charset=utf-8",
                 "Authorization": token ? `Token ${token}` : "",
-                "Access-Control-Allow-Origin": '*',
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "*",
             },
+            mode: "no-cors",
         })
             .then((response) => response.json())
             .then((data) => {
@@ -40,8 +42,10 @@ export default async function Fetch({ action, method, body, token }) {
                 "Accept": "application/json; charset=utf-8",
                 "Content-Type": "application/json; charset=utf-8",
                 "Authorization": token ? `Token ${token}` : "",
-                "Access-Control-Allow-Origin": '*',
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "*",
             },
+            mode: "no-cors",
             body: body ? JSON.stringify(body) : "",
         })
             .then((response) => response.json())
