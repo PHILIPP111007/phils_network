@@ -1,6 +1,8 @@
 import "./Friends/styles/Friends.css"
 import { useEffect, useState } from "react"
+import { useParams } from "react-router-dom"
 import { FilterOption } from "@data/enums"
+import rememberPage from "@modules/rememberPage"
 import useFriends from "@hooks/useFriends"
 import UserSection from "@hooks/UserSection"
 import MainComponents from "@pages/components/MainComponents/MainComponents"
@@ -10,6 +12,9 @@ import FindUser from "@pages/components/FindUser"
 import ScrollToTopOrBottom from "@pages/components/MainComponents/components/ScrollToTopOrBottom"
 
 export default function FriendsSection() {
+
+    var params = useParams()
+    rememberPage(`friends/${params.username}/friends-section/`)
 
     var [friends, setFriends] = useState([])
     var [filter, setFilter] = useState({ username: "", first_name: "", last_name: "" })

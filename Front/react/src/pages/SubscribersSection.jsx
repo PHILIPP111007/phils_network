@@ -1,5 +1,7 @@
 import "./Friends/styles/Friends.css"
 import { useEffect, useState } from "react"
+import { useParams } from "react-router-dom"
+import rememberPage from "@modules/rememberPage"
 import useFriends from "@hooks/useFriends"
 import UserSection from "@hooks/UserSection"
 import MainComponents from "@pages/components/MainComponents/MainComponents"
@@ -10,6 +12,9 @@ import ScrollToTopOrBottom from "@pages/components/MainComponents/components/Scr
 import { FilterOption } from "@data/enums"
 
 export default function SubscribersSection() {
+
+    var params = useParams()
+    rememberPage(`friends/${params.username}/subscribers-section/`)
 
     var [subscribers, setSubscribers] = useState([])
     var [filter, setFilter] = useState({ username: "", first_name: "", last_name: "" })

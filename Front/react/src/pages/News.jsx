@@ -1,6 +1,7 @@
 import "../styles/Posts.css"
 import { useState } from "react"
 import { useInView } from "react-intersection-observer"
+import { useParams } from "react-router-dom"
 import { HttpMethod } from "@data/enums"
 import rememberPage from "@modules/rememberPage"
 import useObserver from "@hooks/useObserver"
@@ -12,7 +13,8 @@ import ScrollToTopOrBottom from "@pages/components/MainComponents/components/Scr
 
 export default function News() {
 
-    rememberPage("news")
+    var params = useParams()
+    rememberPage(`news/${params.username}`)
 
     var [posts, setPosts] = useState([])
     var [loading, setLoading] = useState(true)
