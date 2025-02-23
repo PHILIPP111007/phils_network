@@ -16,11 +16,9 @@ export default async function Fetch({ action, method, body, token }) {
         data = await fetch(url, {
             method: "GET",
             headers: {
-                "Accept": "application/json; charset=utf-8",
-                "Content-Type": "application/json; charset=utf-8",
+                "Accept": "application/json;",
+                "Content-Type": "application/json;",
                 "Authorization": token ? `Token ${token}` : "",
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "*",
             },
             mode: "no-cors",
         })
@@ -39,11 +37,9 @@ export default async function Fetch({ action, method, body, token }) {
         data = await fetch(url, {
             method: method,
             headers: {
-                "Accept": "application/json; charset=utf-8",
-                "Content-Type": "application/json; charset=utf-8",
+                "Accept": "application/json;",
+                "Content-Type": "application/json;",
                 "Authorization": token ? `Token ${token}` : "",
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "*",
             },
             mode: "no-cors",
             body: body ? JSON.stringify(body) : "",
