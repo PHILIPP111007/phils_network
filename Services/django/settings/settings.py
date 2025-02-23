@@ -62,9 +62,38 @@ DJANGO_MIDDLEWARE: list[str] = [
 THIRD_PARTY_MIDDLEWARE: list[str] = [
 	"corsheaders.middleware.CorsMiddleware",  # for working Django REST
 	"whitenoise.middleware.WhiteNoiseMiddleware",  # for servers to work with static files
+	"settings.DisableCSRFMiddleware.DisableCSRFMiddleware",
 ]
 
-MIDDLEWARE = DJANGO_MIDDLEWARE + THIRD_PARTY_MIDDLEWARE
+LOCAL_MIDDLEWARE = [
+	"settings.DisableCSRFMiddleware.DisableCSRFMiddleware",
+]
+
+MIDDLEWARE = DJANGO_MIDDLEWARE + THIRD_PARTY_MIDDLEWARE + LOCAL_MIDDLEWARE
+
+
+CORS_ALLOWED_ORIGINS = [
+	"http://0.0.0.0:80",
+]
+CORS_ALLOW_METHODS = [
+	"DELETE",
+	"GET",
+	"OPTIONS",
+	"POST",
+	"PUT",
+]
+CORS_ALLOW_HEADERS = [
+	"accept",
+	"accept-encoding",
+	"authorization",
+	"content-type",
+	"dnt",
+	"origin",
+	"user-agent",
+	"x-csrftoken",
+	"x-requested-with",
+]
+CORS_ALLOW_ALL_ORIGINS = True
 
 
 ROOT_URLCONF: str = "settings.urls"

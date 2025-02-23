@@ -16,11 +16,12 @@ export default async function Fetch({ action, method, body, token }) {
         data = await fetch(url, {
             method: "GET",
             headers: {
-                "Accept": "application/json;",
-                "Content-Type": "application/json;",
+                "Accept": "application/json;text/plain",
+                "Content-Type": "application/json;charset=UTF-8",
+                "Access-Control-Allow-Origin": "*",
                 "Authorization": token ? `Token ${token}` : "",
             },
-            mode: "no-cors",
+            mode: 'cors',
         })
             .then((response) => response.json())
             .then((data) => {
@@ -37,11 +38,12 @@ export default async function Fetch({ action, method, body, token }) {
         data = await fetch(url, {
             method: method,
             headers: {
-                "Accept": "application/json;",
-                "Content-Type": "application/json;",
+                "Accept": "application/json;text/plain",
+                "Content-Type": "application/json;charset=UTF-8",
+                "Access-Control-Allow-Origin": "*",
                 "Authorization": token ? `Token ${token}` : "",
             },
-            mode: "no-cors",
+            mode: 'cors',
             body: body ? JSON.stringify(body) : "",
         })
             .then((response) => response.json())
