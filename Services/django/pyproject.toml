@@ -1,46 +1,85 @@
 ["author"]
-	name = "Philipp Roshchin"
-	email = "r.phil@yandex.ru"
+name = "Philipp Roshchin"
+email = "r.phil@yandex.ru"
 
 ["app"]
-	name = "phils_network"
-	version = "2.0.0"
+name = "phils_network"
+version = "3.0.0"
 
 [tool.ruff]
-	# Same as Black.
-	line-length = 88
-	indent-width = 4
+# Same as Black.
+line-length = 88
+indent-width = 4
 
-	# Assume Python 3.12
-	target-version = "py312"
+# Assume Python 3.12
+target-version = "py312"
 
-	# Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default. 
-	select = ["E", "F"] 
-	ignore = ["F403"] 
-	
-	# Allow autofix for all enabled rules (when `--fix`) is provided. 
-	fixable = ["A", "B", "C", "D", "E", "F", "G", "I", "N", "Q", "S", "T", "W", "ANN", "ARG", "BLE", "COM", "DJ", "DTZ", "EM", "ERA", "EXE", "FBT", "ICN", "INP", "ISC", "NPY", "PD", "PGH", "PIE", "PL", "PT", "PTH", "PYI", "RET", "RSE", "RUF", "SIM", "SLF", "TCH", "TID", "TRY", "UP", "YTT"] 
-	unfixable = []
+# Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default. 
+select = ["E", "F"]
+ignore = ["F403"]
 
-	exclude = [
-		".git",
-		".ruff_cache",
-		"__pypackages__",
-		"build",
-		"venv",
-	]
+# Allow autofix for all enabled rules (when `--fix`) is provided. 
+fixable = [
+	"A",
+	"B",
+	"C",
+	"D",
+	"E",
+	"F",
+	"G",
+	"I",
+	"N",
+	"Q",
+	"S",
+	"T",
+	"W",
+	"ANN",
+	"ARG",
+	"BLE",
+	"COM",
+	"DJ",
+	"DTZ",
+	"EM",
+	"ERA",
+	"EXE",
+	"FBT",
+	"ICN",
+	"INP",
+	"ISC",
+	"NPY",
+	"PD",
+	"PGH",
+	"PIE",
+	"PL",
+	"PT",
+	"PTH",
+	"PYI",
+	"RET",
+	"RSE",
+	"RUF",
+	"SIM",
+	"SLF",
+	"TCH",
+	"TID",
+	"TRY",
+	"UP",
+	"YTT",
+]
+unfixable = []
+
+exclude = [".git", ".ruff_cache", "__pypackages__", "build", "venv"]
 
 [tool.ruff.lint]
-	# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
-	# Unlike Flake8, Ruff doesn't enable pycodestyle warnings (`W`) or
-	# McCabe complexity (`C901`) by default.
-	select = ["E4", "E7", "E9", "F"]
-	ignore = []
+# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
+# Unlike Flake8, Ruff doesn't enable pycodestyle warnings (`W`) or
+# McCabe complexity (`C901`) by default.
+select = ["E4", "E7", "E9", "F"]
+ignore = []
 
-	# Allow fix for all enabled rules (when `--fix`) is provided.
-	fixable = ["ALL"]
-	unfixable = []
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
 
 [tool.ruff.format]
-	# Like Black, indent with spaces, rather than tabs.
-	indent-style = "tab"
+# Like Black, indent with spaces, rather than tabs.
+indent-style = "tab"
