@@ -135,3 +135,5 @@ Run the frontend app.
 npm install -g serve
 serve -s build
 ```
+
+<img src="pictures/image.png" alt="alt text" width="1000"/>
