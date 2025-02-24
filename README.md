@@ -57,7 +57,7 @@ docker-compose up -d
 docker-compose run django python manage.py createsuperuser
 ```
 
-Then go to 0.0.0.0
+Then go to 0.0.0.0 host
 
 ## Development installation
 
