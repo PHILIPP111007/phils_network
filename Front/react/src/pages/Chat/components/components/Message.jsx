@@ -1,5 +1,5 @@
 import "./styles/Message.css"
-import ReactLinkify from "react-linkify"
+import ReactMarkdown from "react-markdown"
 import { Link } from "react-router-dom"
 
 export default function Message({ message }) {
@@ -11,9 +11,7 @@ export default function Message({ message }) {
                 </Link>
             </div>
             <div className="text">
-                <ReactLinkify>
-                    {message.text}
-                </ReactLinkify>
+                <ReactMarkdown children={message.text} />
             </div>
         </div>
     )
