@@ -35,7 +35,6 @@ THIRD_PARTY_APPS: list[str] = [
 	"gunicorn",
 	"uvicorn",
 	# REST API
-	"corsheaders",
 	"rest_framework",
 	"rest_framework.authtoken",
 	"djoser",
@@ -60,7 +59,6 @@ DJANGO_MIDDLEWARE: list[str] = [
 ]
 
 THIRD_PARTY_MIDDLEWARE: list[str] = [
-	"corsheaders.middleware.CorsMiddleware",  # for working Django REST
 	"whitenoise.middleware.WhiteNoiseMiddleware",  # for servers to work with static files
 ]
 
@@ -69,31 +67,6 @@ LOCAL_MIDDLEWARE = [
 ]
 
 MIDDLEWARE = DJANGO_MIDDLEWARE + THIRD_PARTY_MIDDLEWARE + LOCAL_MIDDLEWARE
-
-
-CORS_ALLOWED_ORIGINS = [
-	"http://0.0.0.0:80",
-]
-CSRF_TRUSTED_ORIGINS = [
-	"http://0.0.0.0:80",
-]
-CORS_ALLOW_METHODS = (
-	"DELETE",
-	"GET",
-	"OPTIONS",
-	"POST",
-	"PUT",
-)
-CORS_ALLOW_HEADERS = (
-	"accept",
-	"authorization",
-	"content-type",
-	"user-agent",
-	"x-csrftoken",
-	"x-requested-with",
-)
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_PRIVATE_NETWORK = True
 
 
 ROOT_URLCONF: str = "settings.urls"
