@@ -74,25 +74,26 @@ MIDDLEWARE = DJANGO_MIDDLEWARE + THIRD_PARTY_MIDDLEWARE + LOCAL_MIDDLEWARE
 CORS_ALLOWED_ORIGINS = [
 	"http://0.0.0.0:80",
 ]
-CORS_ALLOW_METHODS = [
+CSRF_TRUSTED_ORIGINS = [
+	"http://0.0.0.0:80",
+]
+CORS_ALLOW_METHODS = (
 	"DELETE",
 	"GET",
 	"OPTIONS",
 	"POST",
 	"PUT",
-]
-CORS_ALLOW_HEADERS = [
+)
+CORS_ALLOW_HEADERS = (
 	"accept",
-	"accept-encoding",
 	"authorization",
 	"content-type",
-	"dnt",
-	"origin",
 	"user-agent",
 	"x-csrftoken",
 	"x-requested-with",
-]
+)
 CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_PRIVATE_NETWORK = True
 
 
 ROOT_URLCONF: str = "settings.urls"
