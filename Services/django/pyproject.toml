@@ -1,11 +1,3 @@
-["author"]
-name = "Philipp Roshchin"
-email = "r.phil@yandex.ru"
-
-["app"]
-name = "phils_network"
-version = "3.0.0"
-
 [tool.ruff]
 # Same as Black.
 line-length = 88
