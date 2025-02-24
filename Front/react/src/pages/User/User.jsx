@@ -1,6 +1,6 @@
 import "./styles/User.css"
 import "../../styles/Posts.css"
-import { useContext, useEffect, useState } from "react"
+import { use, useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { useInView } from "react-intersection-observer"
 import { UserContext } from "@data/context"
@@ -21,7 +21,7 @@ import plusIcon from "@images/plus-icon.svg"
 
 export default function User() {
 
-    var { user, setUser } = useContext(UserContext)
+    var { user, setUser } = use(UserContext)
     var [ref, inView] = useInView()
     var params = useParams()
     var [userLocal, setUserLocal] = useState(user)

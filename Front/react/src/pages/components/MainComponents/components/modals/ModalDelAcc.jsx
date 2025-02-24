@@ -1,14 +1,14 @@
 import "./styles/ModalDelAcc.css"
-import { useContext } from "react"
-import { HttpMethod, CacheKeys } from "@data/enums"
+import { use } from "react"
+import { HttpMethod } from "@data/enums"
 import { AuthContext, UserContext } from "@data/context"
 import Fetch from "@API/Fetch"
 import Button from "@pages/components/UI/Button"
 
 export default function ModalDelAcc() {
 
-    var { setIsAuth } = useContext(AuthContext)
-    var { user, setUser } = useContext(UserContext)
+    var { setIsAuth } = use(AuthContext)
+    var { user, setUser } = use(UserContext)
 
     async function deleteAccount() {
         var data = await Fetch({ action: `user/${user.pk}/`, method: HttpMethod.DELETE })

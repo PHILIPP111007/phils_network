@@ -1,5 +1,5 @@
 import "./styles/Rooms.css"
-import { useContext, useEffect, useMemo, useRef, useState } from "react"
+import { use, useEffect, useMemo, useRef, useState } from "react"
 import { useParams } from "react-router-dom"
 import { UserContext } from "@data/context"
 import { HttpMethod } from "@data/enums"
@@ -19,7 +19,7 @@ export default function Rooms() {
     var params = useParams()
     rememberPage(`chats/${params.username}`)
 
-    var { user } = useContext(UserContext)
+    var { user } = use(UserContext)
     var [rooms, setRooms] = useState([])
     var [modalRoomCreate, setModalRoomCreate] = useState(false)
     var [loading, setLoading] = useState(true)

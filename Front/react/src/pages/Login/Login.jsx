@@ -1,5 +1,5 @@
 import "./styles/Login.css"
-import { useState, useContext, useEffect } from "react"
+import { useState, use, useEffect } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import { AuthContext, UserContext } from "@data/context"
 import { HttpMethod, CacheKeys } from "@data/enums"
@@ -9,8 +9,8 @@ import Input from "@pages/components/UI/Input"
 
 export default function Login() {
 
-    var { setIsAuth } = useContext(AuthContext)
-    var { user, setUser } = useContext(UserContext)
+    var { setIsAuth } = use(AuthContext)
+    var { user, setUser } = use(UserContext)
     var [loginForm, setLoginForm] = useState({ username: "", password: "" })
     var navigate = useNavigate()
 

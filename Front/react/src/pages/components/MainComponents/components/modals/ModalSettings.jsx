@@ -1,5 +1,5 @@
 import "./styles/ModalSettings.css"
-import { useContext, useEffect, useState } from "react"
+import { use, useEffect, useState } from "react"
 import { UserContext } from "@data/context"
 import { HttpMethod } from "@data/enums"
 import Fetch from "@API/Fetch"
@@ -8,7 +8,7 @@ import Input from "@pages/components/UI/Input"
 
 export default function ModalSettings(props) {
 
-    var { user, setUser } = useContext(UserContext)
+    var { user, setUser } = use(UserContext)
     var [userNew, setUserNew] = useState({ first_name: "", last_name: "", email: "" })
 
     async function userUpdate(event) {

@@ -1,5 +1,5 @@
 import "./styles/FriendsNavBar.css"
-import { useContext, useEffect, useState } from "react"
+import { useEffect, useState, use } from "react"
 import { Link } from "react-router-dom"
 import { FilterOption, HttpMethod } from "@data/enums"
 import { UserContext } from "@data/context"
@@ -7,7 +7,7 @@ import Fetch from "@API/Fetch"
 
 export default function FriendsNavBar() {
 
-    var { user } = useContext(UserContext)
+    var { user } = use(UserContext)
     var [subscribersCount, setSubscribersCount] = useState(0)
 
     useEffect(() => {

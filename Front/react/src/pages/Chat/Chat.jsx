@@ -1,5 +1,5 @@
 import "./styles/Chat.css"
-import { useContext, useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, use } from "react"
 import { useSignal } from "@preact/signals-react"
 import { useNavigate, useParams } from "react-router-dom"
 import { useInView } from "react-intersection-observer"
@@ -17,7 +17,7 @@ import UserInput from "@pages/Chat/components/UserInput"
 
 export default function Chat() {
 
-    var { user } = useContext(UserContext)
+    var { user } = use(UserContext)
     var [messages, setMessages] = useState([])
     var mainSets = useSignal({
         room: {

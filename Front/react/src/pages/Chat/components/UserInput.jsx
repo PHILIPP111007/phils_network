@@ -1,4 +1,4 @@
-import { useContext, useState } from "react"
+import { useState, use } from "react"
 import { UserContext } from "@data/context"
 import Modal from "../../components/Modal"
 import ModalRoomEdit from "./modals/ModalRoomEdit"
@@ -7,7 +7,7 @@ import sendIcon from "@images/send-icon.svg"
 
 export default function UserInput({ mainSets, sendMessage, editRoom }) {
 
-    var { user } = useContext(UserContext)
+    var { user } = use(UserContext)
     var [modalRoomEdit, setModalRoomEdit] = useState(false)
     var [text, setText] = useState("")
 

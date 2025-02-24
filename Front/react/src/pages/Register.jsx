@@ -1,5 +1,5 @@
 import "./Login/styles/Login.css"
-import { useState, useContext, useEffect, useMemo } from "react"
+import { useState, useEffect, useMemo, use } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { UserContext, AuthContext } from "@data/context"
 import { HttpMethod } from "@data/enums"
@@ -10,8 +10,8 @@ import Input from "@pages/components/UI/Input"
 
 export default function Register() {
 
-    var { setIsAuth } = useContext(AuthContext)
-    var { user, setUser } = useContext(UserContext)
+    var { setIsAuth } = use(AuthContext)
+    var { user, setUser } = use(UserContext)
     var [registerForm, setRegisterForm] = useState({
         username: "",
         password: "",
