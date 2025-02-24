@@ -62,11 +62,10 @@ DJANGO_MIDDLEWARE: list[str] = [
 THIRD_PARTY_MIDDLEWARE: list[str] = [
 	"corsheaders.middleware.CorsMiddleware",  # for working Django REST
 	"whitenoise.middleware.WhiteNoiseMiddleware",  # for servers to work with static files
-	"settings.DisableCSRFMiddleware.DisableCSRFMiddleware",
 ]
 
 LOCAL_MIDDLEWARE = [
-	"settings.DisableCSRFMiddleware.DisableCSRFMiddleware",
+	"app.middleware.DisableCSRFMiddleware.DisableCSRFMiddleware",
 ]
 
 MIDDLEWARE = DJANGO_MIDDLEWARE + THIRD_PARTY_MIDDLEWARE + LOCAL_MIDDLEWARE
