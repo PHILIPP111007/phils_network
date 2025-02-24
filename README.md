@@ -59,7 +59,8 @@ docker-compose up -d
 docker-compose run django python manage.py createsuperuser
 ```
 
-Then go to 0.0.0.0 host
+Then go to <http://0.0.0.0/> \
+Go to <http://0.0.0.0/admin/> to see django admin page
 
 ## Development installation
 
