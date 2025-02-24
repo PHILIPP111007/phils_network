@@ -28,10 +28,10 @@ Have fun and if you want please leave feedback!
 ## Technologies used
 
 * Django \
-<https://www.djangoproject.com/>
+<https://www.djangoproject.com/> <img src="pictures/django-framework.png" alt="alt text" width="70"/>
 
 * Django REST framework \
-<https://www.django-rest-framework.org/>
+<https://www.django-rest-framework.org/> <img src="pictures/Django-REST-framework.png" alt="alt text" width="70"/>
 
 * django-channels \
 <https://channels.readthedocs.io/en/stable/index.html>
@@ -40,16 +40,16 @@ Have fun and if you want please leave feedback!
 <https://docs.gunicorn.org/en/stable/index.html>
 
 * Redis \
-<https://redis.io/docs/>
+<https://redis.io/docs/> <img src="pictures/redis.svg" alt="alt text" width="70"/>
 
 * Postgres \
-<https://www.postgresql.org/>
+<https://www.postgresql.org/> <img src="pictures/Postgresql_elephant.png" alt="alt text" width="70"/>
 
 * React \
-<https://react.dev/learn>
+<https://react.dev/learn> <img src="pictures/React-icon.png" alt="alt text" width="70"/>
 
 * Docker \
-<https://www.docker.com/>
+<https://www.docker.com/>  <img src="pictures/Docker-Logo.png" alt="alt text" width="70"/>
 
 ## Production installation
 
@@ -137,4 +137,4 @@ npm install -g serve
 serve -s build
 ```
 
-<img src="pictures/image.png" alt="alt text" width="1000"/>
+<img src="pictures/screenshot.png" alt="alt text" width="1000"/>
