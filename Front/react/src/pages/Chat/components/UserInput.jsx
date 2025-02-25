@@ -1,7 +1,7 @@
 import { useState, use } from "react"
 import { UserContext } from "@data/context"
-import Modal from "../../components/Modal"
-import ModalRoomEdit from "./ModalRoomEdit"
+import Modal from "@pages/components/Modal"
+import ModalRoomEdit from "@pages/Chat/components/components/ModalRoomEdit"
 import settingsLogo from "@images/three_points_gray.svg"
 import sendIcon from "@images/send-icon.svg"
 
