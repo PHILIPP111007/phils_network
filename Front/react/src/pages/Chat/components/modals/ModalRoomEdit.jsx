@@ -17,7 +17,7 @@ export default function ModalRoomEdit({ mainSets, me, editRoom }) {
                 friends: mainSets.value.invitationChanges.friends,
                 subscribers: mainSets.value.invitationChanges.subscribers.map((user) => {
                     if (user.pk === subscriber.pk) {
-                        return { ...user, isInRoom: user.isInRoom ? false : true }
+                        return { ...user, isInRoom: !user.isInRoom }
                     }
                     return user
                 })
@@ -32,7 +32,7 @@ export default function ModalRoomEdit({ mainSets, me, editRoom }) {
                 subscribers: mainSets.value.invitationChanges.subscribers,
                 friends: mainSets.value.invitationChanges.friends.map((user) => {
                     if (user.pk === friend.pk) {
-                        return { ...user, isInRoom: user.isInRoom ? false : true }
+                        return { ...user, isInRoom: !user.isInRoom }
                     }
                     return user
                 })
@@ -58,7 +58,7 @@ export default function ModalRoomEdit({ mainSets, me, editRoom }) {
                 {(mainSets.value.isCreator === true || user.pk === me.pk)
                     &&
                     <Button onClick={() => editSubscribers(user)} >
-                        {user.isInRoom === true ? "delete" : "add"}
+                        {user.isInRoom ? "delete" : "add"}
                     </Button>
                 }
             </div>
@@ -79,7 +79,7 @@ export default function ModalRoomEdit({ mainSets, me, editRoom }) {
                 {mainSets.value.isCreator === true
                     &&
                     <Button onClick={() => editFriends(user)} >
-                        {user.isInRoom === true ? "delete" : "add"}
+                        {user.isInRoom ? "delete" : "add"}
                     </Button>
                 }
             </div>
