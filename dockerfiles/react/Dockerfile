@@ -3,7 +3,8 @@ WORKDIR /usr/src/app
 
 RUN npm install -g npm
 
-COPY ./Front/react/*.json .
+COPY ./Front/react/package.json .
+COPY ./Front/react/package-lock.json .
 RUN npm install
 
 COPY ./Front/react/config ./config
