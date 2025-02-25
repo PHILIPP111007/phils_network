@@ -59,6 +59,7 @@
     "react-markdown": "10.0.0",
     "react-refresh": "0.16.0",
     "react-router-dom": "7.2.0",
+    "react-linkify": "1.0.0-alpha",
     "resolve": "^1.22.10",
     "resolve-url-loader": "^5.0.0",
     "sass-loader": "16.0.5",
