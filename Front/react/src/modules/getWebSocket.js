@@ -1,5 +1,5 @@
-import { WEBSOCKET_URL } from "@data/constants"
-import getToken from "@modules/getToken"
+import { WEBSOCKET_URL } from "../data/constants"
+import getToken from "./getToken"
 
 export default function getWebSocket({ socket_name, path }) {
     var socket = new WebSocket(

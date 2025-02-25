@@ -1,10 +1,10 @@
 import "./styles/ModalSettings.css"
 import { use, useEffect, useState } from "react"
-import { UserContext } from "@data/context"
-import { HttpMethod } from "@data/enums"
-import Fetch from "@API/Fetch"
-import Button from "@pages/components/UI/Button"
-import Input from "@pages/components/UI/Input"
+import { UserContext } from "../../../../data/context"
+import { HttpMethod } from "../../../../data/enums"
+import Fetch from "../../../../API/Fetch"
+import Button from "../../UI/Button"
+import Input from "../../UI/Input"
 
 export default function ModalSettings(props) {
 

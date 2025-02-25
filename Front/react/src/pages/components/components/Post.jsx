@@ -2,8 +2,8 @@ import "./styles/Post.css"
 import { useState } from "react"
 import { Link } from "react-router-dom"
 import ReactMarkdown from "react-markdown"
-import settingsLogo from "@images/three_points.svg"
-import Button from "@pages/components/UI/Button"
+import settingsLogo from "../../../images/three_points.svg"
+import Button from "../UI/Button"
 
 export default function Post({ post, ...props }) {
 
@@ -52,7 +52,7 @@ export default function Post({ post, ...props }) {
                         post.content.substring(0, 499) + "..."
                         :
                         post.content
-                    
+
                 } />
             </div>
             <br />

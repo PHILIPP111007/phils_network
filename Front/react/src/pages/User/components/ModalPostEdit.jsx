@@ -1,5 +1,5 @@
 import "./styles/ModalPostEdit.css"
-import Button from "@pages/components/UI/Button"
+import Button from "../../components/UI/Button"
 
 export default function ModalPostEdit(props) {
     return (

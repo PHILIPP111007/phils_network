@@ -1,10 +1,10 @@
 import "./styles/ModalRoomCreate.css"
 import { useEffect, useState } from "react"
-import { FilterOption } from "@data/enums"
-import UserSection from "@hooks/UserSection"
-import Loading from "@pages/components/Loading"
-import Button from "@pages/components/UI/Button"
-import Input from "@pages/components/UI/Input"
+import { FilterOption } from "../../../data/enums"
+import UserSection from "../../../hooks/UserSection"
+import Loading from "../../components/Loading"
+import Button from "../../components/UI/Button"
+import Input from "../../components/UI/Input"
 
 export default function ModalRoomCreate(props) {
 

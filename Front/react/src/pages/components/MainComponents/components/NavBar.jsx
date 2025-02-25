@@ -1,7 +1,7 @@
 import "./styles/NavBar.css"
 import { use } from "react"
 import { Link } from "react-router-dom"
-import { UserContext } from "@data/context"
+import { UserContext } from "../../../../data/context"
 
 export default function NavBar() {
 

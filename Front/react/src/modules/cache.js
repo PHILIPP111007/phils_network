@@ -1,5 +1,5 @@
-import { MESSAGES_TO_CACHE } from "@data/constants"
-import { CacheKeys } from "@data/enums"
+import { MESSAGES_TO_CACHE } from "../data/constants"
+import { CacheKeys } from "../data/enums"
 
 export class MessagesByRoomCache {
     static get_key(room_id) {

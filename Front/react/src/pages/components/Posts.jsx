@@ -1,5 +1,5 @@
 import { useMemo } from "react"
-import Post from "@pages/components/components/Post"
+import Post from "./components/Post"
 
 export default function Posts({ posts, ...props }) {
 

@@ -1,6 +1,6 @@
 import { useEffect } from "react"
-import { Theme, CacheKeys } from "@data/enums"
-import { ROOT_ELEMENT_THEME } from "@data/constants"
+import { Theme, CacheKeys } from "../data/enums"
+import { ROOT_ELEMENT_THEME } from "../data/constants"
 
 export default function useTheme() {
 

@@ -1,7 +1,7 @@
 import { useEffect } from "react"
-import { HttpMethod } from "@data/enums"
-import Fetch from "@API/Fetch"
-import getToken from "@modules/getToken"
+import { HttpMethod } from "../data/enums"
+import Fetch from "../API/Fetch"
+import getToken from "../modules/getToken"
 
 export function useAuth({ username, setIsAuth }) {
     var Func = useEffect(() => {

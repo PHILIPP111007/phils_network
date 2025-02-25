@@ -1,6 +1,6 @@
-import { HttpMethod } from "@data/enums"
-import { FETCH_URL } from "@data/constants"
-import getToken from "@modules/getToken"
+import { HttpMethod } from "../data/enums"
+import { FETCH_URL } from "../data/constants"
+import getToken from "../modules/getToken"
 
 export default async function Fetch({ action, method, body }) {
 

@@ -1,12 +1,12 @@
 import "./Login/styles/Login.css"
 import { useState, useEffect, useMemo, use } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { UserContext, AuthContext } from "@data/context"
-import { HttpMethod } from "@data/enums"
-import Fetch from "@API/Fetch"
-import getToken from "@modules/getToken"
-import ErrorMessage from "@pages/components/ErrorMessage"
-import Input from "@pages/components/UI/Input"
+import { UserContext, AuthContext } from "../data/context"
+import { HttpMethod } from "../data/enums"
+import Fetch from "../API/Fetch"
+import getToken from "../modules/getToken"
+import ErrorMessage from "./components/ErrorMessage"
+import Input from "./components/UI/Input"
 
 export default function Register() {
 
