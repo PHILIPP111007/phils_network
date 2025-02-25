@@ -2,8 +2,7 @@ __all__ = ["get_user_cache"]
 
 from django.core.cache import cache
 
-
-USER_CACHE_TIME = 60 * 60 * 24 * 7
+USER_CACHE_TIME = 60 * 60 * 24 * 7  # 7 days
 
 
 def get_user_cache(username):
