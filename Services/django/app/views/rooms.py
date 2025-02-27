@@ -77,7 +77,7 @@ class RoomInvitationsAddAPIView(APIView):
 	def post(self, request: Request, username: str, room_id: int) -> Response:
 		self.check_permissions(request=request)
 
-		self.service_class.add(user=request.user, room_id=room_id)
+		self.service_class.add(username=username, room_id=room_id)
 
 		return Response(
 			{"ok": True},

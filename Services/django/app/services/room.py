@@ -49,8 +49,11 @@ class RoomService:
 		room = Room.objects.filter(pk=pk).first()
 		if room is not None:
 			if friends:
-				room.subscribers.add(*friends)
-
+				for user_pk in friends:
+					friend = User.objects.get(pk=user_pk)
+					RoomInvitation.objects.create(
+						creator=request.user, to_user=friend, room=room
+					)
 			if subscribers:
 				room.subscribers.remove(*subscribers)
 
@@ -117,13 +120,15 @@ class RoomInvitationsService:
 		)
 
 	@staticmethod
-	def add(user: User, room_id: int):
+	def add(username: str, room_id: int):
 		room_invite = RoomInvitation.objects.filter(pk=room_id).first()
 		room_creator = RoomCreator.objects.filter(room=room_invite.room).first()
 
 		if room_creator:
 			room_invite.delete()
 			room = Room.objects.filter(pk=room_creator.room.pk).first()
+
+			user = User.objects.get(username=username)
 			room.subscribers.add(user)
 
 	@staticmethod
