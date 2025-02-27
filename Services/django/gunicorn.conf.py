@@ -62,8 +62,7 @@ def get_workers_count() -> int:
 	https://docs.gunicorn.org/en/stable/configure.html#:~:text=workers%20%3D%20multiprocessing.cpu_count()%20*%202%20%2B%201
 	"""
 
-	cpu_count() * 2 + 1
-	return 1
+	return cpu_count() * 2 + 1
 
 
 def get_threads_count() -> int:
