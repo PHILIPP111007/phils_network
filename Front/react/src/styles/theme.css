@@ -91,6 +91,7 @@
 
     .Post,
     .RoomCard,
+    .RoomInvitationCard,
     .ModalRoomCreate .card,
     .ModalRoomEdit .card,
     .FriendCard,
@@ -104,6 +105,7 @@
     }
 
     .RoomCard a,
+    .RoomInvitationCard a,
     .Message a {
         color: var(--l-color);
     }
@@ -195,6 +197,7 @@
 
     .Post,
     .RoomCard,
+    .RoomInvitationCard,
     .ModalRoomCreate .card,
     .ModalRoomEdit .card,
     .FriendCard,

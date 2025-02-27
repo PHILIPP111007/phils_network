@@ -1,5 +1,5 @@
+from app.models import Blog, Message, Room, RoomCreator, RoomInvitation, Subscriber
 from django.contrib import admin
-from app.models import Blog, Subscriber, Room, RoomCreator, Message
 
 
 @admin.register(Blog)
@@ -28,6 +28,12 @@ class RoomAdmin(admin.ModelAdmin):
 @admin.register(RoomCreator)
 class RoomCreatorAdmin(admin.ModelAdmin):
 	list_display = ("creator", "room")
+	list_filter = ("creator",)
+
+
+@admin.register(RoomInvitation)
+class RoomInvitationAdmin(admin.ModelAdmin):
+	list_display = ("creator", "to_user", "room", "timestamp")
 	list_filter = ("creator",)
 
 

@@ -15,7 +15,7 @@
     color: black;
 }
 
-.RoomNavBar .subscribersCount {
+.RoomNavBar #roomInvitations_length {
     padding: 5px 10px;
     background-color: red;
     border-radius: 20px;

@@ -1,11 +1,12 @@
 import { lazy } from "react"
 var User = lazy(() => import("../pages/User/User"))
-var Rooms = lazy(() => import("../pages/Rooms/Rooms"))
 var News = lazy(() => import("../pages/News"))
 var Friends = lazy(() => import("../pages/Friends/Friends"))
 var FriendsSection = lazy(() => import("../pages/FriendsSection"))
 var SubscriptionsSection = lazy(() => import("../pages/SubscriptionsSection"))
 var SubscribersSection = lazy(() => import("../pages/SubscribersSection"))
+var Rooms = lazy(() => import("../pages/Rooms/Rooms"))
+var RoomInvitations = lazy(() => import("../pages/Rooms/components/RoomInvitations"))
 var Chat = lazy(() => import("../pages/Chat/Chat"))
 var Login = lazy(() => import("../pages/Login/Login"))
 var Register = lazy(() => import("../pages/Register"))
@@ -60,6 +61,11 @@ export var PrivateRoutes = [
         path: "/chats/:username/",
         name: "Chats",
         element: <Rooms />
+    },
+    {
+        path: "/invite_chats/:username/",
+        name: "RoomInvitations",
+        element: <RoomInvitations />
     },
     {
         path: "/chats/:username/:room_id/",

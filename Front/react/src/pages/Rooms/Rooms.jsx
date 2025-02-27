@@ -3,13 +3,13 @@ import { use, useEffect, useMemo, useRef, useState } from "react"
 import { useParams } from "react-router-dom"
 import { UserContext } from "../../data/context"
 import { HttpMethod } from "../../data/enums"
-import { RoomsCache } from "../../modules/cache"
 import rememberPage from "../../modules/rememberPage"
 import getWebSocket from "../../modules/getWebSocket"
 import Fetch from "../../API/Fetch"
 import ModalRoomCreate from "./components/ModalRoomCreate"
 import RoomCard from "./components/RoomCard"
 import MainComponents from "../components/MainComponents/MainComponents"
+import RoomNavBar from "./components/RoomNavBar"
 import Modal from "../components/Modal"
 import ScrollToTopOrBottom from "../components/MainComponents/components/ScrollToTopOrBottom"
 import Button from "../components/UI/Button"
@@ -31,7 +31,6 @@ export default function Rooms() {
         var data = await Fetch({ action: "room/", method: HttpMethod.POST, body: room })
         if (data && data.ok) {
             var newRooms = [data.room, ...rooms]
-            RoomsCache.save(user.username, newRooms)
             setRooms(newRooms)
         }
         setModalRoomCreate(false)
@@ -63,7 +62,6 @@ export default function Rooms() {
 
             setRooms((prev) => {
                 var newRooms = [newRoom, ...prev.filter((room) => room.id !== room_id)]
-                RoomsCache.save(user.username, newRooms)
                 return newRooms
             })
         }
@@ -71,19 +69,13 @@ export default function Rooms() {
 
     useEffect(() => {
         setLoading(true)
-        var rooms = RoomsCache.get(user.username)
-        if (rooms !== null) {
-            rooms = JSON.parse(rooms)
-            setRooms(rooms)
-        } else {
-            Fetch({ action: "room/", method: HttpMethod.GET })
-                .then((data) => {
-                    if (data && data.ok) {
-                        setRooms(data.rooms)
-                        RoomsCache.save(user.username, data.rooms)
-                    }
-                })
-        }
+        Fetch({ action: "room/", method: HttpMethod.GET })
+            .then((data) => {
+                if (data && data.ok) {
+                    setRooms(data.rooms)
+                }
+            })
+
         setLoading(false)
     }, [])
 
@@ -114,6 +106,8 @@ export default function Rooms() {
             <Modal modal={modalRoomCreate} setModal={setModalRoomCreate}>
                 <ModalRoomCreate createRoom={createRoom} />
             </Modal>
+
+            <RoomNavBar />
 
             <Button onClick={() => setModalRoomCreate(true)} >add room</Button>
 

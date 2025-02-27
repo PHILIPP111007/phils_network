@@ -7,12 +7,11 @@ __all__ = [
 ]
 
 
-from django.conf import settings
-from django.contrib.auth.models import User
-
 from rest_framework import serializers
 
-from app.models import Blog, Room, Message
+from app.models import Blog, Message, Room, RoomInvitation
+from django.conf import settings
+from django.contrib.auth.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -60,6 +59,16 @@ class RoomsSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Room
 		exclude = ("subscribers",)
+
+
+class RoomsInvitationSerializer(serializers.ModelSerializer):
+	creator = UserSerializer(read_only=True)
+	to_user = UserSerializer(read_only=True)
+	room = RoomsSerializer(read_only=True)
+
+	class Meta:
+		model = RoomInvitation
+		fields = "__all__"
 
 
 class ChatSerializer(serializers.ModelSerializer):

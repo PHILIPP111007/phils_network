@@ -1,0 +1,11 @@
+.RoomInvitationCard {
+    margin: 10px auto;
+    min-width: 500px;
+    max-width: 1000px;
+    padding: 20px;
+    word-break: break-all;
+}
+
+.RoomInvitationCard .UserBtns {
+    height: 20px;
+}

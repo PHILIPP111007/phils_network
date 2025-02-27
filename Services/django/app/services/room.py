@@ -1,9 +1,9 @@
-from django.db.models.query import QuerySet
-from django.db.models import Subquery, OuterRef
-from django.contrib.auth.models import User
-
 from rest_framework.request import Request
-from app.models import RoomCreator, Room, Message
+
+from app.models import Message, Room, RoomCreator, RoomInvitation
+from django.contrib.auth.models import User
+from django.db.models import OuterRef, Subquery
+from django.db.models.query import QuerySet
 
 
 class RoomService:
@@ -71,15 +71,63 @@ class RoomService:
 		room.save()
 
 		if pk_list:
-			subscribers = (
-				User.objects.filter(pk__in=pk_list)
-				.only("pk")
-				.values_list("pk", flat=True)
-			)
+			subscribers = User.objects.filter(pk__in=pk_list)
 
 			if subscribers:
-				room.subscribers.add(*subscribers)
+				room.subscribers.add(request.user)
 
-		RoomCreator.objects.get_or_create(room_id=room.pk, creator_id=request.user.pk)
+				for user in subscribers:
+					if user == request.user:
+						continue
+					RoomInvitation.objects.create(
+						room=room, creator=request.user, to_user=user
+					)
+
+		RoomCreator.objects.get_or_create(room=room, creator=request.user)
 
 		return room
+
+
+class RoomCreatorService:
+	@staticmethod
+	def filter(pk: int) -> QuerySet[RoomCreator]:
+		return (
+			RoomCreator.objects.filter(room_id=pk)
+			.select_related("creator")
+			.only("creator__username")
+		)
+
+
+class RoomInvitationsService:
+	@staticmethod
+	def filter(user: User):
+		return (
+			RoomInvitation.objects.filter(to_user=user)
+			.select_related("creator", "to_user")
+			.only(
+				"timestamp",
+				"creator__username",
+				"creator__first_name",
+				"creator__last_name",
+				"to_user__username",
+				"to_user__first_name",
+				"to_user__last_name",
+				"room__name",
+			)
+		)
+
+	@staticmethod
+	def add(user: User, room_id: int):
+		room_invite = RoomInvitation.objects.filter(pk=room_id).first()
+		room_creator = RoomCreator.objects.filter(room=room_invite.room).first()
+
+		if room_creator:
+			room_invite.delete()
+			room = Room.objects.filter(pk=room_creator.room.pk).first()
+			room.subscribers.add(user)
+
+	@staticmethod
+	def remove(room_id: int):
+		room = RoomInvitation.objects.filter(pk=room_id).first()
+		if room:
+			room.delete()

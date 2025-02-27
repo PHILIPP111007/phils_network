@@ -5,7 +5,6 @@ import { useNavigate, useParams } from "react-router-dom"
 import { useInView } from "react-intersection-observer"
 import { HttpMethod } from "../../data/enums"
 import { UserContext } from "../../data/context"
-import { MessagesByRoomCache, RoomsCache } from "../../modules/cache"
 import rememberPage from "../../modules/rememberPage"
 import useObserver from "../../hooks/useObserver"
 import getWebSocket from "../../modules/getWebSocket"
@@ -72,7 +71,6 @@ export default function Chat() {
 
             var data = await Fetch({ action: `room/${params.room_id}/`, method: HttpMethod.PUT, body: body })
             if (data && data.ok) {
-                RoomsCache.delete(user.username)
                 navigate(`/chats/${user.username}/`)
             }
         }
@@ -87,10 +85,6 @@ export default function Chat() {
             if (data) {
                 if (data.ok) {
                     setMessages((prev) => [...data.messages.reverse(), ...messages])
-                    MessagesByRoomCache.save(mainSets.value.room.id, messages)
-                } else {
-                    MessagesByRoomCache.delete(mainSets.value.room.id)
-                    RoomsCache.delete(user.username)
                 }
             }
             mainSets.value.loading = false
@@ -109,10 +103,6 @@ export default function Chat() {
 
                     rememberPage(`chats/${params.username}/${data.room.id}`)
 
-                    var messages_by_room = MessagesByRoomCache.get(mainSets.value.room.id)
-                    if (messages_by_room && messages_by_room.length > 0) {
-                        setMessages(messages_by_room)
-                    }
                     fetchAddMessages(true)
                 }
             })
@@ -138,8 +128,6 @@ export default function Chat() {
             var data = JSON.parse(e.data)
             if (data) {
                 setMessages((prev) => [...messages, data.message])
-                MessagesByRoomCache.save(mainSets.value.room.id, messages)
-                RoomsCache.update(mainSets.value.room.id, data.message.sender.username, data.message.text)
             }
             scrollToBottom()
         }

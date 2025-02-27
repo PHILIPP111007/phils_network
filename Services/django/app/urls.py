@@ -16,19 +16,21 @@ POST http://127.0.0.1:8000/token/token/logout/
 
 __all__ = ["urlpatterns"]
 
-from django.urls import path, include
 from app.views import (
-	UserAPIView,
 	BlogAPIView,
-	NewsAPIView,
-	FindUserAPIView,
-	SubscriberAPIView,
-	FriendsAPIView,
-	RoomsAPIView,
 	ChatAPIView,
+	FindUserAPIView,
+	FriendsAPIView,
 	MessagesAPIView,
+	NewsAPIView,
+	RoomInvitationsAddAPIView,
+	RoomInvitationsAPIView,
+	RoomInvitationsRemoveAPIView,
+	RoomsAPIView,
+	SubscriberAPIView,
+	UserAPIView,
 )
-
+from django.urls import include, path
 
 auth_patterns = [
 	path("auth/", include("djoser.urls")),
@@ -54,6 +56,15 @@ room_patterns = [
 	path("room/", RoomsAPIView.as_view()),
 	path("room/<int:pk>/", ChatAPIView.as_view()),
 	path("room/<int:pk>/<int:loaded_messages>/", MessagesAPIView.as_view()),
+	path("invite_chats/<str:username>/", RoomInvitationsAPIView.as_view()),
+	path(
+		"invite_chats/<str:username>/add_room/<int:room_id>/",
+		RoomInvitationsAddAPIView.as_view(),
+	),
+	path(
+		"invite_chats/<str:username>/remove_room/<int:room_id>/",
+		RoomInvitationsRemoveAPIView.as_view(),
+	),
 ]
 
 urlpatterns = (
