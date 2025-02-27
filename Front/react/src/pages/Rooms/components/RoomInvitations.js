@@ -20,7 +20,7 @@ export default function RoomInvitations() {
             .then((data) => {
                 if (data && data.ok) {
                     setRoomInvitations((prev) => {
-                        var newRooms = [roomInvitations, ...prev.filter((room) => room.id !== room_id)]
+                        var newRooms = [...prev.filter((room) => room.id !== room_id)]
                         return newRooms
                     })
                 }
@@ -33,7 +33,7 @@ export default function RoomInvitations() {
                 if (data && data.ok) {
                     if (data && data.ok) {
                         setRoomInvitations((prev) => {
-                            var newRooms = [roomInvitations, ...prev.filter((room) => room.id !== room_id)]
+                            var newRooms = [...prev.filter((room) => room.id !== room_id)]
                             console.log(newRooms)
                             return newRooms
                         })
