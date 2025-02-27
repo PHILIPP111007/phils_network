@@ -67,6 +67,10 @@
         background-color: var(--l-upper-line-bg-color);
     }
 
+    .RoomNavBar {
+        background-color: var(--l-upper-line-bg-color);
+    }
+
     .SettingsBar {
         background-color: var(--l-upper-line-bg-color);
         border-color: var(--l-border-color);
@@ -74,6 +78,10 @@
 
     .NavBar a:hover,
     .FriendsNavBar a:hover {
+        background-color: var(--l-upper-line-bg-color-hover);
+    }
+
+    .RoomNavBar a:hover {
         background-color: var(--l-upper-line-bg-color-hover);
     }
 
@@ -154,6 +162,10 @@
         background-color: var(--d-upper-line-bg-color);
     }
 
+    .RoomNavBar {
+        background-color: var(--d-upper-line-bg-color);
+    }
+
     .SettingsBar {
         background-color: var(--d-upper-line-bg-color);
         border-color: var(--d-border-color);
@@ -164,8 +176,16 @@
         color: var(--d-ui-color);
     }
 
+    .RoomNavBar a {
+        color: var(--d-ui-color);
+    }
+
     .NavBar a:hover,
     .FriendsNavBar a:hover {
+        background-color: var(--d-upper-line-bg-color-hover);
+    }
+
+    .RoomNavBar a:hover {
         background-color: var(--d-upper-line-bg-color-hover);
     }
 
