@@ -18,8 +18,6 @@ Welcome to version 3.0.0!
 
 * [x] Lazy loading of pages, posts and messages.
 
-* [x] Browser caching lists of user rooms and first N messages in each room.
-
 * [x] Markdown posts support
 
 \
