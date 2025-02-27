@@ -14,6 +14,34 @@ export default function RoomInvitations() {
 
     rememberPage(`invite_chats/${user.username}/`)
 
+
+    async function add_room(room_id) {
+        await Fetch({ action: `invite_chats/${user.username}/add_room/${room_id}/`, method: HttpMethod.POST })
+            .then((data) => {
+                if (data && data.ok) {
+                    setRoomInvitations((prev) => {
+                        var newRooms = [roomInvitations, ...prev.filter((room) => room.id !== room_id)]
+                        return newRooms
+                    })
+                }
+            })
+    }
+
+    async function remove_room(room_id) {
+        await Fetch({ action: `invite_chats/${user.username}/remove_room/${room_id}/`, method: HttpMethod.POST })
+            .then((data) => {
+                if (data && data.ok) {
+                    if (data && data.ok) {
+                        setRoomInvitations((prev) => {
+                            var newRooms = [roomInvitations, ...prev.filter((room) => room.id !== room_id)]
+                            console.log(newRooms)
+                            return newRooms
+                        })
+                    }
+                }
+            })
+    }
+
     useEffect(() => {
         Fetch({ action: `invite_chats/${user.username}`, method: HttpMethod.GET })
             .then((data) => {
@@ -28,7 +56,7 @@ export default function RoomInvitations() {
             <MainComponents />
 
             {roomInvitations.map(room =>
-                <RoomInvitationCard key={room.id} room={room} roomInvitations={roomInvitations} setRoomInvitations={setRoomInvitations} />
+                <RoomInvitationCard key={room.id} room={room} add_room={add_room} remove_room={remove_room} />
             )}
 
         </aside>
