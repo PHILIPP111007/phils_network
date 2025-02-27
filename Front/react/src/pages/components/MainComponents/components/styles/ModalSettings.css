@@ -4,6 +4,7 @@
     max-height: calc(100vh - 110px);
     overflow-y: auto;
 }
+
 .ModalSettings .Input {
     margin: 10px;
 }

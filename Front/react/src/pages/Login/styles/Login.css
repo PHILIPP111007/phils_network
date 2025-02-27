@@ -6,10 +6,12 @@
     text-align: center;
     margin-top: 100px;
 }
+
 .LoginForm .Input {
     width: 300px;
     margin: 5px auto;
 }
+
 .LoginForm h2 {
     margin-bottom: 50px;
 }

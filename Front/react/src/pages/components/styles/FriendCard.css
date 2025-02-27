@@ -5,12 +5,15 @@
     max-width: 1000px;
     padding: 20px;
 }
+
 .FriendCard .UserBtns {
     height: 20px;
 }
+
 .FriendCard .info {
     padding: 10px;
 }
+
 .FriendCard a {
     text-decoration: none;
 }

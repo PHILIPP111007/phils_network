@@ -2,12 +2,15 @@
     margin-top: 10px;
     word-break: break-all;
 }
+
 .RoomCard .link {
     text-decoration: none;
 }
+
 .RoomCard .content {
     padding: 20px;
 }
+
 .RoomCard .LastMessage {
     color: gray;
 }

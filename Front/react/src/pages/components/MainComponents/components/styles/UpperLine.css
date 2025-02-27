@@ -10,9 +10,11 @@
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
 }
+
 .UpperLine img {
     width: 25px;
 }
+
 .UpperLine img:hover {
     cursor: pointer;
 }

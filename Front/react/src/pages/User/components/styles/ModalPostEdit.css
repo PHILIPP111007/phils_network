@@ -4,6 +4,7 @@
     max-height: calc(100vh - 110px);
     overflow-y: auto;
 }
+
 .ModalPostEdit textarea {
     font-family: inherit;
     font-size: inherit;
@@ -12,10 +13,11 @@
     min-height: 200px;
     resize: none;
     outline: none;
-	border: 1px solid;
+    border: 1px solid;
     overflow: auto;
     padding: 5px;
 }
+
 .ModalPostEdit button {
     margin: 10px;
 }

@@ -3,10 +3,12 @@
     align-items: center;
     justify-content: center;
 }
+
 .friends-section {
     display: flex;
     justify-content: center;
 }
+
 .friends-section h3 {
     margin-bottom: 40px;
     text-align: center;

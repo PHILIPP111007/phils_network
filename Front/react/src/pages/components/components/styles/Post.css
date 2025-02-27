@@ -3,15 +3,19 @@
     padding: 20px;
     word-break: break-word;
 }
+
 .Post .link {
     text-decoration: none;
 }
+
 .Post .content {
     white-space: pre-line;
 }
+
 .settingsLogo {
     width: 25px;
 }
+
 .settingsLogo:hover {
     cursor: pointer;
 }

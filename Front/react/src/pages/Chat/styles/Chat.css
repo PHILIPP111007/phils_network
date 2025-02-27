@@ -4,20 +4,25 @@
     max-width: 800px;
     word-break: break-word;
 }
+
 .Chat .Message {
     margin-bottom: 10px;
     padding: 5px;
     line-height: 20px;
 }
+
 .Chat .info {
     margin-bottom: 10px;
 }
+
 .Chat .info a {
     text-decoration: none;
 }
+
 .Chat .text {
     white-space: pre-line;
 }
+
 .Chat .UserInput {
     position: fixed;
     bottom: 10px;
@@ -25,6 +30,7 @@
     transform: translate(-50%, -50%);
     display: flex;
 }
+
 .Chat .TextArea {
     width: 400px;
     resize: none;
@@ -34,33 +40,39 @@
     font-family: inherit;
     font-size: inherit;
     line-height: inherit;
-	border: 1px solid;
+    border: 1px solid;
     padding: 5px;
     border-right: none;
     border-left: none;
     line-height: 20px;
 }
+
 .Chat #SendButton {
     width: 25px;
     border-top: 1px solid;
     border-bottom: 1px solid;
     border-right: 1px solid;
 }
+
 .Chat #SendButton:hover {
     cursor: pointer;
 }
+
 .Chat #SettingsButton {
     width: 30px;
     border-top: 1px solid;
     border-bottom: 1px solid;
     border-left: 1px solid;
 }
+
 .Chat #SettingsButton:hover {
     cursor: pointer;
 }
+
 .Chat .Wrapper-InView {
     margin-top: 100px;
 }
+
 .Chat .Wrapper-Scrollbottom {
     margin-top: 10px;
 }

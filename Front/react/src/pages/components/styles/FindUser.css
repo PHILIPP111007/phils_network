@@ -1,9 +1,11 @@
 .FindUser {
     text-align: center;
 }
+
 .FindUser input {
     margin-bottom: 10px;
 }
+
 .FindUser button {
     margin-bottom: 30px;
 }

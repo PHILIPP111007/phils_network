@@ -4,6 +4,7 @@
     overflow-y: auto;
     text-align: center;
 }
+
 .ModalRoomCreate .card {
     display: flex;
     justify-content: space-between;
