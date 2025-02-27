@@ -31,7 +31,7 @@ export default function SubscribersSection() {
 
     return (
         <div className="Friends">
-            <MainComponents oading={loading} />
+            <MainComponents loading={loading} />
 
             <ScrollToTopOrBottom bottom={false} />
 
