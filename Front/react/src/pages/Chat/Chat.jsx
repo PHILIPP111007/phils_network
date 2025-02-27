@@ -5,9 +5,10 @@ import { useNavigate, useParams } from "react-router-dom"
 import { useInView } from "react-intersection-observer"
 import { HttpMethod } from "../../data/enums"
 import { UserContext } from "../../data/context"
+import { MessagesByRoomCache, RoomsCache } from "../../modules/cache"
+import rememberPage from "../../modules/rememberPage"
 import useObserver from "../../hooks/useObserver"
 import getWebSocket from "../../modules/getWebSocket"
-import { MessagesByRoomCache, RoomsCache } from "../../modules/cache"
 import Fetch from "../../API/Fetch"
 import MainComponents from "../components/MainComponents/MainComponents"
 import LazyDiv from "../components/LazyDiv"
@@ -105,6 +106,8 @@ export default function Chat() {
                     mainSets.value.invitationChanges.subscribers = data.room.subscribers_info.map((user) => {
                         return { ...user, isInRoom: true }
                     })
+
+                    rememberPage(`chats/${params.username}/${data.room.id}`)
 
                     var messages_by_room = MessagesByRoomCache.get(mainSets.value.room.id)
                     if (messages_by_room && messages_by_room.length > 0) {
