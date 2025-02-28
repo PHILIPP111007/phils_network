@@ -15,7 +15,7 @@ COPY ./Front/react/src ./src
 RUN npm run build
 
 
-FROM nginx:stable-alpine
+FROM nginx:1.27.4
 
 RUN rm /usr/share/nginx/html/*
 COPY --from=client /usr/src/app/build /usr/share/nginx/html
