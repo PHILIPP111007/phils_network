@@ -69,12 +69,12 @@ class RoomService:
 		if room_name is None:
 			return None
 
-		pk_list: list[int] | None = request.data.get("subscribers", None)
+		subscribers_pk_list: list[int] | None = request.data.get("subscribers", None)
 		room = Room(name=room_name)
 		room.save()
 
-		if pk_list:
-			subscribers = User.objects.filter(pk__in=pk_list)
+		if subscribers_pk_list:
+			subscribers = User.objects.filter(pk__in=subscribers_pk_list)
 
 			if subscribers:
 				room.subscribers.add(request.user)
