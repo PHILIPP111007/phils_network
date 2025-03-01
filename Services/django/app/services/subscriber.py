@@ -122,14 +122,9 @@ class SubscriberService:
 		return {"ok": True}
 
 	@classmethod
-	def get_user_status(cls, request: Request, pk: int):
-		user_1 = (
-			cls.filter(user_id=request.user.pk, subscribe_id=pk).only("pk").exists()
-		)
-
-		user_2 = (
-			cls.filter(user_id=pk, subscribe_id=request.user.pk).only("pk").exists()
-		)
+	def get_user_status(cls, user: User, pk: int):
+		user_1 = cls.filter(user_id=user.pk, subscribe_id=pk).only("pk").exists()
+		user_2 = cls.filter(user_id=pk, subscribe_id=user.pk).only("pk").exists()
 
 		# If we are friends, I can see his blog.
 		if user_1 and user_2:
