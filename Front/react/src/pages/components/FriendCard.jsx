@@ -13,11 +13,11 @@ export default function FriendCard({ user }) {
             <Link to={`/users/${user.username}/`} >
                 <div className="info">
                     <div className="name">
-                        {user.first_name ? user.first_name : "No name"} {user.last_name ? user.last_name : "No name"} {showOnlineStatus({ user: user })}
+                        {user.first_name ? user.first_name : "No name"} {user.last_name ? user.last_name : "No name"}
                     </div>
 
                     <div className="username">
-                        @{user.username}
+                        @{user.username} {showOnlineStatus({ user: user })}
                     </div>
                 </div>
             </Link>
