@@ -1,11 +1,8 @@
 FROM python:3.13.2-slim
 WORKDIR /app
 
-# do not create files .pyc
-ENV PYTHONDONTWRITEBYTECODE 1
 # do not put stdout and stderr in a buffer
 ENV PYTHONUNBUFFERED 1
-
 
 RUN pip install --upgrade pip
 
