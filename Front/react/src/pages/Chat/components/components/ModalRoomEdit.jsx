@@ -5,6 +5,7 @@ import { FilterOption, HttpMethod } from "../../../../data/enums"
 import Fetch from "../../../../API/Fetch"
 import Loading from "../../../components/Loading"
 import Button from "../../../components/UI/Button"
+import showOnlineStatus from "../../../../modules/showOnlineStatus"
 
 export default function ModalRoomEdit({ mainSets, me, editRoom }) {
 
@@ -46,7 +47,7 @@ export default function ModalRoomEdit({ mainSets, me, editRoom }) {
                 <div className="info">
                     <div>
                         <Link to={`/users/${user.username}/`} >
-                            {user.first_name ? user.first_name : "No name"} {user.last_name ? user.last_name : "No name"} @{user.username}
+                            {user.first_name ? user.first_name : "No name"} {user.last_name ? user.last_name : "No name"} @{user.username} {showOnlineStatus({ user: user })}
                         </Link>
                     </div>
 
@@ -71,7 +72,7 @@ export default function ModalRoomEdit({ mainSets, me, editRoom }) {
                 <div className="info">
                     <div>
                         <Link to={`/users/${user.username}/`} >
-                            {user.first_name} {user.last_name} @{user.username}
+                            {user.first_name} {user.last_name} @{user.username} {showOnlineStatus({ user: user })}
                         </Link>
                     </div>
                 </div>
