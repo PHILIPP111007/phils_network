@@ -34,11 +34,15 @@ export default function Login() {
 
     async function login(event) {
         event.preventDefault()
-        var data = await Fetch({ action: "token/token/login/", method: HttpMethod.POST, body: loginForm })
+        var data = await Fetch({ action: "token/token/login/", method: HttpMethod.POST, body: loginForm, token: "" })
 
         if (data && !data.detail && data.auth_token) {
             localStorage.setItem(CacheKeys.TOKEN, data.auth_token)
             setIsAuth(true)
+
+            // Create online status
+            data = await Fetch({ action: "online_status/", method: HttpMethod.POST })
+
             auth()
         }
     }

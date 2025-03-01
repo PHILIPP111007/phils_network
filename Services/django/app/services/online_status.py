@@ -5,4 +5,5 @@ from django.contrib.auth.models import User
 class OnlineStatusService:
 	@staticmethod
 	def create(user: User) -> OnlineStatus:
-		return OnlineStatus.objects.create(user=user, is_online=False)
+		if not OnlineStatus.objects.filter(user=user):
+			return OnlineStatus.objects.create(user=user, is_online=False)
