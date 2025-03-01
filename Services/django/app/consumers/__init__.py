@@ -1,2 +1,2 @@
-from app.consumers.chat_consumer import ChatConsumer
-from app.consumers.online_status_consumer import OnlineStatusConsumer
+from app.consumers.chat import ChatConsumer
+from app.consumers.online_status import OnlineStatusConsumer
