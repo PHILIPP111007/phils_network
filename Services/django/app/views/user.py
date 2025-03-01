@@ -1,9 +1,9 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.request import Request
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.authentication import TokenAuthentication
 from rest_framework import status
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.request import Request
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from app.permissions import IsOwnerOrReadOnly
 from app.serializers import UserSerializer
@@ -32,7 +32,7 @@ class UserAPIView(APIView):
 			)
 
 		query = {"ok": True, "global_user": self.serializer_class(global_user[0]).data}
-		local_user = self.service_class.filter_by_username(username=username).first()
+		local_user = self.service_class.filter_by_username(username=username)[0]
 
 		if local_user is not None:
 			query["local_user"] = self.serializer_class(local_user).data
