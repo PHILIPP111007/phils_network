@@ -2,6 +2,7 @@ import "./styles/FriendCard.css"
 import { useState } from "react"
 import { Link } from "react-router-dom"
 import UserStatus from "./UserStatus"
+import showOnlineStatus from "../../modules/showOnlineStatus"
 
 export default function FriendCard({ user }) {
 
@@ -12,7 +13,7 @@ export default function FriendCard({ user }) {
             <Link to={`/users/${user.username}/`} >
                 <div className="info">
                     <div className="name">
-                        <p>{user.first_name ? user.first_name : "No name"} {user.last_name ? user.last_name : "No name"}</p>
+                        {user.first_name ? user.first_name : "No name"} {user.last_name ? user.last_name : "No name"} {showOnlineStatus({ user: user })}
                     </div>
 
                     <div className="username">

@@ -17,6 +17,7 @@ import Posts from "../components/Posts"
 import UserStatus from "../components/UserStatus"
 import LazyDiv from "../components/LazyDiv"
 import ScrollToTopOrBottom from "../components/MainComponents/components/ScrollToTopOrBottom"
+import showOnlineStatus from "../../modules/showOnlineStatus"
 import plusIcon from "../../images/plus-icon.svg"
 
 export default function User() {
@@ -122,7 +123,7 @@ export default function User() {
 
             <div className="UserCard">
                 <h3>{userLocal.first_name} {userLocal.last_name}</h3>
-                <div>@{userLocal.username}</div>
+                <div>@{userLocal.username} {showOnlineStatus({ user: userLocal })}</div>
                 <div className="UserBtns">
                     {!isUserGlobal
                         &&

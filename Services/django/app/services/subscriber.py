@@ -1,15 +1,14 @@
 from typing import Callable
 
-from django.db.models.query import QuerySet
-from django.db.models import Q, Subquery
-from django.contrib.auth.models import User
-
 from rest_framework.request import Request
 from rest_framework.utils.serializer_helpers import ReturnList
 
-from app.enums import SubscriberStatus, DeleteOption, FilterOption
+from app.enums import DeleteOption, FilterOption, SubscriberStatus
+from app.models import OnlineStatus, Subscriber
 from app.serializers import UserSerializer
-from app.models import Subscriber
+from django.contrib.auth.models import User
+from django.db.models import Q, Subquery
+from django.db.models.query import QuerySet
 
 
 class SubscriberService:
@@ -90,6 +89,10 @@ class SubscriberService:
 		if option_func:
 			query = option_func(pk)
 			if serializer and not isinstance(query, int):
+				for user in query:
+					online_status = OnlineStatus.objects.filter(user_id=user.pk).first()
+					if online_status:
+						user.is_online = online_status.is_online
 				query = UserSerializer(query, many=True).data
 			return query
 		return None
@@ -137,4 +140,3 @@ class SubscriberService:
 			return SubscriberStatus.HE_SUBSCRIBER.value
 		else:
 			return SubscriberStatus.NO_DATA.value
-

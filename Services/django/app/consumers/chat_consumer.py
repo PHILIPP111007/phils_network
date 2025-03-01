@@ -2,10 +2,9 @@ __all__ = ["ChatConsumer"]
 
 import json
 
-from rest_framework.authtoken.models import Token
-
-from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
+from channels.generic.websocket import AsyncWebsocketConsumer
+from rest_framework.authtoken.models import Token
 
 from app.serializers import MessageSerializer
 from app.services import MessageService

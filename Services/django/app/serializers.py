@@ -15,9 +15,11 @@ from django.contrib.auth.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
+	is_online = serializers.BooleanField(read_only=True)
+
 	class Meta:
 		model = User
-		fields = ("pk", "username", "first_name", "last_name", "email")
+		fields = ("pk", "username", "first_name", "last_name", "email", "is_online")
 
 
 class BlogSerializer(serializers.ModelSerializer):

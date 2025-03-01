@@ -57,7 +57,12 @@ export default function Register() {
             }
 
             if (typeof data.username === "string") {
-                setUser(data)
+
+                // Create online status
+                await Fetch({ action: "online_status/", method: HttpMethod.POST })
+
+                setUser({ ...data, is_online: false })
+
                 navigate("/login/")
             }
         } else {

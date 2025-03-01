@@ -1,0 +1,2 @@
+from app.consumers.chat_consumer import ChatConsumer
+from app.consumers.online_status_consumer import OnlineStatusConsumer

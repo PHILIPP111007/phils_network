@@ -1,4 +1,12 @@
-from app.models import Blog, Message, Room, RoomCreator, RoomInvitation, Subscriber
+from app.models import (
+	Blog,
+	Message,
+	OnlineStatus,
+	Room,
+	RoomCreator,
+	RoomInvitation,
+	Subscriber,
+)
 from django.contrib import admin
 
 
@@ -42,3 +50,9 @@ class MessageAdmin(admin.ModelAdmin):
 	exclude = ["text"]
 	list_display = ("sender", "room", "timestamp")
 	list_filter = ("sender", "room")
+
+
+@admin.register(OnlineStatus)
+class OnlineStatusAdmin(admin.ModelAdmin):
+	list_display = ("user", "is_online")
+	list_filter = ("user", "is_online")

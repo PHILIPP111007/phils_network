@@ -1,19 +1,32 @@
-from django.db.models.query import QuerySet
-from django.contrib.auth.models import User
-
 from rest_framework.request import Request
+
+from app.models import OnlineStatus
+from django.contrib.auth.models import User
+from django.db.models.query import QuerySet
 
 
 class UserService:
 	@staticmethod
 	def filter(pk: int) -> QuerySet[User]:
-		return User.objects.filter(pk=pk).only("username", "first_name", "last_name")
+		users = User.objects.filter(pk=pk).only(
+			"pk", "username", "first_name", "last_name"
+		)
+		for user in users:
+			online_status = OnlineStatus.objects.filter(user_id=user.pk).first()
+			if online_status:
+				user.is_online = online_status.is_online
+		return users
 
 	@staticmethod
 	def filter_by_username(username: str) -> QuerySet[User]:
-		return User.objects.filter(username=username).only(
-			"username", "first_name", "last_name"
+		users = User.objects.filter(username=username).only(
+			"pk", "username", "first_name", "last_name"
 		)
+		for user in users:
+			online_status = OnlineStatus.objects.filter(user_id=user.pk).first()
+			if online_status:
+				user.is_online = online_status.is_online
+		return users
 
 	@staticmethod
 	def filter_find(request: Request) -> QuerySet[User] | User | None:
@@ -52,8 +65,12 @@ class UserService:
 				pk=request.user.pk
 			)
 
+			for user in query_full:
+				user.is_online = (
+					OnlineStatus.objects.filter(user=user).first().is_online
+				)
+
 			return query_full
-		
 
 	@staticmethod
 	def put(user: User, request: Request) -> User:
