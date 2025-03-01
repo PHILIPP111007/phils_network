@@ -52,7 +52,7 @@ Have fun and if you want please leave feedback!
 ## Production installation
 
 ```sh
-docker-compose up -d
+docker-compose up
 
 docker-compose run django python manage.py createsuperuser
 ```
