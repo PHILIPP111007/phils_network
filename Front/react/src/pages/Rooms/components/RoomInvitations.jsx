@@ -34,7 +34,6 @@ export default function RoomInvitations() {
                     if (data && data.ok) {
                         setRoomInvitations((prev) => {
                             var newRooms = [...prev.filter((room) => room.id !== room_id)]
-                            console.log(newRooms)
                             return newRooms
                         })
                     }
