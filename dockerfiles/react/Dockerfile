@@ -18,7 +18,7 @@ RUN npm run build
 FROM nginx:1.27.4
 
 RUN rm /usr/share/nginx/html/*
-COPY --from=client /usr/src/app/build /usr/share/nginx/html
+COPY --from=client /app/build /usr/share/nginx/html
 RUN rm /etc/nginx/conf.d/default.conf
 COPY ./dockerfiles/react/nginx.conf /etc/nginx/conf.d
 
