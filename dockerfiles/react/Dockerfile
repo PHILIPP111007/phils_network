@@ -1,5 +1,5 @@
 FROM node:23.8.0-alpine as client
-WORKDIR /usr/src/app
+WORKDIR /app
 
 RUN npm install -g npm
 

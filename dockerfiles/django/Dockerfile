@@ -1,5 +1,5 @@
 FROM python:3.13.2-slim
-WORKDIR /usr/src/app
+WORKDIR /app
 
 # do not create files .pyc
 ENV PYTHONDONTWRITEBYTECODE 1
