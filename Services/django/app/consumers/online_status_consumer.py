@@ -39,18 +39,6 @@ class OnlineStatusConsumer(AsyncWebsocketConsumer):
 
 		await self.channel_layer.group_discard(self.username_group, self.channel_name)
 
-	async def receive(self, text_data):
-		"""
-		Called with a decoded WebSocket frame.
-		Receive message from WebSocket, create message in the DB
-		and send it to room group.
-		"""
-		...
-
-	async def chat_message(self, event):
-		"""Receive message from room group and send it to WebSocket."""
-		...
-
 
 @database_sync_to_async
 def _get_user_pk(token_key: str) -> int | None:
