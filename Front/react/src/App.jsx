@@ -1,6 +1,6 @@
 import "./styles/App.css"
 import "./styles/theme.css"
-import { Suspense, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import { AuthContext, UserContext } from "./data/context"
 import { PrivateRoutes, PublicRoutes } from "./data/routes"
@@ -26,9 +26,11 @@ export default function App() {
 
     useAuth({ username: user.username, setIsAuth: setIsAuth })
 
-    if (isAuth && user.username) {
-        getWebSocket({ socket_name: "OnlineSocket", path: `online_status/${user.username}/` })
-    }
+    useEffect(() => {
+        if (isAuth && user.username) {
+            getWebSocket({ socket_name: "OnlineSocket", path: `online_status/${user.username}/` })
+        }
+    }, [])
 
     return (
         <AuthContext.Provider value={{ isAuth, setIsAuth }}>
