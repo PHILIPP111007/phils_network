@@ -87,7 +87,6 @@ TEMPLATES: list[dict] = [
 	},
 ]
 
-WSGI_APPLICATION: str = "settings.wsgi.application"
 ASGI_APPLICATION: str = "settings.asgi.application"
 
 # If you need to use Redis:
