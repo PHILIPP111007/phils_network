@@ -77,4 +77,4 @@ class OnlineStatus(models.Model):
 		return f"{self.user.username} [ is_online={self.is_online} ]"
 
 	class Meta:
-		verbose_name_plural = "OnlineStatuses"
+		verbose_name_plural = "Online Statuses"
