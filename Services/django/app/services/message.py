@@ -1,7 +1,6 @@
+from app.models import Message, Room
 from django.conf import settings
 from django.db.models.query import QuerySet
-
-from app.models import Room, Message
 
 
 class MessageService:

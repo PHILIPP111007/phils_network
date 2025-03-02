@@ -1,12 +1,11 @@
+from rest_framework.utils.serializer_helpers import ReturnList
+
+from app.cache import get_user_cache
+from app.models import Blog
+from app.serializers import BlogSerializer
 from django.conf import settings
 from django.core.cache import cache
 from django.db.models.query import QuerySet
-
-from rest_framework.utils.serializer_helpers import ReturnList
-
-from app.models import Blog
-from app.serializers import BlogSerializer
-from app.cache import get_user_cache
 
 
 class BlogService:
