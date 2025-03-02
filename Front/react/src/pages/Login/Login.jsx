@@ -41,7 +41,7 @@ export default function Login() {
             setIsAuth(true)
 
             // Create online status
-            data = await Fetch({ action: "api/v1/online_status/", method: HttpMethod.POST })
+            data = await Fetch({ action: "api/v2/online_status/", method: HttpMethod.POST })
 
             auth()
         }
