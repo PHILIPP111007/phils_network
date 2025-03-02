@@ -26,5 +26,7 @@ def get_session():
 
 SessionDep = Annotated[Session, Depends(get_session)]
 
+
+# docker ps
 # docker exec -it ad3ce97519e1 sh
-# psql postgres --username=postgres --password=postgres --host=db --port=5432
+# psql postgres --username=postgres --host=db --port=5432
