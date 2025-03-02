@@ -3,12 +3,13 @@ import "../../styles/Posts.css"
 import { use, useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { useInView } from "react-intersection-observer"
-import { UserContext } from "../../data/context"
+import { UserContext, AuthContext } from "../../data/context"
 import { useSetUser } from "../../hooks/useAuth"
 import { HttpMethod } from "../../data/enums"
 import useObserver from "../../hooks/useObserver"
 import rememberPage from "../../modules/rememberPage"
 import Fetch from "../../API/Fetch"
+import getWebSocket from "../../modules/getWebSocket"
 import MainComponents from "../components/MainComponents/MainComponents"
 import Modal from "../components/Modal"
 import ModalPostEdit from "./components/ModalPostEdit"
@@ -23,6 +24,7 @@ import plusIcon from "../../images/plus-icon.svg"
 export default function User() {
 
     var { user, setUser } = use(UserContext)
+    var { isAuth } = use(AuthContext)
     var [ref, inView] = useInView()
     var params = useParams()
     var [userLocal, setUserLocal] = useState(user)
@@ -110,6 +112,13 @@ export default function User() {
         setPosts((prev) => [])
         getPosts(0)
     }, [params.username])
+
+    useEffect(() => {
+        if (isAuth) {
+            console.log("WPDKWKDWOKDWKOD\n\n\n")
+            getWebSocket({ socket_name: "OnlineSocket", path: `online_status/${user.username}/` })
+        }
+    }, [isAuth])
 
     useSetUser({ username: params.username, setUser: setUser, setUserLocal: setUserLocal })
 
