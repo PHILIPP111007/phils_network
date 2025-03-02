@@ -1,4 +1,6 @@
 __all__ = ["Blog"]
+
+
 from datetime import datetime
 
 from sqlmodel import Field, SQLModel
