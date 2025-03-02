@@ -13,9 +13,9 @@ class OnlineStatusAPIView(APIView):
 	authentication_classes = (TokenAuthentication,)
 	permission_classes = (IsAuthenticated,)
 
-	def post(self, request: Request) -> Response:
+	async def post(self, request: Request) -> Response:
 		self.check_permissions(request=request)
 
-		OnlineStatusService.create(user=request.user)
+		await OnlineStatusService.create(user=request.user)
 
 		return Response({"ok": True}, status=status.HTTP_200_OK)
