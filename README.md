@@ -59,6 +59,7 @@ docker-compose run django python manage.py createsuperuser
 
 Then go to <http://0.0.0.0/> \
 Go to <http://0.0.0.0/admin_page/> to see django admin page
+Go to <http://0.0.0.0:8080/docs> to see Swagger documentation
 
 If you are hosting this site, then go to `Front/react/src/data/constants.js` and replace `SERVER_HOST` with your server IP
 

@@ -35,6 +35,28 @@ services:
       MESSAGES_TO_LOAD: "30"
       DATETIME_FORMAT: "%Y-%m-%d %H:%M"
 
+  fastapi:
+    container_name: fastapi
+    restart: unless-stopped
+    environment:
+      PG_NAME: postgres
+      PG_USER: postgres
+      PG_HOST: db
+      PG_PORT: "5432"
+      PG_PASSWORD: postgres
+    build:
+      context: .
+      dockerfile: ./dockerfiles/fastapi/Dockerfile
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    command: >
+      sh -c "fastapi run --workers 1 --port 8080 app/main.py"
+    networks:
+      - nginx_network
+      - db_network
+
   cache:
     container_name: cache
     restart: unless-stopped
