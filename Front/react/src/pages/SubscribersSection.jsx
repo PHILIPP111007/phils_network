@@ -14,7 +14,7 @@ import { FilterOption } from "../data/enums"
 export default function SubscribersSection() {
 
     var params = useParams()
-    rememberPage(`friends/${params.username}/subscribers-section/`)
+    rememberPage(`friends/${params.username}/subscribers-section`)
 
     var [subscribers, setSubscribers] = useState([])
     var [filter, setFilter] = useState({ username: "", first_name: "", last_name: "" })

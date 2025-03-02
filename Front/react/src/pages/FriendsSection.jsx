@@ -14,7 +14,7 @@ import ScrollToTopOrBottom from "./components/MainComponents/components/ScrollTo
 export default function FriendsSection() {
 
     var params = useParams()
-    rememberPage(`friends/${params.username}/friends-section/`)
+    rememberPage(`friends/${params.username}/friends-section`)
 
     var [friends, setFriends] = useState([])
     var [filter, setFilter] = useState({ username: "", first_name: "", last_name: "" })

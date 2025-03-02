@@ -14,7 +14,7 @@ import ScrollToTopOrBottom from "./components/MainComponents/components/ScrollTo
 export default function SubscriptionsSection() {
 
     var params = useParams()
-    rememberPage(`friends/${params.username}/subscriptions-section/`)
+    rememberPage(`friends/${params.username}/subscriptions-section`)
 
     var [subscriptions, setSubscriptions] = useState([])
     var [filter, setFilter] = useState({ username: "", first_name: "", last_name: "" })
