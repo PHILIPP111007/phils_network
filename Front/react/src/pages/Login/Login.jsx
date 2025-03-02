@@ -16,7 +16,7 @@ export default function Login() {
 
     async function auth() {
         var token = getToken()
-        var data = await Fetch({ action: "auth/users/me/", method: HttpMethod.GET })
+        var data = await Fetch({ action: "api/v1/auth/users/me/", method: HttpMethod.GET })
 
         if (data && !data.detail && data.username && token) {
             setUser({ ...user, ...data })
@@ -34,14 +34,14 @@ export default function Login() {
 
     async function login(event) {
         event.preventDefault()
-        var data = await Fetch({ action: "token/token/login/", method: HttpMethod.POST, body: loginForm, token: "" })
+        var data = await Fetch({ action: "api/v1/token/token/login/", method: HttpMethod.POST, body: loginForm, token: "" })
 
         if (data && !data.detail && data.auth_token) {
             localStorage.setItem(CacheKeys.TOKEN, data.auth_token)
             setIsAuth(true)
 
             // Create online status
-            data = await Fetch({ action: "online_status/", method: HttpMethod.POST })
+            data = await Fetch({ action: "api/v1/online_status/", method: HttpMethod.POST })
 
             auth()
         }

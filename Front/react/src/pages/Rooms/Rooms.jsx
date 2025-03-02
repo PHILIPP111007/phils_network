@@ -28,7 +28,7 @@ export default function Rooms() {
     async function createRoom(room) {
         room.subscribers.push(user.pk)
 
-        var data = await Fetch({ action: "room/", method: HttpMethod.POST, body: room })
+        var data = await Fetch({ action: "api/v1/room/", method: HttpMethod.POST, body: room })
         if (data && data.ok) {
             var newRooms = [data.room, ...rooms]
             setRooms(newRooms)
@@ -69,7 +69,7 @@ export default function Rooms() {
 
     useEffect(() => {
         setLoading(true)
-        Fetch({ action: "room/", method: HttpMethod.GET })
+        Fetch({ action: "api/v1/room/", method: HttpMethod.GET })
             .then((data) => {
                 if (data && data.ok) {
                     setRooms(data.rooms)

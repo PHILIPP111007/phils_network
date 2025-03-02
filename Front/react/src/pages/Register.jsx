@@ -22,7 +22,7 @@ export default function Register() {
 
     async function auth() {
         var token = getToken()
-        var data = await Fetch({ action: "auth/users/me/", method: HttpMethod.GET })
+        var data = await Fetch({ action: "api/v1/auth/users/me/", method: HttpMethod.GET })
 
         if (data && !data.detail && data.username && token) {
             setUser({ ...user, ...data })
@@ -39,7 +39,7 @@ export default function Register() {
         event.preventDefault()
 
         if (registerForm.password === registerForm.password2) {
-            var data = await Fetch({ action: "auth/users/", method: HttpMethod.POST, body: registerForm })
+            var data = await Fetch({ action: "api/v1/auth/users/", method: HttpMethod.POST, body: registerForm })
 
             var new_errors = []
             if (data.username) {

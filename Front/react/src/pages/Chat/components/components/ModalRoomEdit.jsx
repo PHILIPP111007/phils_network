@@ -91,7 +91,7 @@ export default function ModalRoomEdit({ mainSets, me, editRoom }) {
         if (mainSets.value.isCreator) {
             setLoading(true)
 
-            Fetch({ action: `friends/${FilterOption.FRIENDS}/`, method: HttpMethod.GET })
+            Fetch({ action: `api/v1/friends/${FilterOption.FRIENDS}/`, method: HttpMethod.GET })
                 .then((data) => {
                     if (data && data.ok) {
                         var response = data.query

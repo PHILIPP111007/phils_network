@@ -14,7 +14,7 @@ export default function ModalSettings(props) {
     async function userUpdate(event) {
         event.preventDefault()
         if (userNew.first_name || userNew.last_name || userNew.email) {
-            var data = await Fetch({ action: `user/${user.pk}/`, method: HttpMethod.PUT, body: userNew })
+            var data = await Fetch({ action: `api/v1/user/${user.pk}/`, method: HttpMethod.PUT, body: userNew })
             if (data.ok) {
                 setUser(data.user)
             }

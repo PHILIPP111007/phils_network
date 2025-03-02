@@ -35,7 +35,7 @@ export default function SettingsBar(props) {
     }
 
     async function logout() {
-        await Fetch({ action: "token/token/logout/", method: HttpMethod.POST })
+        await Fetch({ action: "api/v1/token/token/logout/", method: HttpMethod.POST })
             .then(() => {
                 localStorage.clear()
                 setIsAuth(false)

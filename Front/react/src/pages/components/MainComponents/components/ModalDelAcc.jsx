@@ -11,7 +11,7 @@ export default function ModalDelAcc() {
     var { user, setUser } = use(UserContext)
 
     async function deleteAccount() {
-        var data = await Fetch({ action: `user/${user.pk}/`, method: HttpMethod.DELETE })
+        var data = await Fetch({ action: `api/v1/user/${user.pk}/`, method: HttpMethod.DELETE })
         if (data.ok) {
             localStorage.clear()
             setIsAuth(false)

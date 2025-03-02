@@ -25,7 +25,7 @@ export default function Friends() {
         if (findUser.username || findUser.first_name || findUser.last_name) {
             setLoading(true)
 
-            var data = await Fetch({ action: "find/", method: HttpMethod.POST, body: findUser })
+            var data = await Fetch({ action: "api/v1/find/", method: HttpMethod.POST, body: findUser })
             if (data && data.ok) {
                 setUsers(data.users)
             }

@@ -16,7 +16,7 @@ export default function RoomInvitations() {
 
 
     async function add_room(room_id) {
-        await Fetch({ action: `invite_chats/${user.username}/add_room/${room_id}/`, method: HttpMethod.POST })
+        await Fetch({ action: `api/v1/invite_chats/${user.username}/add_room/${room_id}/`, method: HttpMethod.POST })
             .then((data) => {
                 if (data && data.ok) {
                     setRoomInvitations((prev) => {
@@ -28,7 +28,7 @@ export default function RoomInvitations() {
     }
 
     async function remove_room(room_id) {
-        await Fetch({ action: `invite_chats/${user.username}/remove_room/${room_id}/`, method: HttpMethod.POST })
+        await Fetch({ action: `api/v1/invite_chats/${user.username}/remove_room/${room_id}/`, method: HttpMethod.POST })
             .then((data) => {
                 if (data && data.ok) {
                     if (data && data.ok) {
@@ -42,7 +42,7 @@ export default function RoomInvitations() {
     }
 
     useEffect(() => {
-        Fetch({ action: `invite_chats/${user.username}`, method: HttpMethod.GET })
+        Fetch({ action: `api/v1/invite_chats/${user.username}`, method: HttpMethod.GET })
             .then((data) => {
                 if (data && data.ok) {
                     setRoomInvitations(data.rooms)

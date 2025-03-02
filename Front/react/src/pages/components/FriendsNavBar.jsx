@@ -11,7 +11,7 @@ export default function FriendsNavBar() {
     var [subscribersCount, setSubscribersCount] = useState(0)
 
     useEffect(() => {
-        Fetch({ action: `friends/${FilterOption.SUBSCRIBERS_COUNT}/`, method: HttpMethod.GET })
+        Fetch({ action: `api/v1/friends/${FilterOption.SUBSCRIBERS_COUNT}/`, method: HttpMethod.GET })
             .then((data) => {
                 if (data && data.ok) {
                     setSubscribersCount(data.query)

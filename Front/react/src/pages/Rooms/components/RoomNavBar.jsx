@@ -11,7 +11,7 @@ export default function RoomNavBar() {
     var [roomInvitations, setRoomInvitations] = useState([])
 
     useEffect(() => {
-        Fetch({ action: `invite_chats/${user.username}`, method: HttpMethod.GET })
+        Fetch({ action: `api/v1/invite_chats/${user.username}`, method: HttpMethod.GET })
             .then((data) => {
                 if (data && data.ok) {
                     setRoomInvitations(data.rooms)
