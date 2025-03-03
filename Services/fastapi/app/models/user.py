@@ -24,8 +24,8 @@ class User(SQLModel, table=True):
             "lazy": "joined",
         },
     )
-    subscriber_subscriber: list["Subscriber"] = Relationship(
-        back_populates="subscriber",
+    subscriber_subscribe: list["Subscriber"] = Relationship(
+        back_populates="subscribe",
         sa_relationship_kwargs={
             "primaryjoin": "Subscriber.subscribe_id==User.id",
             "lazy": "joined",

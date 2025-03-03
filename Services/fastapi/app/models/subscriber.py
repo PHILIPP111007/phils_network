@@ -18,10 +18,10 @@ class Subscriber(SQLModel, table=True):
             foreign_keys="[Subscriber.user_id]",
         ),
     )
-    subscriber: "User" = Relationship(
+    subscribe: "User" = Relationship(
         sa_relationship=RelationshipProperty(
             "User",
-            back_populates="subscriber_subscriber",
+            back_populates="subscriber_subscribe",
             foreign_keys="[Subscriber.subscribe_id]",
         ),
     )
