@@ -22,7 +22,6 @@ from app.views import (
 	FindUserAPIView,
 	FriendsAPIView,
 	MessagesAPIView,
-	NewsAPIView,
 	RoomInvitationsAddAPIView,
 	RoomInvitationsAPIView,
 	RoomInvitationsRemoveAPIView,
@@ -46,9 +45,6 @@ blog_patterns = [
 	path("blog/<int:pk>/", BlogAPIView.as_view()),
 	path("blog/<str:username>/<int:loaded_posts>/", BlogAPIView.as_view()),
 ]
-news_patterns = [
-	path("news/<int:loaded_posts>/", NewsAPIView.as_view()),
-]
 find_patterns = [
 	path("find/", FindUserAPIView.as_view()),
 ]
@@ -68,10 +64,5 @@ room_patterns = [
 ]
 
 urlpatterns = (
-	auth_patterns
-	+ user_patterns
-	+ blog_patterns
-	+ news_patterns
-	+ find_patterns
-	+ room_patterns
+	auth_patterns + user_patterns + blog_patterns + find_patterns + room_patterns
 )
