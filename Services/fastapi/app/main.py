@@ -1,7 +1,8 @@
 import json
+from datetime import datetime
 
 from fastapi import FastAPI, Request
-from sqlmodel import Session, select
+from sqlmodel import Session, delete, select
 
 from app.constants import DATETIME_FORMAT, POSTS_TO_LOAD
 from app.database import SessionDep, engine
@@ -166,6 +167,44 @@ async def put_blog(session: SessionDep, request: Request, id: int):
     session.commit()
 
     return {"ok": True, "post": post}
+
+
+@app.post("/api/v2/blog/")
+async def post_blog(session: SessionDep, request: Request):
+    if not request.state.user:
+        return {"ok": False, "error": "can not authenticate"}
+
+    body = await request.body()
+    body = json.loads(body)
+
+    post = Blog(
+        user_id=body["user"],
+        content=body["content"],
+        timestamp=datetime.now(),
+        changed=False,
+    )
+
+    session.add(post)
+    session.commit()
+    session.refresh(post)
+
+    print({"ok": True, "post": post})
+
+    return {"ok": True, "post": post}
+
+
+@app.delete("/api/v2/blog/{id}")
+async def delete_blog(session: SessionDep, request: Request, id: int):
+    if not request.state.user:
+        return {"ok": False, "error": "can not authenticate"}
+
+    posts = session.exec(select(Blog).where(Blog.id == id)).unique().all()
+    post = posts[0]
+
+    session.exec(delete(Blog).where(Blog.id == post.id))
+    session.commit()
+
+    return {"ok": True}
 
 
 ###################################
