@@ -17,7 +17,6 @@ POST http://127.0.0.1:8000/token/token/logout/
 __all__ = ["urlpatterns"]
 
 from app.views import (
-	BlogAPIView,
 	ChatAPIView,
 	FindUserAPIView,
 	FriendsAPIView,
@@ -40,11 +39,6 @@ user_patterns = [
 	path("subscriber/<int:pk>/", SubscriberAPIView.as_view()),
 	path("friends/<int:option>/", FriendsAPIView.as_view()),
 ]
-blog_patterns = [
-	path("blog/", BlogAPIView.as_view()),
-	path("blog/<int:pk>/", BlogAPIView.as_view()),
-	path("blog/<str:username>/<int:loaded_posts>/", BlogAPIView.as_view()),
-]
 find_patterns = [
 	path("find/", FindUserAPIView.as_view()),
 ]
@@ -63,6 +57,4 @@ room_patterns = [
 	),
 ]
 
-urlpatterns = (
-	auth_patterns + user_patterns + blog_patterns + find_patterns + room_patterns
-)
+urlpatterns = auth_patterns + user_patterns + find_patterns + room_patterns

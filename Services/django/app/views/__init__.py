@@ -1,4 +1,3 @@
-from app.views.blog import BlogAPIView
 from app.views.chat import ChatAPIView
 from app.views.find_user import FindUserAPIView
 from app.views.friends import FriendsAPIView
