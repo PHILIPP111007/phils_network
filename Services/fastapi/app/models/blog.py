@@ -12,6 +12,6 @@ class Blog(SQLModel, table=True):
     id: int = Field(primary_key=True)
     timestamp: datetime
     content: str
-    changed: str
+    changed: bool
     user_id: int = Field(foreign_key="auth_user.id")
     user: "User" = Relationship(back_populates="blogs")
