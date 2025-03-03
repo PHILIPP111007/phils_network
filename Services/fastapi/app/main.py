@@ -145,6 +145,7 @@ async def put_blog(session: SessionDep, request: Request, id: int):
 
     body = await request.body()
     post.content = json.loads(body)["content"]
+    post.changed = True
 
     session.add(post)
     session.commit()
