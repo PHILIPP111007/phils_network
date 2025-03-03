@@ -8,5 +8,5 @@ class OnlineStatus(SQLModel, table=True):
     __tablename__ = "app_onlinestatus"
 
     id: int = Field(primary_key=True)
-    is_online: bool = Field()
-    user_id: int = Field()
+    is_online: bool
+    user_id: int = Field(foreign_key="auth_user.id")
