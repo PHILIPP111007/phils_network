@@ -56,7 +56,7 @@ async def add_user_to_request(request: Request, call_next):
 @app.post("/api/v2/online_status/")
 async def post_online_status(session: SessionDep, request: Request):
     if not request.state.user:
-        return {"ok": False, "error": "can not authenticate"}
+        return {"ok": False, "error": "Can not authenticate."}
 
     online_statuses = session.exec(
         select(OnlineStatus).where(OnlineStatus.user_id == request.state.user.id)
@@ -92,7 +92,7 @@ async def get_blog(
         )
 
     if not request.state.user:
-        return {"ok": False, "error": "can not authenticate"}
+        return {"ok": False, "error": "Can not authenticate."}
 
     users = session.exec(select(User).where(User.username == username)).unique().all()
 
@@ -154,10 +154,13 @@ async def get_blog(
 @app.put("/api/v2/blog/{id}")
 async def put_blog(session: SessionDep, request: Request, id: int):
     if not request.state.user:
-        return {"ok": False, "error": "can not authenticate"}
+        return {"ok": False, "error": "Can not authenticate."}
 
     posts = session.exec(select(Blog).where(Blog.id == id)).unique().all()
     post = posts[0]
+
+    if not post.user_id == request.state.user.id:
+        return {"ok": False, "error": "Access denied."}
 
     body = await request.body()
     post.content = json.loads(body)["content"]
@@ -172,7 +175,7 @@ async def put_blog(session: SessionDep, request: Request, id: int):
 @app.post("/api/v2/blog/")
 async def post_blog(session: SessionDep, request: Request):
     if not request.state.user:
-        return {"ok": False, "error": "can not authenticate"}
+        return {"ok": False, "error": "Can not authenticate."}
 
     body = await request.body()
     body = json.loads(body)
@@ -183,6 +186,9 @@ async def post_blog(session: SessionDep, request: Request):
         timestamp=datetime.now(),
         changed=False,
     )
+
+    if not post.user_id == request.state.user.id:
+        return {"ok": False, "error": "Access denied."}
 
     session.add(post)
     session.commit()
@@ -196,10 +202,13 @@ async def post_blog(session: SessionDep, request: Request):
 @app.delete("/api/v2/blog/{id}")
 async def delete_blog(session: SessionDep, request: Request, id: int):
     if not request.state.user:
-        return {"ok": False, "error": "can not authenticate"}
+        return {"ok": False, "error": "Can not authenticate."}
 
     posts = session.exec(select(Blog).where(Blog.id == id)).unique().all()
     post = posts[0]
+
+    if not post.user_id == request.state.user.id:
+        return {"ok": False, "error": "Access denied."}
 
     session.exec(delete(Blog).where(Blog.id == post.id))
     session.commit()
@@ -244,7 +253,7 @@ async def get_news(session: SessionDep, request: Request, loaded_posts: int):
         return query
 
     if not request.state.user:
-        return {"ok": False, "error": "can not authenticate"}
+        return {"ok": False, "error": "Can not authenticate."}
 
     friends = await _get_friends(id=request.state.user.id)
 
