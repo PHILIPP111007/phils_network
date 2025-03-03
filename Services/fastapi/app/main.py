@@ -1,8 +1,7 @@
-from os import environ
-
 from fastapi import FastAPI, Request
 from sqlmodel import Session, select
 
+from app.constants import DATETIME_FORMAT, POSTS_TO_LOAD
 from app.database import SessionDep, engine
 from app.enums import SubscriberStatus
 from app.models import Blog, OnlineStatus, Subscriber, Token, User
@@ -11,10 +10,6 @@ app = FastAPI(
     title="phils_network",
     version="0.1.0",
 )
-
-
-DATETIME_FORMAT: str = environ.get("DATETIME_FORMAT", "%Y-%m-%d %H:%M")
-POSTS_TO_LOAD: int = int(environ.get("POSTS_TO_LOAD", "20"))
 
 
 # Middleware to store user in request context
