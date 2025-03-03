@@ -1,7 +1,8 @@
-from database import SessionDep, engine
 from fastapi import FastAPI, Request
-from models import OnlineStatus, Token, User
 from sqlmodel import Session, select
+
+from app.database import SessionDep, engine
+from app.models import OnlineStatus, Token, User
 
 app = FastAPI(
     title="phils_network",
