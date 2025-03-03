@@ -3,12 +3,13 @@ __all__ = ["Token"]
 
 from datetime import datetime
 
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, Relationship, SQLModel
 
 
 class Token(SQLModel, table=True):
     __tablename__ = "authtoken_token"
 
     key: str = Field(primary_key=True)
-    user_id: int = Field()
-    created: datetime = Field()
+    user_id: int = Field(foreign_key="auth_user.id")
+    created: datetime
+    user: "User" = Relationship(back_populates="tokens")
