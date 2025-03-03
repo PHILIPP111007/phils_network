@@ -41,7 +41,7 @@ class BlogAPIView(APIView):
 			)
 
 		if request.user.pk != unknown.pk:
-			data = SubscriberService.get_user_status(request=request, pk=unknown.pk)
+			data = SubscriberService.get_user_status(user=request.user, pk=unknown.pk)
 
 			if data != SubscriberStatus.IS_FRIEND.value:
 				return Response(
