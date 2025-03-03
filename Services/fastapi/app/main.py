@@ -54,7 +54,7 @@ async def add_user_to_request(request: Request, call_next):
 
 
 @app.post("/api/v2/online_status/")
-async def post_online_status(session: SessionDep, request: Request):
+async def post_online_status(session: SessionDep, request: Request) -> dict[str, bool]:
     if not request.state.user:
         return {"ok": False, "error": "Can not authenticate."}
 
@@ -78,7 +78,7 @@ async def post_online_status(session: SessionDep, request: Request):
 @app.get("/api/v2/blog/{username}/{loaded_posts}/")
 async def get_blog(
     session: SessionDep, request: Request, username: str, loaded_posts: int
-):
+) -> dict[str, list[Blog]]:
     async def _filter(user_id: int, subscribe_id: int) -> list[Subscriber]:
         return (
             session.exec(
@@ -152,7 +152,7 @@ async def get_blog(
 
 
 @app.put("/api/v2/blog/{id}")
-async def put_blog(session: SessionDep, request: Request, id: int):
+async def put_blog(session: SessionDep, request: Request, id: int) -> dict[str, Blog]:
     if not request.state.user:
         return {"ok": False, "error": "Can not authenticate."}
 
@@ -173,7 +173,7 @@ async def put_blog(session: SessionDep, request: Request, id: int):
 
 
 @app.post("/api/v2/blog/")
-async def post_blog(session: SessionDep, request: Request):
+async def post_blog(session: SessionDep, request: Request) -> dict[str, Blog]:
     if not request.state.user:
         return {"ok": False, "error": "Can not authenticate."}
 
@@ -194,13 +194,13 @@ async def post_blog(session: SessionDep, request: Request):
     session.commit()
     session.refresh(post)
 
-    print({"ok": True, "post": post})
-
     return {"ok": True, "post": post}
 
 
 @app.delete("/api/v2/blog/{id}")
-async def delete_blog(session: SessionDep, request: Request, id: int):
+async def delete_blog(
+    session: SessionDep, request: Request, id: int
+) -> dict[str, bool]:
     if not request.state.user:
         return {"ok": False, "error": "Can not authenticate."}
 
@@ -222,7 +222,9 @@ async def delete_blog(session: SessionDep, request: Request, id: int):
 
 
 @app.get("/api/v2/news/{loaded_posts}")
-async def get_news(session: SessionDep, request: Request, loaded_posts: int):
+async def get_news(
+    session: SessionDep, request: Request, loaded_posts: int
+) -> dict[str, list[Blog]]:
     async def _get_friends(id):
         set_1 = (
             session.exec(
