@@ -56,7 +56,7 @@ export default function User() {
             postsLength = posts.length
         }
 
-        var data = await Fetch({ action: `api/v1/blog/${params.username}/${postsLength}/`, method: HttpMethod.GET })
+        var data = await Fetch({ action: `api/v2/blog/${params.username}/${postsLength}/`, method: HttpMethod.GET })
         if (data && data.ok) {
             var newPosts = data.posts.map(post => {
                 return { ...post, postLen500: post.content.length > 500 }
@@ -161,7 +161,6 @@ export default function User() {
                 setMainSets={setMainSets}
                 setModalPost={setModalPostEdit}
             />
-
             <LazyDiv Ref={ref} />
         </div>
     )

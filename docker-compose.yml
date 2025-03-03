@@ -44,6 +44,8 @@ services:
       PG_HOST: db
       PG_PORT: "5432"
       PG_PASSWORD: postgres
+      DATETIME_FORMAT: "%Y-%m-%d %H:%M"
+      POSTS_TO_LOAD: "20"
     build:
       context: .
       dockerfile: ./dockerfiles/fastapi/Dockerfile
