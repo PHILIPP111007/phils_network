@@ -16,7 +16,6 @@ app = FastAPI(
 @app.middleware("http")
 async def add_user_to_request(request: Request, call_next):
     token = request.headers.get("Authorization")
-
     if token:
         token = token.split(" ")[1]  # Remove "Bearer"
         with Session(engine) as session:
@@ -122,16 +121,17 @@ async def get_blog_user_page(
 
 @app.get("/api/v2/news/{loaded_posts}")
 async def get_news(session: SessionDep, request: Request, loaded_posts: int):
-    def _get_friends(id):
-        set_1 = session.exec(select(Subscriber).where(Subscriber.user_id == id)).all()
+    async def _get_friends(id):
+        set_1 = session.exec(
+            select(Subscriber.subscribe_id).where(Subscriber.user_id == id)
+        ).all()
         set_2 = (
-            session.exec(select(Subscriber).where(Subscriber.subscribe_id == id))
+            session.exec(
+                select(Subscriber.user_id).where(Subscriber.subscribe_id == id)
+            )
             .unique()
             .all()
         )
-
-        set_1 = [subscriber.subscribe.id for subscriber in set_1]
-        set_2 = [subscriber.user.id for subscriber in set_2]
 
         set_3 = set()
         for id in set_1:
@@ -149,7 +149,7 @@ async def get_news(session: SessionDep, request: Request, loaded_posts: int):
     if not request.state.user:
         return {"ok": False, "error": "can not authenticate"}
 
-    friends = _get_friends(id=request.state.user.id)
+    friends = await _get_friends(id=request.state.user.id)
 
     posts = (
         session.exec(
