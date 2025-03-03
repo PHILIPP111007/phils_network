@@ -1,3 +1,5 @@
+import json
+
 from fastapi import FastAPI, Request
 from sqlmodel import Session, select
 
@@ -58,7 +60,7 @@ async def post_online_status(session: SessionDep, request: Request):
 
 
 @app.get("/api/v2/blog/{username}/{loaded_posts}/")
-async def get_blog_user_page(
+async def get_blog(
     session: SessionDep, request: Request, username: str, loaded_posts: int
 ):
     async def _filter(user_id: int, subscribe_id: int) -> list[Subscriber]:
@@ -100,7 +102,7 @@ async def get_blog_user_page(
         if data != SubscriberStatus.IS_FRIEND.value:
             return {"ok": False, "error": "Make friends to see his blog."}
 
-    posts = (
+    query = (
         session.exec(
             select(Blog)
             .where(Blog.user_id == unknown.id)
@@ -111,20 +113,55 @@ async def get_blog_user_page(
         .unique()
         .all()
     )
-    if not posts:
+    if not query:
         return {"ok": False, "error": "Not found user posts."}
 
-    for post in posts:
-        post.timestamp = post.timestamp.strftime(DATETIME_FORMAT)
+    posts = []
+    for post in query:
+        posts.append(
+            {
+                "id": post.id,
+                "timestamp": post.timestamp.strftime(DATETIME_FORMAT),
+                "content": post.content,
+                "changed": post.changed,
+                "user_id": post.user_id,
+                "user": {
+                    "username": post.user.username,
+                    "first_name": post.user.first_name,
+                    "last_name": post.user.last_name,
+                },
+            }
+        )
     return {"ok": True, "posts": posts}
+
+
+@app.put("/api/v2/blog/{id}")
+async def put_blog(session: SessionDep, request: Request, id: int):
+    if not request.state.user:
+        return {"ok": False, "error": "can not authenticate"}
+
+    posts = session.exec(select(Blog).where(Blog.id == id)).unique().all()
+    post = posts[0]
+
+    body = await request.body()
+    post.content = json.loads(body)["content"]
+
+    session.add(post)
+    session.commit()
+
+    return {"ok": True, "post": post}
 
 
 @app.get("/api/v2/news/{loaded_posts}")
 async def get_news(session: SessionDep, request: Request, loaded_posts: int):
     async def _get_friends(id):
-        set_1 = session.exec(
-            select(Subscriber.subscribe_id).where(Subscriber.user_id == id)
-        ).all()
+        set_1 = (
+            session.exec(
+                select(Subscriber.subscribe_id).where(Subscriber.user_id == id)
+            )
+            .unique()
+            .all()
+        )
         set_2 = (
             session.exec(
                 select(Subscriber.user_id).where(Subscriber.subscribe_id == id)
@@ -151,7 +188,7 @@ async def get_news(session: SessionDep, request: Request, loaded_posts: int):
 
     friends = await _get_friends(id=request.state.user.id)
 
-    posts = (
+    query = (
         session.exec(
             select(Blog)
             .where(Blog.user_id.in_(friends))
@@ -163,9 +200,24 @@ async def get_news(session: SessionDep, request: Request, loaded_posts: int):
         .all()
     )
 
-    if not posts:
-        return ({"ok": False, "error": "Not found posts."},)
+    if not query:
+        return {"ok": False, "error": "Not found posts."}
 
-    for post in posts:
-        post.timestamp = post.timestamp.strftime(DATETIME_FORMAT)
+    posts = []
+    for post in query:
+        posts.append(
+            {
+                "id": post.id,
+                "timestamp": post.timestamp.strftime(DATETIME_FORMAT),
+                "content": post.content,
+                "changed": post.changed,
+                "user_id": post.user_id,
+                "user": {
+                    "username": post.user.username,
+                    "first_name": post.user.first_name,
+                    "last_name": post.user.last_name,
+                },
+            }
+        )
+
     return {"ok": True, "posts": posts}
