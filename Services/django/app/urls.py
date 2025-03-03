@@ -23,7 +23,6 @@ from app.views import (
 	FriendsAPIView,
 	MessagesAPIView,
 	NewsAPIView,
-	OnlineStatusAPIView,
 	RoomInvitationsAddAPIView,
 	RoomInvitationsAPIView,
 	RoomInvitationsRemoveAPIView,
@@ -67,9 +66,6 @@ room_patterns = [
 		RoomInvitationsRemoveAPIView.as_view(),
 	),
 ]
-online_status_patterns = [
-	path("online_status/", OnlineStatusAPIView.as_view()),
-]
 
 urlpatterns = (
 	auth_patterns
@@ -78,5 +74,4 @@ urlpatterns = (
 	+ news_patterns
 	+ find_patterns
 	+ room_patterns
-	+ online_status_patterns
 )
