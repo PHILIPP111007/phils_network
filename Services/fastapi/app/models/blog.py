@@ -3,7 +3,7 @@ __all__ = ["Blog"]
 
 from datetime import datetime
 
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, Relationship, SQLModel
 
 
 class Blog(SQLModel, table=True):
@@ -14,3 +14,4 @@ class Blog(SQLModel, table=True):
     content: str
     changed: str
     user_id: int = Field(foreign_key="auth_user.id")
+    user: "User" = Relationship(back_populates="blogs")

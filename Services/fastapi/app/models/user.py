@@ -13,4 +13,7 @@ class User(SQLModel, table=True):
     first_name: str
     last_name: str
 
+    # Relations
     tokens: list["Token"] = Relationship(back_populates="user")
+    online_statuses: list["OnlineStatus"] = Relationship(back_populates="user")
+    blogs: list["Blog"] = Relationship(back_populates="user")
