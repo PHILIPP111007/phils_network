@@ -94,7 +94,7 @@ export default function User() {
             setModalPostEdit(false)
             newPost.changed = true
 
-            var data = await Fetch({ action: `api/v1/blog/${newPost.id}/`, method: HttpMethod.PUT, body: newPost })
+            var data = await Fetch({ action: `api/v2/blog/${newPost.id}/`, method: HttpMethod.PUT, body: newPost })
             if (data && data.ok) {
                 setPosts(posts.map(post => {
                     if (post.id === newPost.id) {
