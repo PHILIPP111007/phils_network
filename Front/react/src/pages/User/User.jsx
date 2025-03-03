@@ -67,7 +67,7 @@ export default function User() {
     }
 
     async function deletePost(oldPost) {
-        var data = await Fetch({ action: `api/v1/blog/${oldPost.id}/`, method: HttpMethod.DELETE })
+        var data = await Fetch({ action: `api/v2/blog/${oldPost.id}/`, method: HttpMethod.DELETE })
         if (data && data.ok) {
             setPosts((prev) => prev.filter(post => post.id !== oldPost.id))
             setModalPostEdit(false)
@@ -81,7 +81,7 @@ export default function User() {
             content: text,
         }
 
-        var data = await Fetch({ action: "api/v1/blog/", method: HttpMethod.POST, body: newPost })
+        var data = await Fetch({ action: "api/v2/blog/", method: HttpMethod.POST, body: newPost })
         if (data && data.ok) {
             newPost = { ...data.post, postLen500: data.post.content.length > 500, btnFlag: true }
             setPosts([newPost, ...posts])
