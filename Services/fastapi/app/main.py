@@ -42,6 +42,9 @@ async def add_user_to_request(request: Request, call_next):
     return response
 
 
+# OnlineStatus
+
+
 @app.post("/api/v2/online_status/")
 async def post_online_status(session: SessionDep, request: Request):
     if not request.state.user:
@@ -57,6 +60,9 @@ async def post_online_status(session: SessionDep, request: Request):
         session.commit()
 
     return {"ok": True}
+
+
+# Blog
 
 
 @app.get("/api/v2/blog/{username}/{loaded_posts}/")
@@ -151,6 +157,9 @@ async def put_blog(session: SessionDep, request: Request, id: int):
     session.commit()
 
     return {"ok": True, "post": post}
+
+
+# News
 
 
 @app.get("/api/v2/news/{loaded_posts}")
