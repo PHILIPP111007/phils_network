@@ -1,4 +1,4 @@
-__all__ = ["Blog"]
+__all__ = ["Subscriber"]
 
 
 from sqlalchemy.orm import RelationshipProperty
