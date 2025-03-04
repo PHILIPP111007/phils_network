@@ -51,7 +51,7 @@ export default function Chat() {
     async function sendMessage(text) {
         var sendingText = await text.trim()
         if (sendingText.length > 0) {
-            var message = { sender_id: user.pk, text: sendingText }
+            var message = { sender_id: user.id, text: sendingText }
             await chatSocket.current.send(JSON.stringify({ message: message }))
         }
     }

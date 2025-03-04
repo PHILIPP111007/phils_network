@@ -20,11 +20,11 @@ export default function ModalRoomCreate(props) {
                     <div>{user.first_name} {user.last_name} @{user.username}</div>
                 </div>
 
-                {room.subscribers.filter(pk => pk === user.pk).length === 0
+                {room.subscribers.filter(id => id === user.id).length === 0
                     ?
-                    <Button onClick={() => setRoom({ ...room, subscribers: [...room.subscribers, user.pk] })} >add</Button>
+                    <Button onClick={() => setRoom({ ...room, subscribers: [...room.subscribers, user.id] })} >add</Button>
                     :
-                    <Button onClick={() => setRoom({ ...room, subscribers: room.subscribers.filter(pk => pk !== user.pk) })} >delete</Button>
+                    <Button onClick={() => setRoom({ ...room, subscribers: room.subscribers.filter(id => id !== user.id) })} >delete</Button>
                 }
             </div>
         )
