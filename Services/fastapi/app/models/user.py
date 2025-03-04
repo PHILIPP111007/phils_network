@@ -16,7 +16,7 @@ class User(SQLModel, table=True):
     # Relations
     tokens: list["Token"] = Relationship(back_populates="user")
     online_statuses: list["OnlineStatus"] = Relationship(back_populates="user")
-    blogs: list["Blog"] = Relationship(back_populates="user")
+    blogs: list["Post"] = Relationship(back_populates="user")
     subscriber_user: list["Subscriber"] = Relationship(
         back_populates="user",
         sa_relationship_kwargs={

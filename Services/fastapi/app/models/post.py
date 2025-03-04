@@ -1,4 +1,4 @@
-__all__ = ["Blog"]
+__all__ = ["Post"]
 
 
 from datetime import datetime
@@ -6,8 +6,8 @@ from datetime import datetime
 from sqlmodel import Field, Relationship, SQLModel
 
 
-class Blog(SQLModel, table=True):
-    __tablename__ = "app_blog"
+class Post(SQLModel, table=True):
+    __tablename__ = "app_post"
 
     id: int = Field(primary_key=True)
     timestamp: datetime

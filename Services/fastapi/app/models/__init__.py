@@ -1,6 +1,6 @@
-from app.models.blog import Blog
 from app.models.message import Message
 from app.models.online_status import OnlineStatus
+from app.models.post import Post
 from app.models.room import Room
 from app.models.room_creator import RoomCreator
 from app.models.room_invitation import RoomInvitation

@@ -9,7 +9,7 @@ __all__ = [
 
 from rest_framework import serializers
 
-from app.models import Blog, Message, Room, RoomInvitation
+from app.models import Message, Post, Room, RoomInvitation
 from django.conf import settings
 from django.contrib.auth.models import User
 
@@ -49,7 +49,7 @@ class BlogSerializer(serializers.ModelSerializer):
 	# )
 
 	class Meta:
-		model = Blog
+		model = Post
 		fields = "__all__"
 
 

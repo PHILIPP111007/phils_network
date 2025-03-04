@@ -1,7 +1,7 @@
 from app.models import (
-	Blog,
 	Message,
 	OnlineStatus,
+	Post,
 	Room,
 	RoomCreator,
 	RoomInvitation,
@@ -10,8 +10,8 @@ from app.models import (
 from django.contrib import admin
 
 
-@admin.register(Blog)
-class BlogAdmin(admin.ModelAdmin):
+@admin.register(Post)
+class PostAdmin(admin.ModelAdmin):
 	exclude = ["content"]
 	list_display = ("user", "timestamp")
 	list_filter = ("user",)

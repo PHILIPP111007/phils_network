@@ -9,9 +9,9 @@ from app.constants import DATETIME_FORMAT, POSTS_TO_LOAD
 from app.database import SessionDep, engine
 from app.enums import DeleteOption, FilterOption, SubscriberStatus
 from app.models import (
-    Blog,
     Message,
     OnlineStatus,
+    Post,
     Room,
     RoomCreator,
     RoomInvitation,
@@ -84,7 +84,7 @@ async def post_online_status(session: SessionDep, request: Request) -> dict[str,
 
 
 ###################################
-# Blog ############################
+# Post ############################
 ###################################
 
 
@@ -133,11 +133,11 @@ async def get_blog(
 
     query = (
         session.exec(
-            select(Blog)
-            .where(Blog.user_id == unknown.id)
+            select(Post)
+            .where(Post.user_id == unknown.id)
             .offset(loaded_posts)
             .limit(POSTS_TO_LOAD)
-            .order_by(Blog.timestamp.desc())
+            .order_by(Post.timestamp.desc())
         )
         .unique()
         .all()
@@ -171,7 +171,7 @@ async def put_blog(session: SessionDep, request: Request, id: int):
     if not request.state.user:
         return {"ok": False, "error": "Can not authenticate."}
 
-    posts = session.exec(select(Blog).where(Blog.id == id)).unique().all()
+    posts = session.exec(select(Post).where(Post.id == id)).unique().all()
     post = posts[0]
 
     if post.user_id != request.state.user.id:
@@ -196,7 +196,7 @@ async def post_blog(session: SessionDep, request: Request):
     body = await request.body()
     body: dict = json.loads(body)
 
-    post = Blog(
+    post = Post(
         user_id=body["user"],
         content=body["content"],
         timestamp=datetime.now(),
@@ -220,13 +220,13 @@ async def delete_blog(
     if not request.state.user:
         return {"ok": False, "error": "Can not authenticate."}
 
-    posts = session.exec(select(Blog).where(Blog.id == id)).unique().all()
+    posts = session.exec(select(Post).where(Post.id == id)).unique().all()
     post = posts[0]
 
     if post.user_id != request.state.user.id:
         return {"ok": False, "error": "Access denied."}
 
-    session.exec(delete(Blog).where(Blog.id == post.id))
+    session.exec(delete(Post).where(Post.id == post.id))
     session.commit()
 
     return {"ok": True}
@@ -261,11 +261,11 @@ async def get_news(session: SessionDep, request: Request, loaded_posts: int):
 
     query = (
         session.exec(
-            select(Blog)
-            .where(Blog.user_id.in_(friends))
+            select(Post)
+            .where(Post.user_id.in_(friends))
             .offset(loaded_posts)
             .limit(POSTS_TO_LOAD)
-            .order_by(Blog.timestamp.desc())
+            .order_by(Post.timestamp.desc())
         )
         .unique()
         .all()
@@ -728,7 +728,7 @@ async def delete_user(
     session.exec(delete(Subscriber).where(Subscriber.user_id == user.id))
     session.exec(delete(Subscriber).where(Subscriber.subscribe_id == user.id))
     session.exec(delete(Token).where(Token.user_id == user.id))
-    session.exec(delete(Blog).where(Blog.user_id == user.id))
+    session.exec(delete(Post).where(Post.user_id == user.id))
     session.exec(delete(OnlineStatus).where(OnlineStatus.user_id == user.id))
     session.exec(delete(User).where(User.id == user.id))
     session.commit()
