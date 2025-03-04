@@ -883,3 +883,74 @@ async def get_room_invitation(session: SessionDep, request: Request, username: s
         return {"ok": False, "error": "Not found rooms."}
 
     return {"ok": True, "rooms": rooms}
+
+
+@app.post("/api/v2/invite_chats/{username}/add_room/{room_id}/")
+async def post_room_invitation_add(
+    session: SessionDep, request: Request, username: str, room_id: int
+):
+    if not request.state.user:
+        return {"ok": False, "error": "Can not authenticate."}
+
+    room_invites = (
+        session.exec(select(RoomInvitation).where(RoomInvitation.id == room_id))
+        .unique()
+        .all()
+    )
+    room_invite = room_invites[0]
+
+    room_creators = (
+        session.exec(
+            select(RoomCreator).where(RoomCreator.room_id == room_invite.room_id)
+        )
+        .unique()
+        .all()
+    )
+    room_creator = room_creators[0]
+
+    if room_creator:
+        session.exec(delete(RoomInvitation).where(RoomInvitation.id == room_invite.id))
+        rooms = (
+            session.exec(select(Room).where(Room.id == room_creator.room_id))
+            .unique()
+            .all()
+        )
+        room = rooms[0]
+
+        users = (
+            session.exec(select(User).where(User.username == username)).unique().all()
+        )
+        user = users[0]
+
+        flag = (
+            session.exec(
+                select(RoomSubscribers).where(
+                    RoomSubscribers.user_id == user.id,
+                    RoomSubscribers.room_id == room.id,
+                )
+            )
+            .unique()
+            .all()
+        )
+        if not flag:
+            room_subscriber = RoomSubscribers(user_id=user.id, room_id=room.id)
+            session.add(room_subscriber)
+            session.commit()
+        else:
+            session.exec(delete(RoomInvitation).where(RoomInvitation.id == room_id))
+            session.commit()
+
+    return {"ok": True}
+
+
+@app.post("/api/v2/invite_chats/{username}/remove_room/{room_id}/")
+async def post_room_invitation_remove(
+    session: SessionDep, request: Request, username: str, room_id: int
+):
+    if not request.state.user:
+        return {"ok": False, "error": "Can not authenticate."}
+
+    session.exec(delete(RoomInvitation).where(RoomInvitation.id == room_id))
+    session.commit()
+
+    return {"ok": True}
