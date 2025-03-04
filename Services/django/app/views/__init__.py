@@ -8,5 +8,4 @@ from app.views.rooms import (
 	RoomInvitationsRemoveAPIView,
 	RoomsAPIView,
 )
-from app.views.subscriber import SubscriberAPIView
 from app.views.user import UserAPIView

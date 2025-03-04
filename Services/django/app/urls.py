@@ -25,7 +25,6 @@ from app.views import (
 	RoomInvitationsAPIView,
 	RoomInvitationsRemoveAPIView,
 	RoomsAPIView,
-	SubscriberAPIView,
 	UserAPIView,
 )
 from django.urls import include, path
@@ -36,7 +35,6 @@ auth_patterns = [
 ]
 user_patterns = [
 	path("user/<str:username>/", UserAPIView.as_view()),
-	path("subscriber/<int:pk>/", SubscriberAPIView.as_view()),
 	path("friends/<int:option>/", FriendsAPIView.as_view()),
 ]
 find_patterns = [
