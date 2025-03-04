@@ -19,8 +19,6 @@ __all__ = ["urlpatterns"]
 from app.views import (
 	ChatAPIView,
 	MessagesAPIView,
-	RoomInvitationsAddAPIView,
-	RoomInvitationsRemoveAPIView,
 )
 from django.urls import include, path
 
@@ -31,14 +29,6 @@ auth_patterns = [
 room_patterns = [
 	path("room/<int:pk>/", ChatAPIView.as_view()),
 	path("room/<int:pk>/<int:loaded_messages>/", MessagesAPIView.as_view()),
-	path(
-		"invite_chats/<str:username>/add_room/<int:room_id>/",
-		RoomInvitationsAddAPIView.as_view(),
-	),
-	path(
-		"invite_chats/<str:username>/remove_room/<int:room_id>/",
-		RoomInvitationsRemoveAPIView.as_view(),
-	),
 ]
 
 urlpatterns = auth_patterns + room_patterns
