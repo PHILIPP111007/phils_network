@@ -31,3 +31,20 @@ class User(SQLModel, table=True):
             "lazy": "joined",
         },
     )
+    room_creators: list["RoomCreator"] = Relationship(back_populates="creator")
+    room_subscribers: list["RoomSubscribers"] = Relationship(back_populates="user")
+    messages: list["Message"] = Relationship(back_populates="sender")
+    room_invitations_creators: list["RoomInvitation"] = Relationship(
+        back_populates="creator",
+        sa_relationship_kwargs={
+            "primaryjoin": "RoomInvitation.creator_id==User.id",
+            "lazy": "joined",
+        },
+    )
+    room_invitations_to_users: list["RoomInvitation"] = Relationship(
+        back_populates="to_user",
+        sa_relationship_kwargs={
+            "primaryjoin": "RoomInvitation.to_user_id==User.id",
+            "lazy": "joined",
+        },
+    )
