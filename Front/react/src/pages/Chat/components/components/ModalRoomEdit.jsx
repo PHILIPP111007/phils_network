@@ -32,7 +32,7 @@ export default function ModalRoomEdit({ mainSets, me, editRoom }) {
             invitationChanges: {
                 subscribers: mainSets.value.invitationChanges.subscribers,
                 friends: mainSets.value.invitationChanges.friends.map((user) => {
-                    if (user.pk === friend.pk) {
+                    if (user.id === friend.id) {
                         return { ...user, isInRoom: !user.isInRoom }
                     }
                     return user
@@ -51,12 +51,12 @@ export default function ModalRoomEdit({ mainSets, me, editRoom }) {
                         </Link>
                     </div>
 
-                    {me.pk === user.pk &&
+                    {me.id === user.id &&
                         <div className="me">me</div>
                     }
                 </div>
 
-                {(mainSets.value.isCreator === true || user.pk === me.pk)
+                {(mainSets.value.isCreator === true || user.id === me.id)
                     &&
                     <Button onClick={() => editSubscribers(user)} >
                         {user.isInRoom ? "delete" : "add"}
@@ -91,12 +91,12 @@ export default function ModalRoomEdit({ mainSets, me, editRoom }) {
         if (mainSets.value.isCreator) {
             setLoading(true)
 
-            Fetch({ action: `api/v1/friends/${FilterOption.FRIENDS}/`, method: HttpMethod.GET })
+            Fetch({ action: `api/v2/friends/${FilterOption.FRIENDS}/`, method: HttpMethod.GET })
                 .then((data) => {
                     if (data && data.ok) {
                         var response = data.query
                         response = response.filter((friend) => {
-                            var hasMatch = mainSets.value.room.subscribers_info.some(user => friend.pk === user.pk)
+                            var hasMatch = mainSets.value.room.subscribers_info.some(user => friend.id === user.id)
                             return !hasMatch
                         })
                         response = response.map((user) => {

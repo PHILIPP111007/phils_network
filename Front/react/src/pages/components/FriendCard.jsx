@@ -22,7 +22,7 @@ export default function FriendCard({ user }) {
                 </div>
             </Link>
             <div className="UserBtns">
-                <UserStatus pk={user.pk} status={status} setStatus={setStatus} />
+                <UserStatus id={user.id} status={status} setStatus={setStatus} />
             </div>
         </div>
     )
