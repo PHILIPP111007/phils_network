@@ -18,7 +18,6 @@ __all__ = ["urlpatterns"]
 
 from app.views import (
 	ChatAPIView,
-	FriendsAPIView,
 	MessagesAPIView,
 	RoomInvitationsAddAPIView,
 	RoomInvitationsAPIView,
@@ -34,7 +33,6 @@ auth_patterns = [
 ]
 user_patterns = [
 	path("user/<str:username>/", UserAPIView.as_view()),
-	path("friends/<int:option>/", FriendsAPIView.as_view()),
 ]
 room_patterns = [
 	path("room/", RoomsAPIView.as_view()),
