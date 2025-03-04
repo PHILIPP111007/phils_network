@@ -1,6 +1,6 @@
 # phils_network
 
-Minimalistic social network written using Django and React.
+Minimalistic social network written using Django, FastAPI and React.
 
 > You may donate to [phils_network](https://github.com/PHILIPP111007/phils_network) project:
 >
