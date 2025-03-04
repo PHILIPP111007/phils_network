@@ -8,7 +8,18 @@ from sqlmodel import Session, delete, select
 from app.constants import DATETIME_FORMAT, POSTS_TO_LOAD
 from app.database import SessionDep, engine
 from app.enums import DeleteOption, FilterOption, SubscriberStatus
-from app.models import Blog, OnlineStatus, Subscriber, Token, User
+from app.models import (
+    Blog,
+    Message,
+    OnlineStatus,
+    Room,
+    RoomCreator,
+    RoomInvitation,
+    RoomSubscribers,
+    Subscriber,
+    Token,
+    User,
+)
 from app.modules import get_subscribers_sets
 
 app = FastAPI(
@@ -672,7 +683,9 @@ async def get_user(session: SessionDep, request: Request, username: str):
 
 
 @app.put("/api/v2/user/{username}/")
-async def put_user(session: SessionDep, request: Request, username: str):
+async def put_user(
+    session: SessionDep, request: Request, username: str
+) -> dict[str, User]:
     if not request.state.user:
         return {"ok": False, "error": "Can not authenticate."}
 
@@ -699,7 +712,9 @@ async def put_user(session: SessionDep, request: Request, username: str):
 
 
 @app.delete("/api/v2/user/{username}/")
-async def delete_user(session: SessionDep, request: Request, username: str):
+async def delete_user(
+    session: SessionDep, request: Request, username: str
+) -> dict[str, bool]:
     if not request.state.user:
         return {"ok": False, "error": "Can not authenticate."}
 
@@ -721,3 +736,113 @@ async def delete_user(session: SessionDep, request: Request, username: str):
     session.commit()
 
     return {"ok": True}
+
+
+###################################
+# Room ############################
+###################################
+
+
+@app.get("/api/v2/room/")
+async def get_room(session: SessionDep, request: Request):
+    if not request.state.user:
+        return {"ok": False, "error": "Can not authenticate."}
+
+    room_ids = session.exec(
+        select(RoomSubscribers.room_id).where(
+            RoomSubscribers.user_id == request.state.user.id
+        )
+    ).all()
+    rooms = session.exec(select(Room).where(Room.id.in_(room_ids))).unique().all()
+
+    time_and_rooms = []
+    for room in rooms:
+        messages = (
+            session.exec(
+                select(Message)
+                .where(Message.room_id == room.id)
+                .order_by(Message.timestamp.desc())
+            )
+            .unique()
+            .all()
+        )
+        if messages:
+            time = messages[0].timestamp
+            time_and_rooms.append((time, room, messages[0]))
+        else:
+            time = room.timestamp
+            time_and_rooms.append((time, room, None))
+
+    time_and_rooms: list[tuple[datetime, Room, Message | None]] = list(
+        sorted(time_and_rooms, key=lambda x: x[0], reverse=True)
+    )
+
+    rooms = []
+    for time, room, last_message in time_and_rooms:
+        if last_message:
+            last_message_sender = last_message.sender.username
+            last_message_text = last_message.text
+        else:
+            last_message_sender = None
+            last_message_text = ""
+
+        room = {
+            "id": room.id,
+            "name": room.name,
+            "timestamp": room.timestamp.strftime(DATETIME_FORMAT),
+            "last_message_timestamp": time.strftime(DATETIME_FORMAT),
+            "last_message_text": last_message_text,
+            "last_message_sender": last_message_sender,
+        }
+        rooms.append(room)
+
+    return {"ok": True, "rooms": rooms}
+
+
+@app.post("/api/v2/room/")
+async def post_room(session: SessionDep, request: Request):
+    if not request.state.user:
+        return {"ok": False, "error": "Can not authenticate."}
+
+    body = await request.body()
+    body: dict = json.loads(body)
+
+    room_name = body.get("name")
+    if room_name is None:
+        return {"ok": False}
+
+    room = Room(name=room_name, timestamp=datetime.now())
+    session.add(room)
+    session.commit()
+    session.refresh(room)
+
+    room_subscriber = RoomSubscribers(user_id=request.state.user.id, room_id=room.id)
+    session.add(room_subscriber)
+
+    room_creator = RoomCreator(creator_id=request.state.user.id, room_id=room.id)
+    session.add(room_creator)
+    session.commit()
+
+    subscribers_pk_list: list[int] | None = body.get("subscribers")
+    if subscribers_pk_list:
+        subscribers = (
+            session.exec(select(User).where(User.id.in_(subscribers_pk_list)))
+            .unique()
+            .all()
+        )
+        if subscribers:
+            for subscriber in subscribers:
+                if subscriber.id == request.state.user.id:
+                    continue
+
+                room_invitation = RoomInvitation(
+                    creator_id=request.state.user.id,
+                    room_id=room.id,
+                    to_user_id=subscriber.id,
+                    timestamp=datetime.now(),
+                )
+                session.add(room_invitation)
+                session.commit()
+
+    session.refresh(room)
+    return {"ok": True, "room": room}
