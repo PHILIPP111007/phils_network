@@ -800,7 +800,7 @@ async def get_room(session: SessionDep, request: Request):
 
 
 @app.post("/api/v2/room/")
-async def post_room(session: SessionDep, request: Request):
+async def post_room(session: SessionDep, request: Request) -> dict[str, Room]:
     if not request.state.user:
         return {"ok": False, "error": "Can not authenticate."}
 
@@ -846,3 +846,40 @@ async def post_room(session: SessionDep, request: Request):
 
     session.refresh(room)
     return {"ok": True, "room": room}
+
+
+@app.get("/api/v2/invite_chats/{username}/")
+async def get_room_invitation(session: SessionDep, request: Request, username: str):
+    if not request.state.user:
+        return {"ok": False, "error": "Can not authenticate."}
+
+    query = (
+        session.exec(
+            select(RoomInvitation).where(
+                RoomInvitation.to_user_id == request.state.user.id
+            )
+        )
+        .unique()
+        .all()
+    )
+
+    rooms = []
+    for room in query:
+        room = {
+            "id": room.id,
+            "creator_id": room.creator_id,
+            "room_id": room.room_id,
+            "to_user_id": room.to_user_id,
+            "timestamp": room.timestamp,
+            "room": {
+                "id": room.room.id,
+                "name": room.room.name,
+            },
+            "creator": {"username": room.creator.username},
+        }
+        rooms.append(room)
+
+    if not rooms:
+        return {"ok": False, "error": "Not found rooms."}
+
+    return {"ok": True, "rooms": rooms}
