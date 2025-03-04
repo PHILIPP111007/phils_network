@@ -222,7 +222,7 @@ async def delete_blog(
 ###################################
 
 
-@app.get("/api/v2/news/{loaded_posts}")
+@app.get("/api/v2/news/{loaded_posts}/")
 async def get_news(session: SessionDep, request: Request, loaded_posts: int):
     async def _get_friends(id):
         set_1 = (
