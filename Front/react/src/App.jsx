@@ -15,7 +15,7 @@ export default function App() {
 
     var [isAuth, setIsAuth] = useState(false)
     var [user, setUser] = useState({
-        pk: 0,
+        id: 0,
         username: "",
         email: "",
         first_name: "",

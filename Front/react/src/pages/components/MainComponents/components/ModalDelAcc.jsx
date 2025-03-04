@@ -16,7 +16,7 @@ export default function ModalDelAcc() {
             localStorage.clear()
             setIsAuth(false)
             setUser({
-                pk: 0,
+                id: 0,
                 username: "",
                 email: "",
                 first_name: "",

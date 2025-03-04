@@ -60,10 +60,10 @@ export default function Chat() {
         var subscribers = mainSets.value.invitationChanges.subscribers.filter((user) => user.isInRoom === false)
         var friends = mainSets.value.invitationChanges.friends.filter((user) => user.isInRoom === true)
         subscribers = subscribers.map((user) => {
-            return user.pk
+            return user.id
         })
         friends = friends.map((user) => {
-            return user.pk
+            return user.id
         })
 
         if (friends.length > 0 || subscribers.length > 0) {

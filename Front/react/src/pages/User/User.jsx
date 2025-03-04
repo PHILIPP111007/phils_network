@@ -77,7 +77,7 @@ export default function User() {
     async function createPost(text) {
         setModalPostCreate(false)
         var newPost = {
-            user: user.pk,
+            user: user.id,
             content: text,
         }
 
@@ -135,7 +135,7 @@ export default function User() {
                 <div className="UserBtns">
                     {!isUserGlobal
                         &&
-                        <UserStatus pk={userLocal.pk} status={status} setStatus={setStatus} />}
+                        <UserStatus id={userLocal.id} status={status} setStatus={setStatus} />}
                 </div>
             </div>
 

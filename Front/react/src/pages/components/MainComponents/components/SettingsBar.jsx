@@ -40,7 +40,7 @@ export default function SettingsBar(props) {
                 localStorage.clear()
                 setIsAuth(false)
                 setUser({
-                    pk: 0,
+                    id: 0,
                     username: "",
                     email: "",
                     first_name: "",
