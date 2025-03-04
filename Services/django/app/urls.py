@@ -23,16 +23,12 @@ from app.views import (
 	RoomInvitationsAPIView,
 	RoomInvitationsRemoveAPIView,
 	RoomsAPIView,
-	UserAPIView,
 )
 from django.urls import include, path
 
 auth_patterns = [
 	path("auth/", include("djoser.urls")),
 	path("token/", include("djoser.urls.authtoken")),
-]
-user_patterns = [
-	path("user/<str:username>/", UserAPIView.as_view()),
 ]
 room_patterns = [
 	path("room/", RoomsAPIView.as_view()),
@@ -49,4 +45,4 @@ room_patterns = [
 	),
 ]
 
-urlpatterns = auth_patterns + user_patterns + room_patterns
+urlpatterns = auth_patterns + room_patterns
