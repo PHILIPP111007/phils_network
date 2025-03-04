@@ -22,7 +22,6 @@ from app.views import (
 	RoomInvitationsAddAPIView,
 	RoomInvitationsAPIView,
 	RoomInvitationsRemoveAPIView,
-	RoomsAPIView,
 )
 from django.urls import include, path
 
@@ -31,7 +30,6 @@ auth_patterns = [
 	path("token/", include("djoser.urls.authtoken")),
 ]
 room_patterns = [
-	path("room/", RoomsAPIView.as_view()),
 	path("room/<int:pk>/", ChatAPIView.as_view()),
 	path("room/<int:pk>/<int:loaded_messages>/", MessagesAPIView.as_view()),
 	path("invite_chats/<str:username>/", RoomInvitationsAPIView.as_view()),

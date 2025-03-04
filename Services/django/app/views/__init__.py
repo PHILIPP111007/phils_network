@@ -4,5 +4,4 @@ from app.views.rooms import (
 	RoomInvitationsAddAPIView,
 	RoomInvitationsAPIView,
 	RoomInvitationsRemoveAPIView,
-	RoomsAPIView,
 )
