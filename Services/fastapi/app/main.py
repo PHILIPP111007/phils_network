@@ -146,6 +146,7 @@ async def get_blog(
                 "user": {
                     "id": post.user.id,
                     "username": post.user.username,
+                    "email": post.user.email,
                     "first_name": post.user.first_name,
                     "last_name": post.user.last_name,
                 },
@@ -162,7 +163,7 @@ async def put_blog(session: SessionDep, request: Request, id: int):
     posts = session.exec(select(Blog).where(Blog.id == id)).unique().all()
     post = posts[0]
 
-    if not post.user_id == request.state.user.id:
+    if post.user_id != request.state.user.id:
         return {"ok": False, "error": "Access denied."}
 
     body = await request.body()
@@ -191,7 +192,7 @@ async def post_blog(session: SessionDep, request: Request):
         changed=False,
     )
 
-    if not post.user_id == request.state.user.id:
+    if post.user_id != request.state.user.id:
         return {"ok": False, "error": "Access denied."}
 
     session.add(post)
@@ -211,7 +212,7 @@ async def delete_blog(
     posts = session.exec(select(Blog).where(Blog.id == id)).unique().all()
     post = posts[0]
 
-    if not post.user_id == request.state.user.id:
+    if post.user_id != request.state.user.id:
         return {"ok": False, "error": "Access denied."}
 
     session.exec(delete(Blog).where(Blog.id == post.id))
@@ -275,6 +276,7 @@ async def get_news(session: SessionDep, request: Request, loaded_posts: int):
                 "user": {
                     "id": post.user.id,
                     "username": post.user.username,
+                    "email": post.user.email,
                     "first_name": post.user.first_name,
                     "last_name": post.user.last_name,
                 },
@@ -476,6 +478,7 @@ async def post_find_user(session: SessionDep, request: Request):
         user = {
             "id": find_user.id,
             "username": find_user.username,
+            "email": user.email,
             "first_name": find_user.first_name,
             "last_name": find_user.last_name,
             "is_online": is_online,
@@ -547,8 +550,6 @@ async def get_friends(session: SessionDep, request: Request, option: int):
 
     option_func: Callable[[int], list[User] | int] | None = options.get(option, None)
 
-    print(option, option_func)
-
     users = []
     if option_func:
         query = await option_func()
@@ -566,6 +567,7 @@ async def get_friends(session: SessionDep, request: Request, option: int):
                     user = {
                         "id": user.id,
                         "username": user.username,
+                        "email": user.email,
                         "first_name": user.first_name,
                         "last_name": user.last_name,
                         "is_online": online_status.is_online,
@@ -574,6 +576,7 @@ async def get_friends(session: SessionDep, request: Request, option: int):
                     user = {
                         "id": user.id,
                         "username": user.username,
+                        "email": user.email,
                         "first_name": user.first_name,
                         "last_name": user.last_name,
                         "is_online": False,
@@ -584,3 +587,137 @@ async def get_friends(session: SessionDep, request: Request, option: int):
             query = len(query)
             return {"ok": True, "query": query}
     return {"ok": False, "error": "Not found users."}
+
+
+###################################
+# User ############################
+###################################
+
+
+@app.get("/api/v2/user/{username}/")
+async def get_user(session: SessionDep, request: Request, username: str):
+    if not request.state.user:
+        return {"ok": False, "error": "Can not authenticate."}
+
+    users = []
+    query = (
+        session.exec(select(User).where(User.id == request.state.user.id))
+        .unique()
+        .all()
+    )
+    for user in query:
+        online_statuses = (
+            session.exec(select(OnlineStatus).where(OnlineStatus.user_id == user.id))
+            .unique()
+            .all()
+        )
+        if online_statuses:
+            online_status = online_statuses[0]
+            user = {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "is_online": online_status.is_online,
+            }
+        else:
+            user = {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "is_online": False,
+            }
+        users.append(user)
+    if not users:
+        return {"ok": False, "error": "Not found the global user."}
+    global_user = users[0]
+
+    result = {"ok": True, "global_user": global_user}
+
+    query = session.exec(select(User).where(User.username == username)).unique().all()
+    for user in query:
+        online_statuses = (
+            session.exec(select(OnlineStatus).where(OnlineStatus.user_id == user.id))
+            .unique()
+            .all()
+        )
+        if online_statuses:
+            online_status = online_statuses[0]
+            user = {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "is_online": online_status.is_online,
+            }
+        else:
+            user = {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "is_online": False,
+            }
+        users.append(user)
+    if users:
+        local_user = users[0]
+        result["local_user"] = local_user
+
+    return result
+
+
+@app.put("/api/v2/user/{username}/")
+async def put_user(session: SessionDep, request: Request, username: str):
+    if not request.state.user:
+        return {"ok": False, "error": "Can not authenticate."}
+
+    body = await request.body()
+    body: dict = json.loads(body)
+
+    print(body)
+
+    users = session.exec(select(User).where(User.id == body["id"])).unique().all()
+    user: User = users[0]
+
+    if user.id != request.state.user.id:
+        return {"ok": False, "error": "Access denied."}
+
+    user.first_name = body["first_name"]
+    user.last_name = body["last_name"]
+    user.email = body["email"]
+
+    session.add(user)
+    session.commit()
+    session.refresh(user)
+
+    return {"ok": True, "user": user}
+
+
+@app.delete("/api/v2/user/{username}/")
+async def delete_user(session: SessionDep, request: Request, username: str):
+    if not request.state.user:
+        return {"ok": False, "error": "Can not authenticate."}
+
+    users = session.exec(select(User).where(User.username == username)).unique().all()
+    if not users:
+        return {"ok": False, "error": "Not found user."}
+
+    user: User = users[0]
+
+    if user.id != request.state.user.id:
+        return {"ok": False, "error": "Access denied."}
+
+    session.exec(delete(Subscriber).where(Subscriber.user_id == user.id))
+    session.exec(delete(Subscriber).where(Subscriber.subscribe_id == user.id))
+    session.exec(delete(Token).where(Token.user_id == user.id))
+    session.exec(delete(Blog).where(Blog.user_id == user.id))
+    session.exec(delete(OnlineStatus).where(OnlineStatus.user_id == user.id))
+    session.exec(delete(User).where(User.id == user.id))
+    session.commit()
+
+    return {"ok": True}
