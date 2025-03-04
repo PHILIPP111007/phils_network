@@ -251,8 +251,7 @@ async def get_news(session: SessionDep, request: Request, loaded_posts: int):
             if id in set_1:
                 set_3.add(id)
 
-        query = session.exec(select(User).where(User.id.in_(set_3))).unique().all()
-        query = [user.id for user in query]
+        query = session.exec(select(User.id).where(User.id.in_(set_3))).unique().all()
         return query
 
     if not request.state.user:
@@ -431,9 +430,6 @@ async def post_find_user(session: SessionDep, request: Request):
         first_name: str | None = body["first_name"]
         last_name: str | None = body["last_name"]
 
-        if not (first_name or last_name):
-            return {"ok": False}
-
         if first_name:
             query_1 = (
                 session.exec(
@@ -468,6 +464,8 @@ async def post_find_user(session: SessionDep, request: Request):
             find_users = query_1
         elif last_name:
             find_users = query_2
+        else:
+            find_users = None
 
     if not find_users:
         return {"ok": False, "error": "Not found users."}
