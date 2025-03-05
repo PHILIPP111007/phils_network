@@ -80,7 +80,7 @@ export default function Chat() {
         var msgs_len = messages.length
         if (flag || msgs_len > 0) {
             mainSets.value.loading = true
-            var data = await Fetch({ action: `api/v1/room/${params.room_id}/${msgs_len}/`, method: HttpMethod.GET })
+            var data = await Fetch({ action: `api/v2/room/${params.room_id}/${msgs_len}/`, method: HttpMethod.GET })
 
             if (data) {
                 if (data.ok) {

@@ -1056,7 +1056,7 @@ async def put_chat(session: SessionDep, request: Request, id: int) -> dict[str, 
 ######################################
 
 
-@app.get("room/{id}/{loaded_messages}/")
+@app.get("/api/v2/room/{id}/{loaded_messages}/")
 async def get_message(
     session: SessionDep, request: Request, id: int, loaded_messages: int
 ):
