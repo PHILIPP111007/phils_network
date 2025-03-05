@@ -89,7 +89,7 @@ async def post_online_status(session: SessionDep, request: Request) -> dict[str,
 
 
 @app.get("/api/v2/blog/{username}/{loaded_posts}/")
-async def get_blog(
+async def get_post(
     session: SessionDep, request: Request, username: str, loaded_posts: int
 ):
     async def _filter(user_id: int, subscribe_id: int) -> list[Subscriber]:
@@ -167,7 +167,7 @@ async def get_blog(
 
 
 @app.put("/api/v2/blog/{id}")
-async def put_blog(session: SessionDep, request: Request, id: int):
+async def put_post(session: SessionDep, request: Request, id: int):
     if not request.state.user:
         return {"ok": False, "error": "Can not authenticate."}
 
@@ -189,7 +189,7 @@ async def put_blog(session: SessionDep, request: Request, id: int):
 
 
 @app.post("/api/v2/blog/")
-async def post_blog(session: SessionDep, request: Request):
+async def post_post(session: SessionDep, request: Request):
     if not request.state.user:
         return {"ok": False, "error": "Can not authenticate."}
 
@@ -214,7 +214,7 @@ async def post_blog(session: SessionDep, request: Request):
 
 
 @app.delete("/api/v2/blog/{id}")
-async def delete_blog(
+async def delete_post(
     session: SessionDep, request: Request, id: int
 ) -> dict[str, bool]:
     if not request.state.user:
@@ -690,8 +690,6 @@ async def put_user(
     body = await request.body()
     body: dict = json.loads(body)
 
-    print(body)
-
     users = session.exec(select(User).where(User.id == body["id"])).unique().all()
     user: User = users[0]
 
@@ -798,7 +796,7 @@ async def get_room(session: SessionDep, request: Request):
 
 
 @app.post("/api/v2/room/")
-async def post_room(session: SessionDep, request: Request) -> dict[str, Room]:
+async def post_room(session: SessionDep, request: Request):
     if not request.state.user:
         return {"ok": False, "error": "Can not authenticate."}
 
@@ -807,7 +805,7 @@ async def post_room(session: SessionDep, request: Request) -> dict[str, Room]:
 
     room_name = body.get("name")
     if room_name is None:
-        return {"ok": False}
+        return {"ok": False, "error": "Not provided room name."}
 
     room = Room(name=room_name, timestamp=datetime.now())
     session.add(room)
@@ -816,6 +814,7 @@ async def post_room(session: SessionDep, request: Request) -> dict[str, Room]:
 
     room_subscriber = RoomSubscribers(user_id=request.state.user.id, room_id=room.id)
     session.add(room_subscriber)
+    session.commit()
 
     room_creator = RoomCreator(creator_id=request.state.user.id, room_id=room.id)
     session.add(room_creator)
@@ -886,7 +885,7 @@ async def get_room_invitation(session: SessionDep, request: Request, username: s
 @app.post("/api/v2/invite_chats/{username}/add_room/{room_id}/")
 async def post_room_invitation_add(
     session: SessionDep, request: Request, username: str, room_id: int
-):
+) -> dict[str, bool]:
     if not request.state.user:
         return {"ok": False, "error": "Can not authenticate."}
 
@@ -944,11 +943,111 @@ async def post_room_invitation_add(
 @app.post("/api/v2/invite_chats/{username}/remove_room/{room_id}/")
 async def post_room_invitation_remove(
     session: SessionDep, request: Request, username: str, room_id: int
-):
+) -> dict[str, bool]:
     if not request.state.user:
         return {"ok": False, "error": "Can not authenticate."}
 
     session.exec(delete(RoomInvitation).where(RoomInvitation.id == room_id))
     session.commit()
+
+    return {"ok": True}
+
+
+###################################
+# Chat ############################
+###################################
+
+
+@app.get("/api/v2/room/{id}/")
+async def get_chat(session: SessionDep, request: Request, id: int):
+    if not request.state.user:
+        return {"ok": False, "error": "Can not authenticate."}
+
+    rooms = session.exec(select(Room).where(Room.id == id)).unique().all()
+    if not rooms:
+        return {"ok": False, "error": "Not found room."}
+    room = rooms[0]
+
+    room_creators = (
+        session.exec(select(RoomCreator).where(RoomCreator.room_id == id))
+        .unique()
+        .all()
+    )
+    if not room_creators:
+        return {"ok": False, "error": "Not found room creator."}
+    room_creator = room_creators[0]
+    is_creator = room_creator.creator_id == request.state.user.id
+
+    subscribers_info = [
+        {
+            "id": subscriber.user.id,
+            "username": subscriber.user.username,
+            "first_name": subscriber.user.first_name,
+            "last_name": subscriber.user.last_name,
+        }
+        for subscriber in room.room_subscribers
+    ]
+
+    room = {
+        "id": room.id,
+        "name": room.name,
+        "timestamp": room.timestamp.strftime(DATETIME_FORMAT),
+        "subscribers_info": subscribers_info,
+    }
+
+    return {
+        "ok": True,
+        "isCreator": is_creator,
+        "room": room,
+    }
+
+
+@app.put("/api/v2/room/{id}/")
+async def put_chat(session: SessionDep, request: Request, id: int) -> dict[str, bool]:
+    if not request.state.user:
+        return {"ok": False, "error": "Can not authenticate."}
+
+    body = await request.body()
+    body: dict = json.loads(body)
+
+    friends: list | None = body.get("friends")
+    subscribers: list | None = body.get("subscribers")
+
+    rooms = session.exec(select(Room).where(Room.id == id)).unique().all()
+    if not rooms:
+        return {"ok": False, "error": "Not found room."}
+    room = rooms[0]
+
+    if friends:
+        friends = session.exec(select(User).where(User.id.in_(friends))).unique().all()
+        for friend in friends:
+            room_invitation = RoomInvitation(
+                creator_id=request.state.user.id,
+                to_user_id=friend.id,
+                room_id=room.id,
+                timestamp=datetime.now(),
+            )
+            session.add(room_invitation)
+            session.commit()
+
+    if subscribers:
+        for user_id in subscribers:
+            if user_id == request.state.user.id:
+                continue
+            session.exec(
+                delete(RoomSubscribers).where(
+                    RoomSubscribers.user_id == user_id,
+                    RoomSubscribers.room_id == room.id,
+                )
+            )
+        session.commit()
+
+    if not room.room_subscribers:
+        session.exec(delete(Room).where(Room.id == room.id))
+        session.exec(delete(Message).where(Message.room_id == room.id))
+        session.exec(delete(RoomCreator).where(RoomCreator.room_id == room.id))
+        session.exec(delete(RoomInvitation).where(RoomInvitation.room_id == room.id))
+        session.exec(delete(RoomSubscribers).where(RoomSubscribers.room_id == room.id))
+        session.commit()
 
     return {"ok": True}
