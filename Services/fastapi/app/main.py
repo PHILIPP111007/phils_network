@@ -818,10 +818,10 @@ async def post_room(session: SessionDep, request: Request):
     session.add(room_creator)
     session.commit()
 
-    subscribers_pk_list: list[int] | None = body.get("subscribers")
-    if subscribers_pk_list:
+    subscribers_id_list: list[int] | None = body.get("subscribers")
+    if subscribers_id_list:
         subscribers = (
-            session.exec(select(User).where(User.id.in_(subscribers_pk_list)))
+            session.exec(select(User).where(User.id.in_(subscribers_id_list)))
             .unique()
             .all()
         )

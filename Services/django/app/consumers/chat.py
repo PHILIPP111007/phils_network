@@ -22,12 +22,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		self.room_group = self.room
 
 		token_key = self.scope["query_string"].decode().split("=")[-1]
-		pk = await _get_user_pk(token_key)
+		id = await _get_user_id(token_key)
 
-		if not pk:
+		if not id:
 			await self.close()
 		else:
-			flag = await _check_permission(self, pk)
+			flag = await _check_permission(self, id)
 			if flag:
 				await self.channel_layer.group_add(self.room_group, self.channel_name)
 				await self.accept()
@@ -71,7 +71,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 
 @database_sync_to_async
-def _get_user_pk(token_key: str) -> int | None:
+def _get_user_id(token_key: str) -> int | None:
 	token = Token.objects.filter(key=token_key).first()
 
 	if token:
@@ -80,12 +80,12 @@ def _get_user_pk(token_key: str) -> int | None:
 
 
 @database_sync_to_async
-def _check_permission(self, pk) -> bool:
+def _check_permission(self, id) -> bool:
 	"""Check if user is this room subscriber."""
 
 	room_id = int(self.scope["url_route"]["kwargs"]["room"])
 
-	return MessageService.check_permission(room_id=room_id, subscriber_id=pk)
+	return MessageService.check_permission(room_id=room_id, subscriber_id=id)
 
 
 @database_sync_to_async

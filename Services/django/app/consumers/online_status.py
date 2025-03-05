@@ -20,9 +20,9 @@ class OnlineStatusConsumer(AsyncWebsocketConsumer):
 		self.username_group = self.username
 
 		token_key = self.scope["query_string"].decode().split("=")[-1]
-		pk = await _get_user_pk(token_key)
+		id = await _get_user_id(token_key)
 
-		if not pk:
+		if not id:
 			await self.close()
 		else:
 			await _create_online_status(username=self.username)
@@ -41,7 +41,7 @@ class OnlineStatusConsumer(AsyncWebsocketConsumer):
 
 
 @database_sync_to_async
-def _get_user_pk(token_key: str) -> int | None:
+def _get_user_id(token_key: str) -> int | None:
 	token = Token.objects.filter(key=token_key).first()
 
 	if token:

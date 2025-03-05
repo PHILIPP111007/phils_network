@@ -17,7 +17,7 @@ export default function ModalRoomEdit({ mainSets, me, editRoom }) {
             invitationChanges: {
                 friends: mainSets.value.invitationChanges.friends,
                 subscribers: mainSets.value.invitationChanges.subscribers.map((user) => {
-                    if (user.pk === subscriber.pk) {
+                    if (user.id === subscriber.id) {
                         return { ...user, isInRoom: !user.isInRoom }
                     }
                     return user
