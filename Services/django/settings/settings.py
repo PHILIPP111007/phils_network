@@ -193,6 +193,6 @@ REST_FRAMEWORK: dict[str, list[str]] = {
 }
 # DJOSER settings
 DJOSER: dict[str, str] = {
-	"USER_ID_FIELD": "pk",
+	"USER_ID_FIELD": "id",
 	"LOGIN_FIELD": "username",
 }
