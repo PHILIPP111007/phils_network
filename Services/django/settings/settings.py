@@ -62,11 +62,8 @@ THIRD_PARTY_MIDDLEWARE: list[str] = [
 	"whitenoise.middleware.WhiteNoiseMiddleware",  # for servers to work with static files
 ]
 
-LOCAL_MIDDLEWARE = [
-	"app.middleware.DisableCSRFMiddleware.DisableCSRFMiddleware",
-]
 
-MIDDLEWARE = DJANGO_MIDDLEWARE + THIRD_PARTY_MIDDLEWARE + LOCAL_MIDDLEWARE
+MIDDLEWARE = DJANGO_MIDDLEWARE + THIRD_PARTY_MIDDLEWARE
 
 
 ROOT_URLCONF: str = "settings.urls"
@@ -194,21 +191,8 @@ REST_FRAMEWORK: dict[str, list[str]] = {
 		"rest_framework.authentication.TokenAuthentication",
 	],
 }
-
-if DEBUG:
-	REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"].append(
-		"rest_framework.renderers.BrowsableAPIRenderer"
-	)
-
 # DJOSER settings
 DJOSER: dict[str, str] = {
 	"USER_ID_FIELD": "pk",
 	"LOGIN_FIELD": "username",
 }
-
-# Lazy loading settings
-POSTS_TO_LOAD: int = int(environ.get("POSTS_TO_LOAD", "20"))
-MESSAGES_TO_LOAD: int = int(environ.get("MESSAGES_TO_LOAD", "30"))
-
-# Date time format
-DATETIME_FORMAT: str = environ.get("DATETIME_FORMAT", "%Y-%m-%d %H:%M")
