@@ -5,7 +5,7 @@ from typing import Callable
 from fastapi import FastAPI, Request
 from sqlmodel import Session, delete, select
 
-from app.constants import DATETIME_FORMAT, POSTS_TO_LOAD
+from app.constants import DATETIME_FORMAT, MESSAGES_TO_LOAD, POSTS_TO_LOAD
 from app.database import SessionDep, engine
 from app.enums import DeleteOption, FilterOption, SubscriberStatus
 from app.models import (
@@ -1049,3 +1049,65 @@ async def put_chat(session: SessionDep, request: Request, id: int) -> dict[str, 
         session.commit()
 
     return {"ok": True}
+
+
+######################################
+# Message ############################
+######################################
+
+
+@app.get("room/{id}/{loaded_messages}/")
+async def get_message(
+    session: SessionDep, request: Request, id: int, loaded_messages: int
+):
+    if not request.state.user:
+        return {"ok": False, "error": "Can not authenticate."}
+
+    rooms = session.exec(select(Room).where(Room.id == id)).unique().all()
+    if not rooms:
+        return {"ok": False, "error": "Not found room."}
+    room = rooms[0]
+
+    flag = (
+        session.exec(
+            select(RoomSubscribers).where(
+                RoomSubscribers.user_id == request.state.user.id,
+                RoomSubscribers.room_id == room.id,
+            )
+        )
+        .unique()
+        .all()
+    )
+    if not flag:
+        return {"ok": False, "error": "Access denied."}
+
+    query = (
+        session.exec(
+            select(Message)
+            .where(
+                Message.room_id == room.id,
+            )
+            .offset(loaded_messages)
+            .limit(MESSAGES_TO_LOAD)
+            .order_by(Post.timestamp.desc())
+        )
+        .unique()
+        .all()
+    )
+    if not query:
+        return {"ok": False, "error": "Not found messages."}
+
+    messages = []
+    for message in query:
+        message = {
+            "text": message.text,
+            "timestamp": message.timestamp.strftime(DATETIME_FORMAT),
+            "sender": {
+                "username": message.sender.username,
+                "first_name": message.sender.first_name,
+                "last_name": message.sender.last_name,
+            },
+        }
+        messages.append(message)
+
+    return {"ok": True, "messages": messages}
