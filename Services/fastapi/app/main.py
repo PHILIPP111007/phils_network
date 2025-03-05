@@ -647,36 +647,36 @@ async def get_user(session: SessionDep, request: Request, username: str):
     result = {"ok": True, "global_user": global_user}
 
     query = session.exec(select(User).where(User.username == username)).unique().all()
-    for user in query:
-        online_statuses = (
-            session.exec(select(OnlineStatus).where(OnlineStatus.user_id == user.id))
-            .unique()
-            .all()
-        )
-        if online_statuses:
-            online_status = online_statuses[0]
-            user = {
-                "id": user.id,
-                "username": user.username,
-                "email": user.email,
-                "first_name": user.first_name,
-                "last_name": user.last_name,
-                "is_online": online_status.is_online,
-            }
-        else:
-            user = {
-                "id": user.id,
-                "username": user.username,
-                "email": user.email,
-                "first_name": user.first_name,
-                "last_name": user.last_name,
-                "is_online": False,
-            }
-        users.append(user)
-    if users:
-        local_user = users[0]
-        result["local_user"] = local_user
+    if not query:
+        return result
 
+    user = query[0]
+    online_statuses = (
+        session.exec(select(OnlineStatus).where(OnlineStatus.user_id == user.id))
+        .unique()
+        .all()
+    )
+    if online_statuses:
+        online_status = online_statuses[0]
+        user = {
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "is_online": online_status.is_online,
+        }
+    else:
+        user = {
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "is_online": False,
+        }
+
+    result["local_user"] = user
     return result
 
 
