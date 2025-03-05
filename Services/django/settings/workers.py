@@ -10,7 +10,4 @@ class UvicornWorker(BaseUvicornWorker):
 		"loop": "auto",
 		"http": "auto",
 		"lifespan": "off",
-		# Optional:
-		# "app": "settings.asgi",
-		# "reload": True,
 	}
