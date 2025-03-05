@@ -35,18 +35,19 @@ export default function SettingsBar(props) {
     }
 
     async function logout() {
+        // Delete online status
+        await Fetch({ action: "api/v2/online_status/", method: HttpMethod.DELETE })
         await Fetch({ action: "api/v1/token/token/logout/", method: HttpMethod.POST })
-            .then(() => {
-                localStorage.clear()
-                setIsAuth(false)
-                setUser({
-                    id: 0,
-                    username: "",
-                    email: "",
-                    first_name: "",
-                    last_name: ""
-                })
-            })
+        localStorage.clear()
+        setIsAuth(false)
+        setUser({
+            id: 0,
+            username: "",
+            email: "",
+            first_name: "",
+            last_name: ""
+        })
+
     }
 
     return (
