@@ -4,7 +4,17 @@ from fastapi import APIRouter, Request
 from sqlmodel import delete, select
 
 from app.database import SessionDep
-from app.models import Message, OnlineStatus, Post, Subscriber, Token, User
+from app.models import (
+	Message,
+	OnlineStatus,
+	Post,
+	RoomCreator,
+	RoomInvitation,
+	RoomSubscribers,
+	Subscriber,
+	Token,
+	User,
+)
 
 router = APIRouter(tags=["user"])
 
@@ -124,6 +134,10 @@ async def delete_user(
 	session.exec(delete(Token).where(Token.user_id == user.id))
 	session.exec(delete(Post).where(Post.user_id == user.id))
 	session.exec(delete(OnlineStatus).where(OnlineStatus.user_id == user.id))
+	session.exec(delete(RoomCreator).where(RoomCreator.creator_id == user.id))
+	session.exec(delete(RoomInvitation).where(RoomInvitation.creator_id == user.id))
+	session.exec(delete(RoomInvitation).where(RoomInvitation.to_user_id == user.id))
+	session.exec(delete(RoomSubscribers).where(RoomSubscribers.user_id == user.id))
 	session.exec(delete(Message).where(Message.sender_id == user.id))
 	session.exec(delete(User).where(User.id == user.id))
 	session.commit()
