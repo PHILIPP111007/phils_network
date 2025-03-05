@@ -45,17 +45,11 @@ async def add_user_to_request(request: Request, call_next):
             )
             if tokens:
                 token = tokens[0]
-                users = (
-                    session.exec(select(User).where(User.id == token.user_id))
-                    .unique()
-                    .all()
-                )
-                if users:
-                    user = users[0]
-                    if user:
-                        request.state.user = User(id=user.id, username=user.username)
-                        response = await call_next(request)
-                        return response
+                user = session.exec(select(User).where(User.id == token.user_id)).one()
+                if user:
+                    request.state.user = User(id=user.id, username=user.username)
+                    response = await call_next(request)
+                    return response
     request.state.user = None
     response = await call_next(request)
     return response
@@ -107,12 +101,9 @@ async def get_post(
     if not request.state.user:
         return {"ok": False, "error": "Can not authenticate."}
 
-    users = session.exec(select(User).where(User.username == username)).unique().all()
-
-    if not users:
+    unknown = session.exec(select(User).where(User.username == username)).one()
+    if not unknown:
         return {"ok": False, "error": "Not found user."}
-
-    unknown = users[0]
 
     if request.state.user.id != unknown.id:
         user_1 = await _filter(user_id=request.state.user.id, subscribe_id=unknown.id)
@@ -171,8 +162,9 @@ async def put_post(session: SessionDep, request: Request, id: int):
     if not request.state.user:
         return {"ok": False, "error": "Can not authenticate."}
 
-    posts = session.exec(select(Post).where(Post.id == id)).unique().all()
-    post = posts[0]
+    post = session.exec(select(Post).where(Post.id == id)).one()
+    if not post:
+        return {"ok": False, "error": "Not found post."}
 
     if post.user_id != request.state.user.id:
         return {"ok": False, "error": "Access denied."}
@@ -220,8 +212,9 @@ async def delete_post(
     if not request.state.user:
         return {"ok": False, "error": "Can not authenticate."}
 
-    posts = session.exec(select(Post).where(Post.id == id)).unique().all()
-    post = posts[0]
+    post = session.exec(select(Post).where(Post.id == id)).one()
+    if not post:
+        return {"ok": False, "error": "Not found post."}
 
     if post.user_id != request.state.user.id:
         return {"ok": False, "error": "Access denied."}
@@ -367,33 +360,24 @@ async def delete_subscriber(
 
     subscribe = None
     if option == DeleteOption.DELETE_FRIEND.value:
-        subscribe = (
-            session.exec(
-                select(Subscriber).where(
-                    Subscriber.user_id == request.state.user.id,
-                    Subscriber.subscribe_id == id,
-                )
+        subscribe = session.exec(
+            select(Subscriber).where(
+                Subscriber.user_id == request.state.user.id,
+                Subscriber.subscribe_id == id,
             )
-            .unique()
-            .all()
-        )
+        ).one()
         if not subscribe:
             return {"ok": False, "error": "Not found subscriber."}
-        subscribe = subscribe[0]
+
     elif option == DeleteOption.DELETE_SUBSCRIBER.value:
-        subscribe = (
-            session.exec(
-                select(Subscriber).where(
-                    Subscriber.user_id == id,
-                    Subscriber.subscribe_id == request.state.user.id,
-                )
+        subscribe = session.exec(
+            select(Subscriber).where(
+                Subscriber.user_id == id,
+                Subscriber.subscribe_id == request.state.user.id,
             )
-            .unique()
-            .all()
-        )
+        ).one()
         if not subscribe:
             return {"ok": False, "error": "Not found subscriber."}
-        subscribe = subscribe[0]
 
     session.exec(delete(Subscriber).where(Subscriber.id == subscribe.id))
     session.commit()
@@ -472,16 +456,10 @@ async def post_find_user(session: SessionDep, request: Request):
 
     users = []
     for find_user in find_users:
-        is_online = (
-            session.exec(
-                select(OnlineStatus).where(OnlineStatus.user_id == find_user.id)
-            )
-            .unique()
-            .all()
-        )
-        if is_online:
-            is_online = is_online[0]
-        else:
+        is_online = session.exec(
+            select(OnlineStatus).where(OnlineStatus.user_id == find_user.id)
+        ).one()
+        if not is_online:
             is_online = False
 
         user = {
@@ -615,13 +593,10 @@ async def get_user(session: SessionDep, request: Request, username: str):
         .all()
     )
     for user in query:
-        online_statuses = (
-            session.exec(select(OnlineStatus).where(OnlineStatus.user_id == user.id))
-            .unique()
-            .all()
-        )
-        if online_statuses:
-            online_status = online_statuses[0]
+        online_status = session.exec(
+            select(OnlineStatus).where(OnlineStatus.user_id == user.id)
+        ).one()
+        if online_status:
             user = {
                 "id": user.id,
                 "username": user.username,
@@ -646,18 +621,14 @@ async def get_user(session: SessionDep, request: Request, username: str):
 
     result = {"ok": True, "global_user": global_user}
 
-    query = session.exec(select(User).where(User.username == username)).unique().all()
-    if not query:
+    user = session.exec(select(User).where(User.username == username)).one()
+    if not user:
         return result
 
-    user = query[0]
-    online_statuses = (
-        session.exec(select(OnlineStatus).where(OnlineStatus.user_id == user.id))
-        .unique()
-        .all()
-    )
-    if online_statuses:
-        online_status = online_statuses[0]
+    online_status = session.exec(
+        select(OnlineStatus).where(OnlineStatus.user_id == user.id)
+    ).one()
+    if online_status:
         user = {
             "id": user.id,
             "username": user.username,
@@ -688,8 +659,9 @@ async def put_user(session: SessionDep, request: Request):
     body = await request.body()
     body: dict = json.loads(body)
 
-    users = session.exec(select(User).where(User.id == body["id"])).unique().all()
-    user: User = users[0]
+    user = session.exec(select(User).where(User.id == body["id"])).one()
+    if not user:
+        return {"ok": False, "error": "Not found user."}
 
     if user.id != request.state.user.id:
         return {"ok": False, "error": "Access denied."}
@@ -712,11 +684,9 @@ async def delete_user(
     if not request.state.user:
         return {"ok": False, "error": "Can not authenticate."}
 
-    users = session.exec(select(User).where(User.username == username)).unique().all()
-    if not users:
+    user = session.exec(select(User).where(User.username == username)).one()
+    if not user:
         return {"ok": False, "error": "Not found user."}
-
-    user: User = users[0]
 
     if user.id != request.state.user.id:
         return {"ok": False, "error": "Access denied."}
@@ -767,8 +737,8 @@ async def get_room(session: SessionDep, request: Request):
             time = room.timestamp
             time_and_rooms.append((time, room, None))
 
-    time_and_rooms: list[tuple[datetime, Room, Message | None]] = list(
-        sorted(time_and_rooms, key=lambda x: x[0], reverse=True)
+    time_and_rooms: list[tuple[datetime, Room, Message | None]] = sorted(
+        time_and_rooms, key=lambda x: x[0], reverse=True
     )
 
     rooms = []
@@ -887,35 +857,18 @@ async def post_room_invitation_add(
     if not request.state.user:
         return {"ok": False, "error": "Can not authenticate."}
 
-    room_invites = (
-        session.exec(select(RoomInvitation).where(RoomInvitation.id == room_id))
-        .unique()
-        .all()
-    )
-    room_invite = room_invites[0]
+    room_invite = session.exec(
+        select(RoomInvitation).where(RoomInvitation.id == room_id)
+    ).one()
 
-    room_creators = (
-        session.exec(
-            select(RoomCreator).where(RoomCreator.room_id == room_invite.room_id)
-        )
-        .unique()
-        .all()
-    )
-    room_creator = room_creators[0]
+    room_creator = session.exec(
+        select(RoomCreator).where(RoomCreator.room_id == room_invite.room_id)
+    ).one()
 
     if room_creator:
         session.exec(delete(RoomInvitation).where(RoomInvitation.id == room_invite.id))
-        rooms = (
-            session.exec(select(Room).where(Room.id == room_creator.room_id))
-            .unique()
-            .all()
-        )
-        room = rooms[0]
-
-        users = (
-            session.exec(select(User).where(User.username == username)).unique().all()
-        )
-        user = users[0]
+        room = session.exec(select(Room).where(Room.id == room_creator.room_id)).one()
+        user = session.exec(select(User).where(User.username == username)).one()
 
         flag = (
             session.exec(
@@ -961,19 +914,16 @@ async def get_chat(session: SessionDep, request: Request, id: int):
     if not request.state.user:
         return {"ok": False, "error": "Can not authenticate."}
 
-    rooms = session.exec(select(Room).where(Room.id == id)).unique().all()
-    if not rooms:
+    room = session.exec(select(Room).where(Room.id == id)).one()
+    if not room:
         return {"ok": False, "error": "Not found room."}
-    room = rooms[0]
 
-    room_creators = (
-        session.exec(select(RoomCreator).where(RoomCreator.room_id == id))
-        .unique()
-        .all()
-    )
-    if not room_creators:
+    room_creator = session.exec(
+        select(RoomCreator).where(RoomCreator.room_id == id)
+    ).one()
+    if not room_creator:
         return {"ok": False, "error": "Not found room creator."}
-    room_creator = room_creators[0]
+
     is_creator = room_creator.creator_id == request.state.user.id
 
     subscribers_info = [
@@ -1011,10 +961,9 @@ async def put_chat(session: SessionDep, request: Request, id: int) -> dict[str, 
     friends: list | None = body.get("friends")
     subscribers: list | None = body.get("subscribers")
 
-    rooms = session.exec(select(Room).where(Room.id == id)).unique().all()
-    if not rooms:
+    room = session.exec(select(Room).where(Room.id == id)).one()
+    if not room:
         return {"ok": False, "error": "Not found room."}
-    room = rooms[0]
 
     if friends:
         friends = session.exec(select(User).where(User.id.in_(friends))).unique().all()
@@ -1063,10 +1012,9 @@ async def get_message(
     if not request.state.user:
         return {"ok": False, "error": "Can not authenticate."}
 
-    rooms = session.exec(select(Room).where(Room.id == id)).unique().all()
-    if not rooms:
+    room = session.exec(select(Room).where(Room.id == id)).one()
+    if not room:
         return {"ok": False, "error": "Not found room."}
-    room = rooms[0]
 
     flag = (
         session.exec(
