@@ -3,10 +3,7 @@ from sqlmodel import select
 
 from app.constants import DATETIME_FORMAT, POSTS_TO_LOAD
 from app.database import SessionDep
-from app.models import (
-	Post,
-	User,
-)
+from app.models import Post, User
 from app.modules import get_subscribers_sets
 
 router = APIRouter(tags=["news"])

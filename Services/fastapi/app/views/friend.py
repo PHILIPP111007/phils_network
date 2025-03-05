@@ -5,10 +5,7 @@ from sqlmodel import select
 
 from app.database import SessionDep
 from app.enums import FilterOption
-from app.models import (
-	OnlineStatus,
-	User,
-)
+from app.models import OnlineStatus, User
 from app.modules import get_subscribers_sets
 
 router = APIRouter(tags=["friend"])
