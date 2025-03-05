@@ -21,14 +21,14 @@ class User(SQLModel, table=True):
         back_populates="user",
         sa_relationship_kwargs={
             "primaryjoin": "Subscriber.user_id==User.id",
-            "lazy": "joined",
+            "lazy": "select",
         },
     )
     subscriber_subscribe: list["Subscriber"] = Relationship(
         back_populates="subscribe",
         sa_relationship_kwargs={
             "primaryjoin": "Subscriber.subscribe_id==User.id",
-            "lazy": "joined",
+            "lazy": "select",
         },
     )
     room_creators: list["RoomCreator"] = Relationship(back_populates="creator")
@@ -38,13 +38,13 @@ class User(SQLModel, table=True):
         back_populates="creator",
         sa_relationship_kwargs={
             "primaryjoin": "RoomInvitation.creator_id==User.id",
-            "lazy": "joined",
+            "lazy": "select",
         },
     )
     room_invitations_to_users: list["RoomInvitation"] = Relationship(
         back_populates="to_user",
         sa_relationship_kwargs={
             "primaryjoin": "RoomInvitation.to_user_id==User.id",
-            "lazy": "joined",
+            "lazy": "select",
         },
     )
