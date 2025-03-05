@@ -24,7 +24,7 @@ from app.modules import get_subscribers_sets
 
 app = FastAPI(
     title="phils_network",
-    version="0.1.0",
+    version="3.0.0",
 )
 
 
