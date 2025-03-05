@@ -51,7 +51,7 @@ export default function Rooms() {
     function updateRoomLastMessage(data) {
         data = JSON.parse(data)
         if (data && data.status) {
-            var room_id = Number(data.message.room)
+            var room_id = Number(data.message.room_id)
             var newRoom = rooms.filter((room) => room.id === room_id)[0]
             var text = data.message.text
             newRoom.last_message_sender = data.message.sender.username
