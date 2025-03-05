@@ -487,7 +487,7 @@ async def post_find_user(session: SessionDep, request: Request):
         user = {
             "id": find_user.id,
             "username": find_user.username,
-            "email": user.email,
+            "email": find_user.email,
             "first_name": find_user.first_name,
             "last_name": find_user.last_name,
             "is_online": is_online,
