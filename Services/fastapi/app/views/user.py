@@ -5,6 +5,7 @@ from sqlmodel import delete, select
 
 from app.database import SessionDep
 from app.models import (
+	DjangoAdminLog,
 	Message,
 	OnlineStatus,
 	Post,
@@ -139,6 +140,7 @@ async def delete_user(
 	session.exec(delete(RoomInvitation).where(RoomInvitation.to_user_id == user.id))
 	session.exec(delete(RoomSubscribers).where(RoomSubscribers.user_id == user.id))
 	session.exec(delete(Message).where(Message.sender_id == user.id))
+	session.exec(delete(DjangoAdminLog).where(DjangoAdminLog.user_id == user.id))
 	session.exec(delete(User).where(User.id == user.id))
 	session.commit()
 
