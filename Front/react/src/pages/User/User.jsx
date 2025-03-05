@@ -115,7 +115,7 @@ export default function User() {
 
     useEffect(() => {
         if (isAuth) {
-            getWebSocket({ socket_name: "OnlineSocket", path: `online_status/${user.username}/` })
+            getWebSocket({ socket_name: "OnlineSocket", path: `online_status/${user.id}/` })
         }
     }, [isAuth])
 

@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 from typing import Callable
 
-from fastapi import FastAPI, Request, WebSocket
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from sqlmodel import Session, delete, select
 
 from app.constants import DATETIME_FORMAT, MESSAGES_TO_LOAD, POSTS_TO_LOAD
@@ -40,8 +40,11 @@ async def add_user_to_request(request: Request, call_next):
 	if token:
 		token = token.split(" ")[1]  # Remove "Bearer"
 		with Session(engine) as session:
-			token = session.exec(select(Token).where(Token.key == token)).one()
-			if token:
+			tokens = (
+				session.exec(select(Token).where(Token.key == token)).unique().all()
+			)
+			if tokens:
+				token = tokens[0]
 				user = session.exec(select(User).where(User.id == token.user_id)).one()
 				if user:
 					request.state.user = User(id=user.id, username=user.username)
@@ -70,6 +73,19 @@ async def post_online_status(session: SessionDep, request: Request) -> dict[str,
 		online_status = OnlineStatus(is_online=False, user_id=request.state.user.id)
 		session.add(online_status)
 		session.commit()
+
+	return {"ok": True}
+
+
+@app.delete("/api/v2/online_status/")
+async def delete_online_status(session: SessionDep, request: Request):
+	if not request.state.user:
+		return {"ok": False, "error": "Can not authenticate."}
+
+	session.exec(
+		delete(OnlineStatus).where(OnlineStatus.user_id == request.state.user.id)
+	)
+	session.commit()
 
 	return {"ok": True}
 
@@ -1063,64 +1079,157 @@ async def get_message(
 ########################################
 
 
+@app.websocket("/ws/online_status/{user_id}/")
+async def online_status(
+	session: SessionDep, websocket: WebSocket, user_id: int, token_key: str = None
+):
+	async def _get_user_id() -> int | None:
+		nonlocal token_key
+
+		tokens = (
+			session.exec(select(Token).where(Token.key == token_key)).unique().all()
+		)
+		if tokens:
+			token = tokens[0]
+			return token.user_id
+		return
+
+	async def _create_online_status():
+		nonlocal user_id
+
+		online_statuses = (
+			session.exec(select(OnlineStatus).where(OnlineStatus.user_id == user_id))
+			.unique()
+			.all()
+		)
+		if online_statuses:
+			online_status = online_statuses[0]
+			online_status.is_online = True
+			session.add(online_status)
+			session.commit()
+
+	async def _remove_online_status() -> None:
+		nonlocal user_id
+
+		online_statuses = (
+			session.exec(select(OnlineStatus).where(OnlineStatus.user_id == user_id))
+			.unique()
+			.all()
+		)
+		if online_statuses:
+			online_status = online_statuses[0]
+			online_status.is_online = False
+			session.add(online_status)
+			session.commit()
+
+	await websocket.accept()
+	id = await _get_user_id()
+	try:
+		while True:
+			if not id:
+				await websocket.close()
+			else:
+				await _create_online_status()
+
+			await websocket.receive_text()
+
+	except WebSocketDisconnect:
+		await _remove_online_status()
+
+
 class ConnectionManager:
-    def __init__(self):
-        self.active_connections: list[WebSocket] = []
+	def __init__(self):
+		self.active_connections: list[WebSocket] = []
 
-    async def connect(self, websocket: WebSocket):
-        await websocket.accept()
-        self.active_connections.append(websocket)
+	async def connect(self, websocket: WebSocket):
+		await websocket.accept()
+		self.active_connections.append(websocket)
 
-    def disconnect(self, websocket: WebSocket):
-        self.active_connections.remove(websocket)
-
+	async def disconnect(self, websocket: WebSocket):
+		self.active_connections.remove(websocket)
 
 
 manager = ConnectionManager()
 
 
-
-
-
-@app.websocket("/ws/api/v2/online_status/{username}/")
-async def online_status(
-	session: SessionDep, websocket: WebSocket, username: str, token: str
+@app.websocket("/ws/chat/{room_id}/")
+async def chat(
+	session: SessionDep, websocket: WebSocket, room_id: int, token_key: str = None
 ):
-	async def _get_user_id(token: str) -> int | None:
-		token = session.exec(select(Token).where(Token.key == token)).one()
-		if token:
+	async def _get_user_id() -> int | None:
+		nonlocal token_key
+
+		tokens = (
+			session.exec(select(Token).where(Token.key == token_key)).unique().all()
+		)
+		if tokens:
+			token = tokens[0]
 			return token.user_id
 		return
 
-	async def _create_online_status(username: str):
-		online_status = session.exec(
-			select(OnlineStatus).where(OnlineStatus.user.username == username)
-		).one()
-		if online_status:
-			online_status.is_online = True
-			session.commit()
+	async def _check_permission(id: int) -> bool:
+		"""Check if user is this room subscriber."""
 
+		nonlocal room_id
+
+		room = session.exec(select(Room).where(Room.id == room_id)).one()
+		room_subscribers_ids: set[int] = set(
+			[subscriber.user_id for subscriber in room.room_subscribers]
+		)
+		flag = id in room_subscribers_ids
+		return flag
+
+	async def _create_message(message: dict) -> Message:
+		"""Create message."""
+
+		nonlocal room_id
+
+		message = Message(
+			sender_id=message["sender_id"],
+			room_id=room_id,
+			text=message["text"],
+			timestamp=datetime.now(),
+		)
+		session.add(message)
+		session.commit()
+		session.refresh(message)
+		return message
+
+	# await websocket.accept()
 	await manager.connect(websocket)
-
-	while True:
-		print(username, token)
-		# data = await websocket.receive_text()
-		# await websocket.send_text(f"Message text was: {data}")
-
-		id = await _get_user_id(token)
-
-		if not id:
-			await websocket.close()
-		else:
-			await _create_online_status(username=username)
-
-
+	id = await _get_user_id()
 
 	try:
-        while True:
-            data = await websocket.receive_text()
-            await manager.send_personal_message(f"You wrote: {data}", websocket)
-            await manager.broadcast(f"Client #{client_id} says: {data}")
-    except WebSocketDisconnect:
-        manager.disconnect(websocket)
-        await manager.broadcast(f"Client #{client_id} left the chat")
+		while True:
+			if not id:
+				await websocket.close()
+			else:
+				flag = _check_permission(id=id)
+				if not flag:
+					await websocket.close()
+
+			text = await websocket.receive_text()
+			text: dict = json.loads(text)
+			query = await _create_message(text["message"])
+
+			message = {
+				"sender_id": query.sender_id,
+				"room_id": query.room_id,
+				"text": query.text,
+				"timestamp": query.timestamp.strftime(DATETIME_FORMAT),
+				"sender": {
+					"username": query.sender.username,
+					"first_name": query.sender.first_name,
+					"last_name": query.sender.last_name,
+				},
+			}
+			await websocket.send_text(
+				data=json.dumps(
+					{
+						"status": True,
+						"message": message,
+					}
+				)
+			)
+	except WebSocketDisconnect:
+		manager.disconnect(websocket)

@@ -5,7 +5,7 @@ export default function getWebSocket({ socket_name, path }) {
     var socket = new WebSocket(
         WEBSOCKET_URL
         + path
-        + `?token=${getToken()}`
+        + `?token_key=${getToken()}`
     )
     socket.onopen = () => {
         console.log(`${socket_name}: The connection was setup successfully.`)
