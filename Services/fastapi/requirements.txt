@@ -2,3 +2,4 @@ fastapi[standard]==0.115.11
 sqlmodel==0.0.23
 psycopg2-binary==2.9.10
 sqlalchemy==2.0.38
+websockets==15.0
