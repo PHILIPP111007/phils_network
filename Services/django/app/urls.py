@@ -16,17 +16,10 @@ POST http://127.0.0.1:8000/token/token/logout/
 
 __all__ = ["urlpatterns"]
 
-from app.views import (
-	MessagesAPIView,
-)
+
 from django.urls import include, path
 
-auth_patterns = [
+urlpatterns = [
 	path("auth/", include("djoser.urls")),
 	path("token/", include("djoser.urls.authtoken")),
 ]
-room_patterns = [
-	path("room/<int:pk>/<int:loaded_messages>/", MessagesAPIView.as_view()),
-]
-
-urlpatterns = auth_patterns + room_patterns
