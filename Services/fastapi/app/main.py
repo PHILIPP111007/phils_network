@@ -1089,7 +1089,7 @@ async def get_message(
             )
             .offset(loaded_messages)
             .limit(MESSAGES_TO_LOAD)
-            .order_by(Post.timestamp.desc())
+            .order_by(Message.timestamp.desc())
         )
         .unique()
         .all()
