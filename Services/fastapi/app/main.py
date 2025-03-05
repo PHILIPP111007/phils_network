@@ -27,6 +27,8 @@ app = FastAPI(
 	version="3.0.0",
 )
 
+connected_clients = []
+
 
 #########################################
 # Middleware ############################
@@ -1094,7 +1096,7 @@ async def online_status(
 			return token.user_id
 		return
 
-	async def _create_online_status():
+	async def _create_online_status() -> None:
 		nonlocal user_id
 
 		online_statuses = (
@@ -1135,21 +1137,6 @@ async def online_status(
 
 	except WebSocketDisconnect:
 		await _remove_online_status()
-
-
-class ConnectionManager:
-	def __init__(self):
-		self.active_connections: list[WebSocket] = []
-
-	async def connect(self, websocket: WebSocket):
-		await websocket.accept()
-		self.active_connections.append(websocket)
-
-	async def disconnect(self, websocket: WebSocket):
-		self.active_connections.remove(websocket)
-
-
-manager = ConnectionManager()
 
 
 @app.websocket("/ws/chat/{room_id}/")
@@ -1196,15 +1183,23 @@ async def chat(
 		return message
 
 	# await websocket.accept()
-	await manager.connect(websocket)
+	await websocket.accept()
+
 	id = await _get_user_id()
+
+	connected_clients.append(
+		{"websocket": websocket, "token_key": token_key, "room_id": room_id}
+	)
 
 	try:
 		while True:
 			if not id:
 				await websocket.close()
+				connected_clients.remove(
+					{"websocket": websocket, "token_key": token_key, "room_id": room_id}
+				)
 			else:
-				flag = _check_permission(id=id)
+				flag = await _check_permission(id=id)
 				if not flag:
 					await websocket.close()
 
@@ -1223,13 +1218,21 @@ async def chat(
 					"last_name": query.sender.last_name,
 				},
 			}
-			await websocket.send_text(
-				data=json.dumps(
-					{
-						"status": True,
-						"message": message,
-					}
-				)
+
+			connected_clients_by_room = list(
+				filter(lambda x: x["room_id"] == room_id, connected_clients)
 			)
+			for client in connected_clients_by_room:
+				await client["websocket"].send_text(
+					data=json.dumps(
+						{
+							"status": True,
+							"message": message,
+						}
+					)
+				)
+
 	except WebSocketDisconnect:
-		manager.disconnect(websocket)
+		connected_clients.remove(
+			{"websocket": websocket, "token_key": token_key, "room_id": room_id}
+		)
