@@ -69,7 +69,7 @@ export default function Chat() {
         if (friends.length > 0 || subscribers.length > 0) {
             var body = { subscribers: subscribers, friends: friends }
 
-            var data = await Fetch({ action: `api/v1/room/${params.room_id}/`, method: HttpMethod.PUT, body: body })
+            var data = await Fetch({ action: `api/v2/room/${params.room_id}/`, method: HttpMethod.PUT, body: body })
             if (data && data.ok) {
                 navigate(`/chats/${user.username}/`)
             }
@@ -92,7 +92,7 @@ export default function Chat() {
     }
 
     useEffect(() => {
-        Fetch({ action: `api/v1/room/${params.room_id}/`, method: HttpMethod.GET })
+        Fetch({ action: `api/v2/room/${params.room_id}/`, method: HttpMethod.GET })
             .then((data) => {
                 if (data && data.ok) {
                     mainSets.value.isCreator = data.isCreator
