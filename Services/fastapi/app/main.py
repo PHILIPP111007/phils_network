@@ -680,10 +680,8 @@ async def get_user(session: SessionDep, request: Request, username: str):
     return result
 
 
-@app.put("/api/v2/user/{username}/")
-async def put_user(
-    session: SessionDep, request: Request, username: str
-) -> dict[str, User]:
+@app.put("/api/v2/user/")
+async def put_user(session: SessionDep, request: Request):
     if not request.state.user:
         return {"ok": False, "error": "Can not authenticate."}
 
