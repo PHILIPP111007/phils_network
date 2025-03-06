@@ -23,6 +23,16 @@ from app.views import (
 app = FastAPI(
 	title="phils_network",
 	version="3.0.0",
+	description="### Minimalistic social network written using Django, FastAPI and React.",
+	contact={
+		"name": "Roshchin Philipp",
+		"url": "https://github.com/PHILIPP111007",
+		"email": "r.phil@yandex.ru",
+	},
+	license_info={
+		"name": "MIT",
+		"identifier": "MIT",
+	},
 )
 
 connected_clients = []
