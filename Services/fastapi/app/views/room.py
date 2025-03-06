@@ -86,16 +86,15 @@ async def post_room(
 
 	room = Room(name=room_name_and_subscribers.name, timestamp=datetime.now())
 	session.add(room)
-	session.commit()
-	session.refresh(room)
 
 	room_subscriber = RoomSubscribers(user_id=request.state.user.id, room_id=room.id)
 	session.add(room_subscriber)
-	session.commit()
 
 	room_creator = RoomCreator(creator_id=request.state.user.id, room_id=room.id)
 	session.add(room_creator)
+
 	session.commit()
+	session.refresh(room)
 
 	if room_name_and_subscribers.subscribers:
 		subscribers = (
@@ -117,7 +116,7 @@ async def post_room(
 					timestamp=datetime.now(),
 				)
 				session.add(room_invitation)
-				session.commit()
+			session.commit()
 
 	session.refresh(room)
 	return {"ok": True, "room": room}

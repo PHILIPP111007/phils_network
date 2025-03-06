@@ -86,7 +86,7 @@ async def put_chat(
 				timestamp=datetime.now(),
 			)
 			session.add(room_invitation)
-			session.commit()
+		session.commit()
 
 	if friends_and_subscribers.subscribers:
 		for user_id in friends_and_subscribers.subscribers:

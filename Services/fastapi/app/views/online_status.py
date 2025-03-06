@@ -15,7 +15,6 @@ async def post_online_status(session: SessionDep, request: Request) -> dict[str,
 	online_status = session.exec(
 		select(OnlineStatus).where(OnlineStatus.user_id == request.state.user.id)
 	).first()
-
 	if not online_status:
 		online_status_new = OnlineStatus(is_online=False, user_id=request.state.user.id)
 		session.add(online_status_new)
