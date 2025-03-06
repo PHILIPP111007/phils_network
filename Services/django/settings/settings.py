@@ -117,16 +117,6 @@ DATABASES = {
 	},
 }
 
-CACHES = {
-	"default": {
-		"BACKEND": "django.core.cache.backends.redis.RedisCache",
-		"LOCATION": "redis://"
-		+ environ.get("REDIS_HOST", "127.0.0.1")
-		+ ":"
-		+ environ.get("REDIS_PORT", "6379"),
-	}
-}
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -170,13 +160,6 @@ STATIC_ROOT = BASE_DIR / "django_static"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD: str = "django.db.models.BigAutoField"
-
-
-######### My settings #########
-
-# CORS settings
-
-CORS_ORIGIN_ALLOW_ALL: bool = True
 
 
 # REST FRAMEWORK settings

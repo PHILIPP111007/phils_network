@@ -34,15 +34,6 @@ Have fun and if you want please leave feedback!
 * Django REST framework \
 <https://www.django-rest-framework.org/> <img src="pictures/Django-REST-framework.png" alt="alt text" width="70"/>
 
-* django-channels \
-<https://channels.readthedocs.io/en/stable/index.html>
-
-* gunicorn \
-<https://docs.gunicorn.org/en/stable/index.html>
-
-* Redis \
-<https://redis.io/docs/> <img src="pictures/redis.svg" alt="alt text" width="70"/>
-
 * Postgres \
 <https://www.postgresql.org/> <img src="pictures/Postgresql_elephant.png" alt="alt text" width="70"/>
 
