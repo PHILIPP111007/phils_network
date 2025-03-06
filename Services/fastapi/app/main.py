@@ -175,25 +175,27 @@ async def websocket_chat(
 
 	# await websocket.accept()
 	await websocket.accept()
-
 	id = await _get_user_id()
 
 	connected_clients.append(
 		{"websocket": websocket, "token_key": token_key, "room_id": room_id}
 	)
 
+	if not id:
+		await websocket.close()
+		connected_clients.remove(
+			{"websocket": websocket, "token_key": token_key, "room_id": room_id}
+		)
+	else:
+		flag = await _check_permission(id=id)
+		if not flag:
+			await websocket.close()
+			connected_clients.remove(
+				{"websocket": websocket, "token_key": token_key, "room_id": room_id}
+			)
+
 	try:
 		while True:
-			if not id:
-				await websocket.close()
-				connected_clients.remove(
-					{"websocket": websocket, "token_key": token_key, "room_id": room_id}
-				)
-			else:
-				flag = await _check_permission(id=id)
-				if not flag:
-					await websocket.close()
-
 			text = await websocket.receive_text()
 			text: dict = json.loads(text)
 			query = await _create_message(text["message"])
