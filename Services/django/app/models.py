@@ -84,11 +84,11 @@ class OnlineStatus(models.Model):
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
 	is_online = models.BooleanField(default=False)
 
-	def __str__(self):
-		return f"{self.user.username} [ is_online={self.is_online} ]"
-
 	class Meta:
 		verbose_name_plural = "Online Statuses"
 		indexes = [
 			models.Index(fields=["user_id"]),
 		]
+
+	def __str__(self):
+		return f"{self.user.username} [ is_online={self.is_online} ]"
