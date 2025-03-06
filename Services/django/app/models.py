@@ -9,7 +9,9 @@ class Post(models.Model):
 	changed = models.BooleanField(default=False)
 
 	class Meta:
-		ordering = ["-timestamp"]
+		indexes = [
+			models.Index(fields=["user_id"]),
+		]
 
 	def __str__(self):
 		return f"{self.user.username} [ {self.timestamp} ]"
@@ -20,6 +22,13 @@ class Subscriber(models.Model):
 	subscribe = models.ForeignKey(
 		User, related_name="subscribe", on_delete=models.CASCADE
 	)
+
+	class Meta:
+		indexes = [
+			models.Index(fields=["user_id"]),
+			models.Index(fields=["subscribe_id"]),
+			models.Index(fields=["user_id", "subscribe_id"]),
+		]
 
 	def __str__(self):
 		return self.user.username
@@ -63,7 +72,9 @@ class Message(models.Model):
 	timestamp = models.DateTimeField(auto_now_add=True)
 
 	class Meta:
-		ordering = ["-timestamp"]
+		indexes = [
+			models.Index(fields=["room_id"]),
+		]
 
 	def __str__(self):
 		return f"{self.sender.username} [ {self.timestamp} ]"
@@ -78,3 +89,6 @@ class OnlineStatus(models.Model):
 
 	class Meta:
 		verbose_name_plural = "Online Statuses"
+		indexes = [
+			models.Index(fields=["user_id"]),
+		]

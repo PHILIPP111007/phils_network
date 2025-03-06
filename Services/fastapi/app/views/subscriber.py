@@ -105,7 +105,8 @@ async def delete_subscriber(
 			return {"ok": False, "error": "Not found subscriber."}
 		subscribe = subscribes[0]
 
-	session.exec(delete(Subscriber).where(Subscriber.id == subscribe.id))
-	session.commit()
+	if subscribe:
+		session.exec(delete(Subscriber).where(Subscriber.id == subscribe.id))
+		session.commit()
 
 	return {"ok": True}
