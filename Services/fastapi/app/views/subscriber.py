@@ -1,6 +1,5 @@
-import json
-
 from fastapi import APIRouter, Request
+from pydantic import BaseModel
 from sqlmodel import delete, select
 
 from app.database import SessionDep
@@ -8,6 +7,10 @@ from app.enums import DeleteOption, SubscriberStatus
 from app.models import Subscriber
 
 router = APIRouter(tags=["subscriber"])
+
+
+class Option(BaseModel):
+	option: int
 
 
 @router.get("/api/v2/subscriber/{id}/")
@@ -61,21 +64,16 @@ async def post_subscriber(
 
 @router.delete("/api/v2/subscriber/{id}/")
 async def delete_subscriber(
-	session: SessionDep, request: Request, id: int
+	session: SessionDep, request: Request, id: int, option: Option
 ) -> dict[str, bool]:
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	body = await request.body()
-	body: dict = json.loads(body)
-
-	if not body.get("option"):
+	if not option.option:
 		return {"ok": False, "error": "Not provided an option."}
 
-	option = body["option"]
-
 	subscribe = None
-	if option == DeleteOption.DELETE_FRIEND.value:
+	if option.option == DeleteOption.DELETE_FRIEND.value:
 		subscribes = (
 			session.exec(
 				select(Subscriber).where(
@@ -90,7 +88,7 @@ async def delete_subscriber(
 			return {"ok": False, "error": "Not found subscriber."}
 		subscribe = subscribes[0]
 
-	elif option == DeleteOption.DELETE_SUBSCRIBER.value:
+	elif option.option == DeleteOption.DELETE_SUBSCRIBER.value:
 		subscribes = (
 			session.exec(
 				select(Subscriber).where(

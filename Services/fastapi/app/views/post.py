@@ -1,7 +1,7 @@
-import json
 from datetime import datetime
 
 from fastapi import APIRouter, Request
+from pydantic import BaseModel
 from sqlmodel import delete, select
 
 from app.constants import DATETIME_FORMAT, POSTS_TO_LOAD
@@ -10,6 +10,15 @@ from app.enums import SubscriberStatus
 from app.models import Post, Subscriber, User
 
 router = APIRouter(tags=["post"])
+
+
+class Content(BaseModel):
+	content: str
+
+
+class UserAndContent(BaseModel):
+	user: int
+	content: str
 
 
 @router.get("/api/v2/blog/{username}/{loaded_posts}/")
@@ -91,7 +100,7 @@ async def get_post(
 
 
 @router.put("/api/v2/blog/{id}/")
-async def put_post(session: SessionDep, request: Request, id: int):
+async def put_post(session: SessionDep, request: Request, id: int, content: Content):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
@@ -103,9 +112,7 @@ async def put_post(session: SessionDep, request: Request, id: int):
 	if post.user_id != request.state.user.id:
 		return {"ok": False, "error": "Access denied."}
 
-	body = await request.body()
-	body: dict = json.loads(body)
-	post.content = body["content"]
+	post.content = content.content
 	post.changed = True
 
 	session.add(post)
@@ -115,16 +122,15 @@ async def put_post(session: SessionDep, request: Request, id: int):
 
 
 @router.post("/api/v2/blog/")
-async def post_post(session: SessionDep, request: Request):
+async def post_post(
+	session: SessionDep, request: Request, user_and_content: UserAndContent
+):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	body = await request.body()
-	body: dict = json.loads(body)
-
 	post = Post(
-		user_id=body["user"],
-		content=body["content"],
+		user_id=user_and_content.user,
+		content=user_and_content.content,
 		timestamp=datetime.now(),
 		changed=False,
 	)

@@ -1,7 +1,7 @@
-import json
 from datetime import datetime
 
 from fastapi import APIRouter, Request
+from pydantic import BaseModel
 from sqlmodel import delete, select
 
 from app.constants import DATETIME_FORMAT
@@ -9,6 +9,11 @@ from app.database import SessionDep
 from app.models import Message, Room, RoomCreator, RoomInvitation, RoomSubscribers, User
 
 router = APIRouter(tags=["room"])
+
+
+class RoomNameAndSubscribers(BaseModel):
+	name: str
+	subscribers: list[int] = []
 
 
 @router.get("/api/v2/room/")
@@ -72,18 +77,18 @@ async def get_room(session: SessionDep, request: Request):
 
 
 @router.post("/api/v2/room/")
-async def post_room(session: SessionDep, request: Request):
+async def post_room(
+	session: SessionDep,
+	request: Request,
+	room_name_and_subscribers: RoomNameAndSubscribers,
+):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	body = await request.body()
-	body: dict = json.loads(body)
-
-	room_name = body.get("name")
-	if room_name is None:
+	if not room_name_and_subscribers.name:
 		return {"ok": False, "error": "Not provided room name."}
 
-	room = Room(name=room_name, timestamp=datetime.now())
+	room = Room(name=room_name_and_subscribers.name, timestamp=datetime.now())
 	session.add(room)
 	session.commit()
 	session.refresh(room)
@@ -96,10 +101,11 @@ async def post_room(session: SessionDep, request: Request):
 	session.add(room_creator)
 	session.commit()
 
-	subscribers_id_list: list[int] | None = body.get("subscribers")
-	if subscribers_id_list:
+	if room_name_and_subscribers.subscribers:
 		subscribers = (
-			session.exec(select(User).where(User.id.in_(subscribers_id_list)))
+			session.exec(
+				select(User).where(User.id.in_(room_name_and_subscribers.subscribers))
+			)
 			.unique()
 			.all()
 		)

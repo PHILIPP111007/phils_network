@@ -1,6 +1,5 @@
-import json
-
 from fastapi import APIRouter, Request
+from pydantic import BaseModel
 from sqlmodel import delete, select
 
 from app.database import SessionDep
@@ -18,6 +17,13 @@ from app.models import (
 )
 
 router = APIRouter(tags=["user"])
+
+
+class UserBody(BaseModel):
+	id: int
+	first_name: str
+	last_name: str
+	email: str
 
 
 @router.get("/api/v2/user/{username}/")
@@ -98,14 +104,11 @@ async def get_user(session: SessionDep, request: Request, username: str):
 
 
 @router.put("/api/v2/user/")
-async def put_user(session: SessionDep, request: Request):
+async def put_user(session: SessionDep, request: Request, user_body: UserBody):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	body = await request.body()
-	body: dict = json.loads(body)
-
-	users = session.exec(select(User).where(User.id == body["id"])).unique().all()
+	users = session.exec(select(User).where(User.id == user_body.id)).unique().all()
 	if not users:
 		return {"ok": False, "error": "Not found user."}
 	user = users[0]
@@ -113,9 +116,9 @@ async def put_user(session: SessionDep, request: Request):
 	if user.id != request.state.user.id:
 		return {"ok": False, "error": "Access denied."}
 
-	user.first_name = body["first_name"]
-	user.last_name = body["last_name"]
-	user.email = body["email"]
+	user.first_name = user_body.first_name
+	user.last_name = user_body.last_name
+	user.email = user_body.email
 
 	session.add(user)
 	session.commit()

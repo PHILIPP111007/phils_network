@@ -1,6 +1,5 @@
-import json
-
 from fastapi import APIRouter, Request
+from pydantic import BaseModel
 from sqlmodel import select
 
 from app.database import SessionDep
@@ -9,35 +8,35 @@ from app.models import OnlineStatus, User
 router = APIRouter(tags=["find_user"])
 
 
+class FindUser(BaseModel):
+	username: str | None = None
+	first_name: str | None = None
+	last_name: str | None = None
+
+
 @router.post("/api/v2/find_user/")
-async def post_find_user(session: SessionDep, request: Request):
+async def post_find_user(session: SessionDep, request: Request, find_user: FindUser):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	body = await request.body()
-	body: dict = json.loads(body)
-	username = body["username"]
-
 	find_users = None
-	if username:
+	if find_user.username:
 		find_users = (
 			session.exec(
 				select(User).where(
-					User.id != request.state.user.id, User.username.contains(username)
+					User.id != request.state.user.id,
+					User.username.contains(find_user.username),
 				)
 			)
 			.unique()
 			.all()
 		)
 	else:
-		first_name: str | None = body["first_name"]
-		last_name: str | None = body["last_name"]
-
-		if first_name:
+		if find_user.first_name:
 			query_1 = (
 				session.exec(
 					select(User).where(
-						User.first_name.contains(first_name),
+						User.first_name.contains(find_user.first_name),
 						User.id != request.state.user.id,
 					)
 				)
@@ -45,11 +44,11 @@ async def post_find_user(session: SessionDep, request: Request):
 				.all()
 			)
 
-		if last_name:
+		if find_user.last_name:
 			query_2 = (
 				session.exec(
 					select(User).where(
-						User.last_name.contains(last_name),
+						User.last_name.contains(find_user.last_name),
 						User.id != request.state.user.id,
 					)
 				)
@@ -57,15 +56,15 @@ async def post_find_user(session: SessionDep, request: Request):
 				.all()
 			)
 
-		if first_name and last_name:
+		if find_user.first_name and find_user.last_name:
 			find_users = []
 			for user in query_1:
 				find_users.append(user)
 			for user in query_2:
 				find_users.append(user)
-		elif first_name:
+		elif find_user.first_name:
 			find_users = query_1
-		elif last_name:
+		elif find_user.last_name:
 			find_users = query_2
 		else:
 			find_users = None

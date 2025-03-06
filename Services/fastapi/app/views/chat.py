@@ -1,7 +1,7 @@
-import json
 from datetime import datetime
 
 from fastapi import APIRouter, Request
+from pydantic import BaseModel
 from sqlmodel import delete, select
 
 from app.constants import DATETIME_FORMAT
@@ -12,10 +12,14 @@ from app.models import (
 	RoomCreator,
 	RoomInvitation,
 	RoomSubscribers,
-	User,
 )
 
 router = APIRouter(tags=["chat"])
+
+
+class FriendsAndSubscribers(BaseModel):
+	friends: list[int] = []
+	subscribers: list[int] = []
 
 
 @router.get("/api/v2/room/{id}/")
@@ -63,37 +67,33 @@ async def get_chat(session: SessionDep, request: Request, id: int):
 
 
 @router.put("/api/v2/room/{id}/")
-async def put_chat(session: SessionDep, request: Request, id: int) -> dict[str, bool]:
+async def put_chat(
+	session: SessionDep,
+	request: Request,
+	id: int,
+	friends_and_subscribers: FriendsAndSubscribers,
+) -> dict[str, bool]:
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
-
-	body = await request.body()
-	body: dict = json.loads(body)
-
-	friends: list | None = body.get("friends")
-	subscribers: list | None = body.get("subscribers")
 
 	rooms = session.exec(select(Room).where(Room.id == id)).unique().all()
 	if not rooms:
 		return {"ok": False, "error": "Not found room."}
 	room = rooms[0]
 
-	if friends:
-		friends = session.exec(select(User).where(User.id.in_(friends))).unique().all()
-		for friend in friends:
+	if friends_and_subscribers.friends:
+		for friend_id in friends_and_subscribers.friends:
 			room_invitation = RoomInvitation(
 				creator_id=request.state.user.id,
-				to_user_id=friend.id,
+				to_user_id=friend_id,
 				room_id=room.id,
 				timestamp=datetime.now(),
 			)
 			session.add(room_invitation)
 			session.commit()
 
-	if subscribers:
-		for user_id in subscribers:
-			if user_id == request.state.user.id:
-				continue
+	if friends_and_subscribers.subscribers:
+		for user_id in friends_and_subscribers.subscribers:
 			session.exec(
 				delete(RoomSubscribers).where(
 					RoomSubscribers.user_id == user_id,
