@@ -31,71 +31,59 @@ async def get_user(session: SessionDep, request: Request, username: str):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	users = []
-	query = (
-		session.exec(select(User).where(User.id == request.state.user.id))
-		.unique()
-		.all()
-	)
-	for user in query:
-		online_statuses = (
-			session.exec(select(OnlineStatus).where(OnlineStatus.user_id == user.id))
-			.unique()
-			.all()
-		)
-		online_status = online_statuses[0]
-		if online_status:
-			user = {
-				"id": user.id,
-				"username": user.username,
-				"email": user.email,
-				"first_name": user.first_name,
-				"last_name": user.last_name,
-				"is_online": online_status.is_online,
-			}
-		else:
-			user = {
-				"id": user.id,
-				"username": user.username,
-				"email": user.email,
-				"first_name": user.first_name,
-				"last_name": user.last_name,
-				"is_online": False,
-			}
-		users.append(user)
-	if not users:
+	query = session.exec(select(User).where(User.id == request.state.user.id)).first()
+	if not query:
 		return {"ok": False, "error": "Not found the global user."}
-	global_user = users[0]
 
-	result = {"ok": True, "global_user": global_user}
-
-	users = session.exec(select(User).where(User.username == username)).unique().all()
-	if not users:
-		return result
-	user = users[0]
-
-	online_statuses = (
-		session.exec(select(OnlineStatus).where(OnlineStatus.user_id == user.id))
-		.unique()
-		.all()
-	)
-	if online_statuses:
-		online_status = online_statuses[0]
+	online_status = session.exec(
+		select(OnlineStatus).where(OnlineStatus.user_id == query.id)
+	).first()
+	if online_status:
 		user = {
-			"id": user.id,
-			"username": user.username,
-			"email": user.email,
-			"first_name": user.first_name,
-			"last_name": user.last_name,
+			"id": query.id,
+			"username": query.username,
+			"email": query.email,
+			"first_name": query.first_name,
+			"last_name": query.last_name,
 			"is_online": online_status.is_online,
 		}
 	else:
 		user = {
-			"id": user.id,
-			"username": user.username,
-			"email": user.email,
-			"first_name": user.first_name,
-			"last_name": user.last_name,
+			"id": query.id,
+			"username": query.username,
+			"email": query.email,
+			"first_name": query.first_name,
+			"last_name": query.last_name,
+			"is_online": False,
+		}
+
+	global_user = user
+
+	result = {"ok": True, "global_user": global_user}
+
+	query = session.exec(select(User).where(User.username == username)).first()
+	if not query:
+		return result
+
+	online_status = session.exec(
+		select(OnlineStatus).where(OnlineStatus.user_id == query.id)
+	).first()
+	if online_status:
+		user = {
+			"id": query.id,
+			"username": query.username,
+			"email": query.email,
+			"first_name": query.first_name,
+			"last_name": query.last_name,
+			"is_online": online_status.is_online,
+		}
+	else:
+		user = {
+			"id": query.id,
+			"username": query.username,
+			"email": query.email,
+			"first_name": query.first_name,
+			"last_name": query.last_name,
 			"is_online": False,
 		}
 
@@ -108,10 +96,9 @@ async def put_user(session: SessionDep, request: Request, user_body: UserBody):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	users = session.exec(select(User).where(User.id == user_body.id)).unique().all()
-	if not users:
+	user = session.exec(select(User).where(User.id == user_body.id)).first()
+	if not user:
 		return {"ok": False, "error": "Not found user."}
-	user = users[0]
 
 	if user.id != request.state.user.id:
 		return {"ok": False, "error": "Access denied."}
@@ -134,10 +121,9 @@ async def delete_user(
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	users = session.exec(select(User).where(User.username == username)).unique().all()
-	if not users:
+	user = session.exec(select(User).where(User.username == username)).first()
+	if not user:
 		return {"ok": False, "error": "Not found user."}
-	user = users[0]
 
 	if user.id != request.state.user.id:
 		return {"ok": False, "error": "Access denied."}

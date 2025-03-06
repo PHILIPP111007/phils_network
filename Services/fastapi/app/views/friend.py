@@ -73,15 +73,10 @@ async def get_friends(session: SessionDep, request: Request, option: FilterOptio
 		query = await option_func()
 		if option != FilterOption.SUBSCRIBERS_COUNT.value:
 			for user in query:
-				online_statuses = (
-					session.exec(
-						select(OnlineStatus).where(OnlineStatus.user_id == user.id)
-					)
-					.unique()
-					.all()
-				)
-				if online_statuses:
-					online_status = online_statuses[0]
+				online_status = session.exec(
+					select(OnlineStatus).where(OnlineStatus.user_id == user.id)
+				).first()
+				if online_status:
 					user = {
 						"id": user.id,
 						"username": user.username,

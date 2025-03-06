@@ -171,21 +171,13 @@ async def post_room_invitation_add(
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	room_invites = (
-		session.exec(select(RoomInvitation).where(RoomInvitation.id == room_id))
-		.unique()
-		.all()
-	)
-	room_invite = room_invites[0]
+	room_invite = session.exec(
+		select(RoomInvitation).where(RoomInvitation.id == room_id)
+	).first()
 
-	room_creators = (
-		session.exec(
-			select(RoomCreator).where(RoomCreator.room_id == room_invite.room_id)
-		)
-		.unique()
-		.all()
-	)
-	room_creator = room_creators[0]
+	room_creator = session.exec(
+		select(RoomCreator).where(RoomCreator.room_id == room_invite.room_id)
+	).first()
 
 	if room_creator:
 		session.exec(delete(RoomInvitation).where(RoomInvitation.id == room_invite.id))

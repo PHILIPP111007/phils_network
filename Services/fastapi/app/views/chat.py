@@ -27,18 +27,15 @@ async def get_chat(session: SessionDep, request: Request, id: int):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	room = session.exec(select(Room).where(Room.id == id)).one()
+	room = session.exec(select(Room).where(Room.id == id)).first()
 	if not room:
 		return {"ok": False, "error": "Not found room."}
 
-	room_creators = (
-		session.exec(select(RoomCreator).where(RoomCreator.room_id == id))
-		.unique()
-		.all()
-	)
-	if not room_creators:
+	room_creator = session.exec(
+		select(RoomCreator).where(RoomCreator.room_id == id)
+	).first()
+	if not room_creator:
 		return {"ok": False, "error": "Not found room creator."}
-	room_creator = room_creators[0]
 
 	is_creator = room_creator.creator_id == request.state.user.id
 
@@ -76,10 +73,9 @@ async def put_chat(
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	rooms = session.exec(select(Room).where(Room.id == id)).unique().all()
-	if not rooms:
+	room = session.exec(select(Room).where(Room.id == id)).first()
+	if not room:
 		return {"ok": False, "error": "Not found room."}
-	room = rooms[0]
 
 	if friends_and_subscribers.friends:
 		for friend_id in friends_and_subscribers.friends:
