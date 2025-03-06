@@ -23,7 +23,7 @@ async def post_find_user(session: SessionDep, request: Request):
 		find_users = (
 			session.exec(
 				select(User).where(
-					User.username.contains(username), User.id != request.state.user.id
+					User.id != request.state.user.id, User.username.contains(username)
 				)
 			)
 			.unique()
