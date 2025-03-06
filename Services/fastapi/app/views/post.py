@@ -90,7 +90,7 @@ async def get_post(
 	return {"ok": True, "posts": posts}
 
 
-@router.put("/api/v2/blog/{id}")
+@router.put("/api/v2/blog/{id}/")
 async def put_post(session: SessionDep, request: Request, id: int):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
@@ -139,7 +139,7 @@ async def post_post(session: SessionDep, request: Request):
 	return {"ok": True, "post": post}
 
 
-@router.delete("/api/v2/blog/{id}")
+@router.delete("/api/v2/blog/{id}/")
 async def delete_post(
 	session: SessionDep, request: Request, id: int
 ) -> dict[str, bool]:
