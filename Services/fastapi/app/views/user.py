@@ -32,9 +32,12 @@ async def get_user(session: SessionDep, request: Request, username: str):
 		.all()
 	)
 	for user in query:
-		online_status = session.exec(
-			select(OnlineStatus).where(OnlineStatus.user_id == user.id)
-		).one()
+		online_statuses = (
+			session.exec(select(OnlineStatus).where(OnlineStatus.user_id == user.id))
+			.unique()
+			.all()
+		)
+		online_status = online_statuses[0]
 		if online_status:
 			user = {
 				"id": user.id,
@@ -60,14 +63,18 @@ async def get_user(session: SessionDep, request: Request, username: str):
 
 	result = {"ok": True, "global_user": global_user}
 
-	user = session.exec(select(User).where(User.username == username)).one()
-	if not user:
+	users = session.exec(select(User).where(User.username == username)).unique().all()
+	if not users:
 		return result
+	user = users[0]
 
-	online_status = session.exec(
-		select(OnlineStatus).where(OnlineStatus.user_id == user.id)
-	).one()
-	if online_status:
+	online_statuses = (
+		session.exec(select(OnlineStatus).where(OnlineStatus.user_id == user.id))
+		.unique()
+		.all()
+	)
+	if online_statuses:
+		online_status = online_statuses[0]
 		user = {
 			"id": user.id,
 			"username": user.username,
@@ -98,9 +105,10 @@ async def put_user(session: SessionDep, request: Request):
 	body = await request.body()
 	body: dict = json.loads(body)
 
-	user = session.exec(select(User).where(User.id == body["id"])).one()
-	if not user:
+	users = session.exec(select(User).where(User.id == body["id"])).unique().all()
+	if not users:
 		return {"ok": False, "error": "Not found user."}
+	user = users[0]
 
 	if user.id != request.state.user.id:
 		return {"ok": False, "error": "Access denied."}
@@ -123,9 +131,10 @@ async def delete_user(
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	user = session.exec(select(User).where(User.username == username)).one()
-	if not user:
+	users = session.exec(select(User).where(User.username == username)).unique().all()
+	if not users:
 		return {"ok": False, "error": "Not found user."}
+	user = users[0]
 
 	if user.id != request.state.user.id:
 		return {"ok": False, "error": "Access denied."}

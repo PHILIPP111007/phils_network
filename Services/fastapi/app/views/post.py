@@ -31,9 +31,12 @@ async def get_post(
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	unknown = session.exec(select(User).where(User.username == username)).one()
-	if not unknown:
+	unknowns = (
+		session.exec(select(User).where(User.username == username)).unique().all()
+	)
+	if not unknowns:
 		return {"ok": False, "error": "Not found user."}
+	unknown = unknowns[0]
 
 	if request.state.user.id != unknown.id:
 		user_1 = await _filter(user_id=request.state.user.id, subscribe_id=unknown.id)
@@ -92,9 +95,10 @@ async def put_post(session: SessionDep, request: Request, id: int):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	post = session.exec(select(Post).where(Post.id == id)).one()
-	if not post:
+	posts = session.exec(select(Post).where(Post.id == id)).unique().all()
+	if not posts:
 		return {"ok": False, "error": "Not found post."}
+	post = posts[0]
 
 	if post.user_id != request.state.user.id:
 		return {"ok": False, "error": "Access denied."}
@@ -142,9 +146,10 @@ async def delete_post(
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	post = session.exec(select(Post).where(Post.id == id)).one()
-	if not post:
+	posts = session.exec(select(Post).where(Post.id == id)).unique().all()
+	if not posts:
 		return {"ok": False, "error": "Not found post."}
+	post = posts[0]
 
 	if post.user_id != request.state.user.id:
 		return {"ok": False, "error": "Access denied."}

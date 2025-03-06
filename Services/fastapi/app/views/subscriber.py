@@ -76,24 +76,34 @@ async def delete_subscriber(
 
 	subscribe = None
 	if option == DeleteOption.DELETE_FRIEND.value:
-		subscribe = session.exec(
-			select(Subscriber).where(
-				Subscriber.user_id == request.state.user.id,
-				Subscriber.subscribe_id == id,
+		subscribes = (
+			session.exec(
+				select(Subscriber).where(
+					Subscriber.user_id == request.state.user.id,
+					Subscriber.subscribe_id == id,
+				)
 			)
-		).one()
-		if not subscribe:
+			.unique()
+			.all()
+		)
+		if not subscribes:
 			return {"ok": False, "error": "Not found subscriber."}
+		subscribe = subscribes[0]
 
 	elif option == DeleteOption.DELETE_SUBSCRIBER.value:
-		subscribe = session.exec(
-			select(Subscriber).where(
-				Subscriber.user_id == id,
-				Subscriber.subscribe_id == request.state.user.id,
+		subscribes = (
+			session.exec(
+				select(Subscriber).where(
+					Subscriber.user_id == id,
+					Subscriber.subscribe_id == request.state.user.id,
+				)
 			)
-		).one()
-		if not subscribe:
+			.unique()
+			.all()
+		)
+		if not subscribes:
 			return {"ok": False, "error": "Not found subscriber."}
+		subscribe = subscribes[0]
 
 	session.exec(delete(Subscriber).where(Subscriber.id == subscribe.id))
 	session.commit()

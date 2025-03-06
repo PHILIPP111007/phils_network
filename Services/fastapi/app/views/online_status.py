@@ -12,9 +12,13 @@ async def post_online_status(session: SessionDep, request: Request) -> dict[str,
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	online_statuses = session.exec(
-		select(OnlineStatus).where(OnlineStatus.user_id == request.state.user.id)
-	).all()
+	online_statuses = (
+		session.exec(
+			select(OnlineStatus).where(OnlineStatus.user_id == request.state.user.id)
+		)
+		.unique()
+		.all()
+	)
 
 	if not online_statuses:
 		online_status = OnlineStatus(is_online=False, user_id=request.state.user.id)

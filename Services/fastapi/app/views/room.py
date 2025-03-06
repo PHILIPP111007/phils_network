@@ -16,11 +16,15 @@ async def get_room(session: SessionDep, request: Request):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	room_ids = session.exec(
-		select(RoomSubscribers.room_id).where(
-			RoomSubscribers.user_id == request.state.user.id
+	room_ids = (
+		session.exec(
+			select(RoomSubscribers.room_id).where(
+				RoomSubscribers.user_id == request.state.user.id
+			)
 		)
-	).all()
+		.unique()
+		.all()
+	)
 	rooms = session.exec(select(Room).where(Room.id.in_(room_ids))).unique().all()
 
 	time_and_rooms = []
@@ -161,13 +165,21 @@ async def post_room_invitation_add(
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	room_invite = session.exec(
-		select(RoomInvitation).where(RoomInvitation.id == room_id)
-	).one()
+	room_invites = (
+		session.exec(select(RoomInvitation).where(RoomInvitation.id == room_id))
+		.unique()
+		.all()
+	)
+	room_invite = room_invites[0]
 
-	room_creator = session.exec(
-		select(RoomCreator).where(RoomCreator.room_id == room_invite.room_id)
-	).one()
+	room_creators = (
+		session.exec(
+			select(RoomCreator).where(RoomCreator.room_id == room_invite.room_id)
+		)
+		.unique()
+		.all()
+	)
+	room_creator = room_creators[0]
 
 	if room_creator:
 		session.exec(delete(RoomInvitation).where(RoomInvitation.id == room_invite.id))

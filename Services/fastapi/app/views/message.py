@@ -15,9 +15,10 @@ async def get_message(
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	room = session.exec(select(Room).where(Room.id == id)).one()
-	if not room:
+	rooms = session.exec(select(Room).where(Room.id == id)).unique().all()
+	if not rooms:
 		return {"ok": False, "error": "Not found room."}
+	room = rooms[0]
 
 	flag = (
 		session.exec(

@@ -27,11 +27,14 @@ async def get_chat(session: SessionDep, request: Request, id: int):
 	if not room:
 		return {"ok": False, "error": "Not found room."}
 
-	room_creator = session.exec(
-		select(RoomCreator).where(RoomCreator.room_id == id)
-	).one()
-	if not room_creator:
+	room_creators = (
+		session.exec(select(RoomCreator).where(RoomCreator.room_id == id))
+		.unique()
+		.all()
+	)
+	if not room_creators:
 		return {"ok": False, "error": "Not found room creator."}
+	room_creator = room_creators[0]
 
 	is_creator = room_creator.creator_id == request.state.user.id
 
@@ -70,9 +73,10 @@ async def put_chat(session: SessionDep, request: Request, id: int) -> dict[str, 
 	friends: list | None = body.get("friends")
 	subscribers: list | None = body.get("subscribers")
 
-	room = session.exec(select(Room).where(Room.id == id)).one()
-	if not room:
+	rooms = session.exec(select(Room).where(Room.id == id)).unique().all()
+	if not rooms:
 		return {"ok": False, "error": "Not found room."}
+	room = rooms[0]
 
 	if friends:
 		friends = session.exec(select(User).where(User.id.in_(friends))).unique().all()

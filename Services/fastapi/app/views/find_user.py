@@ -75,11 +75,17 @@ async def post_find_user(session: SessionDep, request: Request):
 
 	users = []
 	for find_user in find_users:
-		is_online = session.exec(
-			select(OnlineStatus).where(OnlineStatus.user_id == find_user.id)
-		).one()
-		if not is_online:
+		is_onlines = (
+			session.exec(
+				select(OnlineStatus).where(OnlineStatus.user_id == find_user.id)
+			)
+			.unique()
+			.all()
+		)
+		if not is_onlines:
 			is_online = False
+		else:
+			is_online = is_onlines
 
 		user = {
 			"id": find_user.id,
