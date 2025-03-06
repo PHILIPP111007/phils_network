@@ -1,6 +1,7 @@
 import json
 from datetime import datetime
 
+import uvicorn
 from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from sqlmodel import Session, select
 
@@ -239,3 +240,7 @@ async def websocket_chat(
 		connected_clients.remove(
 			{"websocket": websocket, "token_key": token_key, "room_id": room_id}
 		)
+
+
+if __name__ == "__main__":
+	uvicorn.run(app, host="0.0.0.0", port=8080)
