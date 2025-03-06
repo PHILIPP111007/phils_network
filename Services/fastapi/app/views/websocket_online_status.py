@@ -14,24 +14,18 @@ async def websocket_online_status(
 	async def _get_user_id() -> int | None:
 		nonlocal token_key
 
-		tokens = (
-			session.exec(select(Token).where(Token.key == token_key)).unique().all()
-		)
-		if tokens:
-			token = tokens[0]
+		token = session.exec(select(Token).where(Token.key == token_key)).first()
+		if token:
 			return token.user_id
 		return
 
 	async def _create_online_status() -> None:
 		nonlocal user_id
 
-		online_statuses = (
-			session.exec(select(OnlineStatus).where(OnlineStatus.user_id == user_id))
-			.unique()
-			.all()
-		)
-		if online_statuses:
-			online_status = online_statuses[0]
+		online_status = session.exec(
+			select(OnlineStatus).where(OnlineStatus.user_id == user_id)
+		).first()
+		if online_status:
 			online_status.is_online = True
 			session.add(online_status)
 			session.commit()
@@ -39,13 +33,10 @@ async def websocket_online_status(
 	async def _remove_online_status() -> None:
 		nonlocal user_id
 
-		online_statuses = (
-			session.exec(select(OnlineStatus).where(OnlineStatus.user_id == user_id))
-			.unique()
-			.all()
-		)
-		if online_statuses:
-			online_status = online_statuses[0]
+		online_status = session.exec(
+			select(OnlineStatus).where(OnlineStatus.user_id == user_id)
+		).first()
+		if online_status:
 			online_status.is_online = False
 			session.add(online_status)
 			session.commit()

@@ -47,11 +47,8 @@ async def middleware_add_user_to_request(request: Request, call_next):
 	if token:
 		token = token.split(" ")[1]  # Remove "Bearer"
 		with Session(engine) as session:
-			tokens = (
-				session.exec(select(Token).where(Token.key == token)).unique().all()
-			)
-			if tokens:
-				token = tokens[0]
+			token = session.exec(select(Token).where(Token.key == token)).first()
+			if token:
 				user = session.exec(select(User).where(User.id == token.user_id)).one()
 				if user:
 					request.state.user = User(id=user.id, username=user.username)

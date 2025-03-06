@@ -25,11 +25,8 @@ async def websocket_chat(
 	async def _get_user_id() -> int | None:
 		nonlocal token_key
 
-		tokens = (
-			session.exec(select(Token).where(Token.key == token_key)).unique().all()
-		)
-		if tokens:
-			token = tokens[0]
+		token = session.exec(select(Token).where(Token.key == token_key)).first()
+		if token:
 			return token.user_id
 		return
 
