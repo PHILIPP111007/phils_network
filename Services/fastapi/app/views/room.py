@@ -34,18 +34,14 @@ async def get_room(session: SessionDep, request: Request):
 
 	time_and_rooms = []
 	for room in rooms:
-		messages = (
-			session.exec(
-				select(Message)
-				.where(Message.room_id == room.id)
-				.order_by(Message.timestamp.desc())
-			)
-			.unique()
-			.all()
-		)
-		if messages:
-			time = messages[0].timestamp
-			time_and_rooms.append((time, room, messages[0]))
+		message = session.exec(
+			select(Message)
+			.where(Message.room_id == room.id)
+			.order_by(Message.timestamp.desc())
+		).first()
+		if message:
+			time = message.timestamp
+			time_and_rooms.append((time, room, message))
 		else:
 			time = room.timestamp
 			time_and_rooms.append((time, room, None))
