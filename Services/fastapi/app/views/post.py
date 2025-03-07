@@ -65,9 +65,9 @@ async def get_post(
 		session.exec(
 			select(Post)
 			.where(Post.user_id == unknown.id)
+			.order_by(Post.timestamp.desc())
 			.offset(loaded_posts)
 			.limit(POSTS_TO_LOAD)
-			.order_by(Post.timestamp.desc())
 		)
 		.unique()
 		.all()

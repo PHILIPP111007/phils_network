@@ -21,10 +21,6 @@ async def get_friends(session: SessionDep, request: Request, option: FilterOptio
 			if id in set_2:
 				set_3.add(id)
 
-		for id in set_2:
-			if id in set_1:
-				set_3.add(id)
-
 		query = session.exec(select(User).where(User.id.in_(set_3))).unique().all()
 		return query
 
@@ -68,35 +64,36 @@ async def get_friends(session: SessionDep, request: Request, option: FilterOptio
 
 	option_func: Callable[[int], list[User] | int] | None = options.get(option, None)
 
-	users = []
-	if option_func:
-		query = await option_func()
-		if option != FilterOption.SUBSCRIBERS_COUNT.value:
-			for user in query:
-				online_status = session.exec(
-					select(OnlineStatus).where(OnlineStatus.user_id == user.id)
-				).first()
-				if online_status:
-					user = {
-						"id": user.id,
-						"username": user.username,
-						"email": user.email,
-						"first_name": user.first_name,
-						"last_name": user.last_name,
-						"is_online": online_status.is_online,
-					}
-				else:
-					user = {
-						"id": user.id,
-						"username": user.username,
-						"email": user.email,
-						"first_name": user.first_name,
-						"last_name": user.last_name,
-						"is_online": False,
-					}
-				users.append(user)
-			return {"ok": True, "query": users}
-		else:
-			query = len(query)
-			return {"ok": True, "query": query}
-	return {"ok": False, "error": "Not found users."}
+	if not option_func:
+		return {"ok": False, "error": "Not found users."}
+
+	users: list[dict] = []
+	query = await option_func()
+	if option != FilterOption.SUBSCRIBERS_COUNT.value:
+		for user in query:
+			online_status = session.exec(
+				select(OnlineStatus).where(OnlineStatus.user_id == user.id)
+			).first()
+			if online_status:
+				user = {
+					"id": user.id,
+					"username": user.username,
+					"email": user.email,
+					"first_name": user.first_name,
+					"last_name": user.last_name,
+					"is_online": online_status.is_online,
+				}
+			else:
+				user = {
+					"id": user.id,
+					"username": user.username,
+					"email": user.email,
+					"first_name": user.first_name,
+					"last_name": user.last_name,
+					"is_online": False,
+				}
+			users.append(user)
+		return {"ok": True, "query": users}
+	else:
+		query = len(query)
+		return {"ok": True, "query": query}

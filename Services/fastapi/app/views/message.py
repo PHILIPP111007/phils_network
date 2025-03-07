@@ -19,16 +19,12 @@ async def get_message(
 	if not room:
 		return {"ok": False, "error": "Not found room."}
 
-	flag = (
-		session.exec(
-			select(RoomSubscribers).where(
-				RoomSubscribers.user_id == request.state.user.id,
-				RoomSubscribers.room_id == room.id,
-			)
+	flag = session.exec(
+		select(RoomSubscribers).where(
+			RoomSubscribers.user_id == request.state.user.id,
+			RoomSubscribers.room_id == room.id,
 		)
-		.unique()
-		.all()
-	)
+	).first()
 	if not flag:
 		return {"ok": False, "error": "Access denied."}
 

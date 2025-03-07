@@ -36,8 +36,8 @@ async def post_find_user(session: SessionDep, request: Request, find_user: FindU
 			query_1 = (
 				session.exec(
 					select(User).where(
-						User.first_name.contains(find_user.first_name),
 						User.id != request.state.user.id,
+						User.first_name.contains(find_user.first_name),
 					)
 				)
 				.unique()
@@ -48,8 +48,8 @@ async def post_find_user(session: SessionDep, request: Request, find_user: FindU
 			query_2 = (
 				session.exec(
 					select(User).where(
-						User.last_name.contains(find_user.last_name),
 						User.id != request.state.user.id,
+						User.last_name.contains(find_user.last_name),
 					)
 				)
 				.unique()
@@ -57,7 +57,7 @@ async def post_find_user(session: SessionDep, request: Request, find_user: FindU
 			)
 
 		if find_user.first_name and find_user.last_name:
-			find_users = []
+			find_users: list[User] = []
 			for user in query_1:
 				find_users.append(user)
 			for user in query_2:
@@ -73,25 +73,20 @@ async def post_find_user(session: SessionDep, request: Request, find_user: FindU
 		return {"ok": False, "error": "Not found users."}
 
 	users = []
-	for find_user in find_users:
-		is_onlines = (
-			session.exec(
-				select(OnlineStatus).where(OnlineStatus.user_id == find_user.id)
-			)
-			.unique()
-			.all()
-		)
-		if not is_onlines:
+	for user in find_users:
+		is_online = session.exec(
+			select(OnlineStatus).where(OnlineStatus.user_id == user.id)
+		).first()
+
+		if not is_online:
 			is_online = False
-		else:
-			is_online = is_onlines
 
 		user = {
-			"id": find_user.id,
-			"username": find_user.username,
-			"email": find_user.email,
-			"first_name": find_user.first_name,
-			"last_name": find_user.last_name,
+			"id": user.id,
+			"username": user.username,
+			"email": user.email,
+			"first_name": user.first_name,
+			"last_name": user.last_name,
 			"is_online": is_online,
 		}
 		users.append(user)

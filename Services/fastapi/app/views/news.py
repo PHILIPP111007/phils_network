@@ -19,10 +19,6 @@ async def get_news(session: SessionDep, request: Request, loaded_posts: int):
 			if id in set_2:
 				set_3.add(id)
 
-		for id in set_2:
-			if id in set_1:
-				set_3.add(id)
-
 		query = session.exec(select(User.id).where(User.id.in_(set_3))).unique().all()
 		return query
 

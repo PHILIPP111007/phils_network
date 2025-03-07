@@ -138,18 +138,18 @@ async def get_room_invitation(session: SessionDep, request: Request, username: s
 	)
 
 	rooms = []
-	for room in query:
+	for room_invitation in query:
 		room = {
-			"id": room.id,
-			"creator_id": room.creator_id,
-			"room_id": room.room_id,
-			"to_user_id": room.to_user_id,
-			"timestamp": room.timestamp,
+			"id": room_invitation.id,
+			"creator_id": room_invitation.creator_id,
+			"room_id": room_invitation.room_id,
+			"to_user_id": room_invitation.to_user_id,
+			"timestamp": room_invitation.timestamp,
 			"room": {
-				"id": room.room.id,
-				"name": room.room.name,
+				"id": room_invitation.room.id,
+				"name": room_invitation.room.name,
 			},
-			"creator": {"username": room.creator.username},
+			"creator": {"username": room_invitation.creator.username},
 		}
 		rooms.append(room)
 
