@@ -113,7 +113,7 @@ export default function Chat() {
         var sendButton = document.getElementById("SendButton")
         textArea.focus()
         textArea.onkeyup = function (e) {
-            if (e.keyCode === 13) {
+            if (e.keyCode === 13 && !e.shiftKey) {
                 sendButton.click()
             }
         }
