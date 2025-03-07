@@ -31,22 +31,6 @@
     display: flex;
 }
 
-.Chat .TextArea {
-    width: 400px;
-    resize: none;
-    min-height: 20px;
-    outline: none;
-    overflow: auto;
-    font-family: inherit;
-    font-size: inherit;
-    line-height: inherit;
-    border: 1px solid;
-    padding: 5px;
-    border-right: none;
-    border-left: none;
-    line-height: 20px;
-}
-
 .Chat #SendButton {
     width: 25px;
     border-top: 1px solid;

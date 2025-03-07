@@ -1,3 +1,4 @@
+import "./styles/UserInput.css"
 import { useState, use } from "react"
 import { UserContext } from "../../../data/context"
 import Modal from "../../components/Modal"
@@ -25,7 +26,6 @@ export default function UserInput({ mainSets, sendMessage, editRoom }) {
                 />
                 <textarea
                     className="TextArea"
-                    maxLength="5000"
                     placeholder="type text..."
                     value={text}
                     onChange={(e) => setText(e.target.value)}
