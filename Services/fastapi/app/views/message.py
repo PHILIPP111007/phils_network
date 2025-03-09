@@ -47,8 +47,10 @@ async def get_message(
 	messages = []
 	for message in query:
 		message = {
+			"id": message.id,
 			"text": message.text,
 			"timestamp": message.timestamp.strftime(DATETIME_FORMAT),
+			"file": message.file,
 			"sender": {
 				"username": message.sender.username,
 				"first_name": message.sender.first_name,

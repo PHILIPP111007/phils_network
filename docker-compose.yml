@@ -27,6 +27,8 @@ services:
       SECRET_KEY: weofjweifjewifjewifjewfewf
       DEBUG: "0"
       ALLOWED_HOSTS: "*"
+    volumes:
+      - media:/app/media
 
   fastapi:
     container_name: fastapi
@@ -96,6 +98,7 @@ services:
 
 volumes:
   postgres-data:
+  media:
 
 networks:
   nginx_network:

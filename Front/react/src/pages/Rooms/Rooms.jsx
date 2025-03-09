@@ -53,12 +53,25 @@ export default function Rooms() {
         if (data && data.status) {
             var room_id = Number(data.message.room_id)
             var newRoom = rooms.filter((room) => room.id === room_id)[0]
-            var text = data.message.text
             newRoom.last_message_sender = data.message.sender.username
-            if (text.length > 30) {
-                text = text.substring(0, 30) + "..."
+
+            var text = data.message.text
+            var file_name = data.message.file
+
+            if (text) {
+                if (text.length > 30) {
+                    text = text.substring(0, 30) + "..."
+                }
+                newRoom.last_message_text = text
             }
-            newRoom.last_message_text = text
+
+            if (file_name) {
+                if (file_name.length > 30) {
+                    file_name = file_name.substring(0, 30) + "..."
+                }
+                newRoom.last_message_text = file_name
+            }
+
 
             setRooms((prev) => {
                 var newRooms = [newRoom, ...prev.filter((room) => room.id !== room_id)]

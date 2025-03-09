@@ -4,7 +4,7 @@ import { Link } from "react-router-dom"
 export default function RoomCard({ room, link }) {
 
     function getSubstring({ text }) {
-        if (text.length > 30) {
+        if (text && text.length > 30) {
             text = text.substring(0, 30) + "..."
         }
         return text

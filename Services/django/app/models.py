@@ -2,6 +2,11 @@ from django.contrib.auth.models import User
 from django.db import models
 
 
+def _user_directory_path(instance, file_name):
+	# file will be uploaded to MEDIA_ROOT / user_<username>/<filename>
+	return f"{instance.sender.username}/{instance.room.id}/{file_name}"
+
+
 class Post(models.Model):
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
 	timestamp = models.DateTimeField(auto_now_add=True)
@@ -68,8 +73,11 @@ class RoomInvitation(models.Model):
 class Message(models.Model):
 	room = models.ForeignKey(Room, on_delete=models.CASCADE)
 	sender = models.ForeignKey(User, on_delete=models.CASCADE)
-	text = models.TextField(max_length=5000)
+	text = models.TextField(max_length=5000, blank=True, null=True, default=None)
 	timestamp = models.DateTimeField(auto_now_add=True)
+	file = models.FileField(
+		blank=True, null=True, default=None, upload_to=_user_directory_path
+	)
 
 	class Meta:
 		indexes = [

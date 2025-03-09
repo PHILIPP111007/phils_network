@@ -2,6 +2,7 @@
     width: 400px;
     min-height: 20px;
     max-height: 500px;
+    padding: 5px;
     field-sizing: content;
     height: auto;
     outline: none;
@@ -10,8 +11,11 @@
     font-size: inherit;
     line-height: inherit;
     border: 1px solid;
-    padding: 5px;
     border-right: none;
     border-left: none;
     line-height: 20px;
+}
+
+.UserInput .uploadFileForm {
+    padding: 5px;
 }

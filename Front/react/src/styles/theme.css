@@ -114,6 +114,7 @@
     .ModalRoomEdit,
     .ModalSettings,
     .ModalPostEdit,
+    .uploadFileForm,
     .ModalDelAcc {
         background: var(--l-main-bg-color);
     }
@@ -201,7 +202,9 @@
     .ModalRoomCreate .card,
     .ModalRoomEdit .card,
     .FriendCard,
-    .Chat .Message {
+    .Chat,
+    .uploadFileForm,
+    .Message {
         background-color: var(--d-list-bg-color);
     }
 

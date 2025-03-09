@@ -6,11 +6,7 @@ from sqlmodel import select
 
 from app.constants import DATETIME_FORMAT
 from app.database import SessionDep
-from app.models import (
-	Message,
-	Room,
-	Token,
-)
+from app.models import Message, Room, Token
 
 router = APIRouter(tags=["websocket_chat"])
 
@@ -47,25 +43,36 @@ async def websocket_chat(
 
 		nonlocal room_id
 
-		message = Message(
+		new_message = Message(
 			sender_id=message["sender_id"],
 			room_id=room_id,
 			text=message["text"],
+			file=message["file"],
 			timestamp=datetime.now(),
 		)
-		session.add(message)
-		session.commit()
-		session.refresh(message)
-		return message
 
-	# await websocket.accept()
+		if message.get("id"):
+			new_message.id = message["id"]
+
+		if message["save"]:
+			session.add(new_message)
+			session.commit()
+			session.refresh(new_message)
+			new_message_sender: dict = new_message.sender.model_dump()
+		else:
+			new_message_sender = message["sender"]
+
+		new_message = new_message.model_dump()
+		new_message["sender"] = new_message_sender
+		return new_message
+
 	await websocket.accept()
-	id = await _get_user_id()
 
 	connected_clients.append(
 		{"websocket": websocket, "token_key": token_key, "room_id": room_id}
 	)
 
+	id = await _get_user_id()
 	if not id:
 		await websocket.close()
 		connected_clients.remove(
@@ -85,15 +92,19 @@ async def websocket_chat(
 			text: dict = json.loads(text)
 			query = await _create_message(text["message"])
 
+			print(query)
+
 			message = {
-				"sender_id": query.sender_id,
-				"room_id": query.room_id,
-				"text": query.text,
-				"timestamp": query.timestamp.strftime(DATETIME_FORMAT),
+				"id": query["id"],
+				"sender_id": query["sender_id"],
+				"room_id": query["room_id"],
+				"text": query["text"],
+				"file": query["file"],
+				"timestamp": query["timestamp"].strftime(DATETIME_FORMAT),
 				"sender": {
-					"username": query.sender.username,
-					"first_name": query.sender.first_name,
-					"last_name": query.sender.last_name,
+					"username": query["sender"]["username"],
+					"first_name": query["sender"]["first_name"],
+					"last_name": query["sender"]["last_name"],
 				},
 			}
 

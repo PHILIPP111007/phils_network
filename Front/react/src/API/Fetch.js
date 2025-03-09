@@ -2,7 +2,7 @@ import { HttpMethod } from "../data/enums"
 import { FETCH_URL } from "../data/constants"
 import getToken from "../modules/getToken"
 
-export default async function Fetch({ action, method, body, token }) {
+export default async function Fetch({ action, method, body, token, is_uploading_file }) {
 
     // External token gives by auth() func
 
@@ -36,16 +36,29 @@ export default async function Fetch({ action, method, body, token }) {
         return data
 
     } else {
-        data = await fetch(url, {
-            method: method,
-            headers: {
+        var headers
+
+        if (!is_uploading_file) {
+            body = body ? JSON.stringify(body) : ""
+            headers = {
                 "Accept": "application/json;text/plain",
                 "Content-Type": "application/json;charset=UTF-8",
                 "Access-Control-Allow-Origin": "*",
                 "Authorization": token ? `Token ${token}` : "",
-            },
+            }
+        } else {
+            headers = {
+                "Accept": "application/json;text/plain",
+                "Access-Control-Allow-Origin": "*",
+                "Authorization": token ? `Token ${token}` : "",
+            }
+        }
+
+        data = await fetch(url, {
+            method: method,
+            headers: headers,
             mode: 'cors',
-            body: body ? JSON.stringify(body) : "",
+            body: body,
         })
             .then((response) => response.json())
             .then((data) => {

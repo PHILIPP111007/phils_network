@@ -14,5 +14,6 @@ class Message(SQLModel, table=True):
 	room_id: int = Field(foreign_key="app_room.id", index=True)
 	text: str
 	timestamp: datetime
+	file: str
 	sender: "User" = Relationship(back_populates="messages")
 	room: "Room" = Relationship(back_populates="messages")

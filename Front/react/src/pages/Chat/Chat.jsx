@@ -51,10 +51,57 @@ export default function Chat() {
     async function sendMessage(text) {
         var sendingText = await text.trim()
         if (sendingText.length > 0) {
-            var message = { sender_id: user.id, text: sendingText }
+            var message = { sender_id: user.id, text: sendingText, file: null, save: true }
             await chatSocket.current.send(JSON.stringify({ message: message }))
         }
     }
+
+    async function sendFileMessage(event) {
+        event.preventDefault()
+
+        var uploadFileInput = document.getElementById("uploadFileInput")
+        var file = uploadFileInput.files[0]
+
+        var formData = new FormData()
+        formData.append('file', file)
+
+        var data = await Fetch({
+            action: `api/v1/file_upload/${params.room_id}/`, method: HttpMethod.POST, body: formData, is_uploading_file: true
+        })
+        if (data && data.ok) {
+            var message = { ...data.message, sender_id: user.id, text: "", save: false, sender: { username: user.username, first_name: user.first_name, last_name: user.last_name } }
+            await chatSocket.current.send(JSON.stringify({ message: message }))
+        }
+    }
+
+
+    async function downloadFile(message) {
+
+        var data = await Fetch({
+            action: `api/v1/file_download/${message.id}/`, method: HttpMethod.GET
+        })
+
+        if (data && data.ok) {
+            var file = data.file
+            var fileContent = file.content.join("\n")
+
+            var blob = new Blob([fileContent], { type: 'text/plain' })
+
+            // Создаем URL для Blob
+            var url = URL.createObjectURL(blob)
+
+            var a = document.createElement('a')
+            a.href = url
+            a.download = file.name // Указываем имя файла
+
+            // Программно кликаем на элемент, чтобы инициировать скачивание
+            a.click()
+
+            // Освобождаем URL
+            URL.revokeObjectURL(url)
+        }
+    }
+
 
     async function editRoom() {
         var subscribers = mainSets.value.invitationChanges.subscribers.filter((user) => user.isInRoom === false)
@@ -82,10 +129,8 @@ export default function Chat() {
             mainSets.value.loading = true
             var data = await Fetch({ action: `api/v2/room/${params.room_id}/${msgs_len}/`, method: HttpMethod.GET })
 
-            if (data) {
-                if (data.ok) {
-                    setMessages((prev) => [...data.messages.reverse(), ...messages])
-                }
+            if (data && data.ok) {
+                setMessages((prev) => [...data.messages.reverse(), ...messages])
             }
             mainSets.value.loading = false
         }
@@ -149,9 +194,9 @@ export default function Chat() {
 
             <LazyDiv Ref={refLazyDivinView} />
 
-            <Messages messages={messages} />
+            <Messages messages={messages} downloadFile={downloadFile} />
 
-            <UserInput mainSets={mainSets} sendMessage={sendMessage} editRoom={editRoom} />
+            <UserInput mainSets={mainSets} sendMessage={sendMessage} editRoom={editRoom} sendFileMessage={sendFileMessage} />
 
             <div className="Wrapper-InView" ref={wrapperRef} ></div>
 

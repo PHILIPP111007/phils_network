@@ -54,7 +54,11 @@ async def get_room(session: SessionDep, request: Request):
 	for time, room, last_message in time_and_rooms:
 		if last_message:
 			last_message_sender = last_message.sender.username
-			last_message_text = last_message.text
+			if last_message.file:
+				file_name = last_message.file.split("/")[-1]
+				last_message_text = file_name
+			else:
+				last_message_text = last_message.text
 		else:
 			last_message_sender = None
 			last_message_text = ""
