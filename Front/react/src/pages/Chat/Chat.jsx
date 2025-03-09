@@ -83,21 +83,22 @@ export default function Chat() {
 
         if (data && data.ok) {
             var file = data.file
-            var fileContent = file.content
+            var fileContent = file.content.join('\n')
 
-            var blob = new Blob([fileContent], { type: 'text/plain' })
+            var blob = new Blob([fileContent], { type: "octet/stream" })
 
             // Создаем URL для Blob
             var url = URL.createObjectURL(blob)
 
             var a = document.createElement('a')
+            document.body.appendChild(a)
+            a.style = "display: none"
             a.href = url
-            a.download = file.name // Указываем имя файла
+            a.download = file.name
 
-            // Программно кликаем на элемент, чтобы инициировать скачивание
             a.click()
 
-            // Освобождаем URL
+            document.body.removeChild(a)
             URL.revokeObjectURL(url)
         }
     }
