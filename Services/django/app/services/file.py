@@ -16,6 +16,5 @@ class FileService:
 
 		with open(message.file.path, encoding="utf-8", errors="ignore") as f:
 			data = f.read()
-			print(data)
 
 		return {"name": file_name, "content": data}
