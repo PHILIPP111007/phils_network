@@ -11,6 +11,7 @@ export default function ModalPostCreate(props) {
             <textarea
                 value={text}
                 maxLength="5000"
+                placeholder="Use markdown to format your text..."
                 onChange={(e) => setText(e.target.value)}
             />
             <Button onClick={() => {
