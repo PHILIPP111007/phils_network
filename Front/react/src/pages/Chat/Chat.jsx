@@ -83,7 +83,7 @@ export default function Chat() {
 
         if (data && data.ok) {
             var file = data.file
-            var fileContent = file.content.join("\n")
+            var fileContent = file.content
 
             var blob = new Blob([fileContent], { type: 'text/plain' })
 

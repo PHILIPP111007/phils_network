@@ -25,7 +25,6 @@ urlpatterns = [
 	path("token/", include("djoser.urls.authtoken")),
 ]
 
-
 file_patterns = [
 	path("file_upload/<int:room_id>/", FileUploadAPIView.as_view()),
 	path("file_download/<int:message_id>/", FileDownloadAPIView.as_view()),
