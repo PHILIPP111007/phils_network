@@ -92,8 +92,6 @@ async def websocket_chat(
 			text: dict = json.loads(text)
 			query = await _create_message(text["message"])
 
-			print(query)
-
 			message = {
 				"id": query["id"],
 				"sender_id": query["sender_id"],
