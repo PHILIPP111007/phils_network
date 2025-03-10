@@ -126,8 +126,8 @@ async def post_room(
 	return {"ok": True, "room": room}
 
 
-@router.get("/api/v2/invite_chats/{username}/")
-async def get_room_invitation(session: SessionDep, request: Request, username: str):
+@router.get("/api/v2/invite_chats/")
+async def get_room_invitation(session: SessionDep, request: Request):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
