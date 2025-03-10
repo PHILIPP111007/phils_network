@@ -202,9 +202,8 @@
     .ModalRoomCreate .card,
     .ModalRoomEdit .card,
     .FriendCard,
-    .Chat,
     .uploadFileForm,
-    .Message {
+    .Chat .Message {
         background-color: var(--d-list-bg-color);
     }
 
