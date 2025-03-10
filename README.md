@@ -20,7 +20,7 @@ Welcome to version 3.0.0!
 
 * [x] Markdown posts and messages support.
 
-* [x] You can send files (now only in txt, docx, xlsx formats).
+* [x] You can send files (now only in .txt, .docx, .xlsx formats).
 
 \
 Have fun and if you want please leave feedback!
