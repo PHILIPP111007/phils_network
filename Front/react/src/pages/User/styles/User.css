@@ -1,7 +1,7 @@
 .UserCard {
     margin-top: 100px;
     margin: 100px auto 0px;
-    width: 500px;
+    max-width: 500px;
     padding: 20px;
     text-align: center;
 }

@@ -9,6 +9,7 @@
     margin-bottom: 10px;
     padding: 5px;
     line-height: 20px;
+    max-width: 800px;
 }
 
 .Chat .info {
