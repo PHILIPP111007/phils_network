@@ -45,6 +45,9 @@ Have fun and if you want please leave feedback!
 * Docker \
 <https://www.docker.com/>  <img src="pictures/Docker-Logo.png" alt="alt text" width="70"/>
 
+* Minio \
+<https://min.io/>  <img src="pictures/minio.png" alt="alt text" width="70"/>
+
 ## Production installation
 
 ```sh
