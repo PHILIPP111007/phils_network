@@ -39,6 +39,8 @@ THIRD_PARTY_APPS: list[str] = [
 	"rest_framework.authtoken",
 	"djoser",
 	"django_extensions",
+	"storages",
+	"boto3",
 ]
 
 LOCAL_APPS: list[str] = [
@@ -165,3 +167,10 @@ DJOSER: dict[str, str] = {
 	"USER_ID_FIELD": "id",
 	"LOGIN_FIELD": "username",
 }
+
+
+DEFAULT_FILE_STORAGE = "storages.backends.s3.S3Boto3Storage"
+
+AWS_ACCESS_KEY_ID = environ.get("AWS_ACCESS_KEY_ID", "minio")
+AWS_SECRET_ACCESS_KEY = environ.get("AWS_SECRET_ACCESS_KEY", "minio123")
+AWS_S3_ENDPOINT_URL = environ.get("AWS_S3_ENDPOINT_URL", "http://s3:9000")

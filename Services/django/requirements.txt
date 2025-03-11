@@ -20,6 +20,8 @@ idna==3.10
 msgpack==1.1.0
 oauthlib==3.2.2
 packaging==24.2
+django-storages
+boto3
 python-docx
 openpyxl
 psycopg==3.2.5

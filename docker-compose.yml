@@ -11,6 +11,7 @@ services:
       - 8080
     depends_on:
       - db
+      - s3
     command: >
       sh -c "python manage.py collectstatic --noinput &&
             python manage.py migrate &&
@@ -18,6 +19,7 @@ services:
     networks:
       - nginx_network
       - db_network
+      - s3_network
     environment:
       PG_NAME: postgres
       PG_USER: postgres
@@ -27,8 +29,9 @@ services:
       SECRET_KEY: weofjweifjewifjewifjewfewf
       DEBUG: "0"
       ALLOWED_HOSTS: "*"
-    volumes:
-      - media:/app/media
+      AWS_S3_ENDPOINT_URL: http://s3:9000
+      AWS_ACCESS_KEY_ID: minio
+      AWS_SECRET_ACCESS_KEY: minio123
 
   fastapi:
     container_name: fastapi
@@ -96,12 +99,26 @@ services:
     networks:
       - nginx_network
 
+  s3:
+    container_name: s3
+    image: minio/minio:latest
+    restart: unless-stopped
+    ports:
+      - 9000:9000
+    command: server --address s3:9000 /data
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio123
+    networks:
+      - s3_network
+
 volumes:
   postgres-data:
-  media:
 
 networks:
   nginx_network:
     driver: bridge
   db_network:
+    driver: bridge
+  s3_network:
     driver: bridge
