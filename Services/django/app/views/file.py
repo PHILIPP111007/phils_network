@@ -38,7 +38,12 @@ class FileUploadAPIView(APIView):
 def file_download(request: Request, message_id: int):
 	if request.method == "GET":
 		message = Message.objects.filter(pk=message_id).first()
-		file_path = os.path.basename(message.file.path)
+		file_path = message.file.path
+
+		folders_to_create = file_path.split(os.path.sep)[:-1]
+		folders_to_create = os.path.sep.join(folders_to_create)
+
+		os.makedirs(folders_to_create, exist_ok=True)
 
 		with open(file_path, "wb") as file:
 			s3.download_fileobj(settings.BUCKET_NAME, message.file.path, file)
