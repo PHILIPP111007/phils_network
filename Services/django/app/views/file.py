@@ -1,3 +1,6 @@
+__all__ = ["FileUploadAPIView", "file_download"]
+
+
 import os
 from wsgiref.util import FileWrapper
 
@@ -13,6 +16,7 @@ from app.s3 import s3
 from app.serializers import MessageSerializer
 from app.services import FileService
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 
 
@@ -35,6 +39,7 @@ class FileUploadAPIView(APIView):
 		)
 
 
+@login_required
 def file_download(request: Request, message_id: int):
 	if request.method == "GET":
 		message = Message.objects.filter(pk=message_id).first()
