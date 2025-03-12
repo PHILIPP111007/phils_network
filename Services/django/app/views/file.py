@@ -1,3 +1,6 @@
+import os
+from wsgiref.util import FileWrapper
+
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -5,8 +8,12 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from app.models import Message
+from app.s3 import s3
 from app.serializers import MessageSerializer
 from app.services import FileService
+from django.conf import settings
+from django.http import HttpResponse
 
 
 class FileUploadAPIView(APIView):
@@ -28,14 +35,19 @@ class FileUploadAPIView(APIView):
 		)
 
 
-class FileDownloadAPIView(APIView):
-	service_class = FileService
-	authentication_classes = (TokenAuthentication,)
-	permission_classes = [IsAuthenticated]
+def file_download(request: Request, message_id: int):
+	if request.method == "GET":
+		message = Message.objects.filter(pk=message_id).first()
+		file_path = os.path.basename(message.file.path)
 
-	def get(self, request: Request, message_id: int) -> Response:
-		self.check_permissions(request=request)
+		with open(file_path, "wb") as file:
+			s3.download_fileobj(settings.BUCKET_NAME, message.file.path, file)
+			file.seek(0)
 
-		file = self.service_class.get_file(message_id=message_id)
+		file = open(file_path, "rb")
 
-		return Response({"ok": True, "file": file}, status=status.HTTP_200_OK)
+		response = HttpResponse(FileWrapper(file))
+		file.close()
+		return response
+	else:
+		return HttpResponse("Method not allowed.")

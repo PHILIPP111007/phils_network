@@ -5,7 +5,9 @@ import { useNavigate, useParams } from "react-router-dom"
 import { useInView } from "react-intersection-observer"
 import { HttpMethod } from "../../data/enums"
 import { UserContext } from "../../data/context"
+import { FETCH_URL } from "../../data/constants"
 import rememberPage from "../../modules/rememberPage"
+import getToken from "../../modules/getToken"
 import useObserver from "../../hooks/useObserver"
 import getWebSocket from "../../modules/getWebSocket"
 import Fetch from "../../API/Fetch"
@@ -76,16 +78,23 @@ export default function Chat() {
 
 
     async function downloadFile(message) {
+        var action = `api/v1/file_download/${message.id}/`
+        var token = getToken()
 
-        var data = await Fetch({
-            action: `api/v1/file_download/${message.id}/`, method: HttpMethod.GET
+        var data = await fetch(`${FETCH_URL}${action}`, {
+            method: "GET",
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Authorization": token ? `Token ${token}` : "",
+            },
         })
+            .then((data) => {
+                return data.blob()
+            })
+            .catch((error) => console.error(error))
 
-        if (data && data.ok) {
-            var file = data.file
-            var fileContent = file.content.join('\n')
-
-            var blob = new Blob([fileContent], { type: "octet/stream" })
+        if (data) {
+            var blob = new Blob([data], { type: "octet/stream" })
 
             // Создаем URL для Blob
             var url = URL.createObjectURL(blob)
@@ -94,7 +103,6 @@ export default function Chat() {
             document.body.appendChild(a)
             a.style = "display: none"
             a.href = url
-            a.download = file.name
 
             a.click()
 

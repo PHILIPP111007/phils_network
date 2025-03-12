@@ -17,7 +17,7 @@ POST http://127.0.0.1:8000/token/token/logout/
 __all__ = ["urlpatterns"]
 
 
-from app.views import FileDownloadAPIView, FileUploadAPIView
+from app.views import FileUploadAPIView, file_download
 from django.urls import include, path
 
 urlpatterns = [
@@ -27,7 +27,7 @@ urlpatterns = [
 
 file_patterns = [
 	path("file_upload/<int:room_id>/", FileUploadAPIView.as_view()),
-	path("file_download/<int:message_id>/", FileDownloadAPIView.as_view()),
+	path("file_download/<int:message_id>/", file_download),
 ]
 
 urlpatterns += file_patterns
