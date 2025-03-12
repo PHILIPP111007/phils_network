@@ -1,3 +1,6 @@
+__all__ = ["FileService"]
+
+
 import os
 
 from app.models import Message
