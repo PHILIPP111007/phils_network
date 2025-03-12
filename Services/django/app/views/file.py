@@ -48,6 +48,7 @@ def file_download(request: Request, message_id: int):
 
 		response = HttpResponse(FileWrapper(file))
 		file.close()
+		os.remove(file_path)
 		return response
 	else:
 		return HttpResponse("Method not allowed.")
