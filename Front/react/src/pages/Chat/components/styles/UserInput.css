@@ -18,6 +18,10 @@
 @media (pointer: coarse) {
 
     /* mobile device */
+    .UserInput {
+        margin-bottom: 100px;
+    }
+
     .UserInput .TextArea {
         margin-bottom: 100px;
         width: 100%;
