@@ -8,11 +8,9 @@
     width: 200px;
     padding: 20px;
     font-size: 17px;
-    text-align: left;
     text-decoration: none;
     color: black;
 }
-
 
 @media (pointer: fine),
 (pointer: none) {
@@ -22,8 +20,11 @@
         top: 100px;
         right: 10px;
     }
-}
 
+    .RoomNavBar a {
+        text-align: left;
+    }
+}
 
 @media (pointer: coarse) {
 
