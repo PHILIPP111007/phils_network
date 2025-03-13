@@ -1,4 +1,4 @@
-__all__ = ["FileUploadAPIView", "file_download"]
+__all__ = ["FileAPIView", "file_download"]
 
 
 import os
@@ -19,7 +19,7 @@ from django.conf import settings
 from django.http import HttpResponse
 
 
-class FileUploadAPIView(APIView):
+class FileAPIView(APIView):
 	service_class = FileService
 	authentication_classes = (TokenAuthentication,)
 	permission_classes = [IsAuthenticated]

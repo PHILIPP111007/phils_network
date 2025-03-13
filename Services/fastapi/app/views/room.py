@@ -177,15 +177,11 @@ async def post_room_invitation_add(
 		)
 	).first()
 
-	room_creator = session.exec(
-		select(RoomCreator).where(RoomCreator.room_id == room_invite.room_id)
-	).first()
-
-	if room_invite and room_creator:
+	if room_invite:
 		session.exec(delete(RoomInvitation).where(RoomInvitation.id == room_invite.id))
 		session.commit()
 
-		room = session.exec(select(Room).where(Room.id == room_creator.room_id)).first()
+		room = session.exec(select(Room).where(Room.id == room_invite.room_id)).first()
 		user = session.exec(select(User).where(User.id == user_id)).first()
 
 		flag = (

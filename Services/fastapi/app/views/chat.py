@@ -1,10 +1,11 @@
+import os
 from datetime import datetime
 
 from fastapi import APIRouter, Request
 from pydantic import BaseModel
 from sqlmodel import delete, select
 
-from app.constants import DATETIME_FORMAT
+from app.constants import BUCKET_NAME, DATETIME_FORMAT, MEDIA_ROOT
 from app.database import SessionDep
 from app.models import (
 	Message,
@@ -13,6 +14,7 @@ from app.models import (
 	RoomInvitation,
 	RoomSubscribers,
 )
+from app.s3 import s3
 
 router = APIRouter(tags=["chat"])
 
@@ -99,6 +101,16 @@ async def put_chat(
 		session.commit()
 
 	if not room.room_subscribers:
+		messages = (
+			session.exec(select(Message).where(Message.room_id == room.id))
+			.unique()
+			.all()
+		)
+		for message in messages:
+			if message.file:
+				file_path = os.path.join(MEDIA_ROOT, message.file)
+				s3.delete_object(Bucket=BUCKET_NAME, Key=file_path)
+
 		session.exec(delete(Room).where(Room.id == room.id))
 		session.exec(delete(Message).where(Message.room_id == room.id))
 		session.exec(delete(RoomCreator).where(RoomCreator.room_id == room.id))

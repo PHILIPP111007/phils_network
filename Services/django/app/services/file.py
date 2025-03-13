@@ -15,8 +15,8 @@ class FileService:
 		message = Message.objects.create(sender=sender, room_id=room_id, file=file)
 
 		file_name = message.file.path
-		key_name = message.file.path
+		key = message.file.path
 
-		s3.upload_file(file_name, settings.BUCKET_NAME, key_name)
+		s3.upload_file(file_name, settings.BUCKET_NAME, key)
 		os.remove(message.file.path)
 		return message

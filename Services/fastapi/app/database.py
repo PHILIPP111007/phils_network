@@ -1,18 +1,12 @@
 __all__ = ["get_session", "SessionDep", "engine"]
 
 
-from os import environ
 from typing import Annotated
 
 from fastapi import Depends
 from sqlmodel import Session, create_engine
 
-PG_HOST = environ.get("PG_HOST", "db")
-PG_PORT = environ.get("PG_PORT", "5432")
-PG_NAME = environ.get("PG_NAME", "postgres")
-PG_USER = environ.get("PG_USER", "postgres")
-PG_PASSWORD = environ.get("DB_PASSWORD", "postgres")
-
+from app.constants import PG_HOST, PG_NAME, PG_PASSWORD, PG_PORT, PG_USER
 
 DATABASE_URL = f"postgresql://{PG_USER}:{PG_PASSWORD}@{PG_HOST}:{PG_PORT}/{PG_NAME}"
 

@@ -1,1 +1,1 @@
-from app.views.file import FileUploadAPIView, file_download
+from app.views.file import FileAPIView, file_download

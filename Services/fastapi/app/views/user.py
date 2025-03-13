@@ -1,7 +1,10 @@
+import os
+
 from fastapi import APIRouter, Request
 from pydantic import BaseModel
 from sqlmodel import delete, select
 
+from app.constants import BUCKET_NAME, MEDIA_ROOT
 from app.database import SessionDep
 from app.models import (
 	DjangoAdminLog,
@@ -16,6 +19,7 @@ from app.models import (
 	Token,
 	User,
 )
+from app.s3 import s3
 
 router = APIRouter(tags=["user"])
 
@@ -146,6 +150,14 @@ async def delete_user(
 	for room in rooms:
 		if not room.room_subscribers:
 			session.exec(delete(Room).where(Room.id == room.id))
+
+	messages = (
+		session.exec(select(Message).where(Message.sender_id == user.id)).unique().all()
+	)
+	for message in messages:
+		if message.file:
+			file_path = os.path.join(MEDIA_ROOT, message.file)
+			s3.delete_object(Bucket=BUCKET_NAME, Key=file_path)
 
 	session.exec(delete(Subscriber).where(Subscriber.user_id == user.id))
 	session.exec(delete(Subscriber).where(Subscriber.subscribe_id == user.id))

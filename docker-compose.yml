@@ -45,6 +45,9 @@ services:
       DATETIME_FORMAT: "%Y-%m-%d %H:%M"
       POSTS_TO_LOAD: "20"
       MESSAGES_TO_LOAD: "30"
+      AWS_S3_ENDPOINT_URL: http://s3:9000
+      AWS_ACCESS_KEY_ID: minio
+      AWS_SECRET_ACCESS_KEY: minio123
     build:
       context: .
       dockerfile: ./dockerfiles/fastapi/Dockerfile
@@ -52,11 +55,13 @@ services:
       - 8080:8080
     depends_on:
       - db
+      - s3
     command: >
       sh -c "fastapi run --workers 1 --port 8080 app/main.py"
     networks:
       - nginx_network
       - db_network
+      - s3_network
 
   db:
     container_name: db
