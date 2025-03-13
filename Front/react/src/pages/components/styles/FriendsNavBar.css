@@ -1,7 +1,5 @@
 .FriendsNavBar {
     position: fixed;
-    top: 100px;
-    right: 10px;
     display: flex;
 }
 
@@ -10,7 +8,6 @@
     width: 200px;
     padding: 20px;
     font-size: 17px;
-    text-align: left;
     text-decoration: none;
     color: black;
 }
@@ -20,4 +17,36 @@
     background-color: red;
     border-radius: 20px;
     color: white;
+}
+
+@media (pointer: fine),
+(pointer: none) {
+
+    /* desktop */
+    .FriendsNavBar {
+        top: 100px;
+        right: 10px;
+    }
+
+    .FriendsNavBar a {
+        float: left;
+        text-align: center;
+        text-align: left;
+    }
+}
+
+@media (pointer: coarse) {
+
+    /* mobile device */
+    .FriendsNavBar {
+        bottom: 150px;
+        left: 0px;
+        right: 0px;
+        width: 100%;
+    }
+
+    .FriendsNavBar a {
+        float: left;
+        text-align: center;
+    }
 }

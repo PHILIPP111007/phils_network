@@ -1,7 +1,5 @@
 .RoomNavBar {
     position: fixed;
-    top: 100px;
-    right: 10px;
     display: flex;
 }
 
@@ -13,6 +11,34 @@
     text-align: left;
     text-decoration: none;
     color: black;
+}
+
+
+@media (pointer: fine),
+(pointer: none) {
+
+    /* desktop */
+    .RoomNavBar {
+        top: 100px;
+        right: 10px;
+    }
+}
+
+
+@media (pointer: coarse) {
+
+    /* mobile device */
+    .RoomNavBar {
+        bottom: 150px;
+        left: 0px;
+        right: 0px;
+        width: 100%;
+    }
+
+    .RoomNavBar a {
+        float: left;
+        text-align: center;
+    }
 }
 
 .RoomNavBar #roomInvitations_length {

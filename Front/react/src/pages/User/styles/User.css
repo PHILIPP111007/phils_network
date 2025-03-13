@@ -6,6 +6,16 @@
     text-align: center;
 }
 
+
+@media (pointer: coarse) {
+
+    /* mobile device */
+    .UserCard {
+        min-width: 200px;
+    }
+}
+
+
 .User .UserBtns {
     height: 30px;
     padding: 10px;

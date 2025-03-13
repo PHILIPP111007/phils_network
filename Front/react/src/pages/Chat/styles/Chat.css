@@ -12,6 +12,14 @@
     max-width: 800px;
 }
 
+@media (pointer: coarse) {
+
+    /* mobile device */
+    .Chat .Message {
+        min-width: 200px;
+    }
+}
+
 .Chat .info {
     margin-bottom: 10px;
 }

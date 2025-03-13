@@ -1,15 +1,38 @@
-.NavBar {
-    position: fixed;
-    top: 100px;
-    left: 10px;
-    display: flex;
-}
-
 .NavBar a {
-    display: block;
     padding: 20px 30px;
     font-size: 17px;
     text-decoration: none;
     color: black;
     text-align: left;
+    display: block;
+}
+
+
+@media (pointer: fine),
+(pointer: none) {
+
+    /* desktop */
+    .NavBar {
+        position: fixed;
+        top: 100px;
+        left: 0px;
+        display: flex;
+    }
+}
+
+@media (pointer: coarse) {
+
+    /* mobile device */
+    .NavBar {
+        position: fixed;
+        bottom: 0px;
+        left: 0px;
+        right: 0px;
+        width: 100%;
+    }
+
+    .NavBar a {
+        float: left;
+        text-align: center;
+    }
 }

@@ -5,6 +5,15 @@
     max-width: 800px;
 }
 
+@media (pointer: coarse) {
+
+    /* mobile device */
+    .Post {
+        min-width: 200px;
+    }
+
+}
+
 .Post .link {
     text-decoration: none;
 }
