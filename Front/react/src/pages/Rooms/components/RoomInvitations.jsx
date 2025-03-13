@@ -12,15 +12,15 @@ export default function RoomInvitations() {
     var { user } = use(UserContext)
     var [roomInvitations, setRoomInvitations] = useState([])
 
-    rememberPage(`invite_chats/${user.username}/`)
+    rememberPage(`invite_chats/${user.username}`)
 
 
     async function add_room(room_id) {
-        await Fetch({ action: `api/v2/invite_chats/${user.username}/add_room/${room_id}/`, method: HttpMethod.POST })
+        await Fetch({ action: `api/v2/invite_chats/${user.id}/add_room/${room_id}/`, method: HttpMethod.POST })
             .then((data) => {
                 if (data && data.ok) {
                     setRoomInvitations((prev) => {
-                        var newRooms = [...prev.filter((room) => room.id !== room_id)]
+                        var newRooms = [...prev.filter((roomInvitation) => roomInvitation.room.id !== room_id)]
                         return newRooms
                     })
                 }
@@ -28,15 +28,13 @@ export default function RoomInvitations() {
     }
 
     async function remove_room(room_id) {
-        await Fetch({ action: `api/v2/invite_chats/${user.username}/remove_room/${room_id}/`, method: HttpMethod.POST })
+        await Fetch({ action: `api/v2/invite_chats/${user.id}/remove_room/${room_id}/`, method: HttpMethod.POST })
             .then((data) => {
                 if (data && data.ok) {
-                    if (data && data.ok) {
-                        setRoomInvitations((prev) => {
-                            var newRooms = [...prev.filter((room) => room.id !== room_id)]
-                            return newRooms
-                        })
-                    }
+                    setRoomInvitations((prev) => {
+                        var newRooms = [...prev.filter((roomInvitation) => roomInvitation.room.id !== room_id)]
+                        return newRooms
+                    })
                 }
             })
     }
@@ -45,7 +43,7 @@ export default function RoomInvitations() {
         Fetch({ action: 'api/v2/invite_chats/', method: HttpMethod.GET })
             .then((data) => {
                 if (data && data.ok) {
-                    setRoomInvitations(data.rooms)
+                    setRoomInvitations(data.room_invitations)
                 }
             })
     }, [])
@@ -54,8 +52,8 @@ export default function RoomInvitations() {
         <aside className="RoomInvitations">
             <MainComponents />
 
-            {roomInvitations.map(room =>
-                <RoomInvitationCard key={room.id} room={room} add_room={add_room} remove_room={remove_room} />
+            {roomInvitations.map(room_invitation =>
+                <RoomInvitationCard key={room_invitation.id} room_invitation={room_invitation} add_room={add_room} remove_room={remove_room} />
             )}
 
         </aside>

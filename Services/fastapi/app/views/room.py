@@ -141,7 +141,7 @@ async def get_room_invitation(session: SessionDep, request: Request):
 		.all()
 	)
 
-	rooms = []
+	room_invitations = []
 	for room_invitation in query:
 		room = {
 			"id": room_invitation.id,
@@ -155,33 +155,38 @@ async def get_room_invitation(session: SessionDep, request: Request):
 			},
 			"creator": {"username": room_invitation.creator.username},
 		}
-		rooms.append(room)
+		room_invitations.append(room)
 
-	if not rooms:
-		return {"ok": False, "error": "Not found rooms."}
+	if not room_invitations:
+		return {"ok": False, "error": "Not found room invitations."}
 
-	return {"ok": True, "rooms": rooms}
+	return {"ok": True, "room_invitations": room_invitations}
 
 
-@router.post("/api/v2/invite_chats/{username}/add_room/{room_id}/")
+@router.post("/api/v2/invite_chats/{user_id}/add_room/{room_id}/")
 async def post_room_invitation_add(
-	session: SessionDep, request: Request, username: str, room_id: int
+	session: SessionDep, request: Request, user_id: int, room_id: int
 ) -> dict[str, bool]:
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
 	room_invite = session.exec(
-		select(RoomInvitation).where(RoomInvitation.id == room_id)
+		select(RoomInvitation).where(
+			RoomInvitation.room_id == room_id,
+			RoomInvitation.to_user_id == request.state.user.id,
+		)
 	).first()
 
 	room_creator = session.exec(
 		select(RoomCreator).where(RoomCreator.room_id == room_invite.room_id)
 	).first()
 
-	if room_creator:
+	if room_invite and room_creator:
 		session.exec(delete(RoomInvitation).where(RoomInvitation.id == room_invite.id))
-		room = session.exec(select(Room).where(Room.id == room_creator.room_id)).one()
-		user = session.exec(select(User).where(User.username == username)).one()
+		session.commit()
+
+		room = session.exec(select(Room).where(Room.id == room_creator.room_id)).first()
+		user = session.exec(select(User).where(User.id == user_id)).first()
 
 		flag = (
 			session.exec(
@@ -204,14 +209,19 @@ async def post_room_invitation_add(
 	return {"ok": True}
 
 
-@router.post("/api/v2/invite_chats/{username}/remove_room/{room_id}/")
+@router.post("/api/v2/invite_chats/{user_id}/remove_room/{room_id}/")
 async def post_room_invitation_remove(
-	session: SessionDep, request: Request, username: str, room_id: int
+	session: SessionDep, request: Request, user_id: int, room_id: int
 ) -> dict[str, bool]:
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	session.exec(delete(RoomInvitation).where(RoomInvitation.id == room_id))
+	session.exec(
+		delete(RoomInvitation).where(
+			RoomInvitation.to_user_id == user_id,
+			RoomInvitation.room_id == room_id,
+		)
+	)
 	session.commit()
 
 	return {"ok": True}
