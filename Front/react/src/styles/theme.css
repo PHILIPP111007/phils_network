@@ -52,7 +52,8 @@
 }
 
 .light input[type="text"],
-.light input[type="email"] {
+.light input[type="email"],
+input[type=file]::file-selector-button {
     background-color: var(--l-main-bg-color);
     color: var(--l-ui-color);
 }
@@ -139,7 +140,8 @@
 
 .dark button,
 .dark input[type="submit"],
-.dark input[type="reset"] {
+.dark input[type="reset"],
+input[type=file]::file-selector-button {
     background-color: var(--d-ui-bg-color);
     color: var(--d-ui-color);
 }

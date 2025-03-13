@@ -19,3 +19,13 @@
 .UserInput .uploadFileForm {
     padding: 5px;
 }
+
+input[type=file]::file-selector-button {
+    border: 2px solid #565655;
+    padding: .2em .4em;
+    border-radius: .2em;
+}
+
+input[type=file]::file-selector-button:hover {
+    border: 2px solid #565655;
+}
