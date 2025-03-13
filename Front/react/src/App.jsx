@@ -54,6 +54,7 @@ export default function App() {
                                 <Route path="*" element={<ErrorPage />} />
                             </Routes>
                         </Suspense>
+                        <div className="BottomDiv"></div>
                     </div>
                 </BrowserRouter>
             </UserContext.Provider>

@@ -8,8 +8,8 @@
 
     --l-main-bg-color: rgb(250, 244, 244);
     --l-ui-bg-color: rgb(205, 205, 205);
-    --l-upper-line-bg-color: rgba(235, 235, 235, 0.8);
-    --l-upper-line-bg-color-hover: rgba(220, 220, 220, 0.8);
+    --l-upper-line-bg-color: rgba(235, 235, 235);
+    --l-upper-line-bg-color-hover: rgba(220, 220, 220);
     --l-user-card-bg-color: rgb(202, 195, 195);
     --l-list-bg-color: rgb(230, 230, 230);
 
@@ -22,8 +22,8 @@
 
     --d-main-bg-color: rgb(43, 43, 43);
     --d-ui-bg-color: rgb(101, 101, 110);
-    --d-upper-line-bg-color: rgba(61, 61, 71, 0.8);
-    --d-upper-line-bg-color-hover: rgba(50, 50, 50, 0.8);
+    --d-upper-line-bg-color: rgba(61, 61, 71);
+    --d-upper-line-bg-color-hover: rgba(50, 50, 50);
     --d-user-card-bg-color: rgb(57, 57, 61);
     --d-list-bg-color: rgb(57, 57, 61);
 
@@ -78,10 +78,7 @@ input[type=file]::file-selector-button {
     }
 
     .NavBar a:hover,
-    .FriendsNavBar a:hover {
-        background-color: var(--l-upper-line-bg-color-hover);
-    }
-
+    .FriendsNavBar a:hover,
     .RoomNavBar a:hover {
         background-color: var(--l-upper-line-bg-color-hover);
     }
@@ -177,19 +174,13 @@ input[type=file]::file-selector-button {
     }
 
     .NavBar a,
-    .FriendsNavBar a {
-        color: var(--d-ui-color);
-    }
-
+    .FriendsNavBar a,
     .RoomNavBar a {
         color: var(--d-ui-color);
     }
 
     .NavBar a:hover,
-    .FriendsNavBar a:hover {
-        background-color: var(--d-upper-line-bg-color-hover);
-    }
-
+    .FriendsNavBar a:hover,
     .RoomNavBar a:hover {
         background-color: var(--d-upper-line-bg-color-hover);
     }

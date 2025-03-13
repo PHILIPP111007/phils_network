@@ -16,3 +16,7 @@ body {
     border-radius: 20px;
     color: white;
 }
+
+.App .BottomDiv {
+    margin-bottom: 250px;
+}

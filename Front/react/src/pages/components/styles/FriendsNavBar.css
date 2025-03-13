@@ -1,19 +1,15 @@
 .FriendsNavBar {
     position: fixed;
     display: flex;
-    top: 100px;
-    right: 10px;
 }
 
 .FriendsNavBar a {
     display: block;
-    width: 200px;
     padding: 20px;
     font-size: 17px;
     text-decoration: none;
     color: black;
     float: left;
-    text-align: left;
 }
 
 .FriendsNavBar #subscribersCount {
@@ -21,4 +17,31 @@
     background-color: red;
     border-radius: 20px;
     color: white;
+}
+
+@media (pointer: fine),
+(pointer: none) {
+
+    /* desktop */
+    .FriendsNavBar {
+        top: 100px;
+        right: 10px;
+        display: flex;
+    }
+}
+
+@media (pointer: coarse) {
+
+    /* mobile device */
+    .FriendsNavBar {
+        bottom: 100px;
+        left: 0px;
+        right: 0px;
+        width: 100%;
+    }
+
+    .FriendsNavBar a {
+        float: left;
+        text-align: center;
+    }
 }
