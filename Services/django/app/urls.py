@@ -27,7 +27,7 @@ urlpatterns = [
 
 file_patterns = [
 	path("file_upload/<int:room_id>/", FileUploadAPIView.as_view()),
-	path("file_download/<int:message_id>/", file_download),
+	path("file_download/<int:message_id>/<str:username>/", file_download),
 ]
 
 urlpatterns += file_patterns

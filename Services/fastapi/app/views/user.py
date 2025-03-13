@@ -8,6 +8,7 @@ from app.models import (
 	Message,
 	OnlineStatus,
 	Post,
+	Room,
 	RoomCreator,
 	RoomInvitation,
 	RoomSubscribers,
@@ -128,6 +129,24 @@ async def delete_user(
 	if user.id != request.state.user.id:
 		return {"ok": False, "error": "Access denied."}
 
+	room_subscribers = (
+		session.exec(
+			select(RoomSubscribers.room_id).where(RoomSubscribers.user_id == user.id)
+		)
+		.unique()
+		.all()
+	)
+	rooms = (
+		session.exec(select(Room).where(Room.id.in_(room_subscribers))).unique().all()
+	)
+
+	session.exec(delete(RoomSubscribers).where(RoomSubscribers.user_id == user.id))
+	session.commit()
+
+	for room in rooms:
+		if not room.room_subscribers:
+			session.exec(delete(Room).where(Room.id == room.id))
+
 	session.exec(delete(Subscriber).where(Subscriber.user_id == user.id))
 	session.exec(delete(Subscriber).where(Subscriber.subscribe_id == user.id))
 	session.exec(delete(Token).where(Token.user_id == user.id))
@@ -136,7 +155,6 @@ async def delete_user(
 	session.exec(delete(RoomCreator).where(RoomCreator.creator_id == user.id))
 	session.exec(delete(RoomInvitation).where(RoomInvitation.creator_id == user.id))
 	session.exec(delete(RoomInvitation).where(RoomInvitation.to_user_id == user.id))
-	session.exec(delete(RoomSubscribers).where(RoomSubscribers.user_id == user.id))
 	session.exec(delete(Message).where(Message.sender_id == user.id))
 	session.exec(delete(DjangoAdminLog).where(DjangoAdminLog.user_id == user.id))
 	session.exec(delete(User).where(User.id == user.id))

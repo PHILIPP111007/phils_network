@@ -78,7 +78,7 @@ export default function Chat() {
 
 
     async function downloadFile(message) {
-        var action = `api/v1/file_download/${message.id}/`
+        var action = `api/v1/file_download/${message.id}/${user.username}/`
         var token = getToken()
 
         var data = await fetch(`${FETCH_URL}${action}`, {
@@ -96,7 +96,7 @@ export default function Chat() {
         if (data) {
             var blob = new Blob([data], { type: "octet/stream" })
 
-            // Создаем URL для Blob
+            // Create URL for Blob
             var url = URL.createObjectURL(blob)
 
             var a = document.createElement('a')

@@ -16,7 +16,6 @@ from app.s3 import s3
 from app.serializers import MessageSerializer
 from app.services import FileService
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 
 
@@ -39,26 +38,29 @@ class FileUploadAPIView(APIView):
 		)
 
 
-@login_required
-def file_download(request: Request, message_id: int):
-	if request.method == "GET":
-		message = Message.objects.filter(pk=message_id).first()
-		file_path = message.file.path
-
-		folders_to_create = file_path.split(os.path.sep)[:-1]
-		folders_to_create = os.path.sep.join(folders_to_create)
-
-		os.makedirs(folders_to_create, exist_ok=True)
-
-		with open(file_path, "wb") as file:
-			s3.download_fileobj(settings.BUCKET_NAME, message.file.path, file)
-			file.seek(0)
-
-		file = open(file_path, "rb")
-
-		response = HttpResponse(FileWrapper(file))
-		file.close()
-		os.remove(file_path)
-		return response
-	else:
+def file_download(request: Request, message_id: int, username: str) -> HttpResponse:
+	if request.method != "GET":
 		return HttpResponse("Method not allowed.")
+
+	message = Message.objects.filter(pk=message_id).first()
+	room = message.room
+	if not room.subscribers.filter(username=username).exists():
+		return HttpResponse("Access denied.")
+
+	file_path = message.file.path
+
+	folders_to_create = file_path.split(os.path.sep)[:-1]
+	folders_to_create = os.path.sep.join(folders_to_create)
+
+	os.makedirs(folders_to_create, exist_ok=True)
+
+	with open(file_path, "wb") as file:
+		s3.download_fileobj(settings.BUCKET_NAME, message.file.path, file)
+		file.seek(0)
+
+	file = open(file_path, "rb")
+
+	response = HttpResponse(FileWrapper(file))
+	file.close()
+	os.remove(file_path)
+	return response
