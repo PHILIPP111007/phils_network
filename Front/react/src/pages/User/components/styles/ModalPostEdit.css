@@ -1,7 +1,6 @@
 .ModalPostEdit {
-    width: 500px;
+    max-width: 500px;
     padding: 50px;
-    max-height: calc(100vh - 110px);
     overflow-y: auto;
 }
 
@@ -9,7 +8,7 @@
     font-family: inherit;
     font-size: inherit;
     line-height: inherit;
-    width: 400px;
+    max-width: 400px;
     min-height: 200px;
     resize: none;
     outline: none;
@@ -20,4 +19,18 @@
 
 .ModalPostEdit button {
     margin: 10px;
+}
+
+@media (pointer: fine),
+(pointer: none) {
+
+    /* desktop */
+    .ModalPostEdit {
+        max-height: calc(100vh - 110px);
+        width: 500px;
+    }
+
+    .ModalPostEdit textarea {
+        width: 400px;
+    }
 }
