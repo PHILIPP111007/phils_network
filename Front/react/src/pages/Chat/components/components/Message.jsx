@@ -6,8 +6,9 @@ import Button from "../../../components/UI/Button"
 export default function Message({ message, downloadFile }) {
 
     function trimFileName(file) {
-        var file_name_length = file.split('/').length
-        return file.split('/')[file_name_length - 1]
+        var file_split = file.split('/')
+        var file_name_length = file_split.length
+        return file_split[file_name_length - 1]
     }
 
     if (message.file) {

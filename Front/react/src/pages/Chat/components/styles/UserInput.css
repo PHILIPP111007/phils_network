@@ -1,3 +1,11 @@
+.UserInput {
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+}
+
 .UserInput .TextArea {
     min-height: 20px;
     padding: 5px;
@@ -19,7 +27,7 @@
 
     /* mobile device */
     .UserInput {
-        margin-bottom: 100px;
+        margin-bottom: 50px;
     }
 
     .UserInput .TextArea {

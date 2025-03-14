@@ -32,14 +32,6 @@
     white-space: pre-line;
 }
 
-.Chat .UserInput {
-    position: fixed;
-    bottom: 10px;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: flex;
-}
-
 .Chat #SendButton {
     width: 25px;
     border-top: 1px solid;
