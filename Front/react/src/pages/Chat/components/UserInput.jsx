@@ -1,5 +1,5 @@
 import "./styles/UserInput.css"
-import { useState, use } from "react"
+import { useState, use, useEffect } from "react"
 import { UserContext } from "../../../data/context"
 import Modal from "../../components/Modal"
 import ModalRoomEdit from "../../Chat/components/components/ModalRoomEdit"
@@ -12,6 +12,18 @@ export default function UserInput({ mainSets, sendMessage, editRoom, sendFileMes
     var { user } = use(UserContext)
     var [modalRoomEdit, setModalRoomEdit] = useState(false)
     var [text, setText] = useState("")
+
+    function hideUserInput() {
+        var user_input = document.getElementsByClassName("UserInput")[0]
+        user_input.style.display = "none"
+    }
+
+    useEffect(() => {
+        if (modalRoomEdit === false) {
+            var user_input = document.getElementsByClassName("UserInput")[0]
+            user_input.style.display = ""
+        }
+    }, [modalRoomEdit])
 
     return (
         <>
@@ -27,7 +39,11 @@ export default function UserInput({ mainSets, sendMessage, editRoom, sendFileMes
                 <img
                     id="SettingsButton"
                     src={settingsLogo}
-                    onClick={() => setModalRoomEdit(true)} alt="settings button"
+                    onClick={() => {
+                        hideUserInput()
+                        setModalRoomEdit(true)
+                    }}
+                    alt="settings button"
                 />
                 <textarea
                     className="TextArea"
