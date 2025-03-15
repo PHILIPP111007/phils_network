@@ -1,3 +1,7 @@
+.NavBar {
+    position: fixed;
+}
+
 .NavBar a {
     padding: 20px 30px;
     font-size: 17px;
@@ -13,7 +17,6 @@
 
     /* desktop */
     .NavBar {
-        position: fixed;
         top: 100px;
         left: 0px;
         display: flex;
@@ -24,7 +27,6 @@
 
     /* mobile device */
     .NavBar {
-        position: fixed;
         bottom: 0px;
         left: 0px;
         right: 0px;
