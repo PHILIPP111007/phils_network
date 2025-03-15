@@ -5,10 +5,18 @@
     text-align: center;
 }
 
+@media (pointer: coarse) {
+
+    /* mobile device */
+    .ModalRoomCreate {
+        width: 200px;
+    }
+}
+
 .ModalRoomCreate .card {
     display: flex;
     justify-content: space-between;
-    width: 350px;
+    max-width: 350px;
     word-wrap: break-word;
     margin-top: 10px;
     padding: 10px;
