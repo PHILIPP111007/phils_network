@@ -7,6 +7,7 @@ import Fetch from "../API/Fetch"
 import getToken from "../modules/getToken"
 import ErrorMessage from "./components/ErrorMessage"
 import Input from "./components/UI/Input"
+import Button from "./components/UI/Button"
 
 export default function Register() {
 
@@ -17,6 +18,7 @@ export default function Register() {
         password: "",
         password2: ""
     })
+    var [userAgreement, setUserAgreement] = useState(false)
     var [errors, setErrors] = useState([])
     var navigate = useNavigate()
 
@@ -38,32 +40,36 @@ export default function Register() {
     async function register(event) {
         event.preventDefault()
 
-        if (registerForm.password === registerForm.password2) {
-            var data = await Fetch({ action: "api/v1/auth/users/", method: HttpMethod.POST, body: registerForm })
+        if (userAgreement) {
+            if (registerForm.password === registerForm.password2) {
+                var data = await Fetch({ action: "api/v1/auth/users/", method: HttpMethod.POST, body: registerForm })
 
-            var new_errors = []
-            if (data.username) {
-                for (let i = 0; i < data.username.length; i++) {
-                    new_errors.push("Error: " + data.username[i])
+                var new_errors = []
+                if (data.username) {
+                    for (let i = 0; i < data.username.length; i++) {
+                        new_errors.push("Error: " + data.username[i])
+                    }
                 }
-            }
-            if (data.password) {
-                for (let i = 0; i < data.password.length; i++) {
-                    new_errors.push("Error: " + data.password[i])
+                if (data.password) {
+                    for (let i = 0; i < data.password.length; i++) {
+                        new_errors.push("Error: " + data.password[i])
+                    }
                 }
-            }
-            if (new_errors.length > 0) {
-                setErrors((prev) => new_errors)
-            }
+                if (new_errors.length > 0) {
+                    setErrors((prev) => new_errors)
+                }
 
-            if (typeof data.username === "string") {
+                if (typeof data.username === "string") {
 
-                setUser({ ...data, is_online: false })
+                    setUser({ ...data, is_online: false })
 
-                navigate("/login/")
+                    navigate("/login/")
+                }
+            } else {
+                setErrors(['Error: passwords must be equal'])
             }
         } else {
-            setErrors(['Error: passwords must be equal'])
+            setErrors(['You must agree with User Agreement'])
         }
     }
 
@@ -116,6 +122,125 @@ export default function Register() {
                     <Input type="submit" value="register" />
                 </form>
                 <Link to="/login/" >Log in</Link>
+
+                <p>
+                    <br />
+                    <strong>User Agreement</strong>
+                    <br />
+                    <br />
+                    <strong>1. General Provisions</strong>
+                    <br />
+
+                    1.1. This User Agreement (hereinafter referred to as the "Agreement") governs the relationship between the user (hereinafter referred to as the "User") and phils_network (hereinafter referred to as the "Service") regarding the use of the Service.
+                    <br />
+
+                    1.2. By using the Service, the User confirms that he/she has read and accepts the terms of this Agreement.
+                    <br />
+
+                    <strong>2. Registration and Account</strong>
+                    <br />
+
+                    2.1. To use certain functions of the Service, the User must register and create an account.
+                    <br />
+
+                    2.2. The User undertakes to provide accurate information upon registration and update it in case of changes.
+                    <br />
+
+                    2.3. The User is responsible for the safety of his/her account data and not to transfer it to third parties.
+                    <br />
+
+                    <strong>3. User Rights and Obligations</strong>
+                    <br />
+
+                    3.1. The User has the right to:
+                    <br />
+
+                    • Use all functions of the Service in accordance with this Agreement.
+                    <br />
+
+                    • Receive information about the operation of the Service.
+                    <br />
+
+                    • Make suggestions for improving the Service.
+                    <br />
+
+                    3.2. The User undertakes to:
+                    <br />
+
+                    • Not post materials that violate the rights of third parties, including copyright.
+                    <br />
+
+                    • Not use the Service to distribute spam, viruses or other malware.
+                    <br />
+
+                    • Follow the rules of communication and treat other users with respect.
+                    <br />
+
+                    <strong>4. Service Rights and Obligations</strong>
+                    <br />
+
+                    4.1. The Service has the right to:
+                    <br />
+
+                    • Make changes to the functionality and terms of use of the Service without prior notice. <br />
+
+                    • Restrict access to certain functions for individual users.
+                    <br />
+
+                    4.2. The Service undertakes to:
+                    <br />
+
+                    • Ensure the protection of Users' personal data in accordance with applicable law.
+                    <br />
+
+                    • Eliminate technical malfunctions within a reasonable time.
+                    <br />
+
+                    <strong>5. Personal data</strong>
+                    <br />
+
+                    5.1. When registering, the User provides their personal data, which is processed in accordance with the Service's Privacy Policy.
+                    <br />
+
+                    5.2. The User agrees to the processing of their personal data for purposes related to the use of the Service.
+                    <br />
+
+                    <strong>6. Liability of the parties</strong>
+                    <br />
+
+                    6.1. The Service shall not be liable for:
+                    <br />
+
+                    • Losses incurred by the User as a result of the use or inability to use the Service.
+                    <br />
+
+                    • Content of materials posted by Users.
+                    <br />
+
+                    6.2. The User is fully responsible for their actions when using the Service.
+                    <br />
+
+                    <strong>7. Final Provisions</strong>
+                    <br />
+
+                    7.1. This Agreement shall enter into force upon its acceptance by the User and shall remain in effect as long as the User uses the Service.
+                    <br />
+
+                    7.2. The Service reserves the right to change the terms of this Agreement by publishing new versions on the website.
+                    <br />
+
+                    7.3. If any provision of this Agreement is deemed invalid, the remaining provisions shall remain in force.
+                    <br />
+
+                    <strong>8. Contact Information</strong>
+                    <br />
+
+                    8.1. All questions and suggestions regarding this Agreement can be sent to the email address: r.phil@yandex.ru.
+                </p>
+                <br />
+                <Button onClick={() => setUserAgreement(true)} >
+                    I agree with User Agreement
+                </Button>
             </div>
         </div>
     )
