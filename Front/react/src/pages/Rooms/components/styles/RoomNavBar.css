@@ -42,7 +42,7 @@
     }
 }
 
-.RoomNavBar #roomInvitations_length {
+.RoomNavBar #roomInvitationsLength {
     padding: 5px 10px;
     background-color: rgb(130, 130, 232);
     border-radius: 20px;

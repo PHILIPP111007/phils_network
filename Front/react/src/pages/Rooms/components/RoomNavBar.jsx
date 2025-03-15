@@ -24,7 +24,7 @@ export default function RoomNavBar() {
         <aside className="RoomNavBar">
             <nav>
                 <p>
-                    <Link to={`/invite_chats/${user.username}/`}>Invite chats <strong id="roomInvitations_length" >{roomInvitationsLength}</strong></Link>
+                    <Link to={`/invite_chats/${user.username}/`}>Invite chats <strong id="roomInvitationsLength" >{roomInvitationsLength}</strong></Link>
                 </p>
             </nav>
         </aside>
