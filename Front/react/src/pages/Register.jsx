@@ -241,6 +241,114 @@ export default function Register() {
                 <Button onClick={() => setUserAgreement(true)} >
                     I agree with User Agreement
                 </Button>
+
+                <p>
+                    <br />
+                    <strong>Privacy Policy</strong>
+                    <br />
+                    <br />
+
+                    <strong>1. Introduction</strong>
+                    <br />
+
+                    1.1. This Privacy Policy (hereinafter referred to as the “Policy”) describes how phils_network (hereinafter referred to as the “Service”) collects, uses, stores and protects the personal data of Users (hereinafter referred to as the “User”).
+                    <br />
+
+                    1.2. By using the Service, the User confirms that they have read the terms of this Policy and agree with it.
+                    <br />
+
+                    <strong>2. Collected information</strong>
+                    <br />
+
+                    2.1. We may collect the following information about Users:
+                    <br />
+
+                    • Personal data: name, email address, phone number and other contact information.
+                    <br />
+
+                    • Profile data: information about the user posted in the profile (photo, biography, etc.).
+                    <br />
+
+                    • Usage data: information about how the User interacts with the Service (time of visit, actions on the site, etc.).
+                    <br />
+
+                    • Technical data: IP address, device type, operating system and browser.
+                    <br />
+
+                    <strong>3. Purposes of personal data processing</strong>
+                    <br />
+
+                    3.1. Users' personal data is processed for the following purposes:
+                    <br />
+
+                    • Ensuring the operation of the Service and its functionality.
+                    <br />
+
+                    • Improving the quality of services and developing new functions.
+                    <br />
+
+                    • Contacting Users to inform them of news and updates.
+                    <br />
+
+                    • Conducting research and analysis to improve the user experience.
+                    <br />
+
+                    <strong>4. Data storage and protection</strong>
+                    <br />
+
+                    4.1. We take all necessary measures to protect Users' personal data from unauthorized access, modification or disclosure.
+                    <br />
+
+                    4.2. Personal data is stored for the time necessary to achieve the purposes for which it was collected, or in accordance with legal requirements.
+                    <br />
+
+                    <strong>5. Disclosure of information to third parties</strong>
+                    <br />
+
+                    5.1. We do not transfer Users' personal data to third parties without their consent, except in cases provided by law.
+                    <br />
+
+                    5.2. We may transfer information to third parties in the following cases:
+                    <br />
+
+                    • To fulfill obligations to the User.
+                    <br />
+
+                    • When necessary to protect the rights and legitimate interests of the Service or third parties.
+                    <br />
+
+                    <strong>6. User Rights</strong>
+                    <br />
+
+                    6.1. The User has the right to:
+                    <br />
+
+                    • Request access to their personal data.
+                    <br />
+
+                    • Request correction of inaccurate or incomplete data.
+                    <br />
+
+                    • Request deletion of their personal data.
+                    <br />
+
+                    • Revoke consent to data processing at any time.
+                    <br />
+
+                    <strong>7. Changes to the Privacy Policy</strong>
+                    <br />
+
+                    7.1. We reserve the right to change the terms of this Policy at any time. All changes will be published on the Service website.
+                    <br />
+
+                    7.2. The User is obliged to periodically check the Policy for changes. Continued use of the Service after changes have been made means consent to the new Policy.
+                    <br />
+
+                    <strong>8. Contact Information</strong>
+                    <br />
+
+                    8.1. If the User has questions or suggestions regarding this Policy, they can contact us at the following address: r.phil@yandex.ru.
+                </p>
             </div>
         </div>
     )
