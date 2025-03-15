@@ -3,12 +3,12 @@
 }
 
 .NavBar a {
+    display: block;
     padding: 20px 30px;
     font-size: 17px;
     text-decoration: none;
     color: black;
     text-align: left;
-    display: block;
 }
 
 
@@ -19,7 +19,6 @@
     .NavBar {
         top: 100px;
         left: 0px;
-        display: flex;
     }
 }
 

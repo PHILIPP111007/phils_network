@@ -1,15 +1,15 @@
 .RoomNavBar {
     position: fixed;
-    display: flex;
+    /* display: flex; */
 }
 
 .RoomNavBar a {
     display: block;
-    width: 200px;
-    padding: 20px;
+    padding: 20px 30px;
     font-size: 17px;
     text-decoration: none;
     color: black;
+    text-align: left;
 }
 
 @media (pointer: fine),
