@@ -1,15 +1,10 @@
-.FriendsNavBar {
-    position: fixed;
-    display: flex;
-}
-
 .FriendsNavBar a {
-    display: block;
-    padding: 20px;
+    padding: 20px 30px;
     font-size: 17px;
     text-decoration: none;
     color: black;
-    float: left;
+    text-align: left;
+    display: block;
 }
 
 .FriendsNavBar #subscribersCount {
@@ -24,6 +19,7 @@
 
     /* desktop */
     .FriendsNavBar {
+        position: fixed;
         top: 100px;
         right: 10px;
         display: flex;
@@ -34,6 +30,7 @@
 
     /* mobile device */
     .FriendsNavBar {
+        position: fixed;
         bottom: 100px;
         left: 0px;
         right: 0px;
