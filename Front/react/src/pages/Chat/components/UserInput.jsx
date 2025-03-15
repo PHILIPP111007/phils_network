@@ -49,6 +49,7 @@ export default function UserInput({ mainSets, sendMessage, editRoom, sendFileMes
                     className="TextArea"
                     placeholder="Use markdown to format your text..."
                     value={text}
+                    maxLength="5000"
                     onChange={(e) => setText(e.target.value)}
                 />
                 <img id="SendButton" src={sendIcon} onClick={() => {
