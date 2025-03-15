@@ -5,6 +5,15 @@
     padding: 20px;
 }
 
+@media (pointer: fine),
+(pointer: none) {
+
+    /* desktop */
+    .FriendCard {
+        min-width: 500px;
+    }
+}
+
 @media (pointer: coarse) {
 
     /* mobile device */
