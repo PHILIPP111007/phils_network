@@ -24,9 +24,8 @@ async def websocket_chat(
 		token = session.exec(select(Token).where(Token.key == token_key)).first()
 		if token:
 			return token.user_id
-		return
 
-	async def _check_permission(id: int) -> bool:
+	async def _check_permission(user_id: int) -> bool:
 		"""Check if user is this room subscriber."""
 
 		nonlocal room_id
@@ -35,7 +34,7 @@ async def websocket_chat(
 		room_subscribers_ids: set[int] = set(
 			[subscriber.user_id for subscriber in room.room_subscribers]
 		)
-		flag = id in room_subscribers_ids
+		flag = user_id in room_subscribers_ids
 		return flag
 
 	async def _create_message(message: dict) -> Message:
@@ -72,14 +71,14 @@ async def websocket_chat(
 		{"websocket": websocket, "token_key": token_key, "room_id": room_id}
 	)
 
-	id = await _get_user_id()
-	if not id:
+	user_id = await _get_user_id()
+	if not user_id:
 		await websocket.close()
 		connected_clients.remove(
 			{"websocket": websocket, "token_key": token_key, "room_id": room_id}
 		)
 	else:
-		flag = await _check_permission(id=id)
+		flag = await _check_permission(user_id=user_id)
 		if not flag:
 			await websocket.close()
 			connected_clients.remove(

@@ -17,7 +17,6 @@ async def websocket_online_status(
 		token = session.exec(select(Token).where(Token.key == token_key)).first()
 		if token:
 			return token.user_id
-		return
 
 	async def _create_online_status() -> None:
 		nonlocal user_id
