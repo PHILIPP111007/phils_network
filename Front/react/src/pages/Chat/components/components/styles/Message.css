@@ -13,6 +13,16 @@
     }
 }
 
+@media (pointer: fine),
+(pointer: none) {
+
+    /* desktop */
+    .Message {
+        width: 800px;
+    }
+}
+
+
 .Message .timestamp {
     color: gray;
 }
