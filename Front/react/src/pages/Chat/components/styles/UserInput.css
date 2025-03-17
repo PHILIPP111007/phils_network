@@ -9,6 +9,7 @@
 .UserInput .TextArea {
     min-height: 20px;
     padding: 5px;
+    resize: none;
     field-sizing: content;
     outline: none;
     overflow: auto;
