@@ -6,7 +6,7 @@ from sqlmodel import delete, select
 
 from app.constants import BUCKET_NAME, MEDIA_ROOT
 from app.database import SessionDep
-from app.models import Message, Room, Token
+from app.models import Message, MessageViewed, Room, Token
 from app.s3 import s3
 
 router = APIRouter(tags=["websocket_delete_messsage"])
@@ -48,6 +48,9 @@ async def websocket_delete_messsage(
 			file_path = os.path.join(MEDIA_ROOT, message.file)
 			s3.delete_object(Bucket=BUCKET_NAME, Key=file_path)
 
+		session.exec(
+			delete(MessageViewed).where(MessageViewed.message_id == message_id)
+		)
 		session.exec(delete(Message).where(Message.id == message_id))
 		session.commit()
 
