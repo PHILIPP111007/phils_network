@@ -1,10 +1,13 @@
 import json
+import os
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from sqlmodel import delete, select
 
+from app.constants import BUCKET_NAME, MEDIA_ROOT
 from app.database import SessionDep
 from app.models import Message, Room, Token
+from app.s3 import s3
 
 router = APIRouter(tags=["websocket_delete_messsage"])
 
@@ -40,8 +43,13 @@ async def websocket_delete_messsage(
 
 		nonlocal room_id
 
+		message = session.exec(select(Message).where(Message.id == message_id)).first()
+		file_path = os.path.join(MEDIA_ROOT, message.file)
+
 		session.exec(delete(Message).where(Message.id == message_id))
 		session.commit()
+
+		s3.delete_object(Bucket=BUCKET_NAME, Key=file_path)
 
 	await websocket.accept()
 
