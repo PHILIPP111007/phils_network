@@ -76,7 +76,6 @@ async def get_room(session: SessionDep, request: Request):
 			.unique()
 			.all()
 		)
-
 		message_viewed = (
 			session.exec(
 				select(MessageViewed).where(
@@ -87,7 +86,6 @@ async def get_room(session: SessionDep, request: Request):
 			.unique()
 			.all()
 		)
-
 		unread_messages = len(messages_ids) - len(message_viewed)
 
 		room = {
