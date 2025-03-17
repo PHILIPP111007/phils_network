@@ -37,6 +37,7 @@ export default function Chat() {
     var params = useParams()
     var navigate = useNavigate()
     var chatSocket = useRef(null)
+    var deleteMessageSocket = useRef(null)
     var wrapperRef = useRef(null)
     var [refLazyDivinView, inViewLazyDiv] = useInView()
     var [refWrapperinView, inViewWrapper] = useInView()
@@ -145,6 +146,10 @@ export default function Chat() {
         }
     }
 
+    async function deleteMessage(message) {
+        deleteMessageSocket.current.send(JSON.stringify({ message_id: message.id }))
+    }
+
     useEffect(() => {
         Fetch({ action: `api/v2/room/${params.room_id}/`, method: HttpMethod.GET })
             .then((data) => {
@@ -162,6 +167,7 @@ export default function Chat() {
             })
 
         chatSocket.current = getWebSocket({ socket_name: "chatSocket", path: `chat/${params.room_id}/` })
+        deleteMessageSocket.current = getWebSocket({ socket_name: "deleteMessageSocket", path: `chat/${params.room_id}/delete_message/` })
 
         var textArea = document.getElementsByClassName("TextArea").item(0)
         var sendButton = document.getElementById("SendButton")
@@ -174,6 +180,7 @@ export default function Chat() {
 
         return () => {
             chatSocket.current.close()
+            deleteMessageSocket.current.close()
         }
     }, [])
 
@@ -184,6 +191,17 @@ export default function Chat() {
                 setMessages((prev) => [...messages, data.message])
             }
             scrollToBottom()
+        }
+    }, [messages])
+
+    useEffect(() => {
+        deleteMessageSocket.current.onmessage = (e) => {
+            var data = JSON.parse(e.data)
+            if (data) {
+                setMessages((prev) => messages.filter(message => {
+                    return message.id !== data.message_id
+                }))
+            }
         }
     }, [messages])
 
@@ -203,7 +221,7 @@ export default function Chat() {
 
             <LazyDiv Ref={refLazyDivinView} />
 
-            <Messages messages={messages} downloadFile={downloadFile} />
+            <Messages messages={messages} downloadFile={downloadFile} deleteMessage={deleteMessage} />
 
             <UserInput mainSets={mainSets} sendMessage={sendMessage} editRoom={editRoom} sendFileMessage={sendFileMessage} />
 

@@ -15,6 +15,7 @@ from app.views import (
 	subscriber,
 	user,
 	websocket_chat,
+	websocket_delete_messsage,
 	websocket_online_status,
 )
 
@@ -71,3 +72,4 @@ app.include_router(chat.router)
 app.include_router(message.router)
 app.include_router(websocket_chat.router)
 app.include_router(websocket_online_status.router)
+app.include_router(websocket_delete_messsage.router)

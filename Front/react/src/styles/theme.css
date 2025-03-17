@@ -113,7 +113,8 @@ input[type=file]::file-selector-button {
     .ModalSettings,
     .ModalPostEdit,
     .uploadFileForm,
-    .ModalDelAcc {
+    .ModalDelAcc,
+    .ModalMessage {
         background: var(--l-main-bg-color);
     }
 
@@ -214,7 +215,8 @@ input[type=file]::file-selector-button {
     .ModalRoomEdit,
     .ModalSettings,
     .ModalPostEdit,
-    .ModalDelAcc {
+    .ModalDelAcc,
+    .ModalMessage {
         background: var(--d-main-bg-color);
     }
 
