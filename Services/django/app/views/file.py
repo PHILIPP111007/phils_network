@@ -12,7 +12,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from app.models import Message
-from app.s3 import s3
+from app.s3 import create_bucket, s3
 from app.serializers import MessageSerializer
 from app.services import FileService
 from django.conf import settings
@@ -41,6 +41,12 @@ class FileAPIView(APIView):
 def file_download(request: Request, message_id: int, username: str) -> HttpResponse:
 	if request.method != "GET":
 		return HttpResponse("Method not allowed.")
+
+	for bucket in s3.list_buckets()["Buckets"]:
+		if bucket["Name"] == settings.BUCKET_NAME:
+			break
+	else:
+		create_bucket()
 
 	message = Message.objects.filter(pk=message_id).first()
 	room = message.room
