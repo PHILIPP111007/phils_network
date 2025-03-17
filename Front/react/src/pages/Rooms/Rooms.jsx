@@ -54,6 +54,7 @@ export default function Rooms() {
             var room_id = Number(data.message.room_id)
             var newRoom = rooms.filter((room) => room.id === room_id)[0]
             newRoom.last_message_sender = data.message.sender.username
+            newRoom.unread_messages += 1
 
             var text = data.message.text
             var file_name = data.message.file

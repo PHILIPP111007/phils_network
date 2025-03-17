@@ -14,3 +14,15 @@
 .RoomCard .LastMessage {
     color: gray;
 }
+
+.RoomCard .LastMessage {
+    display: flex;
+    justify-content: space-between;
+}
+
+.RoomCard .unread_messages {
+    padding: 10px;
+    border-radius: 20px;
+    background-color: red;
+    color: white;
+}

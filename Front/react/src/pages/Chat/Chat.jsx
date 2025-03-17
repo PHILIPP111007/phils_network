@@ -143,6 +143,10 @@ export default function Chat() {
                 setMessages((prev) => [...data.messages.reverse(), ...messages])
             }
             mainSets.value.loading = false
+
+            data.messages.forEach(message => {
+                Fetch({ action: `api/v2/message_viewed/${message.id}/`, method: HttpMethod.POST })
+            })
         }
     }
 

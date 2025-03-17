@@ -6,7 +6,15 @@ from sqlmodel import delete, select
 
 from app.constants import DATETIME_FORMAT
 from app.database import SessionDep
-from app.models import Message, Room, RoomCreator, RoomInvitation, RoomSubscribers, User
+from app.models import (
+	Message,
+	MessageViewed,
+	Room,
+	RoomCreator,
+	RoomInvitation,
+	RoomSubscribers,
+	User,
+)
 
 router = APIRouter(tags=["room"])
 
@@ -63,6 +71,25 @@ async def get_room(session: SessionDep, request: Request):
 			last_message_sender = None
 			last_message_text = ""
 
+		messages_ids = (
+			session.exec(select(Message.id).where(Message.room_id == room.id))
+			.unique()
+			.all()
+		)
+
+		message_viewed = (
+			session.exec(
+				select(MessageViewed).where(
+					MessageViewed.message_id.in_(messages_ids),
+					MessageViewed.user_id == request.state.user.id,
+				)
+			)
+			.unique()
+			.all()
+		)
+
+		unread_messages = len(messages_ids) - len(message_viewed)
+
 		room = {
 			"id": room.id,
 			"name": room.name,
@@ -70,6 +97,7 @@ async def get_room(session: SessionDep, request: Request):
 			"last_message_timestamp": time.strftime(DATETIME_FORMAT),
 			"last_message_text": last_message_text,
 			"last_message_sender": last_message_sender,
+			"unread_messages": unread_messages,
 		}
 		rooms.append(room)
 

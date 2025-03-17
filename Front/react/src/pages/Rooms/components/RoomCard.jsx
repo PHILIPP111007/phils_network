@@ -21,8 +21,11 @@ export default function RoomCard({ room, link }) {
                     <div className="LastMessage">
                         {room.last_message_sender &&
                             <>
-                                <strong>{room.last_message_sender}:</strong> {getSubstring({ text: room.last_message_text })}
+                                <div><strong>{room.last_message_sender}:</strong> {getSubstring({ text: room.last_message_text })}</div>
                             </>
+                        }
+                        {room.unread_messages > 0 &&
+                            <div className="unread_messages">{room.unread_messages}</div>
                         }
                     </div>
                 </div>

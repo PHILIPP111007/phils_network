@@ -61,6 +61,7 @@ class RoomInvitationAdmin(admin.ModelAdmin):
 @admin.register(Message)
 class MessageAdmin(admin.ModelAdmin):
 	exclude = ("text",)
+	filter_horizontal = ("viewed",)
 	list_display = ("sender", "room", "timestamp")
 	list_filter = ("sender", "room")
 	ordering = ("-timestamp",)

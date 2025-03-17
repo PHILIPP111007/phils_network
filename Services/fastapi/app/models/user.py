@@ -34,6 +34,7 @@ class User(SQLModel, table=True):
 	room_creators: list["RoomCreator"] = Relationship(back_populates="creator")
 	room_subscribers: list["RoomSubscribers"] = Relationship(back_populates="user")
 	messages: list["Message"] = Relationship(back_populates="sender")
+	viewed: list["MessageViewed"] = Relationship(back_populates="user")
 	room_invitations_creators: list["RoomInvitation"] = Relationship(
 		back_populates="creator",
 		sa_relationship_kwargs={

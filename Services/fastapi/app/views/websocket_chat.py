@@ -6,7 +6,7 @@ from sqlmodel import select
 
 from app.constants import DATETIME_FORMAT
 from app.database import SessionDep
-from app.models import Message, Room, Token
+from app.models import Message, MessageViewed, Room, Token
 
 router = APIRouter(tags=["websocket_chat"])
 
@@ -63,6 +63,13 @@ async def websocket_chat(
 
 		new_message = new_message.model_dump()
 		new_message["sender"] = new_message_sender
+
+		message_viewed = MessageViewed(
+			user_id=message["sender_id"], message_id=new_message["id"]
+		)
+		session.add(message_viewed)
+		session.commit()
+
 		return new_message
 
 	await websocket.accept()

@@ -8,6 +8,7 @@ from app.views import (
 	find_user,
 	friend,
 	message,
+	message_viewed,
 	news,
 	online_status,
 	post,
@@ -70,6 +71,7 @@ app.include_router(room.router)
 app.include_router(user.router)
 app.include_router(chat.router)
 app.include_router(message.router)
+app.include_router(message_viewed.router)
 app.include_router(websocket_chat.router)
 app.include_router(websocket_online_status.router)
 app.include_router(websocket_delete_messsage.router)

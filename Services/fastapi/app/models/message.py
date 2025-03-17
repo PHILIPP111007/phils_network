@@ -17,3 +17,4 @@ class Message(SQLModel, table=True):
 	file: str
 	sender: "User" = Relationship(back_populates="messages")
 	room: "Room" = Relationship(back_populates="messages")
+	viewed: list["MessageViewed"] = Relationship(back_populates="message")

@@ -72,12 +72,13 @@ class RoomInvitation(models.Model):
 
 class Message(models.Model):
 	room = models.ForeignKey(Room, on_delete=models.CASCADE)
-	sender = models.ForeignKey(User, on_delete=models.CASCADE)
+	sender = models.ForeignKey(User, related_name="sender", on_delete=models.CASCADE)
 	text = models.TextField(max_length=5000, blank=True, null=True, default=None)
 	timestamp = models.DateTimeField(auto_now_add=True)
 	file = models.FileField(
 		blank=True, null=True, default=None, upload_to=_user_directory_path
 	)
+	viewed = models.ManyToManyField(User, blank=True)
 
 	class Meta:
 		indexes = [
