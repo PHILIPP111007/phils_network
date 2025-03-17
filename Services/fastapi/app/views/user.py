@@ -9,6 +9,7 @@ from app.database import SessionDep
 from app.models import (
 	DjangoAdminLog,
 	Message,
+	MessageViewed,
 	OnlineStatus,
 	Post,
 	Room,
@@ -154,11 +155,15 @@ async def delete_user(
 	messages = (
 		session.exec(select(Message).where(Message.sender_id == user.id)).unique().all()
 	)
+	message_ids = []
 	for message in messages:
+		message_ids.append(message.id)
 		if message.file:
 			file_path = os.path.join(MEDIA_ROOT, message.file)
 			s3.delete_object(Bucket=BUCKET_NAME, Key=file_path)
 
+	session.exec(delete(MessageViewed).where(MessageViewed.message_id.in_(message_ids)))
+	session.exec(delete(MessageViewed).where(MessageViewed.user_id == user.id))
 	session.exec(delete(Subscriber).where(Subscriber.user_id == user.id))
 	session.exec(delete(Subscriber).where(Subscriber.subscribe_id == user.id))
 	session.exec(delete(Token).where(Token.user_id == user.id))
