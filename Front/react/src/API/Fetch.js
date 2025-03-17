@@ -38,17 +38,17 @@ export default async function Fetch({ action, method, body, token, is_uploading_
     } else {
         var headers
 
-        if (!is_uploading_file) {
-            body = body ? JSON.stringify(body) : ""
+        if (is_uploading_file) {
             headers = {
                 "Accept": "application/json;text/plain",
-                "Content-Type": "application/json;charset=UTF-8",
                 "Access-Control-Allow-Origin": "*",
                 "Authorization": token ? `Token ${token}` : "",
             }
         } else {
+            body = body ? JSON.stringify(body) : ""
             headers = {
                 "Accept": "application/json;text/plain",
+                "Content-Type": "application/json;charset=UTF-8",
                 "Access-Control-Allow-Origin": "*",
                 "Authorization": token ? `Token ${token}` : "",
             }
