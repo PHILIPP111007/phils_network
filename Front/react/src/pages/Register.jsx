@@ -73,6 +73,12 @@ export default function Register() {
         }
     }
 
+    function setUserAgreementButton() {
+        setUserAgreement(true)
+        var button = document.getElementById("agreeWithUserAgreementButton")
+        button.style.backgroundColor = "rgb(87, 195, 87)"
+    }
+
     var showErrors = useMemo(() => {
         return (
             <>
@@ -238,7 +244,7 @@ export default function Register() {
                     8.1. All questions and suggestions regarding this Agreement can be sent to the email address: r.phil@yandex.ru.
                 </p>
                 <br />
-                <Button onClick={() => setUserAgreement(true)} >
+                <Button id="agreeWithUserAgreementButton" onClick={() => setUserAgreementButton()} >
                     I agree with User Agreement
                 </Button>
 
