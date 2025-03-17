@@ -44,12 +44,12 @@ async def websocket_delete_messsage(
 		nonlocal room_id
 
 		message = session.exec(select(Message).where(Message.id == message_id)).first()
-		file_path = os.path.join(MEDIA_ROOT, message.file)
+		if message.file:
+			file_path = os.path.join(MEDIA_ROOT, message.file)
+			s3.delete_object(Bucket=BUCKET_NAME, Key=file_path)
 
 		session.exec(delete(Message).where(Message.id == message_id))
 		session.commit()
-
-		s3.delete_object(Bucket=BUCKET_NAME, Key=file_path)
 
 	await websocket.accept()
 
