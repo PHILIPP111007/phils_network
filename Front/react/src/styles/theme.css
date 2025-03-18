@@ -1,39 +1,6 @@
-:root {
-    --gray-color: rgb(134, 134, 134);
-
-    /* Light vars */
-    --l-color: rgb(0, 0, 0);
-    --l-ui-color: rgb(44, 42, 42);
-    --l-list-color: rgb(134, 134, 134);
-
-    --l-main-bg-color: rgb(250, 244, 244);
-    --l-ui-bg-color: rgb(205, 205, 205);
-    --l-upper-line-bg-color: rgba(235, 235, 235);
-    --l-upper-line-bg-color-hover: rgba(220, 220, 220);
-    --l-user-card-bg-color: rgb(202, 195, 195);
-    --l-list-bg-color: rgb(230, 230, 230);
-
-    --l-border-color: rgb(202, 195, 195);
-
-    /* Dark vars */
-    --d-color: rgb(205, 205, 205);
-    --d-ui-color: rgb(205, 205, 205);
-    --d-list-color: rgb(134, 134, 134);
-
-    --d-main-bg-color: rgb(43, 43, 43);
-    --d-ui-bg-color: rgb(101, 101, 110);
-    --d-upper-line-bg-color: rgba(61, 61, 71);
-    --d-upper-line-bg-color-hover: rgba(50, 50, 50);
-    --d-user-card-bg-color: rgb(57, 57, 61);
-    --d-list-bg-color: rgb(57, 57, 61);
-
-    --d-border-color: rgb(80, 80, 90);
-}
-
-
 .FriendCard .username,
 .Chat .info a {
-    color: var(--gray-color);
+    color: rgb(134, 134, 134);
 }
 
 
@@ -42,49 +9,49 @@
 .light button,
 .light input[type="submit"],
 .light input[type="reset"] {
-    background-color: var(--l-ui-bg-color);
-    color: var(--l-ui-color);
+    background-color: rgb(205, 205, 205);
+    color: rgb(44, 42, 42);
 }
 
 .light textarea {
-    background-color: var(--l-main-bg-color);
-    color: var(--l-color);
+    background-color: rgb(250, 244, 244);
+    color: rgb(0, 0, 0);
 }
 
 .light input[type="text"],
 .light input[type="email"],
 input[type=file]::file-selector-button {
-    background-color: var(--l-main-bg-color);
-    color: var(--l-ui-color);
+    background-color: rgb(250, 244, 244);
+    color: rgb(44, 42, 42);
 }
 
 .light {
-    background-color: var(--l-main-bg-color);
-    color: var(--l-color);
+    background-color: rgb(250, 244, 244);
+    color: rgb(0, 0, 0);
 
     .UpperLine,
     .NavBar,
     .FriendsNavBar {
-        background-color: var(--l-upper-line-bg-color);
+        background-color: rgb(235, 235, 235);
     }
 
     .RoomNavBar {
-        background-color: var(--l-upper-line-bg-color);
+        background-color: rgb(235, 235, 235);
     }
 
     .SettingsBar {
-        background-color: var(--l-upper-line-bg-color);
-        border-color: var(--l-border-color);
+        background-color: rgb(235, 235, 235);
+        border-color: rgb(202, 195, 195);
     }
 
     .NavBar a:hover,
     .FriendsNavBar a:hover,
     .RoomNavBar a:hover {
-        background-color: var(--l-upper-line-bg-color-hover);
+        background-color: rgb(220, 220, 220);
     }
 
     .UserCard {
-        background-color: var(--l-user-card-bg-color);
+        background-color: rgb(202, 195, 195);
     }
 
     .Post,
@@ -94,18 +61,18 @@ input[type=file]::file-selector-button {
     .ModalRoomEdit .card,
     .FriendCard,
     .Chat .Message {
-        background-color: var(--l-list-bg-color);
+        background-color: rgb(230, 230, 230);
     }
 
     .Post .title,
     .Post a {
-        color: var(--l-list-color);
+        color: rgb(134, 134, 134);
     }
 
     .RoomCard a,
     .RoomInvitationCard a,
     .Message a {
-        color: var(--l-color);
+        color: rgb(0, 0, 0);
     }
 
     .ModalRoomCreate,
@@ -115,17 +82,17 @@ input[type=file]::file-selector-button {
     .uploadFileForm,
     .ModalDelAcc,
     .ModalMessage {
-        background: var(--l-main-bg-color);
+        background: rgb(250, 244, 244);
     }
 
     .FriendCard,
     .FriendCard .name {
-        color: var(--l-color);
+        color: rgb(0, 0, 0);
     }
 
     .Chat #SendButton,
     .Chat #SettingsButton {
-        background: var(--l-main-bg-color);
+        background: rgb(250, 244, 244);
     }
 }
 
@@ -133,61 +100,61 @@ input[type=file]::file-selector-button {
 /* Dark Theme */
 
 .dark a {
-    color: var(--d-color);
+    color: rgb(205, 205, 205);
 }
 
 .dark button,
 .dark input[type="submit"],
 .dark input[type="reset"],
 input[type=file]::file-selector-button {
-    background-color: var(--d-ui-bg-color);
-    color: var(--d-ui-color);
+    background-color: rgb(101, 101, 110);
+    color: rgb(205, 205, 205);
 }
 
 .dark textarea {
-    background-color: var(--d-main-bg-color);
-    color: var(--d-color);
+    background-color: rgb(43, 43, 43);
+    color: rgb(205, 205, 205);
 }
 
 .dark input[type="text"],
 .dark input[type="email"] {
-    background-color: var(--d-main-bg-color);
-    color: var(--d-ui-color);
+    background-color: rgb(43, 43, 43);
+    color: rgb(205, 205, 205);
 }
 
 .dark {
-    background-color: var(--d-main-bg-color);
-    color: var(--d-color);
+    background-color: rgb(43, 43, 43);
+    color: rgb(205, 205, 205);
 
     .UpperLine,
     .NavBar,
     .FriendsNavBar {
-        background-color: var(--d-upper-line-bg-color);
+        background-color: rgb(61, 61, 71);
     }
 
     .RoomNavBar {
-        background-color: var(--d-upper-line-bg-color);
+        background-color: rgb(61, 61, 71);
     }
 
     .SettingsBar {
-        background-color: var(--d-upper-line-bg-color);
-        border-color: var(--d-border-color);
+        background-color: rgb(61, 61, 71);
+        border-color: rgb(80, 80, 90);
     }
 
     .NavBar a,
     .FriendsNavBar a,
     .RoomNavBar a {
-        color: var(--d-ui-color);
+        color: rgb(205, 205, 205);
     }
 
     .NavBar a:hover,
     .FriendsNavBar a:hover,
     .RoomNavBar a:hover {
-        background-color: var(--d-upper-line-bg-color-hover);
+        background-color: rgba(50, 50, 50);
     }
 
     .UserCard {
-        background-color: var(--d-user-card-bg-color);
+        background-color: rgb(57, 57, 61);
     }
 
     .Post,
@@ -198,17 +165,17 @@ input[type=file]::file-selector-button {
     .FriendCard,
     .uploadFileForm,
     .Chat .Message {
-        background-color: var(--d-list-bg-color);
+        background-color: rgb(57, 57, 61);
     }
 
     .Post .title,
     .Post a {
-        color: var(--d-list-color);
+        color: rgb(134, 134, 134);
     }
 
     .RoomCard .link,
     .Message a {
-        color: var(--d-color);
+        color: rgb(205, 205, 205);
     }
 
     .ModalRoomCreate,
@@ -217,16 +184,16 @@ input[type=file]::file-selector-button {
     .ModalPostEdit,
     .ModalDelAcc,
     .ModalMessage {
-        background: var(--d-main-bg-color);
+        background: rgb(43, 43, 43);
     }
 
     .FriendCard,
     .FriendCard .name {
-        color: var(--d-color);
+        color: rgb(205, 205, 205);
     }
 
     .Chat #SendButton,
     .Chat #SettingsButton {
-        background: var(--d-main-bg-color);
+        background: rgb(43, 43, 43);
     }
 }
