@@ -1,8 +1,9 @@
+import os
 from datetime import datetime
 
 from fastapi import APIRouter, Request
 from pydantic import BaseModel
-from sqlmodel import delete, select
+from sqlmodel import delete, func, select
 
 from app.constants import DATETIME_FORMAT
 from app.database import SessionDep
@@ -63,7 +64,7 @@ async def get_room(session: SessionDep, request: Request):
 		if last_message:
 			last_message_sender = last_message.sender.username
 			if last_message.file:
-				file_name = last_message.file.split("/")[-1]
+				file_name = last_message.file.split(os.sep)[-1]
 				last_message_text = file_name
 			else:
 				last_message_text = last_message.text
@@ -76,17 +77,13 @@ async def get_room(session: SessionDep, request: Request):
 			.unique()
 			.all()
 		)
-		message_viewed = (
-			session.exec(
-				select(MessageViewed).where(
-					MessageViewed.message_id.in_(messages_ids),
-					MessageViewed.user_id == request.state.user.id,
-				)
+		message_viewed_count = session.exec(
+			select(func.count(MessageViewed.id)).where(
+				MessageViewed.message_id.in_(messages_ids),
+				MessageViewed.user_id == request.state.user.id,
 			)
-			.unique()
-			.all()
-		)
-		unread_messages = len(messages_ids) - len(message_viewed)
+		).one()
+		unread_messages = len(messages_ids) - message_viewed_count
 
 		room = {
 			"id": room.id,
