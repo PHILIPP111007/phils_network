@@ -1,5 +1,5 @@
 import "./styles/Message.css"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import ReactMarkdown from "react-markdown"
 import ModalMessage from "./components/ModalMessage"
@@ -16,13 +16,30 @@ export default function Message({ message, downloadFile, deleteMessage }) {
         return file_split[file_name_length - 1]
     }
 
+    useEffect(() => {
+        const touchArea = document.getElementById(`Message_${message.id}`)
+        let longPressTimeout
+        const LONG_PRESS_DURATION = 500 // duration in milliseconds
+
+        touchArea.addEventListener('touchstart', (event) => {
+            longPressTimeout = setTimeout(() => {
+                setModalMessage(true)
+            }, LONG_PRESS_DURATION)
+        })
+
+        touchArea.addEventListener('touchend', () => {
+            clearTimeout(longPressTimeout)
+        })
+
+        touchArea.addEventListener('touchcancel', () => {
+            clearTimeout(longPressTimeout)
+        })
+    }, [])
+
     if (message.file) {
         return (
-            <div className="Message"
+            <div id={`Message_${message.id}`} className="Message"
                 onContextMenu={() => {
-                    setModalMessage(true)
-                }}
-                onTouchEnd={() => {
                     setModalMessage(true)
                 }}>
                 <Modal modal={modalMessage} setModal={setModalMessage}>
@@ -43,11 +60,8 @@ export default function Message({ message, downloadFile, deleteMessage }) {
         )
     }
     return (
-        <div className="Message"
+        <div id={`Message_${message.id}`} className="Message"
             onContextMenu={() => {
-                setModalMessage(true)
-            }}
-            onTouchEnd={() => {
                 setModalMessage(true)
             }}>
             <Modal modal={modalMessage} setModal={setModalMessage}>
