@@ -21,6 +21,9 @@ export default function Message({ message, downloadFile, deleteMessage }) {
             <div className="Message"
                 onContextMenu={() => {
                     setModalMessage(true)
+                }}
+                onTouchEnd={() => {
+                    setModalMessage(true)
                 }}>
                 <Modal modal={modalMessage} setModal={setModalMessage}>
                     <ModalMessage message={message} deleteMessage={deleteMessage} />
@@ -42,6 +45,9 @@ export default function Message({ message, downloadFile, deleteMessage }) {
     return (
         <div className="Message"
             onContextMenu={() => {
+                setModalMessage(true)
+            }}
+            onTouchEnd={() => {
                 setModalMessage(true)
             }}>
             <Modal modal={modalMessage} setModal={setModalMessage}>
