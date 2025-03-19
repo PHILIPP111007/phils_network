@@ -42,7 +42,9 @@ export default function Register() {
 
         if (userAgreement) {
             if (registerForm.password === registerForm.password2) {
-                var data = await Fetch({ action: "api/v1/auth/users/", method: HttpMethod.POST, body: registerForm })
+                setErrors([])
+
+                var data = await Fetch({ action: "api/v1/auth/users/", method: HttpMethod.POST, body: registerForm, token: "" })
 
                 var new_errors = []
                 if (data.username) {
@@ -61,7 +63,7 @@ export default function Register() {
 
                 if (typeof data.username === "string") {
 
-                    setUser({ ...data, is_online: false })
+                    setUser({ ...data })
 
                     navigate("/login/")
                 }
