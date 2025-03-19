@@ -12,7 +12,6 @@ from app.models import (
 	MessageViewed,
 	Post,
 	Room,
-	RoomCreator,
 	RoomInvitation,
 	RoomSubscribers,
 	Subscriber,
@@ -141,7 +140,6 @@ async def delete_user(
 	session.exec(delete(Subscriber).where(Subscriber.subscribe_id == user.id))
 	session.exec(delete(Token).where(Token.user_id == user.id))
 	session.exec(delete(Post).where(Post.user_id == user.id))
-	session.exec(delete(RoomCreator).where(RoomCreator.creator_id == user.id))
 	session.exec(delete(RoomInvitation).where(RoomInvitation.creator_id == user.id))
 	session.exec(delete(RoomInvitation).where(RoomInvitation.to_user_id == user.id))
 	session.exec(delete(Message).where(Message.sender_id == user.id))

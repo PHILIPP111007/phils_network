@@ -3,7 +3,6 @@ from app.models.message import Message
 from app.models.message_viewed import MessageViewed
 from app.models.post import Post
 from app.models.room import Room
-from app.models.room_creator import RoomCreator
 from app.models.room_invitation import RoomInvitation
 from app.models.room_subscribers import RoomSubscribers
 from app.models.subscriber import Subscriber

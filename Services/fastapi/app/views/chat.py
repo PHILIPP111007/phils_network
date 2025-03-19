@@ -10,7 +10,6 @@ from app.database import SessionDep
 from app.models import (
 	Message,
 	Room,
-	RoomCreator,
 	RoomInvitation,
 	RoomSubscribers,
 )
@@ -33,13 +32,7 @@ async def get_chat(session: SessionDep, request: Request, id: int):
 	if not room:
 		return {"ok": False, "error": "Not found room."}
 
-	room_creator = session.exec(
-		select(RoomCreator).where(RoomCreator.room_id == id)
-	).first()
-	if not room_creator:
-		return {"ok": False, "error": "Not found room creator."}
-
-	is_creator = room_creator.creator_id == request.state.user.id
+	is_creator = room.creator_id == request.state.user.id
 
 	subscribers_info = [
 		{
@@ -113,7 +106,6 @@ async def put_chat(
 
 		session.exec(delete(Room).where(Room.id == room.id))
 		session.exec(delete(Message).where(Message.room_id == room.id))
-		session.exec(delete(RoomCreator).where(RoomCreator.room_id == room.id))
 		session.exec(delete(RoomInvitation).where(RoomInvitation.room_id == room.id))
 		session.exec(delete(RoomSubscribers).where(RoomSubscribers.room_id == room.id))
 		session.commit()

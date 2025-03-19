@@ -2,7 +2,6 @@ from app.models import (
 	Message,
 	Post,
 	Room,
-	RoomCreator,
 	RoomInvitation,
 	Subscriber,
 	User,
@@ -46,12 +45,6 @@ class RoomAdmin(admin.ModelAdmin):
 	def room_subscribers(self, room):
 		subscribers_count = Room.objects.filter(pk=room.id).first().subscribers.count()
 		return f"{subscribers_count}"
-
-
-@admin.register(RoomCreator)
-class RoomCreatorAdmin(admin.ModelAdmin):
-	list_display = ("creator", "room")
-	list_filter = ("creator",)
 
 
 @admin.register(RoomInvitation)

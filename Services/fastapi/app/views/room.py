@@ -11,7 +11,6 @@ from app.models import (
 	Message,
 	MessageViewed,
 	Room,
-	RoomCreator,
 	RoomInvitation,
 	RoomSubscribers,
 	User,
@@ -111,17 +110,17 @@ async def post_room(
 	if not room_name_and_subscribers.name:
 		return {"ok": False, "error": "Not provided room name."}
 
-	room = Room(name=room_name_and_subscribers.name, timestamp=datetime.now())
+	room = Room(
+		name=room_name_and_subscribers.name,
+		creator_id=request.state.user.id,
+		timestamp=datetime.now(),
+	)
 	session.add(room)
 	session.commit()
 	session.refresh(room)
 
 	room_subscriber = RoomSubscribers(user_id=request.state.user.id, room_id=room.id)
 	session.add(room_subscriber)
-
-	room_creator = RoomCreator(creator_id=request.state.user.id, room_id=room.id)
-	session.add(room_creator)
-	session.commit()
 
 	if room_name_and_subscribers.subscribers:
 		subscribers = (

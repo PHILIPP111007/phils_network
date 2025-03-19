@@ -31,7 +31,7 @@ class User(SQLModel, table=True):
 			"lazy": "select",
 		},
 	)
-	room_creators: list["RoomCreator"] = Relationship(back_populates="creator")
+	room_creators: list["Room"] = Relationship(back_populates="creator")
 	room_subscribers: list["RoomSubscribers"] = Relationship(back_populates="user")
 	messages: list["Message"] = Relationship(back_populates="sender")
 	viewed: list["MessageViewed"] = Relationship(back_populates="user")

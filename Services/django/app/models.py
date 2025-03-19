@@ -93,6 +93,9 @@ class Subscriber(models.Model):
 
 class Room(models.Model):
 	name = models.CharField(max_length=50)
+	creator = models.ForeignKey(
+		User, related_name="room_creator", on_delete=models.CASCADE, default=None
+	)
 	timestamp = models.DateTimeField(auto_now_add=True)
 	subscribers = models.ManyToManyField(User, blank=True)
 
@@ -100,17 +103,12 @@ class Room(models.Model):
 		return f"{self.name} [ {self.timestamp} ]"
 
 
-class RoomCreator(models.Model):
-	creator = models.ForeignKey(User, on_delete=models.CASCADE)
-	room = models.ForeignKey(Room, on_delete=models.CASCADE)
-
-	def __str__(self):
-		return self.creator.username
-
-
 class RoomInvitation(models.Model):
 	creator = models.ForeignKey(
-		User, on_delete=models.CASCADE, related_name="creator", default=None
+		User,
+		on_delete=models.CASCADE,
+		related_name="room_invitation_creator",
+		default=None,
 	)
 	to_user = models.ForeignKey(
 		User, on_delete=models.CASCADE, related_name="to_user", default=None
