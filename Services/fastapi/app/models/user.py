@@ -5,17 +5,17 @@ from sqlmodel import Field, Relationship, SQLModel
 
 
 class User(SQLModel, table=True):
-	__tablename__ = "auth_user"
+	__tablename__ = "app_user"
 
 	id: int = Field(primary_key=True)
 	username: str
 	email: str
 	first_name: str
 	last_name: str
+	is_online: bool
 
 	# Relations
 	tokens: list["Token"] = Relationship(back_populates="user")
-	online_statuses: list["OnlineStatus"] = Relationship(back_populates="user")
 	blogs: list["Post"] = Relationship(back_populates="user")
 	subscriber_user: list["Subscriber"] = Relationship(
 		back_populates="user",

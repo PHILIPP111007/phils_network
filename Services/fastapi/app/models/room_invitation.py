@@ -11,9 +11,9 @@ class RoomInvitation(SQLModel, table=True):
 	__tablename__ = "app_roominvitation"
 
 	id: int = Field(primary_key=True)
-	creator_id: int = Field(foreign_key="auth_user.id")
+	creator_id: int = Field(foreign_key="app_user.id")
 	room_id: int = Field(foreign_key="app_room.id")
-	to_user_id: int = Field(foreign_key="auth_user.id")
+	to_user_id: int = Field(foreign_key="app_user.id")
 	timestamp: datetime
 	room: "Room" = Relationship(back_populates="room_invitations_rooms")
 	creator: "User" = Relationship(

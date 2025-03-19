@@ -9,8 +9,8 @@ class Subscriber(SQLModel, table=True):
 	__tablename__ = "app_subscriber"
 
 	id: int = Field(primary_key=True)
-	user_id: int = Field(foreign_key="auth_user.id", index=True)
-	subscribe_id: int = Field(foreign_key="auth_user.id", index=True)
+	user_id: int = Field(foreign_key="app_user.id", index=True)
+	subscribe_id: int = Field(foreign_key="app_user.id", index=True)
 	user: "User" = Relationship(
 		sa_relationship=RelationshipProperty(
 			"User",

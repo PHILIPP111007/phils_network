@@ -1,13 +1,16 @@
 from app.models import (
 	Message,
-	OnlineStatus,
 	Post,
 	Room,
 	RoomCreator,
 	RoomInvitation,
 	Subscriber,
+	User,
 )
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
+
+admin.site.register(User, UserAdmin)
 
 
 @admin.register(Post)
@@ -66,9 +69,3 @@ class MessageAdmin(admin.ModelAdmin):
 	list_filter = ("sender", "room")
 	ordering = ("-timestamp",)
 	search_fields = ("sender__username",)
-
-
-@admin.register(OnlineStatus)
-class OnlineStatusAdmin(admin.ModelAdmin):
-	list_display = ("user", "is_online")
-	list_filter = ("user", "is_online")

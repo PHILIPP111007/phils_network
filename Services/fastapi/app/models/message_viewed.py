@@ -9,6 +9,6 @@ class MessageViewed(SQLModel, table=True):
 
 	id: int = Field(primary_key=True)
 	message_id: int = Field(foreign_key="app_message.id")
-	user_id: int = Field(foreign_key="auth_user.id")
+	user_id: int = Field(foreign_key="app_user.id")
 	user: "User" = Relationship(back_populates="viewed")
 	message: "Message" = Relationship(back_populates="viewed")

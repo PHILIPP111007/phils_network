@@ -10,7 +10,7 @@ class Message(SQLModel, table=True):
 	__tablename__ = "app_message"
 
 	id: int = Field(primary_key=True)
-	sender_id: int = Field(foreign_key="auth_user.id")
+	sender_id: int = Field(foreign_key="app_user.id")
 	room_id: int = Field(foreign_key="app_room.id", index=True)
 	text: str
 	timestamp: datetime

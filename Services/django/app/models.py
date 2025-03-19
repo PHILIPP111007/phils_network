@@ -1,10 +1,62 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.models import (
+	AbstractBaseUser,
+	AbstractUser,
+	PermissionsMixin,
+	User,
+	UserManager,
+)
+from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
+from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 
 def _user_directory_path(instance, file_name):
 	# file will be uploaded to MEDIA_ROOT / user_<username>/<filename>
 	return f"{instance.sender.username}/{instance.room.id}/{file_name}"
+
+
+class User(AbstractBaseUser, PermissionsMixin):
+	username_validator = UnicodeUsernameValidator()
+
+	username = models.CharField(
+		_("username"),
+		max_length=150,
+		unique=True,
+		help_text=_(
+			"Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only."
+		),
+		validators=[username_validator],
+		error_messages={
+			"unique": _("A user with that username already exists."),
+		},
+	)
+	first_name = models.CharField(_("first name"), max_length=150, blank=True)
+	last_name = models.CharField(_("last name"), max_length=150, blank=True)
+	email = models.EmailField(_("email address"), blank=True)
+	date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
+	is_staff = models.BooleanField(
+		_("staff status"),
+		default=False,
+		help_text=_("Designates whether the user can log into this admin site."),
+	)
+	is_active = models.BooleanField(
+		_("active"),
+		default=True,
+		help_text=_(
+			"Designates whether this user should be treated as active. "
+			"Unselect this instead of deleting accounts."
+		),
+	)
+	is_online = models.BooleanField(default=False)
+
+	objects = UserManager()
+
+	EMAIL_FIELD = "email"
+	USERNAME_FIELD = "username"
+
+	class Meta(AbstractUser.Meta):
+		swappable = "AUTH_USER_MODEL"
 
 
 class Post(models.Model):
@@ -87,17 +139,3 @@ class Message(models.Model):
 
 	def __str__(self):
 		return f"{self.sender.username} [ {self.timestamp} ]"
-
-
-class OnlineStatus(models.Model):
-	user = models.ForeignKey(User, on_delete=models.CASCADE)
-	is_online = models.BooleanField(default=False)
-
-	class Meta:
-		verbose_name_plural = "Online Statuses"
-		indexes = [
-			models.Index(fields=["user_id"]),
-		]
-
-	def __str__(self):
-		return f"{self.user.username} [ is_online={self.is_online} ]"

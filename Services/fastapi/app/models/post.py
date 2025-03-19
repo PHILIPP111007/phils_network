@@ -13,5 +13,5 @@ class Post(SQLModel, table=True):
 	timestamp: datetime
 	content: str
 	changed: bool
-	user_id: int = Field(foreign_key="auth_user.id", index=True)
+	user_id: int = Field(foreign_key="app_user.id", index=True)
 	user: "User" = Relationship(back_populates="blogs")

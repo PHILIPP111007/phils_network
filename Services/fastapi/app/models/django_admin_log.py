@@ -10,7 +10,7 @@ class DjangoAdminLog(SQLModel, table=True):
 	__tablename__ = "django_admin_log"
 
 	id: int = Field(primary_key=True)
-	user_id: int = Field(foreign_key="auth_user.id")
+	user_id: int = Field(foreign_key="app_user.id")
 	object_id: int
 	action_time: datetime
 	object_repr: str

@@ -157,11 +157,12 @@ REST_FRAMEWORK: dict[str, list[str]] = {
 		"rest_framework.renderers.JSONRenderer",
 	],
 	"DEFAULT_AUTHENTICATION_CLASSES": [
-		"rest_framework.authentication.BasicAuthentication",
-		"rest_framework.authentication.SessionAuthentication",
 		"rest_framework.authentication.TokenAuthentication",
 	],
 }
+
+AUTH_USER_MODEL = "app.User"
+
 # DJOSER settings
 DJOSER: dict[str, str] = {
 	"USER_ID_FIELD": "id",
