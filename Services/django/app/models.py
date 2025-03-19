@@ -1,6 +1,5 @@
 from django.contrib.auth.models import (
 	AbstractBaseUser,
-	AbstractUser,
 	PermissionsMixin,
 	User,
 	UserManager,
@@ -55,8 +54,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 	EMAIL_FIELD = "email"
 	USERNAME_FIELD = "username"
 
-	class Meta(AbstractUser.Meta):
-		swappable = "AUTH_USER_MODEL"
+	class Meta:
+		indexes = [
+			models.Index(fields=["id"]),
+			models.Index(fields=["id", "username"]),
+		]
 
 
 class Post(models.Model):
