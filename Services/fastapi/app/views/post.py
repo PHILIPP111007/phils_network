@@ -87,7 +87,6 @@ async def get_post(
 				"user": {
 					"id": post.user.id,
 					"username": post.user.username,
-					"email": post.user.email,
 					"first_name": post.user.first_name,
 					"last_name": post.user.last_name,
 				},
