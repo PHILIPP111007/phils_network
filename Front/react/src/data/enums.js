@@ -31,7 +31,7 @@ export var FilterOption = {
 
 export var CacheKeys = {
     TOKEN: "token",
-    THEME: "theme",
+    THEME: "system_theme",
     REMEMBER_PAGE: "rememberPage",
     MESSAGES: "messages",
     ROOMS: "rooms",
