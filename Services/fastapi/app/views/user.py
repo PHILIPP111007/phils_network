@@ -10,7 +10,6 @@ from app.models import (
 	DjangoAdminLog,
 	Message,
 	MessageViewed,
-	OnlineStatus,
 	Post,
 	Room,
 	RoomCreator,
@@ -41,27 +40,14 @@ async def get_user(session: SessionDep, request: Request, username: str):
 	if not query:
 		return {"ok": False, "error": "Not found the global user."}
 
-	online_status = session.exec(
-		select(OnlineStatus).where(OnlineStatus.user_id == query.id)
-	).first()
-	if online_status:
-		user = {
-			"id": query.id,
-			"username": query.username,
-			"email": query.email,
-			"first_name": query.first_name,
-			"last_name": query.last_name,
-			"is_online": online_status.is_online,
-		}
-	else:
-		user = {
-			"id": query.id,
-			"username": query.username,
-			"email": query.email,
-			"first_name": query.first_name,
-			"last_name": query.last_name,
-			"is_online": False,
-		}
+	user = {
+		"id": query.id,
+		"username": query.username,
+		"email": query.email,
+		"first_name": query.first_name,
+		"last_name": query.last_name,
+		"is_online": query.is_online,
+	}
 
 	global_user = user
 
@@ -71,27 +57,14 @@ async def get_user(session: SessionDep, request: Request, username: str):
 	if not query:
 		return result
 
-	online_status = session.exec(
-		select(OnlineStatus).where(OnlineStatus.user_id == query.id)
-	).first()
-	if online_status:
-		user = {
-			"id": query.id,
-			"username": query.username,
-			"email": query.email,
-			"first_name": query.first_name,
-			"last_name": query.last_name,
-			"is_online": online_status.is_online,
-		}
-	else:
-		user = {
-			"id": query.id,
-			"username": query.username,
-			"email": query.email,
-			"first_name": query.first_name,
-			"last_name": query.last_name,
-			"is_online": False,
-		}
+	user = {
+		"id": query.id,
+		"username": query.username,
+		"email": query.email,
+		"first_name": query.first_name,
+		"last_name": query.last_name,
+		"is_online": query.is_online,
+	}
 
 	result["local_user"] = user
 	return result
@@ -168,7 +141,6 @@ async def delete_user(
 	session.exec(delete(Subscriber).where(Subscriber.subscribe_id == user.id))
 	session.exec(delete(Token).where(Token.user_id == user.id))
 	session.exec(delete(Post).where(Post.user_id == user.id))
-	session.exec(delete(OnlineStatus).where(OnlineStatus.user_id == user.id))
 	session.exec(delete(RoomCreator).where(RoomCreator.creator_id == user.id))
 	session.exec(delete(RoomInvitation).where(RoomInvitation.creator_id == user.id))
 	session.exec(delete(RoomInvitation).where(RoomInvitation.to_user_id == user.id))

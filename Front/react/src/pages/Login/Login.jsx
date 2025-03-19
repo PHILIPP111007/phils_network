@@ -40,8 +40,7 @@ export default function Login() {
             localStorage.setItem(CacheKeys.TOKEN, data.auth_token)
             setIsAuth(true)
 
-            // Create online status
-            data = await Fetch({ action: "api/v2/online_status/", method: HttpMethod.POST })
+            await Fetch({ action: "api/v2/online_status/set_true/", method: HttpMethod.POST })
 
             auth()
         }

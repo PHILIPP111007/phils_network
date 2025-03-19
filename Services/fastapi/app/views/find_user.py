@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from sqlmodel import select
 
 from app.database import SessionDep
-from app.models import OnlineStatus, User
+from app.models import User
 
 router = APIRouter(tags=["find_user"])
 
@@ -74,20 +74,13 @@ async def post_find_user(session: SessionDep, request: Request, find_user: FindU
 
 	users = []
 	for user in find_users:
-		is_online = session.exec(
-			select(OnlineStatus).where(OnlineStatus.user_id == user.id)
-		).first()
-
-		if not is_online:
-			is_online = False
-
 		user = {
 			"id": user.id,
 			"username": user.username,
 			"email": user.email,
 			"first_name": user.first_name,
 			"last_name": user.last_name,
-			"is_online": is_online,
+			"is_online": user.is_online,
 		}
 		users.append(user)
 

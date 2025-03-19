@@ -1,36 +1,35 @@
 from fastapi import APIRouter, Request
-from sqlmodel import delete, select
+from sqlmodel import select
 
 from app.database import SessionDep
-from app.models import OnlineStatus
+from app.models import User
 
 router = APIRouter(tags=["online_status"])
 
 
-@router.post("/api/v2/online_status/")
-async def post_online_status(session: SessionDep, request: Request) -> dict[str, bool]:
+@router.post("/api/v2/online_status/set_true/")
+async def post_online_status_true(
+	session: SessionDep, request: Request
+) -> dict[str, bool]:
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	online_status = session.exec(
-		select(OnlineStatus).where(OnlineStatus.user_id == request.state.user.id)
-	).first()
-	if not online_status:
-		online_status_new = OnlineStatus(is_online=False, user_id=request.state.user.id)
-		session.add(online_status_new)
-		session.commit()
+	user = session.exec(select(User).where(User.id == request.state.user.id)).first()
+	user.is_online = True
+	session.add(user)
+	session.commit()
 
 	return {"ok": True}
 
 
-@router.delete("/api/v2/online_status/")
-async def delete_online_status(session: SessionDep, request: Request):
+@router.post("/api/v2/online_status/set_false/")
+async def delete_online_status_false(session: SessionDep, request: Request):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	session.exec(
-		delete(OnlineStatus).where(OnlineStatus.user_id == request.state.user.id)
-	)
+	user = session.exec(select(User).where(User.id == request.state.user.id)).first()
+	user.is_online = False
+	session.add(user)
 	session.commit()
 
 	return {"ok": True}

@@ -2,7 +2,7 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from sqlmodel import select
 
 from app.database import SessionDep
-from app.models import OnlineStatus, Token
+from app.models import Token, User
 
 router = APIRouter(tags=["websocket_online_status"])
 
@@ -18,27 +18,21 @@ async def websocket_online_status(
 		if token:
 			return token.user_id
 
-	async def _create_online_status() -> None:
+	async def _online_status_set_true() -> None:
 		nonlocal user_id
 
-		online_status = session.exec(
-			select(OnlineStatus).where(OnlineStatus.user_id == user_id)
-		).first()
-		if online_status:
-			online_status.is_online = True
-			session.add(online_status)
-			session.commit()
+		user = session.exec(select(User).where(User.id == user_id)).first()
+		user.is_online = True
+		session.add(user)
+		session.commit()
 
-	async def _remove_online_status() -> None:
+	async def _online_status_set_false() -> None:
 		nonlocal user_id
 
-		online_status = session.exec(
-			select(OnlineStatus).where(OnlineStatus.user_id == user_id)
-		).first()
-		if online_status:
-			online_status.is_online = False
-			session.add(online_status)
-			session.commit()
+		user = session.exec(select(User).where(User.id == user_id)).first()
+		user.is_online = False
+		session.add(user)
+		session.commit()
 
 	await websocket.accept()
 	id = await _get_user_id()
@@ -47,9 +41,9 @@ async def websocket_online_status(
 			if not id:
 				await websocket.close()
 			else:
-				await _create_online_status()
+				await _online_status_set_true()
 
 			await websocket.receive_text()
 
 	except WebSocketDisconnect:
-		await _remove_online_status()
+		await _online_status_set_false()
