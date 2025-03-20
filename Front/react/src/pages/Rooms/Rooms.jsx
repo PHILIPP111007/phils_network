@@ -2,7 +2,7 @@ import "./styles/Rooms.css"
 import { use, useEffect, useMemo, useRef, useState } from "react"
 import { useParams } from "react-router-dom"
 import { UserContext } from "../../data/context"
-import { HttpMethod } from "../../data/enums"
+import { HttpMethod, CacheKeys, Language } from "../../data/enums"
 import rememberPage from "../../modules/rememberPage"
 import getWebSocket from "../../modules/getWebSocket"
 import Fetch from "../../API/Fetch"
@@ -24,6 +24,7 @@ export default function Rooms() {
     var [modalRoomCreate, setModalRoomCreate] = useState(false)
     var [loading, setLoading] = useState(true)
     var roomSocket = useRef(null)
+    var language = localStorage.getItem(CacheKeys.LANGUAGE)
 
     async function createRoom(room) {
         room.subscribers.push(user.id)
@@ -111,23 +112,46 @@ export default function Rooms() {
         }
     }, [rooms.length])
 
-    return (
-        <div className="Rooms">
-            <MainComponents loading={loading} />
 
-            <ScrollToTopOrBottom bottom={false} />
+    if (language === Language.EN) {
+        return (
+            <div className="Rooms">
+                <MainComponents loading={loading} />
 
-            <Modal modal={modalRoomCreate} setModal={setModalRoomCreate}>
-                <ModalRoomCreate createRoom={createRoom} />
-            </Modal>
+                <ScrollToTopOrBottom bottom={false} />
 
-            <RoomNavBar />
+                <Modal modal={modalRoomCreate} setModal={setModalRoomCreate}>
+                    <ModalRoomCreate createRoom={createRoom} />
+                </Modal>
 
-            <Button onClick={() => setModalRoomCreate(true)} >add room</Button>
+                <RoomNavBar />
 
-            <div className="list">
-                {showRooms}
+                <Button onClick={() => setModalRoomCreate(true)} >add room</Button>
+
+                <div className="list">
+                    {showRooms}
+                </div>
             </div>
-        </div>
-    )
+        )
+    } else if (language === Language.RU) {
+        return (
+            <div className="Rooms">
+                <MainComponents loading={loading} />
+
+                <ScrollToTopOrBottom bottom={false} />
+
+                <Modal modal={modalRoomCreate} setModal={setModalRoomCreate}>
+                    <ModalRoomCreate createRoom={createRoom} />
+                </Modal>
+
+                <RoomNavBar />
+
+                <Button onClick={() => setModalRoomCreate(true)} >добавить комнату</Button>
+
+                <div className="list">
+                    {showRooms}
+                </div>
+            </div>
+        )
+    }
 }

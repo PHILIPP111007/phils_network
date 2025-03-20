@@ -60,6 +60,7 @@ input[type=file]::file-selector-button {
     .ModalRoomCreate .card,
     .ModalRoomEdit .card,
     .FriendCard,
+    .LanguageSelect,
     .Chat .Message {
         background-color: rgb(230, 230, 230);
     }
@@ -93,6 +94,10 @@ input[type=file]::file-selector-button {
     .Chat #SendButton,
     .Chat #SettingsButton {
         background: rgb(250, 244, 244);
+    }
+
+    .LanguageSelect {
+        color: rgb(0, 0, 0);
     }
 }
 
@@ -164,6 +169,7 @@ input[type=file]::file-selector-button {
     .ModalRoomEdit .card,
     .FriendCard,
     .uploadFileForm,
+    .LanguageSelect,
     .Chat .Message {
         background-color: rgb(57, 57, 61);
     }
@@ -195,5 +201,9 @@ input[type=file]::file-selector-button {
     .Chat #SendButton,
     .Chat #SettingsButton {
         background: rgb(43, 43, 43);
+    }
+
+    .LanguageSelect {
+        color: rgb(255, 255, 255);
     }
 }

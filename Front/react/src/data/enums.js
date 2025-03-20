@@ -35,4 +35,10 @@ export var CacheKeys = {
     REMEMBER_PAGE: "rememberPage",
     MESSAGES: "messages",
     ROOMS: "rooms",
+    LANGUAGE: "language",
+}
+
+export var Language = {
+    EN: "English",
+    RU: "Русский",
 }

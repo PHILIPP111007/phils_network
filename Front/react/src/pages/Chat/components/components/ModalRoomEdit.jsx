@@ -1,7 +1,7 @@
 import "./styles/ModalRoomEdit.css"
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
-import { FilterOption, HttpMethod } from "../../../../data/enums"
+import { FilterOption, HttpMethod, CacheKeys, Language } from "../../../../data/enums"
 import Fetch from "../../../../API/Fetch"
 import Loading from "../../../components/Loading"
 import Button from "../../../components/UI/Button"
@@ -10,6 +10,7 @@ import showOnlineStatus from "../../../../modules/showOnlineStatus"
 export default function ModalRoomEdit({ mainSets, me, editRoom }) {
 
     var [loading, setLoading] = useState(true)
+    var language = localStorage.getItem(CacheKeys.LANGUAGE)
 
     async function editSubscribers(subscriber) {
         mainSets.value = {
@@ -42,49 +43,95 @@ export default function ModalRoomEdit({ mainSets, me, editRoom }) {
     }
 
     function subscribersShow() {
-        return mainSets.value.invitationChanges.subscribers.map((user) =>
-            <div key={user.username} className="card">
-                <div className="info">
-                    <div>
-                        <Link to={`/users/${user.username}/`} >
-                            {user.first_name ? user.first_name : "No name"} {user.last_name ? user.last_name : "No name"} @{user.username} {showOnlineStatus({ user: user })}
-                        </Link>
+        if (language === Language.EN) {
+            return mainSets.value.invitationChanges.subscribers.map((user) =>
+                <div key={user.username} className="card">
+                    <div className="info">
+                        <div>
+                            <Link to={`/users/${user.username}/`} >
+                                {user.first_name ? user.first_name : "No name"} {user.last_name ? user.last_name : "No name"} @{user.username} {showOnlineStatus({ user: user })}
+                            </Link>
+                        </div>
+
+                        {me.id === user.id &&
+                            <div className="me">me</div>
+                        }
                     </div>
 
-                    {me.id === user.id &&
-                        <div className="me">me</div>
+                    {(mainSets.value.isCreator === true || user.id === me.id)
+                        &&
+                        <Button onClick={() => editSubscribers(user)} >
+                            {user.isInRoom ? "delete" : "add"}
+                        </Button>
                     }
                 </div>
+            )
+        } else if (language === Language.RU) {
+            return mainSets.value.invitationChanges.subscribers.map((user) =>
+                <div key={user.username} className="card">
+                    <div className="info">
+                        <div>
+                            <Link to={`/users/${user.username}/`} >
+                                {user.first_name ? user.first_name : "No name"} {user.last_name ? user.last_name : "No name"} @{user.username} {showOnlineStatus({ user: user })}
+                            </Link>
+                        </div>
 
-                {(mainSets.value.isCreator === true || user.id === me.id)
-                    &&
-                    <Button onClick={() => editSubscribers(user)} >
-                        {user.isInRoom ? "delete" : "add"}
-                    </Button>
-                }
-            </div>
-        )
+                        {me.id === user.id &&
+                            <div className="me">я</div>
+                        }
+                    </div>
+
+                    {(mainSets.value.isCreator === true || user.id === me.id)
+                        &&
+                        <Button onClick={() => editSubscribers(user)} >
+                            {user.isInRoom ? "удалить" : "добавить"}
+                        </Button>
+                    }
+                </div>
+            )
+        }
     }
 
     function friendsShow() {
-        return mainSets.value.invitationChanges.friends.map((user) =>
-            <div key={user.username} className="card">
-                <div className="info">
-                    <div>
-                        <Link to={`/users/${user.username}/`} >
-                            {user.first_name} {user.last_name} @{user.username} {showOnlineStatus({ user: user })}
-                        </Link>
+        if (language === Language.EN) {
+            return mainSets.value.invitationChanges.friends.map((user) =>
+                <div key={user.username} className="card">
+                    <div className="info">
+                        <div>
+                            <Link to={`/users/${user.username}/`} >
+                                {user.first_name} {user.last_name} @{user.username} {showOnlineStatus({ user: user })}
+                            </Link>
+                        </div>
                     </div>
-                </div>
 
-                {mainSets.value.isCreator === true
-                    &&
-                    <Button onClick={() => editFriends(user)} >
-                        {user.isInRoom ? "delete" : "add"}
-                    </Button>
-                }
-            </div>
-        )
+                    {mainSets.value.isCreator === true
+                        &&
+                        <Button onClick={() => editFriends(user)} >
+                            {user.isInRoom ? "delete" : "add"}
+                        </Button>
+                    }
+                </div>
+            )
+        } else if (language === Language.RU) {
+            return mainSets.value.invitationChanges.friends.map((user) =>
+                <div key={user.username} className="card">
+                    <div className="info">
+                        <div>
+                            <Link to={`/users/${user.username}/`} >
+                                {user.first_name} {user.last_name} @{user.username} {showOnlineStatus({ user: user })}
+                            </Link>
+                        </div>
+                    </div>
+
+                    {mainSets.value.isCreator === true
+                        &&
+                        <Button onClick={() => editFriends(user)} >
+                            {user.isInRoom ? "удалить" : "добавить"}
+                        </Button>
+                    }
+                </div>
+            )
+        }
     }
 
     useEffect(() => {
@@ -109,28 +156,55 @@ export default function ModalRoomEdit({ mainSets, me, editRoom }) {
         }
     }, [mainSets.value.room.id])
 
-    return (
-        <div className="ModalRoomEdit">
-            <h3>{mainSets.value.room.name}</h3>
-            <br />
-            <Button onClick={() => editRoom()} >edit</Button>
-            <br />
-            <br />
-            <h3>room users</h3>
+    if (language === Language.EN) {
+        return (
+            <div className="ModalRoomEdit">
+                <h3>{mainSets.value.room.name}</h3>
+                <br />
+                <Button onClick={() => editRoom()} >edit</Button>
+                <br />
+                <br />
+                <h3>room users</h3>
 
-            {subscribersShow()}
+                {subscribersShow()}
 
-            {mainSets.value.isCreator === true && mainSets.value.invitationChanges.friends.length > 0
-                &&
-                <>
-                    <br />
-                    <hr />
-                    <br />
-                    <h3>invite friends</h3>
-                    {friendsShow()}
-                    {loading && <Loading />}
-                </>
-            }
-        </div>
-    )
+                {mainSets.value.isCreator === true && mainSets.value.invitationChanges.friends.length > 0
+                    &&
+                    <>
+                        <br />
+                        <hr />
+                        <br />
+                        <h3>invite friends</h3>
+                        {friendsShow()}
+                        {loading && <Loading />}
+                    </>
+                }
+            </div>
+        )
+    } else if (language === Language.RU) {
+        return (
+            <div className="ModalRoomEdit">
+                <h3>{mainSets.value.room.name}</h3>
+                <br />
+                <Button onClick={() => editRoom()} >edit</Button>
+                <br />
+                <br />
+                <h3>пользователи комнаты</h3>
+
+                {subscribersShow()}
+
+                {mainSets.value.isCreator === true && mainSets.value.invitationChanges.friends.length > 0
+                    &&
+                    <>
+                        <br />
+                        <hr />
+                        <br />
+                        <h3>пригласить друзей</h3>
+                        {friendsShow()}
+                        {loading && <Loading />}
+                    </>
+                }
+            </div>
+        )
+    }
 }

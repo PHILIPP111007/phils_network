@@ -2,13 +2,14 @@ import "./styles/RoomNavBar.css"
 import { use, useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import { UserContext } from "../../../data/context"
+import { HttpMethod, CacheKeys, Language } from "../../../data/enums"
 import Fetch from "../../../API/Fetch"
-import { HttpMethod } from "../../../data/enums"
 
 export default function RoomNavBar() {
 
     var { user } = use(UserContext)
     var [roomInvitationsLength, setRoomInvitationsLength] = useState(0)
+    var language = localStorage.getItem(CacheKeys.LANGUAGE)
 
     useEffect(() => {
         Fetch({ action: 'api/v2/invite_chats/', method: HttpMethod.GET })
@@ -19,14 +20,25 @@ export default function RoomNavBar() {
             })
     }, [])
 
-
-    return (
-        <aside className="RoomNavBar">
-            <nav>
-                <p>
-                    <Link to={`/invite_chats/${user.username}/`}>Invite chats <strong id="roomInvitationsLength" >{roomInvitationsLength}</strong></Link>
-                </p>
-            </nav>
-        </aside>
-    )
+    if (language === Language.EN) {
+        return (
+            <aside className="RoomNavBar">
+                <nav>
+                    <p>
+                        <Link to={`/invite_chats/${user.username}/`}>Invitation to chats <strong id="roomInvitationsLength" >{roomInvitationsLength}</strong></Link>
+                    </p>
+                </nav>
+            </aside>
+        )
+    } else if (language === Language.RU) {
+        return (
+            <aside className="RoomNavBar">
+                <nav>
+                    <p>
+                        <Link to={`/invite_chats/${user.username}/`}>Приглашение в чаты <strong id="roomInvitationsLength" >{roomInvitationsLength}</strong></Link>
+                    </p>
+                </nav>
+            </aside>
+        )
+    }
 }

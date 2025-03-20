@@ -2,7 +2,8 @@ import "./styles/Login.css"
 import { useState, use, useEffect } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import { AuthContext, UserContext } from "../../data/context"
-import { HttpMethod, CacheKeys } from "../../data/enums"
+import { HttpMethod, CacheKeys, Language } from "../../data/enums"
+import { showLanguage, setLanguage } from "../../modules/language"
 import getToken from "../../modules/getToken"
 import Fetch from "../../API/Fetch"
 import Input from "../components/UI/Input"
@@ -13,6 +14,7 @@ export default function Login() {
     var { user, setUser } = use(UserContext)
     var [loginForm, setLoginForm] = useState({ username: "", password: "" })
     var navigate = useNavigate()
+    var language = localStorage.getItem(CacheKeys.LANGUAGE)
 
     async function auth() {
         var token = getToken()
@@ -50,31 +52,67 @@ export default function Login() {
         auth()
     }, [])
 
-    return (
-        <div className="Login">
-            <div className="LoginForm">
-                <h2>Welcome to phils_network!</h2>
-                <form id="LoginForm" onSubmit={e => login(e)}>
-                    <Input
-                        value={loginForm.username}
-                        onChange={e => setLoginForm({ ...loginForm, username: e.target.value })}
-                        placeholder="username"
-                        type="text"
-                        required
-                    />
-                    <br />
-                    <Input
-                        value={loginForm.password}
-                        onChange={e => setLoginForm({ ...loginForm, password: e.target.value })}
-                        placeholder="password"
-                        type="password"
-                        required
-                    />
-                    <br />
-                    <Input type="submit" value="log in" />
-                </form>
-                <Link to="/register/" >Register</Link>
+    if (language === Language.EN) {
+        return (
+            <div className="Login">
+                <div className="LoginForm">
+                    <h2>Welcome to phils_network!</h2>
+                    <form id="LoginForm" onSubmit={e => login(e)}>
+                        <Input
+                            value={loginForm.username}
+                            onChange={e => setLoginForm({ ...loginForm, username: e.target.value })}
+                            placeholder="username"
+                            type="text"
+                            required
+                        />
+                        <br />
+                        <Input
+                            value={loginForm.password}
+                            onChange={e => setLoginForm({ ...loginForm, password: e.target.value })}
+                            placeholder="password"
+                            type="password"
+                            required
+                        />
+                        <br />
+                        <Input type="submit" value="log in" />
+                    </form>
+                    <select onChange={event => setLanguage(event)} className="LanguageSelect" name="language">
+                        {showLanguage()}
+                    </select>
+                    <Link to="/register/" >Register</Link>
+                </div>
             </div>
-        </div>
-    )
+        )
+    } else if (language === Language.RU) {
+        return (
+            <div className="Login">
+                <div className="LoginForm">
+                    <h2>Добро пожаловать в phils_network!</h2>
+                    <form id="LoginForm" onSubmit={e => login(e)}>
+                        <Input
+                            value={loginForm.username}
+                            onChange={e => setLoginForm({ ...loginForm, username: e.target.value })}
+                            placeholder="ник"
+                            type="text"
+                            required
+                        />
+                        <br />
+                        <Input
+                            value={loginForm.password}
+                            onChange={e => setLoginForm({ ...loginForm, password: e.target.value })}
+                            placeholder="пароль"
+                            type="password"
+                            required
+                        />
+                        <br />
+                        <Input type="submit" value="Авторизоваться" />
+                    </form>
+                    <select onChange={event => setLanguage(event)} className="LanguageSelect" name="language">
+                        {showLanguage()}
+                    </select>
+                    <Link to="/register/" >Зарегистрироваться</Link>
+                </div>
+            </div>
+        )
+    }
 }

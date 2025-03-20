@@ -1,7 +1,7 @@
 import "./styles/Friends.css"
 import { useState } from "react"
 import { useParams } from "react-router-dom"
-import { HttpMethod } from "../../data/enums"
+import { HttpMethod, CacheKeys, Language } from "../../data/enums"
 import rememberPage from "../../modules/rememberPage"
 import Fetch from "../../API/Fetch"
 import MainComponents from "../components/MainComponents/MainComponents"
@@ -14,6 +14,7 @@ import ScrollToTopOrBottom from "../components/MainComponents/components/ScrollT
 export default function Friends() {
 
     var params = useParams()
+    var language = localStorage.getItem(CacheKeys.LANGUAGE)
     rememberPage(`friends/${params.username}`)
 
 
@@ -35,14 +36,25 @@ export default function Friends() {
 
     function showUsers() {
         if (users.length > 0) {
-            return (
-                <>
-                    <h3>Found: {users.length}</h3>
-                    {users.map(user =>
-                        <FriendCard key={user.username} user={user} />
-                    )}
-                </>
-            )
+            if (language === Language.EN) {
+                return (
+                    <>
+                        <h3>Found: {users.length}</h3>
+                        {users.map(user =>
+                            <FriendCard key={user.username} user={user} />
+                        )}
+                    </>
+                )
+            } else if (language === Language.RU) {
+                return (
+                    <>
+                        <h3>Найдено: {users.length}</h3>
+                        {users.map(user =>
+                            <FriendCard key={user.username} user={user} />
+                        )}
+                    </>
+                )
+            }
         }
     }
 

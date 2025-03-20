@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import { AuthContext, UserContext } from "./data/context"
 import { PrivateRoutes, PublicRoutes } from "./data/routes"
 import { useAuth } from "./hooks/useAuth"
+import useLanguage from "./hooks/useLanguage"
 import useTheme from "./hooks/useTheme"
 import SuspenseLoading from "./pages/components/SuspenseLoading"
 import ErrorPage from "./pages/ErrorPage/ErrorPage"
@@ -24,6 +25,8 @@ export default function App() {
     })
 
     useAuth({ username: user.username, setIsAuth: setIsAuth })
+
+    useLanguage()
 
     return (
         <AuthContext.Provider value={{ isAuth, setIsAuth }}>

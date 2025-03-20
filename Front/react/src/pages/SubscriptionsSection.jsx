@@ -1,7 +1,7 @@
 import "./Friends/styles/Friends.css"
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
-import { FilterOption } from "../data/enums"
+import { FilterOption, CacheKeys, Language } from "../data/enums"
 import rememberPage from "../modules/rememberPage"
 import useFriends from "../hooks/useFriends"
 import UserSection from "../hooks/UserSection"
@@ -20,6 +20,7 @@ export default function SubscriptionsSection() {
     var [filter, setFilter] = useState({ username: "", first_name: "", last_name: "" })
     var searchedSubscriptions = useFriends(subscriptions, filter)  // custom hook
     var [loading, setLoading] = useState(true)
+    var language = localStorage.getItem(CacheKeys.LANGUAGE)
 
     async function findFunc(query) {
         setFilter({ ...filter, ...query })
@@ -29,24 +30,48 @@ export default function SubscriptionsSection() {
         UserSection({ option: FilterOption.SUBSCRIPTIONS, setUserSection: setSubscriptions, setLoading: setLoading })
     }, [])
 
-    return (
-        <div className="Friends">
-            <MainComponents loading={loading} />
 
-            <ScrollToTopOrBottom bottom={false} />
+    if (language === Language.EN) {
+        return (
+            <div className="Friends">
+                <MainComponents loading={loading} />
 
-            <FriendsNavBar />
+                <ScrollToTopOrBottom bottom={false} />
 
-            <FindUser findFunc={findFunc} />
+                <FriendsNavBar />
 
-            <div className="friends-section">
-                <div id="subscriptions" className="section">
-                    <h3>Subscriptions: {searchedSubscriptions.length}</h3>
-                    {searchedSubscriptions.map(user =>
-                        <FriendCard key={user.username} user={user} />
-                    )}
+                <FindUser findFunc={findFunc} />
+
+                <div className="friends-section">
+                    <div id="subscriptions" className="section">
+                        <h3>Subscriptions: {searchedSubscriptions.length}</h3>
+                        {searchedSubscriptions.map(user =>
+                            <FriendCard key={user.username} user={user} />
+                        )}
+                    </div>
                 </div>
             </div>
-        </div>
-    )
+        )
+    } else if (language === Language.RU) {
+        return (
+            <div className="Friends">
+                <MainComponents loading={loading} />
+
+                <ScrollToTopOrBottom bottom={false} />
+
+                <FriendsNavBar />
+
+                <FindUser findFunc={findFunc} />
+
+                <div className="friends-section">
+                    <div id="subscriptions" className="section">
+                        <h3>Подписки: {searchedSubscriptions.length}</h3>
+                        {searchedSubscriptions.map(user =>
+                            <FriendCard key={user.username} user={user} />
+                        )}
+                    </div>
+                </div>
+            </div>
+        )
+    }
 }

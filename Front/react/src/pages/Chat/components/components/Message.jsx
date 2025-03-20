@@ -2,6 +2,7 @@ import "./styles/Message.css"
 import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import ReactMarkdown from "react-markdown"
+import { CacheKeys, Language } from "../../../../data/enums"
 import ModalMessage from "./components/ModalMessage"
 import Modal from "../../../components/Modal"
 import Button from "../../../components/UI/Button"
@@ -9,6 +10,7 @@ import Button from "../../../components/UI/Button"
 export default function Message({ message, downloadFile, deleteMessage }) {
 
     var [modalMessage, setModalMessage] = useState(false)
+    var language = localStorage.getItem(CacheKeys.LANGUAGE)
 
     function trimFileName(file) {
         var file_split = file.split('/')
@@ -37,27 +39,52 @@ export default function Message({ message, downloadFile, deleteMessage }) {
     }, [])
 
     if (message.file) {
-        return (
-            <div id={`Message_${message.id}`} className="Message"
-                onContextMenu={() => {
-                    setModalMessage(true)
-                }}>
-                <Modal modal={modalMessage} setModal={setModalMessage}>
-                    <ModalMessage message={message} deleteMessage={deleteMessage} />
-                </Modal>
-                <div className="info">
-                    <Link to={`/users/${message.sender.username}/`} >
-                        <p className="timestamp">{message.sender.first_name} {message.sender.last_name} @{message.sender.username} {message.timestamp}</p>
-                    </Link>
+
+        if (language === Language.EN) {
+            return (
+                <div id={`Message_${message.id}`} className="Message"
+                    onContextMenu={() => {
+                        setModalMessage(true)
+                    }}>
+                    <Modal modal={modalMessage} setModal={setModalMessage}>
+                        <ModalMessage message={message} deleteMessage={deleteMessage} />
+                    </Modal>
+                    <div className="info">
+                        <Link to={`/users/${message.sender.username}/`} >
+                            <p className="timestamp">{message.sender.first_name} {message.sender.last_name} @{message.sender.username} {message.timestamp}</p>
+                        </Link>
+                    </div>
+                    <div className="downloadButton">
+                        <Button onClick={() => downloadFile(message)}>Download file</Button>
+                    </div>
+                    <div className="file">
+                        {trimFileName(message.file)}
+                    </div>
                 </div>
-                <div className="downloadButton">
-                    <Button onClick={() => downloadFile(message)}>Download file</Button>
+            )
+        } else if (language === Language.RU) {
+            return (
+                <div id={`Message_${message.id}`} className="Message"
+                    onContextMenu={() => {
+                        setModalMessage(true)
+                    }}>
+                    <Modal modal={modalMessage} setModal={setModalMessage}>
+                        <ModalMessage message={message} deleteMessage={deleteMessage} />
+                    </Modal>
+                    <div className="info">
+                        <Link to={`/users/${message.sender.username}/`} >
+                            <p className="timestamp">{message.sender.first_name} {message.sender.last_name} @{message.sender.username} {message.timestamp}</p>
+                        </Link>
+                    </div>
+                    <div className="downloadButton">
+                        <Button onClick={() => downloadFile(message)}>Скачать файл</Button>
+                    </div>
+                    <div className="file">
+                        {trimFileName(message.file)}
+                    </div>
                 </div>
-                <div className="file">
-                    {trimFileName(message.file)}
-                </div>
-            </div>
-        )
+            )
+        }
     }
     return (
         <div id={`Message_${message.id}`} className="Message"

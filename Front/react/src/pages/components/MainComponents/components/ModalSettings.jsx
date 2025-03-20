@@ -1,7 +1,7 @@
 import "./styles/ModalSettings.css"
 import { use, useEffect, useState } from "react"
 import { UserContext } from "../../../../data/context"
-import { HttpMethod } from "../../../../data/enums"
+import { HttpMethod, CacheKeys, Language } from "../../../../data/enums"
 import Fetch from "../../../../API/Fetch"
 import Button from "../../UI/Button"
 import Input from "../../UI/Input"
@@ -10,6 +10,7 @@ export default function ModalSettings(props) {
 
     var { user, setUser } = use(UserContext)
     var [userNew, setUserNew] = useState({ first_name: "", last_name: "", email: "" })
+    var language = localStorage.getItem(CacheKeys.LANGUAGE)
 
     async function userUpdate(event) {
         event.preventDefault()
@@ -25,49 +26,97 @@ export default function ModalSettings(props) {
         setUserNew({ ...user })
     }, [user])
 
-    return (
-        <div className="ModalSettings">
-            <h2>Settings</h2>
+    if (language === Language.EN) {
+        return (
+            <div className="ModalSettings">
+                <h2>Settings</h2>
 
-            <label>Change personal info</label>
-            <form>
-                <Input
-                    type="text"
-                    placeholder="first name"
-                    value={userNew.first_name}
-                    onChange={(e) => setUserNew({ ...userNew, first_name: e.target.value })}
-                />
-                <br />
-                <Input
-                    type="text"
-                    placeholder="last name"
-                    value={userNew.last_name}
-                    onChange={(e) => setUserNew({ ...userNew, last_name: e.target.value })}
-                />
-                <br />
-                <Input
-                    type="email"
-                    placeholder="email"
-                    value={userNew.email}
-                    onChange={(e) => setUserNew({ ...userNew, email: e.target.value })}
-                />
-                <br />
-                <Button onClick={(e) => userUpdate(e)} >upload</Button>
-                <Input
-                    type="reset"
-                    value="reset"
-                    onClick={() => setUserNew({ ...user })}
-                />
-            </form>
+                <label>Change personal info</label>
+                <form>
+                    <Input
+                        type="text"
+                        placeholder="first name"
+                        value={userNew.first_name}
+                        onChange={(e) => setUserNew({ ...userNew, first_name: e.target.value })}
+                    />
+                    <br />
+                    <Input
+                        type="text"
+                        placeholder="last name"
+                        value={userNew.last_name}
+                        onChange={(e) => setUserNew({ ...userNew, last_name: e.target.value })}
+                    />
+                    <br />
+                    <Input
+                        type="email"
+                        placeholder="email"
+                        value={userNew.email}
+                        onChange={(e) => setUserNew({ ...userNew, email: e.target.value })}
+                    />
+                    <br />
+                    <Button onClick={(e) => userUpdate(e)} >upload</Button>
+                    <Input
+                        type="reset"
+                        value="reset"
+                        onClick={() => setUserNew({ ...user })}
+                    />
+                </form>
 
-            <label>Danger zone</label>
-            <br />
-            <Button onClick={() => {
-                props.setModalSettings(false)
-                props.setModalDelAcc(true)
-            }} >
-                delete account
-            </Button>
-        </div>
-    )
+                <label>Danger zone</label>
+                <br />
+                <Button onClick={() => {
+                    props.setModalSettings(false)
+                    props.setModalDelAcc(true)
+                }} >
+                    delete account
+                </Button>
+            </div>
+        )
+    } else if (language === Language.RU) {
+        return (
+            <div className="ModalSettings">
+                <h2>Настройки</h2>
+
+                <label>Изменить личную информацию</label>
+                <form>
+                    <Input
+                        type="text"
+                        placeholder="имя"
+                        value={userNew.first_name}
+                        onChange={(e) => setUserNew({ ...userNew, first_name: e.target.value })}
+                    />
+                    <br />
+                    <Input
+                        type="text"
+                        placeholder="фамилия"
+                        value={userNew.last_name}
+                        onChange={(e) => setUserNew({ ...userNew, last_name: e.target.value })}
+                    />
+                    <br />
+                    <Input
+                        type="email"
+                        placeholder="email"
+                        value={userNew.email}
+                        onChange={(e) => setUserNew({ ...userNew, email: e.target.value })}
+                    />
+                    <br />
+                    <Button onClick={(e) => userUpdate(e)} >upload</Button>
+                    <Input
+                        type="reset"
+                        value="reset"
+                        onClick={() => setUserNew({ ...user })}
+                    />
+                </form>
+
+                <label>Опасная зона</label>
+                <br />
+                <Button onClick={() => {
+                    props.setModalSettings(false)
+                    props.setModalDelAcc(true)
+                }} >
+                    удалить аккаунт
+                </Button>
+            </div>
+        )
+    }
 }

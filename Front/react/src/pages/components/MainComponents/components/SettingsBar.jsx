@@ -1,7 +1,7 @@
 import "./styles/SettingsBar.css"
 import { use, useState, useEffect } from "react"
 import { AuthContext, UserContext } from "../../../../data/context"
-import { HttpMethod, CacheKeys, Theme } from "../../../../data/enums"
+import { HttpMethod, CacheKeys, Theme, Language } from "../../../../data/enums"
 import { ROOT_ELEMENT_THEME } from "../../../../data/constants"
 import Fetch from "../../../../API/Fetch"
 import Button from "../../UI/Button"
@@ -11,6 +11,7 @@ export default function SettingsBar(props) {
     var { setIsAuth } = use(AuthContext)
     var { setUser } = use(UserContext)
     var [theme, setTheme] = useState(Theme.LIGHT)
+    var language = localStorage.getItem(CacheKeys.LANGUAGE)
 
     useEffect(() => {
         if (localStorage.getItem(CacheKeys.THEME) !== null) {
@@ -49,13 +50,25 @@ export default function SettingsBar(props) {
 
     }
 
-    return (
-        <div className="SettingsBar" ref={props.setBarRef} >
-            <Button onClick={() => changeTheme()} >change theme</Button>
-            <br />
-            <Button onClick={() => props.setModalSettings(true)} >settings</Button>
-            <br />
-            <Button onClick={() => logout()} >quit</Button>
-        </div>
-    )
+    if (language === Language.EN) {
+        return (
+            <div className="SettingsBar" ref={props.setBarRef} >
+                <Button onClick={() => changeTheme()} >change theme</Button>
+                <br />
+                <Button onClick={() => props.setModalSettings(true)} >settings</Button>
+                <br />
+                <Button onClick={() => logout()} >quit</Button>
+            </div>
+        )
+    } else if (language === Language.RU) {
+        return (
+            <div className="SettingsBar" ref={props.setBarRef} >
+                <Button onClick={() => changeTheme()} >изменить тему</Button>
+                <br />
+                <Button onClick={() => props.setModalSettings(true)} >настройки</Button>
+                <br />
+                <Button onClick={() => logout()} >выйти</Button>
+            </div>
+        )
+    }
 }

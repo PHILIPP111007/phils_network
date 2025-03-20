@@ -2,7 +2,8 @@ import "./Login/styles/Login.css"
 import { useState, useEffect, useMemo, use } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { UserContext, AuthContext } from "../data/context"
-import { HttpMethod } from "../data/enums"
+import { HttpMethod, Language, CacheKeys } from "../data/enums"
+import { showLanguage, setLanguage } from "../modules/language"
 import Fetch from "../API/Fetch"
 import getToken from "../modules/getToken"
 import ErrorMessage from "./components/ErrorMessage"
@@ -21,6 +22,7 @@ export default function Register() {
     var [userAgreement, setUserAgreement] = useState(false)
     var [errors, setErrors] = useState([])
     var navigate = useNavigate()
+    var language = localStorage.getItem(CacheKeys.LANGUAGE)
 
     async function auth() {
         var token = getToken()
@@ -95,269 +97,545 @@ export default function Register() {
         )
     }, [errors])
 
-    return (
-        <div className="Register">
-            <div className="LoginForm">
-                <h2>Welcome to phils_network!</h2>
-
-                {showErrors}
-
-                <form onSubmit={e => register(e)}>
-                    <Input
-                        value={registerForm.username}
-                        onChange={e => setRegisterForm({ ...registerForm, username: e.target.value })}
-                        placeholder="username"
-                        type="text"
-                        required
-                    />
-                    <br />
-                    <Input
-                        value={registerForm.password}
-                        onChange={e => setRegisterForm({ ...registerForm, password: e.target.value })}
-                        placeholder="password"
-                        type="password"
-                        required
-                    />
-                    <br />
-                    <Input
-                        value={registerForm.password2}
-                        onChange={e => setRegisterForm({ ...registerForm, password2: e.target.value })}
-                        placeholder="password confirmation"
-                        type="password"
-                        required
-                    />
-                    <br />
-                    <Input type="submit" value="register" />
-                </form>
-                <Link to="/login/" >Log in</Link>
-
-                <p>
-                    <br />
-                    <strong>User Agreement</strong>
-                    <br />
-                    <br />
-                    <strong>1. General Provisions</strong>
-                    <br />
+    if (language === Language.EN) {
+
+        return (
+            <div className="Register">
+                <div className="LoginForm">
+                    <h2>Welcome to phils_network!</h2>
+
+                    {showErrors}
+
+                    <form onSubmit={e => register(e)}>
+                        <Input
+                            value={registerForm.username}
+                            onChange={e => setRegisterForm({ ...registerForm, username: e.target.value })}
+                            placeholder="username"
+                            type="text"
+                            required
+                        />
+                        <br />
+                        <Input
+                            value={registerForm.password}
+                            onChange={e => setRegisterForm({ ...registerForm, password: e.target.value })}
+                            placeholder="password"
+                            type="password"
+                            required
+                        />
+                        <br />
+                        <Input
+                            value={registerForm.password2}
+                            onChange={e => setRegisterForm({ ...registerForm, password2: e.target.value })}
+                            placeholder="password confirmation"
+                            type="password"
+                            required
+                        />
+                        <br />
+                        <Input type="submit" value="register" />
+                    </form>
+                    <select onChange={event => setLanguage(event)} className="LanguageSelect" name="language">
+                        {showLanguage()}
+                    </select>
+                    <Link to="/login/" >Log in</Link>
 
-                    1.1. This User Agreement (hereinafter referred to as the "Agreement") governs the relationship between the user (hereinafter referred to as the "User") and phils_network (hereinafter referred to as the "Service") regarding the use of the Service.
-                    <br />
+                    <p>
+                        <br />
+                        <strong>User Agreement</strong>
+                        <br />
+                        <br />
+                        <strong>1. General Provisions</strong>
+                        <br />
 
-                    1.2. By using the Service, the User confirms that he/she has read and accepts the terms of this Agreement.
-                    <br />
+                        1.1. This User Agreement (hereinafter referred to as the "Agreement") governs the relationship between the user (hereinafter referred to as the "User") and phils_network (hereinafter referred to as the "Service") regarding the use of the Service.
+                        <br />
 
-                    <strong>2. Registration and Account</strong>
-                    <br />
+                        1.2. By using the Service, the User confirms that he/she has read and accepts the terms of this Agreement.
+                        <br />
 
-                    2.1. To use certain functions of the Service, the User must register and create an account.
-                    <br />
+                        <strong>2. Registration and Account</strong>
+                        <br />
 
-                    2.2. The User undertakes to provide accurate information upon registration and update it in case of changes.
-                    <br />
+                        2.1. To use certain functions of the Service, the User must register and create an account.
+                        <br />
 
-                    2.3. The User is responsible for the safety of his/her account data and not to transfer it to third parties.
-                    <br />
+                        2.2. The User undertakes to provide accurate information upon registration and update it in case of changes.
+                        <br />
 
-                    <strong>3. User Rights and Obligations</strong>
-                    <br />
+                        2.3. The User is responsible for the safety of his/her account data and not to transfer it to third parties.
+                        <br />
 
-                    3.1. The User has the right to:
-                    <br />
+                        <strong>3. User Rights and Obligations</strong>
+                        <br />
 
-                    • Use all functions of the Service in accordance with this Agreement.
-                    <br />
+                        3.1. The User has the right to:
+                        <br />
 
-                    • Receive information about the operation of the Service.
-                    <br />
+                        • Use all functions of the Service in accordance with this Agreement.
+                        <br />
 
-                    • Make suggestions for improving the Service.
-                    <br />
+                        • Receive information about the operation of the Service.
+                        <br />
 
-                    3.2. The User undertakes to:
-                    <br />
+                        • Make suggestions for improving the Service.
+                        <br />
 
-                    • Not post materials that violate the rights of third parties, including copyright.
-                    <br />
+                        3.2. The User undertakes to:
+                        <br />
 
-                    • Not use the Service to distribute spam, viruses or other malware.
-                    <br />
+                        • Not post materials that violate the rights of third parties, including copyright.
+                        <br />
 
-                    • Follow the rules of communication and treat other users with respect.
-                    <br />
+                        • Not use the Service to distribute spam, viruses or other malware.
+                        <br />
 
-                    <strong>4. Service Rights and Obligations</strong>
-                    <br />
+                        • Follow the rules of communication and treat other users with respect.
+                        <br />
 
-                    4.1. The Service has the right to:
-                    <br />
+                        <strong>4. Service Rights and Obligations</strong>
+                        <br />
 
-                    • Make changes to the functionality and terms of use of the Service without prior notice. <br />
+                        4.1. The Service has the right to:
+                        <br />
 
-                    • Restrict access to certain functions for individual users.
-                    <br />
+                        • Make changes to the functionality and terms of use of the Service without prior notice. <br />
 
-                    4.2. The Service undertakes to:
-                    <br />
+                        • Restrict access to certain functions for individual users.
+                        <br />
 
-                    • Ensure the protection of Users' personal data in accordance with applicable law.
-                    <br />
+                        4.2. The Service undertakes to:
+                        <br />
 
-                    • Eliminate technical malfunctions within a reasonable time.
-                    <br />
+                        • Ensure the protection of Users' personal data in accordance with applicable law.
+                        <br />
 
-                    <strong>5. Personal data</strong>
-                    <br />
+                        • Eliminate technical malfunctions within a reasonable time.
+                        <br />
 
-                    5.1. When registering, the User provides their personal data, which is processed in accordance with the Service's Privacy Policy.
-                    <br />
+                        <strong>5. Personal data</strong>
+                        <br />
 
-                    5.2. The User agrees to the processing of their personal data for purposes related to the use of the Service.
-                    <br />
+                        5.1. When registering, the User provides their personal data, which is processed in accordance with the Service's Privacy Policy.
+                        <br />
 
-                    <strong>6. Liability of the parties</strong>
-                    <br />
+                        5.2. The User agrees to the processing of their personal data for purposes related to the use of the Service.
+                        <br />
 
-                    6.1. The Service shall not be liable for:
-                    <br />
+                        <strong>6. Liability of the parties</strong>
+                        <br />
 
-                    • Losses incurred by the User as a result of the use or inability to use the Service.
-                    <br />
+                        6.1. The Service shall not be liable for:
+                        <br />
 
-                    • Content of materials posted by Users.
-                    <br />
+                        • Losses incurred by the User as a result of the use or inability to use the Service.
+                        <br />
 
-                    6.2. The User is fully responsible for their actions when using the Service.
-                    <br />
+                        • Content of materials posted by Users.
+                        <br />
 
-                    <strong>7. Final Provisions</strong>
-                    <br />
+                        6.2. The User is fully responsible for their actions when using the Service.
+                        <br />
 
-                    7.1. This Agreement shall enter into force upon its acceptance by the User and shall remain in effect as long as the User uses the Service.
-                    <br />
+                        <strong>7. Final Provisions</strong>
+                        <br />
 
-                    7.2. The Service reserves the right to change the terms of this Agreement by publishing new versions on the website.
-                    <br />
+                        7.1. This Agreement shall enter into force upon its acceptance by the User and shall remain in effect as long as the User uses the Service.
+                        <br />
 
-                    7.3. If any provision of this Agreement is deemed invalid, the remaining provisions shall remain in force.
-                    <br />
+                        7.2. The Service reserves the right to change the terms of this Agreement by publishing new versions on the website.
+                        <br />
 
-                    <strong>8. Contact Information</strong>
-                    <br />
+                        7.3. If any provision of this Agreement is deemed invalid, the remaining provisions shall remain in force.
+                        <br />
 
-                    8.1. All questions and suggestions regarding this Agreement can be sent to the email address: r.phil@yandex.ru.
-                </p>
-                <br />
-                <Button id="agreeWithUserAgreementButton" onClick={() => setUserAgreementButton()} >
-                    I agree with User Agreement
-                </Button>
-
-                <p>
-                    <br />
-                    <strong>Privacy Policy</strong>
-                    <br />
-                    <br />
+                        <strong>8. Contact Information</strong>
+                        <br />
 
-                    <strong>1. Introduction</strong>
+                        8.1. All questions and suggestions regarding this Agreement can be sent to the email address: r.phil@yandex.ru.
+                    </p>
                     <br />
+                    <Button id="agreeWithUserAgreementButton" onClick={() => setUserAgreementButton()} >
+                        I agree with User Agreement
+                    </Button>
 
-                    1.1. This Privacy Policy (hereinafter referred to as the “Policy”) describes how phils_network (hereinafter referred to as the “Service”) collects, uses, stores and protects the personal data of Users (hereinafter referred to as the “User”).
-                    <br />
+                    <p>
+                        <br />
+                        <strong>Privacy Policy</strong>
+                        <br />
+                        <br />
 
-                    1.2. By using the Service, the User confirms that they have read the terms of this Policy and agree with it.
-                    <br />
+                        <strong>1. Introduction</strong>
+                        <br />
 
-                    <strong>2. Collected information</strong>
-                    <br />
+                        1.1. This Privacy Policy (hereinafter referred to as the “Policy”) describes how phils_network (hereinafter referred to as the “Service”) collects, uses, stores and protects the personal data of Users (hereinafter referred to as the “User”).
+                        <br />
 
-                    2.1. We may collect the following information about Users:
-                    <br />
+                        1.2. By using the Service, the User confirms that they have read the terms of this Policy and agree with it.
+                        <br />
 
-                    • Personal data: name, email address, phone number and other contact information.
-                    <br />
+                        <strong>2. Collected information</strong>
+                        <br />
 
-                    • Profile data: information about the user posted in the profile (photo, biography, etc.).
-                    <br />
+                        2.1. We may collect the following information about Users:
+                        <br />
 
-                    • Usage data: information about how the User interacts with the Service (time of visit, actions on the site, etc.).
-                    <br />
+                        • Personal data: name, email address, phone number and other contact information.
+                        <br />
 
-                    • Technical data: IP address, device type, operating system and browser.
-                    <br />
+                        • Profile data: information about the user posted in the profile (photo, biography, etc.).
+                        <br />
 
-                    <strong>3. Purposes of personal data processing</strong>
-                    <br />
+                        • Usage data: information about how the User interacts with the Service (time of visit, actions on the site, etc.).
+                        <br />
 
-                    3.1. Users' personal data is processed for the following purposes:
-                    <br />
+                        • Technical data: IP address, device type, operating system and browser.
+                        <br />
 
-                    • Ensuring the operation of the Service and its functionality.
-                    <br />
+                        <strong>3. Purposes of personal data processing</strong>
+                        <br />
 
-                    • Improving the quality of services and developing new functions.
-                    <br />
+                        3.1. Users' personal data is processed for the following purposes:
+                        <br />
 
-                    • Contacting Users to inform them of news and updates.
-                    <br />
+                        • Ensuring the operation of the Service and its functionality.
+                        <br />
 
-                    • Conducting research and analysis to improve the user experience.
-                    <br />
+                        • Improving the quality of services and developing new functions.
+                        <br />
 
-                    <strong>4. Data storage and protection</strong>
-                    <br />
+                        • Contacting Users to inform them of news and updates.
+                        <br />
 
-                    4.1. We take all necessary measures to protect Users' personal data from unauthorized access, modification or disclosure.
-                    <br />
+                        • Conducting research and analysis to improve the user experience.
+                        <br />
 
-                    4.2. Personal data is stored for the time necessary to achieve the purposes for which it was collected, or in accordance with legal requirements.
-                    <br />
+                        <strong>4. Data storage and protection</strong>
+                        <br />
 
-                    <strong>5. Disclosure of information to third parties</strong>
-                    <br />
+                        4.1. We take all necessary measures to protect Users' personal data from unauthorized access, modification or disclosure.
+                        <br />
 
-                    5.1. We do not transfer Users' personal data to third parties without their consent, except in cases provided by law.
-                    <br />
+                        4.2. Personal data is stored for the time necessary to achieve the purposes for which it was collected, or in accordance with legal requirements.
+                        <br />
 
-                    5.2. We may transfer information to third parties in the following cases:
-                    <br />
+                        <strong>5. Disclosure of information to third parties</strong>
+                        <br />
 
-                    • To fulfill obligations to the User.
-                    <br />
+                        5.1. We do not transfer Users' personal data to third parties without their consent, except in cases provided by law.
+                        <br />
 
-                    • When necessary to protect the rights and legitimate interests of the Service or third parties.
-                    <br />
+                        5.2. We may transfer information to third parties in the following cases:
+                        <br />
 
-                    <strong>6. User Rights</strong>
-                    <br />
+                        • To fulfill obligations to the User.
+                        <br />
 
-                    6.1. The User has the right to:
-                    <br />
+                        • When necessary to protect the rights and legitimate interests of the Service or third parties.
+                        <br />
 
-                    • Request access to their personal data.
-                    <br />
+                        <strong>6. User Rights</strong>
+                        <br />
 
-                    • Request correction of inaccurate or incomplete data.
-                    <br />
+                        6.1. The User has the right to:
+                        <br />
 
-                    • Request deletion of their personal data.
-                    <br />
+                        • Request access to their personal data.
+                        <br />
 
-                    • Revoke consent to data processing at any time.
-                    <br />
+                        • Request correction of inaccurate or incomplete data.
+                        <br />
 
-                    <strong>7. Changes to the Privacy Policy</strong>
-                    <br />
+                        • Request deletion of their personal data.
+                        <br />
 
-                    7.1. We reserve the right to change the terms of this Policy at any time. All changes will be published on the Service website.
-                    <br />
+                        • Revoke consent to data processing at any time.
+                        <br />
 
-                    7.2. The User is obliged to periodically check the Policy for changes. Continued use of the Service after changes have been made means consent to the new Policy.
-                    <br />
+                        <strong>7. Changes to the Privacy Policy</strong>
+                        <br />
 
-                    <strong>8. Contact Information</strong>
-                    <br />
+                        7.1. We reserve the right to change the terms of this Policy at any time. All changes will be published on the Service website.
+                        <br />
+
+                        7.2. The User is obliged to periodically check the Policy for changes. Continued use of the Service after changes have been made means consent to the new Policy.
+                        <br />
+
+                        <strong>8. Contact Information</strong>
+                        <br />
 
-                    8.1. If the User has questions or suggestions regarding this Policy, they can contact us at the following address: r.phil@yandex.ru.
-                </p>
+                        8.1. If the User has questions or suggestions regarding this Policy, they can contact us at the following address: r.phil@yandex.ru.
+                    </p>
+                </div>
             </div>
-        </div>
-    )
+
+        )
+    } else if (language === Language.RU) {
+        return (
+            <div className="Register">
+                <div className="LoginForm">
+                    <h2>Добро пожаловать в phils_network!</h2>
+
+                    {showErrors}
+
+                    <form onSubmit={e => register(e)}>
+                        <Input
+                            value={registerForm.username}
+                            onChange={e => setRegisterForm({ ...registerForm, username: e.target.value })}
+                            placeholder="ник"
+                            type="text"
+                            required
+                        />
+                        <br />
+                        <Input
+                            value={registerForm.password}
+                            onChange={e => setRegisterForm({ ...registerForm, password: e.target.value })}
+                            placeholder="пароль"
+                            type="password"
+                            required
+                        />
+                        <br />
+                        <Input
+                            value={registerForm.password2}
+                            onChange={e => setRegisterForm({ ...registerForm, password2: e.target.value })}
+                            placeholder="подтверждение пароля"
+                            type="password"
+                            required
+                        />
+                        <br />
+                        <Input type="submit" value="зарегистрироваться" />
+                    </form>
+                    <select onChange={event => setLanguage(event)} className="LanguageSelect" name="language">
+                        {showLanguage()}
+                    </select>
+                    <Link to="/login/" >Авторизоваться</Link>
+
+                    <p>
+                        <br />
+                        <strong>Пользовательское соглашение</strong>
+                        <br />
+                        <br />
+                        <strong>1. Общие положения</strong>
+                        <br />
+
+                        1.1. Настоящее Пользовательское соглашение (далее именуемое «Соглашение») регулирует отношения между пользователем (далее именуемым «Пользователь») и phils_network (далее именуемым «Сервис») по использованию Сервиса.
+                        <br />
+
+                        1.2. Пользуясь Сервисом, Пользователь подтверждает, что он прочитал и принимает условия настоящего Соглашения.
+                        <br />
+
+                        <strong>2. Регистрация и учетная запись</strong>
+                        <br />
+
+                        2.1. Для использования определенных функций Сервиса Пользователь должен зарегистрироваться и создать учетную запись.
+                        <br />
+
+                        2.2. Пользователь обязуется предоставить достоверную информацию при регистрации и обновлять ее в случае изменений.
+                        <br />
+
+                        2.3. Пользователь несет ответственность за сохранность своих учетных данных и не передает их третьим лицам.
+                        <br />
+
+                        <strong>3. Права и обязанности Пользователя</strong>
+                        <br />
+
+                        3.1. Пользователь имеет право:
+                        <br />
+
+                        • Использовать все функции Сервиса в соответствии с настоящим Соглашением.
+                        <br />
+
+                        • Получать информацию о работе Сервиса.
+                        <br />
+
+                        • Вносить предложения по улучшению Сервиса.
+                        <br />
+
+                        3.2. Пользователь обязуется:
+                        <br />
+
+                        • Не размещать материалы, нарушающие права третьих лиц, в том числе авторские права.
+                        <br />
+
+                        • Не использовать Сервис для распространения спама, вирусов и других вредоносных программ.
+                        <br />
+
+                        • Соблюдать правила общения и относиться к другим пользователям с уважением.
+                        <br />
+
+                        <strong>4. Права и обязанности Сервиса</strong>
+                        <br />
+
+                        4.1. Сервис имеет право:
+                        <br />
+
+                        • Вносить изменения в функционал и условия использования Сервиса без предварительного уведомления. <br />
+
+                        • Ограничивать доступ к определенным функциям для отдельных пользователей.
+                        <br />
+
+                        4.2. Сервис обязуется:
+                        <br />
+
+                        • Обеспечивать защиту персональных данных Пользователей в соответствии с действующим законодательством.
+                        <br />
+
+                        • Устранять технические неполадки в разумные сроки.
+                        <br />
+
+                        <strong>5. Персональные данные</strong>
+                        <br />
+
+                        5.1. При регистрации Пользователь предоставляет свои персональные данные, которые обрабатываются в соответствии с Политикой конфиденциальности Сервиса.
+                        <br />
+
+                        5.2. Пользователь дает согласие на обработку своих персональных данных в целях, связанных с использованием Сервиса.
+                        <br />
+
+                        <strong>6. Ответственность сторон</strong>
+                        <br />
+
+                        6.1. Сервис не несет ответственности за:
+                        <br />
+
+                        • Убытки, понесенные Пользователем в результате использования или невозможности использования Сервиса.
+                        <br />
+
+                        • Содержание материалов, размещаемых Пользователями.
+                        <br />
+
+                        6.2. Пользователь несет полную ответственность за свои действия при использовании Сервиса.
+                        <br />
+
+                        <strong>7. Заключительные положения</strong>
+                        <br />
+
+                        7.1. Настоящее Соглашение вступает в силу с момента его принятия Пользователем и действует до тех пор, пока Пользователь использует Сервис.
+                        <br />
+
+                        7.2. Сервис оставляет за собой право изменять условия настоящего Соглашения путем публикации новых версий на сайте.
+                        <br />
+
+                        7.3. Если какое-либо положение настоящего Соглашения будет признано недействительным, остальные положения остаются в силе.
+                        <br />
+
+                        <strong>8. Контактная информация</strong>
+                        <br />
+
+                        8.1. Все вопросы и предложения по настоящему Соглашению можно направлять на адрес электронной почты: r.phil@yandex.ru.
+                    </p>
+                    <br />
+                    <Button id="agreeWithUserAgreementButton" onClick={() => setUserAgreementButton()} >
+                        Я согласен с Пользовательским соглашением
+                    </Button>
+
+                    <p>
+                        <br />
+                        <strong>Политика конфиденциальности</strong>
+                        <br />
+                        <br />
+
+                        <strong>1. Введение</strong>
+                        <br />
+
+                        1.1. Настоящая Политика конфиденциальности (далее именуемая «Политика») описывает, как phils_network (далее именуемый «Сервис») собирает, использует, хранит и защищает персональные данные Пользователей (далее именуемых «Пользователь»).
+                        <br />
+
+                        1.2. Используя Сервис, Пользователь подтверждает, что он ознакомился с условиями настоящей Политики и согласен с ними.
+                        <br />
+
+                        <strong>2. Собираемая информация</strong>
+                        <br />
+
+                        2.1. Мы можем собирать следующую информацию о Пользователях:
+                        <br />
+
+                        • Персональные данные: имя, адрес электронной почты, номер телефона и другая контактная информация.
+                        <br />
+
+                        • Данные профиля: информация о пользователе, размещенная в профиле (фотография, биография и т. д.).
+                        <br />
+
+                        • Данные об использовании: информация о том, как Пользователь взаимодействует с Сервисом (время посещения, действия на сайте и т. д.).
+                        <br />
+
+                        • Технические данные: IP-адрес, тип устройства, операционная система и браузер.
+                        <br />
+
+                        <strong>3. Цели обработки персональных данных</strong>
+                        <br />
+
+                        3.1. Персональные данные Пользователей обрабатываются в следующих целях:
+                        <br />
+
+                        • Обеспечение работы Сервиса и его функционала.
+                        <br />
+
+                        • Улучшение качества услуг и разработка новых функций.
+                        <br />
+
+                        • Связь с Пользователями для информирования их о новостях и обновлениях.
+                        <br />
+
+                        • Проведение исследований и анализа для улучшения пользовательского опыта.
+                        <br />
+
+                        <strong>4. Хранение и защита данных</strong>
+                        <br />
+
+                        4.1. Мы принимаем все необходимые меры для защиты персональных данных Пользователей от несанкционированного доступа, изменения или раскрытия.
+                        <br />
+
+                        4.2. Персональные данные хранятся в течение срока, необходимого для достижения целей, для которых они были собраны, или в соответствии с требованиями законодательства.
+                        <br />
+
+                        <strong>5. Раскрытие информации третьим лицам</strong>
+                        <br />
+
+                        5.1. Мы не передаем персональные данные Пользователей третьим лицам без их согласия, за исключением случаев, предусмотренных законом.
+                        <br />
+
+                        5.2. Мы можем передавать информацию третьим лицам в следующих случаях:
+                        <br />
+
+                        • Для исполнения обязательств перед Пользователем.
+                        <br />
+
+                        • Когда это необходимо для защиты прав и законных интересов Сервиса или третьих лиц.
+                        <br />
+
+                        <strong>6. Права Пользователя</strong>
+                        <br />
+
+                        6.1. Пользователь имеет право:
+                        <br />
+
+                        • Запросить доступ к своим персональным данным.
+                        <br />
+
+                        • Запросить исправление неточных или неполных данных.
+                        <br />
+
+                        • Запросить удаление своих персональных данных.
+                        <br />
+
+                        • Отозвать согласие на обработку данных в любое время.
+                        <br />
+
+                        <strong>7. Изменения в Политике конфиденциальности</strong>
+                        <br />
+
+                        7.1. Мы оставляем за собой право в любое время изменять условия настоящей Политики. Все изменения будут опубликованы на сайте Сервиса.
+                        <br />
+
+                        7.2. Пользователь обязан периодически проверять Политику на предмет изменений. Продолжение использования Сервиса после внесения изменений означает согласие с новой Политикой.
+                        <br />
+
+                        <strong>8. Контактная информация</strong>
+                        <br />
+
+                        8.1. Если у Пользователя возникли вопросы или предложения по настоящей Политике, он может связаться с нами по следующему адресу: r.phil@yandex.ru.
+                    </p>
+                </div>
+            </div>
+        )
+    }
 }

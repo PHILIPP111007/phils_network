@@ -2,27 +2,50 @@ import "./styles/NavBar.css"
 import { use } from "react"
 import { Link } from "react-router-dom"
 import { UserContext } from "../../../../data/context"
+import { CacheKeys, Language } from "../../../../data/enums"
 
 export default function NavBar() {
 
     var { user } = use(UserContext)
+    var language = localStorage.getItem(CacheKeys.LANGUAGE)
 
-    return (
-        <aside className="NavBar">
-            <nav>
-                <p>
-                    <Link to={`/users/${user.username}/`}>User</Link>
-                </p>
-                <p>
-                    <Link to={`/chats/${user.username}/`}>Chats</Link>
-                </p>
-                <p>
-                    <Link to={`/news/${user.username}/`}>News</Link>
-                </p>
-                <p>
-                    <Link to={`/friends/${user.username}/`}>Friends</Link>
-                </p>
-            </nav>
-        </aside>
-    )
+    if (language === Language.EN) {
+        return (
+            <aside className="NavBar">
+                <nav>
+                    <p>
+                        <Link to={`/users/${user.username}/`}>User</Link>
+                    </p>
+                    <p>
+                        <Link to={`/chats/${user.username}/`}>Chats</Link>
+                    </p>
+                    <p>
+                        <Link to={`/news/${user.username}/`}>News</Link>
+                    </p>
+                    <p>
+                        <Link to={`/friends/${user.username}/`}>Friends</Link>
+                    </p>
+                </nav>
+            </aside>
+        )
+    } else if (language === Language.RU) {
+        return (
+            <aside className="NavBar">
+                <nav>
+                    <p>
+                        <Link to={`/users/${user.username}/`}>Пользователь</Link>
+                    </p>
+                    <p>
+                        <Link to={`/chats/${user.username}/`}>Чаты</Link>
+                    </p>
+                    <p>
+                        <Link to={`/news/${user.username}/`}>Новости</Link>
+                    </p>
+                    <p>
+                        <Link to={`/friends/${user.username}/`}>Друзья</Link>
+                    </p>
+                </nav>
+            </aside>
+        )
+    }
 }
