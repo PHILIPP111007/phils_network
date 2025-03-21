@@ -12,7 +12,7 @@ from app.s3 import s3
 router = APIRouter(tags=["websocket_delete_messsage"])
 
 
-connected_clients = []
+connected_clients: dict[str, list] = {}
 
 
 @router.websocket("/ws/chat/{room_id}/delete_message/")
@@ -56,23 +56,22 @@ async def websocket_delete_messsage(
 
 	await websocket.accept()
 
-	connected_clients.append(
-		{"websocket": websocket, "token_key": token_key, "room_id": room_id}
-	)
-
 	user_id = await _get_user_id()
 	if not user_id:
 		await websocket.close()
-		connected_clients.remove(
-			{"websocket": websocket, "token_key": token_key, "room_id": room_id}
-		)
+		return
 	else:
 		flag = await _check_permission(user_id=user_id)
 		if not flag:
 			await websocket.close()
-			connected_clients.remove(
-				{"websocket": websocket, "token_key": token_key, "room_id": room_id}
-			)
+			return
+
+	connected_clients.setdefault(room_id, []).append(
+		{
+			"websocket": websocket,
+			"token_key": token_key,
+		}
+	)
 
 	try:
 		while True:
@@ -80,10 +79,7 @@ async def websocket_delete_messsage(
 			text: dict = json.loads(text)
 			await _delete_message(text["message_id"])
 
-			connected_clients_by_room = list(
-				filter(lambda x: x["room_id"] == room_id, connected_clients)
-			)
-			for client in connected_clients_by_room:
+			for client in connected_clients[room_id]:
 				await client["websocket"].send_text(
 					data=json.dumps(
 						{
@@ -94,6 +90,6 @@ async def websocket_delete_messsage(
 				)
 
 	except WebSocketDisconnect:
-		connected_clients.remove(
-			{"websocket": websocket, "token_key": token_key, "room_id": room_id}
+		connected_clients[room_id].remove(
+			{"websocket": websocket, "token_key": token_key}
 		)
