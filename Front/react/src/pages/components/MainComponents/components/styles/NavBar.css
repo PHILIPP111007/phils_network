@@ -4,11 +4,8 @@
 
 .NavBar a {
     display: block;
-    padding: 20px 30px;
-    font-size: 17px;
     text-decoration: none;
     color: black;
-    text-align: left;
 }
 
 
@@ -20,6 +17,12 @@
         top: 100px;
         left: 0px;
     }
+
+    .NavBar a {
+        padding: 20px 30px;
+        font-size: 17px;
+        text-align: left;
+    }
 }
 
 @media (pointer: coarse) {
@@ -30,10 +33,13 @@
         left: 0px;
         right: 0px;
         width: 100%;
+        justify-content: space-between;
     }
 
     .NavBar a {
         float: left;
         text-align: center;
+        padding: 10px 20px;
+        font-size: 10px;
     }
 }

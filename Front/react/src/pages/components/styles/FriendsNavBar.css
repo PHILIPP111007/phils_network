@@ -1,6 +1,4 @@
 .FriendsNavBar a {
-    padding: 20px 30px;
-    font-size: 17px;
     text-decoration: none;
     color: black;
     text-align: left;
@@ -24,6 +22,11 @@
         right: 10px;
         display: flex;
     }
+
+    .FriendsNavBar a {
+        padding: 20px 30px;
+        font-size: 17px;
+    }
 }
 
 @media (pointer: coarse) {
@@ -40,5 +43,7 @@
     .FriendsNavBar a {
         float: left;
         text-align: center;
+        padding: 10px 20px;
+        font-size: 10px;
     }
 }

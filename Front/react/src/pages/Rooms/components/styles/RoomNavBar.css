@@ -5,8 +5,6 @@
 
 .RoomNavBar a {
     display: block;
-    padding: 20px 30px;
-    font-size: 17px;
     text-decoration: none;
     color: black;
     text-align: left;
@@ -22,6 +20,8 @@
     }
 
     .RoomNavBar a {
+        padding: 20px 30px;
+        font-size: 17px;
         text-align: left;
     }
 }
@@ -39,6 +39,8 @@
     .RoomNavBar a {
         float: left;
         text-align: center;
+        padding: 10px 20px;
+        font-size: 10px;
     }
 }
 
