@@ -134,6 +134,10 @@ async def delete_user(
 			file_path = os.path.join(MEDIA_ROOT, message.file)
 			s3.delete_object(Bucket=BUCKET_NAME, Key=file_path)
 
+	rooms = session.exec(select(Room).where(Room.creator_id == user.id)).unique().all()
+	for room in rooms:
+		room.creator = None
+		session.add(room)
 	session.exec(delete(MessageViewed).where(MessageViewed.message_id.in_(message_ids)))
 	session.exec(delete(MessageViewed).where(MessageViewed.user_id == user.id))
 	session.exec(delete(Subscriber).where(Subscriber.user_id == user.id))

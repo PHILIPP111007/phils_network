@@ -96,7 +96,11 @@ class Subscriber(models.Model):
 class Room(models.Model):
 	name = models.CharField(max_length=50)
 	creator = models.ForeignKey(
-		User, related_name="room_creator", on_delete=models.CASCADE, default=None
+		User,
+		related_name="room_creator",
+		on_delete=models.SET_NULL,
+		default=None,
+		null=True,
 	)
 	timestamp = models.DateTimeField(auto_now_add=True)
 	subscribers = models.ManyToManyField(User, blank=True)
