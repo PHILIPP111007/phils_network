@@ -9,7 +9,7 @@ PG_HOST = environ.get("PG_HOST", "db")
 PG_PORT = environ.get("PG_PORT", "5432")
 PG_NAME = environ.get("PG_NAME", "postgres")
 PG_USER = environ.get("PG_USER", "postgres")
-PG_PASSWORD = environ.get("DB_PASSWORD", "postgres")
+PG_PASSWORD = environ.get("PG_PASSWORD", "postgres")
 
 BUCKET_NAME: str = "philsnetwork"
 AWS_ACCESS_KEY_ID = environ.get("AWS_ACCESS_KEY_ID", "minio")
