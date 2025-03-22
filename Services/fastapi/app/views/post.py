@@ -136,6 +136,7 @@ async def post_post(
 	session.add(post)
 	session.commit()
 	session.refresh(post)
+	post.timestamp = post.timestamp.strftime(DATETIME_FORMAT)
 
 	return {"ok": True, "post": post}
 
