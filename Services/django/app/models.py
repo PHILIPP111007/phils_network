@@ -11,8 +11,8 @@ from django.utils.translation import gettext_lazy as _
 
 
 def _user_directory_path(instance, file_name):
-	# file will be uploaded to MEDIA_ROOT / user_<username>/<filename>
-	return f"{instance.sender.username}/{instance.room.id}/{file_name}"
+	# file will be uploaded to MEDIA_ROOT / <room.id>/<username>/<timestamp>/<filename>
+	return f"{instance.sender.username}/{instance.room.id}/{instance.timestamp}/{file_name}"
 
 
 class User(AbstractBaseUser, PermissionsMixin):
