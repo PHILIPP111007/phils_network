@@ -23,7 +23,7 @@ async def post_online_status_true(
 
 
 @router.post("/api/v2/online_status/set_false/")
-async def delete_online_status_false(session: SessionDep, request: Request):
+async def post_online_status_false(session: SessionDep, request: Request):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 

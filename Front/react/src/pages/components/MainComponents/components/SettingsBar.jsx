@@ -45,9 +45,9 @@ export default function SettingsBar(props) {
             username: "",
             email: "",
             first_name: "",
-            last_name: ""
+            last_name: "",
+            is_online: false
         })
-
     }
 
     if (language === Language.EN) {
