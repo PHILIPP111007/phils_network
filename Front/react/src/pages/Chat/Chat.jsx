@@ -105,6 +105,9 @@ export default function Chat() {
             a.style = "display: none"
             a.href = url
 
+            var message_file_len = message.file.split('/').length - 1
+            a.download = message.file.split('/')[message_file_len]
+
             a.click()
 
             document.body.removeChild(a)
@@ -141,12 +144,12 @@ export default function Chat() {
 
             if (data && data.ok) {
                 setMessages((prev) => [...data.messages.reverse(), ...messages])
+
+                data.messages.forEach(message => {
+                    Fetch({ action: `api/v2/message_viewed/${message.id}/`, method: HttpMethod.POST })
+                })
             }
             mainSets.value.loading = false
-
-            data.messages.forEach(message => {
-                Fetch({ action: `api/v2/message_viewed/${message.id}/`, method: HttpMethod.POST })
-            })
         }
     }
 
