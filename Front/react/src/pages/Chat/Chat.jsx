@@ -196,6 +196,7 @@ export default function Chat() {
             var data = JSON.parse(e.data)
             if (data) {
                 setMessages((prev) => [...messages, data.message])
+                Fetch({ action: `api/v2/message_viewed/${data.message.id}/`, method: HttpMethod.POST })
             }
             scrollToBottom()
         }
