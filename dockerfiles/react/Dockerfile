@@ -1,4 +1,4 @@
-FROM node:23.8.0-alpine as client
+FROM node:24.6.0-alpine as client
 WORKDIR /app
 
 RUN npm install -g npm
