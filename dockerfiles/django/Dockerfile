@@ -7,6 +7,6 @@ ENV PYTHONUNBUFFERED 1
 RUN pip install --upgrade pip
 
 COPY ./Services/django/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt
 
 COPY ./Services/django/ .

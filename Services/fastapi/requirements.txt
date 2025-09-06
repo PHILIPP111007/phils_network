@@ -1,7 +1,7 @@
-fastapi[standard]==0.115.11
+fastapi[standard]==0.116.1
 sqlmodel==0.0.24
-psycopg2-binary==2.9.10
-sqlalchemy==2.0.39
+sqlalchemy==2.0.43
 websockets==15.0.1
-boto3==1.37.11
-django-storages==1.14.5
+boto3==1.40.25
+django-storages==1.14.6
+psycopg-binary==3.2.9
