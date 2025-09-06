@@ -55,6 +55,8 @@ Have fun and if you want please leave feedback!
 ```sh
 docker-compose up
 
+docker compose up --build
+
 docker-compose run django python manage.py createsuperuser
 ```
 
