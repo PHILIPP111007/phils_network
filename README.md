@@ -141,4 +141,13 @@ npm install -g serve
 serve -s build
 ```
 
-<img src="pictures/screenshot.png" alt="alt text" width="1000"/>
+Home page:
+
+<img src="pictures/home_page.png" alt="alt text" width="1000"/>
+<br />
+<br />
+<br />
+
+Chat page:
+
+<img src="pictures/chat_page.png" alt="alt text" width="1000"/>
