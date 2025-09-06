@@ -9,7 +9,7 @@ import { HttpMethod } from "../../data/enums"
 import useObserver from "../../hooks/useObserver"
 import rememberPage from "../../modules/rememberPage"
 import Fetch from "../../API/Fetch"
-import getWebSocket from "../../modules/getWebSocket"
+import { getWebSocketFastAPI } from "../../modules/getWebSocket"
 import MainComponents from "../components/MainComponents/MainComponents"
 import Modal from "../components/Modal"
 import ModalPostEdit from "./components/ModalPostEdit"
@@ -115,7 +115,7 @@ export default function User() {
 
     useEffect(() => {
         if (isAuth) {
-            getWebSocket({ socket_name: "OnlineSocket", path: `online_status/${user.id}/` })
+            getWebSocketFastAPI({ socket_name: "OnlineSocket", path: `online_status/${user.id}/` })
         }
     }, [isAuth])
 

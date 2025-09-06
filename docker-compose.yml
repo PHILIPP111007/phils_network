@@ -18,6 +18,7 @@ services:
       - nginx_network
       - db_network
       - s3_network
+      - cache_network
     environment:
       PG_NAME: postgres
       PG_USER: postgres
@@ -27,6 +28,8 @@ services:
       SECRET_KEY: weofjweifjewifjewifjewfewf
       DEBUG: "0"
       ALLOWED_HOSTS: "*"
+      REDIS_HOST: "cache"
+      REDIS_PORT: "6379"
       AWS_S3_ENDPOINT_URL: http://s3:9000
       AWS_ACCESS_KEY_ID: minio
       AWS_SECRET_ACCESS_KEY: minio123
@@ -115,8 +118,22 @@ services:
     networks:
       - s3_network
 
+  cache:
+    container_name: cache
+    restart: unless-stopped
+    image: redis:7.2-alpine 
+    expose:
+      - 6379
+    command: redis-server
+    volumes: 
+      - cache:/data
+    networks:
+      - cache_network
+
 volumes:
   postgres-data:
+  cache:
+    driver: local
 
 networks:
   nginx_network:
@@ -124,4 +141,6 @@ networks:
   db_network:
     driver: bridge
   s3_network:
+    driver: bridge
+  cache_network:
     driver: bridge

@@ -1,9 +1,27 @@
-import { WEBSOCKET_URL } from "../data/constants"
+import { WEBSOCKET_DJANGO_URL, WEBSOCKET_FASTAPI_URL } from "../data/constants"
 import getToken from "./getToken"
 
-export default function getWebSocket({ socket_name, path }) {
+export function getWebSocketDjango({ socket_name, path }) {
     var socket = new WebSocket(
-        WEBSOCKET_URL
+        WEBSOCKET_DJANGO_URL
+        + path
+        + `?token_key=${getToken()}`
+    )
+    socket.onopen = () => {
+        console.log(`${socket_name}: The connection was setup successfully.`)
+    }
+    socket.onclose = () => {
+        console.log(`${socket_name}: Has already closed.`)
+    }
+    socket.onerror = (e) => {
+        console.error(e)
+    }
+    return socket
+}
+
+export function getWebSocketFastAPI({ socket_name, path }) {
+    var socket = new WebSocket(
+        WEBSOCKET_FASTAPI_URL
         + path
         + `?token_key=${getToken()}`
     )

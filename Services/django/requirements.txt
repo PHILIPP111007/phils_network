@@ -5,6 +5,7 @@ djoser==2.3.3
 django-storages==1.14.6
 boto3==1.40.25
 channels==4.3.1
+channels-redis==4.3.0
 gunicorn==23.0.0
 uvicorn[standard]==0.35.0
 whitenoise==6.9.0

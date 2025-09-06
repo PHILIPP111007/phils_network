@@ -88,6 +88,20 @@ TEMPLATES: list[dict] = [
 
 ASGI_APPLICATION: str = "settings.asgi.application"
 
+CHANNEL_LAYERS = {
+	"default": {
+		"BACKEND": "channels_redis.core.RedisChannelLayer",
+		"CONFIG": {
+			"hosts": [
+				(
+					environ.get("REDIS_HOST", "127.0.0.1"),
+					int(environ.get("REDIS_PORT", "6379")),
+				)
+			],
+			"symmetric_encryption_keys": [SECRET_KEY],
+		},
+	},
+}
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases

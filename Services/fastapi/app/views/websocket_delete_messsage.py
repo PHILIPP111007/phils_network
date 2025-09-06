@@ -15,7 +15,7 @@ router = APIRouter(tags=["websocket_delete_messsage"])
 connected_clients: dict[str, list] = {}
 
 
-@router.websocket("/ws/chat/{room_id}/delete_message/")
+@router.websocket("/ws/v2/chat/{room_id}/delete_message/")
 async def websocket_delete_messsage(
 	session: SessionDep, websocket: WebSocket, room_id: int, token_key: str = None
 ):

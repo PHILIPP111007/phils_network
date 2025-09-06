@@ -14,7 +14,7 @@ router = APIRouter(tags=["websocket_chat"])
 connected_clients: dict[str, list] = {}
 
 
-@router.websocket("/ws/chat/{room_id}/")
+@router.websocket("/ws/v2/chat/{room_id}/")
 async def websocket_chat(
 	session: SessionDep, websocket: WebSocket, room_id: int, token_key: str = None
 ):

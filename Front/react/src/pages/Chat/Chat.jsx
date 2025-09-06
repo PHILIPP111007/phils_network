@@ -9,7 +9,7 @@ import { FETCH_URL } from "../../data/constants"
 import rememberPage from "../../modules/rememberPage"
 import getToken from "../../modules/getToken"
 import useObserver from "../../hooks/useObserver"
-import getWebSocket from "../../modules/getWebSocket"
+import { getWebSocketDjango, getWebSocketFastAPI } from "../../modules/getWebSocket"
 import Fetch from "../../API/Fetch"
 import MainComponents from "../components/MainComponents/MainComponents"
 import LazyDiv from "../components/LazyDiv"
@@ -173,8 +173,8 @@ export default function Chat() {
                 }
             })
 
-        chatSocket.current = getWebSocket({ socket_name: "chatSocket", path: `chat/${params.room_id}/` })
-        deleteMessageSocket.current = getWebSocket({ socket_name: "deleteMessageSocket", path: `chat/${params.room_id}/delete_message/` })
+        chatSocket.current = getWebSocketDjango({ socket_name: "chatSocket", path: `chat/${params.room_id}/` })
+        deleteMessageSocket.current = getWebSocketFastAPI({ socket_name: "deleteMessageSocket", path: `chat/${params.room_id}/delete_message/` })
 
         var textArea = document.getElementsByClassName("TextArea").item(0)
         var sendButton = document.getElementById("SendButton")

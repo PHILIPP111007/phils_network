@@ -7,7 +7,7 @@ from app.models import Token, User
 router = APIRouter(tags=["websocket_online_status"])
 
 
-@router.websocket("/ws/online_status/{user_id}/")
+@router.websocket("/ws/v2/online_status/{user_id}/")
 async def websocket_online_status(
 	session: SessionDep, websocket: WebSocket, user_id: int, token_key: str = None
 ):
