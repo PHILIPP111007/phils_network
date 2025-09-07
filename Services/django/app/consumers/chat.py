@@ -80,7 +80,7 @@ def _get_user_pk(token_key: str) -> int | None:
 
 
 @database_sync_to_async
-def _check_permission(self, pk) -> bool:
+def _check_permission(self, pk: int) -> bool:
 	"""Check if user is this room subscriber."""
 
 	room_id = int(self.scope["url_route"]["kwargs"]["room"])
@@ -89,7 +89,7 @@ def _check_permission(self, pk) -> bool:
 
 
 @database_sync_to_async
-def _create_message(self, message):
+def _create_message(self, message: dict) -> dict:
 	"""Create message."""
 
 	msg = MessageService.create(
