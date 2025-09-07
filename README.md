@@ -1,7 +1,5 @@
 # phils_network
 
-Rate my social network: <http://45.146.166.87/>
-
 Minimalistic social network written using Django, FastAPI and React.
 
 > You may donate to [phils_network](https://github.com/PHILIPP111007/phils_network) project:
@@ -144,7 +142,6 @@ serve -s build
 Home page:
 
 <img src="pictures/home_page.png" alt="alt text" width="1000"/>
-<br />
 <br />
 <br />
 
