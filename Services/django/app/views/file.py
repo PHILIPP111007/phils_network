@@ -16,7 +16,7 @@ from app.s3 import create_bucket, s3
 from app.serializers import MessageSerializer
 from app.services import FileService
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotAllowed
 
 
 class FileAPIView(APIView):
@@ -40,7 +40,7 @@ class FileAPIView(APIView):
 
 def file_download(request: Request, message_id: int, username: str) -> HttpResponse:
 	if request.method != "GET":
-		return HttpResponse("Method not allowed.")
+		return HttpResponseNotAllowed(["GET"])
 
 	for bucket in s3.list_buckets()["Buckets"]:
 		if bucket["Name"] == settings.BUCKET_NAME:
@@ -64,9 +64,12 @@ def file_download(request: Request, message_id: int, username: str) -> HttpRespo
 		s3.download_fileobj(settings.BUCKET_NAME, message.file.path, file)
 		file.seek(0)
 
-	file = open(file_path, "rb")
+	response = HttpResponse(
+		FileWrapper(open(file_path, "rb")),
+		content_type="application/octet-stream"
+	)
+	response['Content-Disposition'] = f'attachment; filename="{os.path.basename(message.file.name)}"'
+	response['Content-Length'] = os.path.getsize(file_path)
 
-	response = HttpResponse(FileWrapper(file))
-	file.close()
 	os.remove(file_path)
 	return response
