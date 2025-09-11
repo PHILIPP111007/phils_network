@@ -2,10 +2,10 @@ import "./styles/Message.css"
 import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import ReactMarkdown from "react-markdown"
-import { CacheKeys, Language } from "../../../../data/enums"
-import ModalMessage from "./components/ModalMessage"
-import Modal from "../../../components/Modal"
-import Button from "../../../components/UI/Button"
+import { CacheKeys, Language } from "../../../../data/enums.js"
+import ModalMessage from "./components/ModalMessage.jsx"
+import Modal from "../../../components/Modal.jsx"
+import Button from "../../../components/UI/Button.jsx"
 
 export default function Message({ message, downloadFile, deleteMessage }) {
 

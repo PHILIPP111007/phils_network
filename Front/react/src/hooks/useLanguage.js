@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { CacheKeys, Language } from "../data/enums"
+import { CacheKeys, Language } from "../data/enums.js"
 
 export default function useLanguage() {
 

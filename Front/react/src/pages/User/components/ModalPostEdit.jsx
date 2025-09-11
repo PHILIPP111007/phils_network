@@ -1,6 +1,6 @@
 import "./styles/ModalPostEdit.css"
-import { CacheKeys, Language } from "../../../data/enums"
-import Button from "../../components/UI/Button"
+import { CacheKeys, Language } from "../../../data/enums.js"
+import Button from "../../components/UI/Button.jsx"
 
 export default function ModalPostEdit(props) {
     var language = localStorage.getItem(CacheKeys.LANGUAGE)

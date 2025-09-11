@@ -1,6 +1,6 @@
 import "./styles/ScrollToTopOrBottom.css"
-import { CacheKeys, Language } from "../../../../data/enums"
-import Button from "../../UI/Button"
+import { CacheKeys, Language } from "../../../../data/enums.js"
+import Button from "../../UI/Button.jsx"
 
 export default function ScrollToTopOrBottom({ bottom }) {
     var language = localStorage.getItem(CacheKeys.LANGUAGE)

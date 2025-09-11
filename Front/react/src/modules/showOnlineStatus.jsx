@@ -1,4 +1,4 @@
-import { CacheKeys, Language } from "../data/enums"
+import { CacheKeys, Language } from "../data/enums.js"
 
 export default function showOnlineStatus({ user }) {
     var language = localStorage.getItem(CacheKeys.LANGUAGE)
