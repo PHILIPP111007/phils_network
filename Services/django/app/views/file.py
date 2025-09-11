@@ -65,11 +65,12 @@ def file_download(request: Request, message_id: int, username: str) -> HttpRespo
 		file.seek(0)
 
 	response = HttpResponse(
-		FileWrapper(open(file_path, "rb")),
-		content_type="application/octet-stream"
+		FileWrapper(open(file_path, "rb")), content_type="application/octet-stream"
 	)
-	response['Content-Disposition'] = f'attachment; filename="{os.path.basename(message.file.name)}"'
-	response['Content-Length'] = os.path.getsize(file_path)
+	response["Content-Disposition"] = (
+		f'attachment; filename="{os.path.basename(message.file.name)}"'
+	)
+	response["Content-Length"] = os.path.getsize(file_path)
 
 	os.remove(file_path)
 	return response

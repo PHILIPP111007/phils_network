@@ -26,21 +26,19 @@ async def get_post(
 	session: SessionDep, request: Request, username: str, loaded_posts: int
 ):
 	async def _filter(user_id: int, subscribe_id: int) -> list[Subscriber]:
-		return (
-			session.exec(
-				select(Subscriber).where(
-					Subscriber.user_id == user_id,
-					Subscriber.subscribe_id == subscribe_id,
-				)
+		query = await session.exec(
+			select(Subscriber).where(
+				Subscriber.user_id == user_id,
+				Subscriber.subscribe_id == subscribe_id,
 			)
-			.unique()
-			.all()
 		)
+		query = query.unique().all()
 
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	unknown = session.exec(select(User).where(User.username == username)).first()
+	unknown = await session.exec(select(User).where(User.username == username))
+	unknown = unknown.first()
 	if not unknown:
 		return {"ok": False, "error": "Not found user."}
 
@@ -61,17 +59,14 @@ async def get_post(
 		if data != SubscriberStatus.IS_FRIEND.value:
 			return {"ok": False, "error": "Make friends to see his blog."}
 
-	query = (
-		session.exec(
-			select(Post)
-			.where(Post.user_id == unknown.id)
-			.order_by(Post.timestamp.desc())
-			.offset(loaded_posts)
-			.limit(POSTS_TO_LOAD)
-		)
-		.unique()
-		.all()
+	query = await session.exec(
+		select(Post)
+		.where(Post.user_id == unknown.id)
+		.order_by(Post.timestamp.desc())
+		.offset(loaded_posts)
+		.limit(POSTS_TO_LOAD)
 	)
+	query = query.unique().all()
 	if not query:
 		return {"ok": False, "error": "Not found user posts."}
 
@@ -100,7 +95,8 @@ async def put_post(session: SessionDep, request: Request, id: int, content: Cont
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	post = session.exec(select(Post).where(Post.id == id)).first()
+	post = await session.exec(select(Post).where(Post.id == id))
+	post = post.first()
 	if not post:
 		return {"ok": False, "error": "Not found post."}
 
@@ -111,7 +107,7 @@ async def put_post(session: SessionDep, request: Request, id: int, content: Cont
 	post.changed = True
 
 	session.add(post)
-	session.commit()
+	await session.commit()
 
 	return {"ok": True, "post": post}
 
@@ -134,8 +130,8 @@ async def post_post(
 		return {"ok": False, "error": "Access denied."}
 
 	session.add(post)
-	session.commit()
-	session.refresh(post)
+	await session.commit()
+	await session.refresh(post)
 	post.timestamp = post.timestamp.strftime(DATETIME_FORMAT)
 
 	return {"ok": True, "post": post}
@@ -148,14 +144,15 @@ async def delete_post(
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	post = session.exec(select(Post).where(Post.id == id)).first()
+	post = await session.exec(select(Post).where(Post.id == id))
+	post = post.first()
 	if not post:
 		return {"ok": False, "error": "Not found post."}
 
 	if post.user_id != request.state.user.id:
 		return {"ok": False, "error": "Access denied."}
 
-	session.exec(delete(Post).where(Post.id == post.id))
-	session.commit()
+	await session.exec(delete(Post).where(Post.id == post.id))
+	await session.commit()
 
 	return {"ok": True}

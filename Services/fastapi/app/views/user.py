@@ -35,7 +35,8 @@ async def get_user(session: SessionDep, request: Request, username: str):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	query = session.exec(select(User).where(User.id == request.state.user.id)).first()
+	query = await session.exec(select(User).where(User.id == request.state.user.id))
+	query = query.first()
 	if not query:
 		return {"ok": False, "error": "Not found the global user."}
 
@@ -52,7 +53,8 @@ async def get_user(session: SessionDep, request: Request, username: str):
 
 	result = {"ok": True, "global_user": global_user}
 
-	query = session.exec(select(User).where(User.username == username)).first()
+	query = await session.exec(select(User).where(User.username == username))
+	query = query.first()
 	if not query:
 		return result
 
@@ -74,7 +76,8 @@ async def put_user(session: SessionDep, request: Request, user_body: UserBody):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	user = session.exec(select(User).where(User.id == user_body.id)).first()
+	user = await session.exec(select(User).where(User.id == user_body.id))
+	user = user.first()
 	if not user:
 		return {"ok": False, "error": "Not found user."}
 
@@ -86,8 +89,8 @@ async def put_user(session: SessionDep, request: Request, user_body: UserBody):
 	user.email = user_body.email
 
 	session.add(user)
-	session.commit()
-	session.refresh(user)
+	await session.commit()
+	await session.refresh(user)
 
 	return {"ok": True, "user": user}
 
@@ -99,34 +102,34 @@ async def delete_user(
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	user = session.exec(select(User).where(User.username == username)).first()
+	user = await session.exec(select(User).where(User.username == username))
+	user = user.first()
 	if not user:
 		return {"ok": False, "error": "Not found user."}
 
 	if user.id != request.state.user.id:
 		return {"ok": False, "error": "Access denied."}
 
-	room_subscribers = (
-		session.exec(
-			select(RoomSubscribers.room_id).where(RoomSubscribers.user_id == user.id)
-		)
-		.unique()
-		.all()
+	room_subscribers = await session.exec(
+		select(RoomSubscribers.room_id).where(RoomSubscribers.user_id == user.id)
 	)
-	rooms = (
-		session.exec(select(Room).where(Room.id.in_(room_subscribers))).unique().all()
-	)
+	room_subscribers = room_subscribers.unique().all()
 
-	session.exec(delete(RoomSubscribers).where(RoomSubscribers.user_id == user.id))
-	session.commit()
+	rooms = await session.exec(select(Room).where(Room.id.in_(room_subscribers)))
+	rooms = rooms.unique().all()
+
+	await session.exec(
+		delete(RoomSubscribers).where(RoomSubscribers.user_id == user.id)
+	)
+	await session.commit()
 
 	for room in rooms:
 		if not room.room_subscribers:
-			session.exec(delete(Room).where(Room.id == room.id))
+			await session.exec(delete(Room).where(Room.id == room.id))
 
-	messages = (
-		session.exec(select(Message).where(Message.sender_id == user.id)).unique().all()
-	)
+	messages = await session.exec(select(Message).where(Message.sender_id == user.id))
+	messages = messages.unique().all()
+
 	message_ids = []
 	for message in messages:
 		message_ids.append(message.id)
@@ -134,21 +137,28 @@ async def delete_user(
 			file_path = os.path.join(MEDIA_ROOT, message.file)
 			s3.delete_object(Bucket=BUCKET_NAME, Key=file_path)
 
-	rooms = session.exec(select(Room).where(Room.creator_id == user.id)).unique().all()
+	rooms = await session.exec(select(Room).where(Room.creator_id == user.id))
+	rooms = rooms.unique().all()
 	for room in rooms:
 		room.creator = None
 		session.add(room)
-	session.exec(delete(MessageViewed).where(MessageViewed.message_id.in_(message_ids)))
-	session.exec(delete(MessageViewed).where(MessageViewed.user_id == user.id))
-	session.exec(delete(Subscriber).where(Subscriber.user_id == user.id))
-	session.exec(delete(Subscriber).where(Subscriber.subscribe_id == user.id))
-	session.exec(delete(Token).where(Token.user_id == user.id))
-	session.exec(delete(Post).where(Post.user_id == user.id))
-	session.exec(delete(RoomInvitation).where(RoomInvitation.creator_id == user.id))
-	session.exec(delete(RoomInvitation).where(RoomInvitation.to_user_id == user.id))
-	session.exec(delete(Message).where(Message.sender_id == user.id))
-	session.exec(delete(DjangoAdminLog).where(DjangoAdminLog.user_id == user.id))
-	session.exec(delete(User).where(User.id == user.id))
-	session.commit()
+	await session.exec(
+		delete(MessageViewed).where(MessageViewed.message_id.in_(message_ids))
+	)
+	await session.exec(delete(MessageViewed).where(MessageViewed.user_id == user.id))
+	await session.exec(delete(Subscriber).where(Subscriber.user_id == user.id))
+	await session.exec(delete(Subscriber).where(Subscriber.subscribe_id == user.id))
+	await session.exec(delete(Token).where(Token.user_id == user.id))
+	await session.exec(delete(Post).where(Post.user_id == user.id))
+	await session.exec(
+		delete(RoomInvitation).where(RoomInvitation.creator_id == user.id)
+	)
+	await session.exec(
+		delete(RoomInvitation).where(RoomInvitation.to_user_id == user.id)
+	)
+	await session.exec(delete(Message).where(Message.sender_id == user.id))
+	await session.exec(delete(DjangoAdminLog).where(DjangoAdminLog.user_id == user.id))
+	await session.exec(delete(User).where(User.id == user.id))
+	await session.commit()
 
 	return {"ok": True}

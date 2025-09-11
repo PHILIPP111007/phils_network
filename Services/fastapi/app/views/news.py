@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Request
 from sqlmodel import select
+from sqlalchemy.orm import joinedload
 
 from app.constants import DATETIME_FORMAT, POSTS_TO_LOAD
 from app.database import SessionDep
@@ -19,7 +20,8 @@ async def get_news(session: SessionDep, request: Request, loaded_posts: int):
 			if id in set_2:
 				set_3.add(id)
 
-		query = session.exec(select(User.id).where(User.id.in_(set_3))).unique().all()
+		query = await session.exec(select(User.id).where(User.id.in_(set_3)))
+		query = query.unique().all()
 		return query
 
 	if not request.state.user:
@@ -27,17 +29,17 @@ async def get_news(session: SessionDep, request: Request, loaded_posts: int):
 
 	friends = await _get_friends(id=request.state.user.id)
 
-	query = (
-		session.exec(
-			select(Post)
-			.where(Post.user_id.in_(friends))
-			.offset(loaded_posts)
-			.limit(POSTS_TO_LOAD)
-			.order_by(Post.timestamp.desc())
+	query = await session.exec(
+		select(Post)
+		.where(Post.user_id.in_(friends))
+		.offset(loaded_posts)
+		.limit(POSTS_TO_LOAD)
+		.order_by(Post.timestamp.desc())
+		.options(
+			joinedload(Post.user)
 		)
-		.unique()
-		.all()
 	)
+	query = query.unique().all()
 
 	if not query:
 		return {"ok": False, "error": "Not found posts."}

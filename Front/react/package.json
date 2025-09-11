@@ -1,6 +1,6 @@
 {
   "name": "phils_network",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "license": "MIT",
   "type": "module",
   "author": {
@@ -17,7 +17,7 @@
   "private": true,
   "homepage": "/",
   "dependencies": {
-    "@preact/signals-react": "3.2.1",
+    "@preact/signals-react": "3.3.0",
     "browserslist": "^4.18.1",
     "camelcase": "^6.2.1",
     "dotenv": "^10.0.0",

@@ -21,40 +21,31 @@ async def post_find_user(session: SessionDep, request: Request, find_user: FindU
 
 	find_users = None
 	if find_user.username:
-		find_users = (
-			session.exec(
-				select(User).where(
-					User.id != request.state.user.id,
-					User.username.contains(find_user.username),
-				)
+		find_users = await session.exec(
+			select(User).where(
+				User.id != request.state.user.id,
+				User.username.contains(find_user.username),
 			)
-			.unique()
-			.all()
 		)
+		find_users = find_users.unique().all()
 	else:
 		if find_user.first_name:
-			query_1 = (
-				session.exec(
-					select(User).where(
-						User.id != request.state.user.id,
-						User.first_name.contains(find_user.first_name),
-					)
+			query_1 = await session.exec(
+				select(User).where(
+					User.id != request.state.user.id,
+					User.first_name.contains(find_user.first_name),
 				)
-				.unique()
-				.all()
 			)
+			query_1 = query_1.unique().all()
 
 		if find_user.last_name:
-			query_2 = (
-				session.exec(
-					select(User).where(
-						User.id != request.state.user.id,
-						User.last_name.contains(find_user.last_name),
-					)
+			query_2 = session.exec(
+				select(User).where(
+					User.id != request.state.user.id,
+					User.last_name.contains(find_user.last_name),
 				)
-				.unique()
-				.all()
 			)
+			query_2 = query_2.unique().all()
 
 		if find_user.first_name and find_user.last_name:
 			find_users: list[User] = []

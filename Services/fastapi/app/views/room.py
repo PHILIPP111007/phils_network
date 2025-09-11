@@ -4,6 +4,7 @@ from datetime import datetime
 from fastapi import APIRouter, Request
 from pydantic import BaseModel
 from sqlmodel import delete, func, select
+from sqlalchemy.orm import joinedload
 
 from app.constants import DATETIME_FORMAT
 from app.database import SessionDep
@@ -29,24 +30,26 @@ async def get_room(session: SessionDep, request: Request):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	room_ids = (
-		session.exec(
-			select(RoomSubscribers.room_id).where(
-				RoomSubscribers.user_id == request.state.user.id
-			)
+	room_ids = await session.exec(
+		select(RoomSubscribers.room_id).where(
+			RoomSubscribers.user_id == request.state.user.id
 		)
-		.unique()
-		.all()
 	)
-	rooms = session.exec(select(Room).where(Room.id.in_(room_ids))).unique().all()
+	room_ids = room_ids.unique().all()
+
+	rooms = await session.exec(select(Room).where(Room.id.in_(room_ids)))
+	rooms = rooms.unique().all()
 
 	time_and_rooms = []
 	for room in rooms:
-		message = session.exec(
+		message = await session.exec(
 			select(Message)
 			.where(Message.room_id == room.id)
 			.order_by(Message.timestamp.desc())
-		).first()
+			.options(joinedload(Message.sender))
+			.limit(1)
+		)
+		message = message.first()
 		if message:
 			time = message.timestamp
 			time_and_rooms.append((time, room, message))
@@ -63,7 +66,7 @@ async def get_room(session: SessionDep, request: Request):
 		if last_message:
 			last_message_sender = last_message.sender.username
 			if last_message.file:
-				file_name = last_message.file.split(os.sep)[-1]
+				file_name = await last_message.file.split(os.sep)[-1]
 				last_message_text = file_name
 			else:
 				last_message_text = last_message.text
@@ -71,17 +74,19 @@ async def get_room(session: SessionDep, request: Request):
 			last_message_sender = None
 			last_message_text = ""
 
-		messages_ids = (
-			session.exec(select(Message.id).where(Message.room_id == room.id))
-			.unique()
-			.all()
+		messages_ids = await session.exec(
+			select(Message.id).where(Message.room_id == room.id)
 		)
-		message_viewed_count = session.exec(
+		messages_ids = messages_ids.unique().all()
+
+		message_viewed_count = await session.exec(
 			select(func.count(MessageViewed.id)).where(
 				MessageViewed.message_id.in_(messages_ids),
 				MessageViewed.user_id == request.state.user.id,
 			)
-		).one()
+		)
+		message_viewed_count = message_viewed_count.one()
+
 		unread_messages = len(messages_ids) - message_viewed_count
 
 		room = {
@@ -116,20 +121,17 @@ async def post_room(
 		timestamp=datetime.now(),
 	)
 	session.add(room)
-	session.commit()
-	session.refresh(room)
+	await session.commit()
+	await session.refresh(room)
 
 	room_subscriber = RoomSubscribers(user_id=request.state.user.id, room_id=room.id)
 	session.add(room_subscriber)
 
 	if room_name_and_subscribers.subscribers:
-		subscribers = (
-			session.exec(
-				select(User).where(User.id.in_(room_name_and_subscribers.subscribers))
-			)
-			.unique()
-			.all()
+		subscribers = await session.exec(
+			select(User).where(User.id.in_(room_name_and_subscribers.subscribers))
 		)
+		subscribers = subscribers.unique().all()
 		if subscribers:
 			for subscriber in subscribers:
 				if subscriber.id == request.state.user.id:
@@ -142,9 +144,9 @@ async def post_room(
 					timestamp=datetime.now(),
 				)
 				session.add(room_invitation)
-			session.commit()
+			await session.commit()
 
-	session.refresh(room)
+	await session.refresh(room)
 	return {"ok": True, "room": room}
 
 
@@ -153,15 +155,10 @@ async def get_room_invitation(session: SessionDep, request: Request):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	query = (
-		session.exec(
-			select(RoomInvitation).where(
-				RoomInvitation.to_user_id == request.state.user.id
-			)
-		)
-		.unique()
-		.all()
+	query = await session.exec(
+		select(RoomInvitation).where(RoomInvitation.to_user_id == request.state.user.id)
 	)
+	query = query.unique().all()
 
 	room_invitations = []
 	for room_invitation in query:
@@ -192,37 +189,41 @@ async def post_room_invitation_add(
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	room_invite = session.exec(
+	room_invite = await session.exec(
 		select(RoomInvitation).where(
 			RoomInvitation.room_id == room_id,
 			RoomInvitation.to_user_id == request.state.user.id,
 		)
-	).first()
+	)
+	room_invite = room_invite.first()
 
 	if room_invite:
-		session.exec(delete(RoomInvitation).where(RoomInvitation.id == room_invite.id))
-		session.commit()
-
-		room = session.exec(select(Room).where(Room.id == room_invite.room_id)).first()
-		user = session.exec(select(User).where(User.id == user_id)).first()
-
-		flag = (
-			session.exec(
-				select(RoomSubscribers).where(
-					RoomSubscribers.user_id == user.id,
-					RoomSubscribers.room_id == room.id,
-				)
-			)
-			.unique()
-			.all()
+		await session.exec(
+			delete(RoomInvitation).where(RoomInvitation.id == room_invite.id)
 		)
+		await session.commit()
+
+		room = await session.exec(select(Room).where(Room.id == room_invite.room_id))
+		room = room.first()
+		user = await session.exec(select(User).where(User.id == user_id))
+		user = user.first()
+
+		flag = await session.exec(
+			select(RoomSubscribers).where(
+				RoomSubscribers.user_id == user.id,
+				RoomSubscribers.room_id == room.id,
+			)
+		)
+		flag = flag.unique().all()
 		if not flag:
 			room_subscriber = RoomSubscribers(user_id=user.id, room_id=room.id)
 			session.add(room_subscriber)
-			session.commit()
+			await session.commit()
 		else:
-			session.exec(delete(RoomInvitation).where(RoomInvitation.id == room_id))
-			session.commit()
+			await session.exec(
+				delete(RoomInvitation).where(RoomInvitation.id == room_id)
+			)
+			await session.commit()
 
 	return {"ok": True}
 
@@ -234,12 +235,12 @@ async def post_room_invitation_remove(
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	session.exec(
+	await session.exec(
 		delete(RoomInvitation).where(
 			RoomInvitation.to_user_id == user_id,
 			RoomInvitation.room_id == room_id,
 		)
 	)
-	session.commit()
+	await session.commit()
 
 	return {"ok": True}

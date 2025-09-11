@@ -21,7 +21,8 @@ async def get_friends(session: SessionDep, request: Request, option: FilterOptio
 			if id in set_2:
 				set_3.add(id)
 
-		query = session.exec(select(User).where(User.id.in_(set_3))).unique().all()
+		query = await session.exec(select(User).where(User.id.in_(set_3)))
+		query = query.unique().all()
 		return query
 
 	async def _get_subscriptions(id: int) -> list[User]:
@@ -32,7 +33,8 @@ async def get_friends(session: SessionDep, request: Request, option: FilterOptio
 			if id not in set_2:
 				set_3.add(id)
 
-		query = session.exec(select(User).where(User.id.in_(set_3))).unique().all()
+		query = await session.exec(select(User).where(User.id.in_(set_3)))
+		query = query.unique().all()
 		return query
 
 	async def _get_subscribers(id: int) -> list[User]:
@@ -43,7 +45,8 @@ async def get_friends(session: SessionDep, request: Request, option: FilterOptio
 			if id not in set_1:
 				set_3.add(id)
 
-		query = session.exec(select(User).where(User.id.in_(set_3))).unique().all()
+		query = await session.exec(select(User).where(User.id.in_(set_3)))
+		query = query.unique().all()
 		return query
 
 	if not request.state.user:

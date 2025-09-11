@@ -18,16 +18,14 @@ async def get_subscriber(
 	session: SessionDep, request: Request, id: int
 ) -> dict[str, int]:
 	async def _filter(user_id: int, subscribe_id: int) -> list[Subscriber]:
-		return (
-			session.exec(
-				select(Subscriber).where(
-					Subscriber.user_id == user_id,
-					Subscriber.subscribe_id == subscribe_id,
-				)
+		query = await session.exec(
+			select(Subscriber).where(
+				Subscriber.user_id == user_id,
+				Subscriber.subscribe_id == subscribe_id,
 			)
-			.unique()
-			.all()
 		)
+		query = query.unique().all()
+		return query
 
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
@@ -57,7 +55,7 @@ async def post_subscriber(
 
 	subscribe = Subscriber(user_id=request.state.user.id, subscribe_id=id)
 	session.add(subscribe)
-	session.commit()
+	await session.commit()
 
 	return {"ok": True}
 
@@ -74,27 +72,29 @@ async def delete_subscriber(
 
 	subscribe = None
 	if option.option == DeleteOption.DELETE_FRIEND.value:
-		subscribe = session.exec(
+		subscribe = await session.exec(
 			select(Subscriber).where(
 				Subscriber.user_id == request.state.user.id,
 				Subscriber.subscribe_id == id,
 			)
-		).first()
+		)
+		subscribe = subscribe.first()
 		if not subscribe:
 			return {"ok": False, "error": "Not found subscriber."}
 
 	elif option.option == DeleteOption.DELETE_SUBSCRIBER.value:
-		subscribe = session.exec(
+		subscribe = await session.exec(
 			select(Subscriber).where(
 				Subscriber.user_id == id,
 				Subscriber.subscribe_id == request.state.user.id,
 			)
-		).first()
+		)
+		subscribe = subscribe.first()
 		if not subscribe:
 			return {"ok": False, "error": "Not found subscriber."}
 
 	if subscribe:
-		session.exec(delete(Subscriber).where(Subscriber.id == subscribe.id))
-		session.commit()
+		await session.exec(delete(Subscriber).where(Subscriber.id == subscribe.id))
+		await session.commit()
 
 	return {"ok": True}

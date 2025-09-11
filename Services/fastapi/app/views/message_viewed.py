@@ -14,17 +14,18 @@ async def post_message_viewed(
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	message_viewed = session.exec(
+	message_viewed = await session.exec(
 		select(MessageViewed).where(
 			MessageViewed.message_id == message_id,
 			MessageViewed.user_id == request.state.user.id,
 		)
-	).first()
+	)
+	message_viewed = message_viewed.first()
 
 	if not message_viewed:
 		message_viewed = MessageViewed(
 			message_id=message_id, user_id=request.state.user.id
 		)
 		session.add(message_viewed)
-		session.commit()
+		await session.commit()
 	return {"ok": True}
