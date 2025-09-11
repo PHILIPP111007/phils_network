@@ -1,8 +1,8 @@
 import "./styles/NavBar.css"
 import { use } from "react"
 import { Link } from "react-router-dom"
-import { UserContext } from "../../../../data/context"
-import { CacheKeys, Language } from "../../../../data/enums"
+import { UserContext } from "../../../../data/context.js"
+import { CacheKeys, Language } from "../../../../data/enums.js"
 
 export default function NavBar() {
 

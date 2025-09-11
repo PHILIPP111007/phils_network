@@ -1,9 +1,9 @@
 import "./styles/FriendCard.css"
 import { useState } from "react"
 import { Link } from "react-router-dom"
-import { CacheKeys, Language } from "../../data/enums"
-import UserStatus from "./UserStatus"
-import showOnlineStatus from "../../modules/showOnlineStatus"
+import { CacheKeys, Language } from "../../data/enums.js"
+import UserStatus from "./UserStatus.jsx"
+import showOnlineStatus from "../../modules/showOnlineStatus.jsx"
 
 export default function FriendCard({ user }) {
 

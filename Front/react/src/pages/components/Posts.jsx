@@ -1,5 +1,5 @@
 import { useMemo } from "react"
-import Post from "./components/Post"
+import Post from "./components/Post.jsx"
 
 export default function Posts({ posts, ...props }) {
 

@@ -1,9 +1,9 @@
 import "./styles/UserStatus.css"
 import { useEffect } from "react"
-import { HttpMethod, UserStatusEnum, CacheKeys, Language } from "../../data/enums"
-import Subscribe from "../../hooks/Subscribe"
-import Fetch from "../../API/Fetch"
-import Button from "./UI/Button"
+import { HttpMethod, UserStatusEnum, CacheKeys, Language } from "../../data/enums.js"
+import Subscribe from "../../hooks/Subscribe.js"
+import Fetch from "../../API/Fetch.js"
+import Button from "./UI/Button.jsx"
 
 export default function UserStatus(props) {
     var language = localStorage.getItem(CacheKeys.LANGUAGE)

@@ -1,9 +1,9 @@
 import "./styles/RoomNavBar.css"
 import { use, useEffect, useState } from "react"
 import { Link } from "react-router-dom"
-import { UserContext } from "../../../data/context"
-import { HttpMethod, CacheKeys, Language } from "../../../data/enums"
-import Fetch from "../../../API/Fetch"
+import { UserContext } from "../../../data/context.js"
+import { HttpMethod, CacheKeys, Language } from "../../../data/enums.js"
+import Fetch from "../../../API/Fetch.js"
 
 export default function RoomNavBar() {
 

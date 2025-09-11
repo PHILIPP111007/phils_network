@@ -1,7 +1,7 @@
 import "./styles/ModalPostEdit.css"
 import { useState } from "react"
-import { CacheKeys, Language } from "../../../data/enums"
-import Button from "../../components/UI/Button"
+import { CacheKeys, Language } from "../../../data/enums.js"
+import Button from "../../components/UI/Button.jsx"
 
 export default function ModalPostCreate(props) {
     var [text, setText] = useState("")

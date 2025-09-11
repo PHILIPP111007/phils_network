@@ -2,9 +2,9 @@ import "./styles/Post.css"
 import { useState } from "react"
 import { Link } from "react-router-dom"
 import ReactMarkdown from "react-markdown"
-import { CacheKeys, Language } from "../../../data/enums"
+import { CacheKeys, Language } from "../../../data/enums.js"
+import Button from "../UI/Button.jsx"
 import settingsLogo from "../../../images/three_points.svg"
-import Button from "../UI/Button"
 
 export default function Post({ post, ...props }) {
 

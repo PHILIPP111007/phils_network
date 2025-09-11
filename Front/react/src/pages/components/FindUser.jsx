@@ -1,8 +1,8 @@
 import "./styles/FindUser.css"
 import { useState } from "react"
-import { CacheKeys, Language } from "../../data/enums"
-import Button from "./UI/Button"
-import Input from "./UI/Input"
+import { CacheKeys, Language } from "../../data/enums.js"
+import Button from "./UI/Button.jsx"
+import Input from "./UI/Input.jsx"
 
 export default function FindUser(props) {
 

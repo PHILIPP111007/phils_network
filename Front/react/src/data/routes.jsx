@@ -1,15 +1,15 @@
 import { lazy } from "react"
-var User = lazy(() => import("../pages/User/User"))
-var News = lazy(() => import("../pages/News"))
-var Friends = lazy(() => import("../pages/Friends/Friends"))
-var FriendsSection = lazy(() => import("../pages/FriendsSection"))
-var SubscriptionsSection = lazy(() => import("../pages/SubscriptionsSection"))
-var SubscribersSection = lazy(() => import("../pages/SubscribersSection"))
-var Rooms = lazy(() => import("../pages/Rooms/Rooms"))
-var RoomInvitations = lazy(() => import("../pages/Rooms/components/RoomInvitations"))
-var Chat = lazy(() => import("../pages/Chat/Chat"))
-var Login = lazy(() => import("../pages/Login/Login"))
-var Register = lazy(() => import("../pages/Register"))
+var User = lazy(() => import("../pages/User/User.jsx"))
+var News = lazy(() => import("../pages/News.jsx"))
+var Friends = lazy(() => import("../pages/Friends/Friends.jsx"))
+var FriendsSection = lazy(() => import("../pages/FriendsSection.jsx"))
+var SubscriptionsSection = lazy(() => import("../pages/SubscriptionsSection.jsx"))
+var SubscribersSection = lazy(() => import("../pages/SubscribersSection.jsx"))
+var Rooms = lazy(() => import("../pages/Rooms/Rooms.jsx"))
+var RoomInvitations = lazy(() => import("../pages/Rooms/components/RoomInvitations.jsx"))
+var Chat = lazy(() => import("../pages/Chat/Chat.jsx"))
+var Login = lazy(() => import("../pages/Login/Login.jsx"))
+var Register = lazy(() => import("../pages/Register.jsx"))
 
 export var PublicRoutes = [
     {

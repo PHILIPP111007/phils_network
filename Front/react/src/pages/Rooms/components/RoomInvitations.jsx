@@ -1,11 +1,11 @@
 import "./styles/RoomInvitations.css"
 import { use, useState, useEffect } from "react"
-import { HttpMethod } from "../../../data/enums"
-import Fetch from "../../../API/Fetch"
-import { UserContext } from "../../../data/context"
-import rememberPage from "../../../modules/rememberPage"
-import MainComponents from "../../components/MainComponents/MainComponents"
-import RoomInvitationCard from "./components/RoomInvitationCard"
+import { HttpMethod } from "../../../data/enums.js"
+import Fetch from "../../../API/Fetch.js"
+import { UserContext } from "../../../data/context.js"
+import rememberPage from "../../../modules/rememberPage.js"
+import MainComponents from "../../components/MainComponents/MainComponents.jsx"
+import RoomInvitationCard from "./components/RoomInvitationCard.jsx"
 
 export default function RoomInvitations() {
 

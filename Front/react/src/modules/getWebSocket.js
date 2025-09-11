@@ -1,4 +1,4 @@
-import { WEBSOCKET_DJANGO_URL, WEBSOCKET_FASTAPI_URL } from "../data/constants"
+import { WEBSOCKET_DJANGO_URL, WEBSOCKET_FASTAPI_URL } from "../data/constants.js"
 import getToken from "./getToken"
 
 export function getWebSocketDjango({ socket_name, path }) {

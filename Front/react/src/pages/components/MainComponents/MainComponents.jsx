@@ -1,10 +1,10 @@
 import { useRef, useState } from "react"
-import Modal from "../../components/Modal"
-import SettingsBar from "../../components/MainComponents/components/SettingsBar"
-import UpperLine from "../../components/MainComponents/components/UpperLine"
-import ModalSettings from "../../components/MainComponents/components/ModalSettings"
-import ModalDelAcc from "../../components/MainComponents/components/ModalDelAcc"
-import NavBar from "../../components/MainComponents/components/NavBar"
+import Modal from "../../components/Modal.jsx"
+import SettingsBar from "../../components/MainComponents/components/SettingsBar.jsx"
+import UpperLine from "../../components/MainComponents/components/UpperLine.jsx"
+import ModalSettings from "../../components/MainComponents/components/ModalSettings.jsx"
+import ModalDelAcc from "../../components/MainComponents/components/ModalDelAcc.jsx"
+import NavBar from "../../components/MainComponents/components/NavBar.jsx"
 
 export default function MainComponents(props) {
 
