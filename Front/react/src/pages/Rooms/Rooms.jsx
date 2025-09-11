@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom"
 import { UserContext } from "../../data/context.js"
 import { HttpMethod, CacheKeys, Language } from "../../data/enums.js"
 import rememberPage from "../../modules/rememberPage.js"
-import { getWebSocketFastAPI } from "../../modules/getWebSocket.js"
+import { getWebSocketDjango } from "../../modules/getWebSocket.js"
 import Fetch from "../../API/Fetch.js"
 import ModalRoomCreate from "./components/ModalRoomCreate.jsx"
 import RoomCard from "./components/RoomCard.jsx"
@@ -96,7 +96,7 @@ export default function Rooms() {
 
     useEffect(() => {
         roomSocket.current = rooms.map((room) => {
-            var socket = getWebSocketFastAPI({ socket_name: "roomSocket", path: `chat/${room.id}/` })
+            var socket = getWebSocketDjango({ socket_name: "roomSocket", path: `chat/${room.id}/` })
             socket.onmessage = (e) => {
                 updateRoomLastMessage(e.data)
             }

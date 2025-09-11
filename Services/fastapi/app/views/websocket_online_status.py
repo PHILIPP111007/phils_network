@@ -14,25 +14,28 @@ async def websocket_online_status(
 	async def _get_user_id() -> int | None:
 		nonlocal token_key
 
-		token = session.exec(select(Token).where(Token.key == token_key)).first()
+		token = await session.exec(select(Token).where(Token.key == token_key))
+		token = token.first()
 		if token:
 			return token.user_id
 
 	async def _online_status_set_true() -> None:
 		nonlocal user_id
 
-		user = session.exec(select(User).where(User.id == user_id)).first()
+		user = await session.exec(select(User).where(User.id == user_id))
+		user = user.first()
 		user.is_online = True
 		session.add(user)
-		session.commit()
+		await session.commit()
 
 	async def _online_status_set_false() -> None:
 		nonlocal user_id
 
-		user = session.exec(select(User).where(User.id == user_id)).first()
+		user = await session.exec(select(User).where(User.id == user_id))
+		user = user.first()
 		user.is_online = False
 		session.add(user)
-		session.commit()
+		await session.commit()
 
 	await websocket.accept()
 	id = await _get_user_id()

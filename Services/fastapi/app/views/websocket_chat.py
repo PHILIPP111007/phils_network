@@ -21,7 +21,8 @@ async def websocket_chat(
 	async def _get_user_id() -> int | None:
 		nonlocal token_key
 
-		token = session.exec(select(Token).where(Token.key == token_key)).first()
+		token = await session.exec(select(Token).where(Token.key == token_key))
+		token = token.first()
 		if token:
 			return token.user_id
 
@@ -30,7 +31,8 @@ async def websocket_chat(
 
 		nonlocal room_id
 
-		room = session.exec(select(Room).where(Room.id == room_id)).one()
+		room = await session.exec(select(Room).where(Room.id == room_id))
+		room = room.one()
 		room_subscribers_ids: set[int] = set(
 			[subscriber.user_id for subscriber in room.room_subscribers]
 		)
@@ -55,8 +57,8 @@ async def websocket_chat(
 
 		if message["save"]:
 			session.add(new_message)
-			session.commit()
-			session.refresh(new_message)
+			await session.commit()
+			await session.refresh(new_message)
 			new_message_sender: dict = new_message.sender.model_dump()
 		else:
 			new_message_sender = message["sender"]
@@ -68,7 +70,7 @@ async def websocket_chat(
 			user_id=message["sender_id"], message_id=new_message["id"]
 		)
 		session.add(message_viewed)
-		session.commit()
+		await session.commit()
 
 		return new_message
 

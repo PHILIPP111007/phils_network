@@ -7,70 +7,20 @@ indent-width = 4
 target-version = "py313"
 
 # Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default. 
-select = ["E", "F"]
-ignore = ["F403"]
+lint.select = ["E", "F"]
+lint.ignore = ["F403"]
 
 # Allow autofix for all enabled rules (when `--fix`) is provided. 
-fixable = [
-	"A",
-	"B",
-	"C",
-	"D",
-	"E",
-	"F",
-	"G",
-	"I",
-	"N",
-	"Q",
-	"S",
-	"T",
-	"W",
-	"ANN",
-	"ARG",
-	"BLE",
-	"COM",
-	"DJ",
-	"DTZ",
-	"EM",
-	"ERA",
-	"EXE",
-	"FBT",
-	"ICN",
-	"INP",
-	"ISC",
-	"NPY",
-	"PD",
-	"PGH",
-	"PIE",
-	"PL",
-	"PT",
-	"PTH",
-	"PYI",
-	"RET",
-	"RSE",
-	"RUF",
-	"SIM",
-	"SLF",
-	"TCH",
-	"TID",
-	"TRY",
-	"UP",
-	"YTT",
-]
-unfixable = []
+lint.unfixable = []
 
 exclude = [".git", ".ruff_cache", "__pypackages__", "build", "venv"]
 
-[tool.ruff.lint]
 # Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
 # Unlike Flake8, Ruff doesn't enable pycodestyle warnings (`W`) or
 # McCabe complexity (`C901`) by default.
-select = ["E4", "E7", "E9", "F"]
-ignore = []
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
-fixable = ["ALL"]
-unfixable = []
+lint.fixable = ["ALL"]
 
 [tool.ruff.format]
 # Like Black, indent with spaces, rather than tabs.

@@ -22,7 +22,8 @@ async def websocket_delete_messsage(
 	async def _get_user_id() -> int | None:
 		nonlocal token_key
 
-		token = session.exec(select(Token).where(Token.key == token_key)).first()
+		token = await session.exec(select(Token).where(Token.key == token_key))
+		token = token.first()
 		if token:
 			return token.user_id
 
@@ -31,7 +32,11 @@ async def websocket_delete_messsage(
 
 		nonlocal room_id
 
-		room = session.exec(select(Room).where(Room.id == room_id)).one()
+		room = await session.exec(
+			select(Room).where(Room.id == room_id).join(Room.room_subscribers)
+		)
+		room = room.one()
+
 		room_subscribers_ids: set[int] = set(
 			[subscriber.user_id for subscriber in room.room_subscribers]
 		)
@@ -43,16 +48,17 @@ async def websocket_delete_messsage(
 
 		nonlocal room_id
 
-		message = session.exec(select(Message).where(Message.id == message_id)).first()
+		message = await session.exec(select(Message).where(Message.id == message_id))
+		message = message.first()
 		if message.file:
 			file_path = os.path.join(MEDIA_ROOT, message.file)
 			s3.delete_object(Bucket=BUCKET_NAME, Key=file_path)
 
-		session.exec(
+		await session.exec(
 			delete(MessageViewed).where(MessageViewed.message_id == message_id)
 		)
-		session.exec(delete(Message).where(Message.id == message_id))
-		session.commit()
+		await session.exec(delete(Message).where(Message.id == message_id))
+		await session.commit()
 
 	await websocket.accept()
 
