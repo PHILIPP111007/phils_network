@@ -3,10 +3,11 @@ import os
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from sqlmodel import delete, select
+from sqlalchemy.orm import joinedload
 
 from app.constants import BUCKET_NAME, MEDIA_ROOT
 from app.database import SessionDep
-from app.models import Message, MessageViewed, Room, Token
+from app.models import Message, MessageViewed, Room, Token, RoomSubscribers
 from app.s3 import s3
 
 router = APIRouter(tags=["websocket_delete_messsage"])
@@ -33,9 +34,11 @@ async def websocket_delete_messsage(
 		nonlocal room_id
 
 		room = await session.exec(
-			select(Room).where(Room.id == room_id).join(Room.room_subscribers)
+			select(Room).where(Room.id == room_id).options(
+				joinedload(Room.room_subscribers).joinedload(RoomSubscribers.user)
+			)
 		)
-		room = room.one()
+		room = room.first()
 
 		room_subscribers_ids: set[int] = set(
 			[subscriber.user_id for subscriber in room.room_subscribers]
