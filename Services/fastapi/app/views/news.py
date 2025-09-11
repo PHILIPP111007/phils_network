@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Request
 from sqlmodel import select
+from sqlalchemy.orm import joinedload
 
 from app.constants import DATETIME_FORMAT, POSTS_TO_LOAD
 from app.database import SessionDep
@@ -34,6 +35,9 @@ async def get_news(session: SessionDep, request: Request, loaded_posts: int):
 		.offset(loaded_posts)
 		.limit(POSTS_TO_LOAD)
 		.order_by(Post.timestamp.desc())
+		.options(
+			joinedload(Post.user)
+		)
 	)
 	query = query.unique().all()
 
