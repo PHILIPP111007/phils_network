@@ -35,9 +35,7 @@ async def get_news(session: SessionDep, request: Request, loaded_posts: int):
 		.offset(loaded_posts)
 		.limit(POSTS_TO_LOAD)
 		.order_by(Post.timestamp.desc())
-		.options(
-			joinedload(Post.user)
-		)
+		.options(joinedload(Post.user))
 	)
 	query = query.unique().all()
 

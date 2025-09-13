@@ -66,7 +66,7 @@ async def get_room(session: SessionDep, request: Request):
 		if last_message:
 			last_message_sender = last_message.sender.username
 			if last_message.file:
-				file_name = await last_message.file.split(os.sep)[-1]
+				file_name = last_message.file.split(os.sep)[-1]
 				last_message_text = file_name
 			else:
 				last_message_text = last_message.text

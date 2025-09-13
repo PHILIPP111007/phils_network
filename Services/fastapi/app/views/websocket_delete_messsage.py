@@ -34,9 +34,9 @@ async def websocket_delete_messsage(
 		nonlocal room_id
 
 		room = await session.exec(
-			select(Room).where(Room.id == room_id).options(
-				joinedload(Room.room_subscribers).joinedload(RoomSubscribers.user)
-			)
+			select(Room)
+			.where(Room.id == room_id)
+			.options(joinedload(Room.room_subscribers).joinedload(RoomSubscribers.user))
 		)
 		room = room.first()
 

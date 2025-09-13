@@ -54,7 +54,7 @@ export default function Chat() {
     async function sendMessage(text) {
         var sendingText = await text.trim()
         if (sendingText.length > 0) {
-            var message = { sender_id: user.id, text: sendingText, file: null, save: true }
+            var message = { sender_id: user.id, text: sendingText, file: null, save: true, room: mainSets.value.room.id }
             await chatSocket.current.send(JSON.stringify({ message: message }))
         }
     }
@@ -163,6 +163,9 @@ export default function Chat() {
                 if (data && data.ok) {
                     mainSets.value.isCreator = data.isCreator
                     mainSets.value.room = data.room
+
+                    // console.log(mainSets.value.room)
+
                     mainSets.value.invitationChanges.subscribers = data.room.subscribers_info.map((user) => {
                         return { ...user, isInRoom: true }
                     })

@@ -1,5 +1,6 @@
 __all__ = ["ChatConsumer"]
 
+import os
 import json
 
 from channels.db import database_sync_to_async
@@ -18,29 +19,19 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		he will be disconnected.
 		"""
 
-		self.room = self.scope["url_route"]["kwargs"]["room"]
-		self.room_group = self.room
-
 		token_key = self.scope["query_string"].decode().split("=")[-1]
-		pk = await _get_user_pk(token_key)
+		pk = await _get_user_pk(token_key=token_key)
 
 		if not pk:
 			await self.close()
 		else:
-			flag = await _check_permission(self, pk)
+			room_id = int(self.scope["url_route"]["kwargs"]["room"])
+			flag = await _check_permission(room_id=room_id, pk=pk)
 			if flag:
-				await self.channel_layer.group_add(self.room_group, self.channel_name)
+				await self.channel_layer.group_add(str(room_id), self.channel_name)
 				await self.accept()
 			else:
 				await self.close()
-
-	async def disconnect(self, close_code):
-		"""
-		Called when a WebSocket connection is closed.
-		Leave room group.
-		"""
-
-		await self.channel_layer.group_discard(self.room_group, self.channel_name)
 
 	async def receive(self, text_data):
 		"""
@@ -50,11 +41,16 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		"""
 
 		text_data = json.loads(text_data)
-		message = await _create_message(self, text_data["message"])
+
+		message = text_data["message"]
+		if message["file"]:
+			message["file"] = os.path.basename(message["file"])
+		else:
+			message = await _create_message(room_id=message["room"], message=message)
 
 		# Send message to room group
 		await self.channel_layer.group_send(
-			self.room_group, {"type": "chat_message", "message": message}
+			str(message["room"]), {"type": "chat_message", "message": message}
 		)
 
 	async def chat_message(self, event):
@@ -80,20 +76,18 @@ def _get_user_pk(token_key: str) -> int | None:
 
 
 @database_sync_to_async
-def _check_permission(self, pk: int) -> bool:
+def _check_permission(room_id: int, pk: int) -> bool:
 	"""Check if user is this room subscriber."""
-
-	room_id = int(self.scope["url_route"]["kwargs"]["room"])
 
 	return MessageService.check_permission(room_id=room_id, subscriber_id=pk)
 
 
 @database_sync_to_async
-def _create_message(self, message: dict) -> dict:
+def _create_message(room_id: int, message: dict) -> dict:
 	"""Create message."""
 
 	msg = MessageService.create(
-		room_id=self.room, sender_id=message["sender_id"], text=message["text"]
+		room_id=room_id, sender_id=message["sender_id"], text=message["text"]
 	)
 
 	return MessageSerializer(msg).data
