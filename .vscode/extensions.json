@@ -1,0 +1,16 @@
+{
+    "recommendations": [
+        "aaron-bond.better-comments",
+        "dbaeumer.vscode-eslint",
+        "gruntfuggly.todo-tree",
+        "ms-azuretools.vscode-containers",
+        "ms-azuretools.vscode-docker",
+        "ms-python.debugpy",
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-python.vscode-python-envs",
+        "vscode-icons-team.vscode-icons",
+        "william-voyek.vscode-nginx",
+        "yzhang.markdown-all-in-one"
+    ]
+}
