@@ -1,5 +1,5 @@
 import "./styles/Loading.css"
-import { CacheKeys, Language } from "../../data/enums"
+import { CacheKeys, Language } from "../../data/enums.js"
 
 export default function Loading() {
     var language = localStorage.getItem(CacheKeys.LANGUAGE)

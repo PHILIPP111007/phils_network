@@ -1,11 +1,11 @@
 import "./styles/ModalRoomEdit.css"
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
-import { FilterOption, HttpMethod, CacheKeys, Language } from "../../../../data/enums"
-import Fetch from "../../../../API/Fetch"
-import Loading from "../../../components/Loading"
-import Button from "../../../components/UI/Button"
-import showOnlineStatus from "../../../../modules/showOnlineStatus"
+import { FilterOption, HttpMethod, CacheKeys, Language } from "../../../../data/enums.js"
+import Fetch from "../../../../API/Fetch.js"
+import Loading from "../../../components/Loading.jsx"
+import Button from "../../../components/UI/Button.jsx"
+import showOnlineStatus from "../../../../modules/showOnlineStatus.jsx"
 
 export default function ModalRoomEdit({ mainSets, me, editRoom }) {
 

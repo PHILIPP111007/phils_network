@@ -1,5 +1,5 @@
 import { useMemo } from "react"
-import Message from "./components/Message"
+import Message from "./components/Message.jsx"
 
 export default function Messages({ messages, downloadFile, deleteMessage }) {
 

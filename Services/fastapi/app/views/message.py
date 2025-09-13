@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Request
 from sqlmodel import select
+from sqlalchemy.orm import joinedload
 
 from app.constants import DATETIME_FORMAT, MESSAGES_TO_LOAD
 from app.database import SessionDep
@@ -15,32 +16,32 @@ async def get_message(
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	room = session.exec(select(Room).where(Room.id == id)).first()
+	room = await session.exec(select(Room).where(Room.id == id))
+	room = room.first()
 	if not room:
 		return {"ok": False, "error": "Not found room."}
 
-	flag = session.exec(
+	flag = await session.exec(
 		select(RoomSubscribers).where(
 			RoomSubscribers.user_id == request.state.user.id,
 			RoomSubscribers.room_id == room.id,
 		)
-	).first()
+	)
+	flag = flag.first()
 	if not flag:
 		return {"ok": False, "error": "Access denied."}
 
-	query = (
-		session.exec(
-			select(Message)
-			.where(
-				Message.room_id == room.id,
-			)
-			.offset(loaded_messages)
-			.limit(MESSAGES_TO_LOAD)
-			.order_by(Message.timestamp.desc())
+	query = await session.exec(
+		select(Message)
+		.where(
+			Message.room_id == room.id,
 		)
-		.unique()
-		.all()
+		.offset(loaded_messages)
+		.limit(MESSAGES_TO_LOAD)
+		.order_by(Message.timestamp.desc())
+		.options(joinedload(Message.sender))
 	)
+	query = query.unique().all()
 	if not query:
 		return {"ok": False, "error": "Not found messages."}
 

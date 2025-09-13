@@ -1,5 +1,5 @@
-import { HttpMethod } from "../data/enums"
-import Fetch from "../API/Fetch"
+import { HttpMethod } from "../data/enums.js"
+import Fetch from "../API/Fetch.js"
 
 export default async function UserSection(props) {
 

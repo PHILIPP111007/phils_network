@@ -1,8 +1,8 @@
 import "./styles/ModalMessage.css"
 import { use } from "react"
-import { UserContext } from "../../../../../data/context"
-import { CacheKeys, Language } from "../../../../../data/enums"
-import Button from "../../../../components/UI/Button"
+import { UserContext } from "../../../../../data/context.js"
+import { CacheKeys, Language } from "../../../../../data/enums.js"
+import Button from "../../../../components/UI/Button.jsx"
 
 
 export default function ModalMessage({ message, deleteMessage }) {

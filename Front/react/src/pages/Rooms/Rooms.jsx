@@ -1,18 +1,18 @@
 import "./styles/Rooms.css"
 import { use, useEffect, useMemo, useRef, useState } from "react"
 import { useParams } from "react-router-dom"
-import { UserContext } from "../../data/context"
-import { HttpMethod, CacheKeys, Language } from "../../data/enums"
-import rememberPage from "../../modules/rememberPage"
-import { getWebSocketFastAPI } from "../../modules/getWebSocket"
-import Fetch from "../../API/Fetch"
-import ModalRoomCreate from "./components/ModalRoomCreate"
-import RoomCard from "./components/RoomCard"
-import MainComponents from "../components/MainComponents/MainComponents"
-import RoomNavBar from "./components/RoomNavBar"
-import Modal from "../components/Modal"
-import ScrollToTopOrBottom from "../components/MainComponents/components/ScrollToTopOrBottom"
-import Button from "../components/UI/Button"
+import { UserContext } from "../../data/context.js"
+import { HttpMethod, CacheKeys, Language } from "../../data/enums.js"
+import rememberPage from "../../modules/rememberPage.js"
+import { getWebSocketDjango } from "../../modules/getWebSocket.js"
+import Fetch from "../../API/Fetch.js"
+import ModalRoomCreate from "./components/ModalRoomCreate.jsx"
+import RoomCard from "./components/RoomCard.jsx"
+import MainComponents from "../components/MainComponents/MainComponents.jsx"
+import RoomNavBar from "./components/RoomNavBar.jsx"
+import Modal from "../components/Modal.jsx"
+import ScrollToTopOrBottom from "../components/MainComponents/components/ScrollToTopOrBottom.jsx"
+import Button from "../components/UI/Button.jsx"
 
 export default function Rooms() {
 
@@ -96,7 +96,7 @@ export default function Rooms() {
 
     useEffect(() => {
         roomSocket.current = rooms.map((room) => {
-            var socket = getWebSocketFastAPI({ socket_name: "roomSocket", path: `chat/${room.id}/` })
+            var socket = getWebSocketDjango({ socket_name: "roomSocket", path: `chat/${room.id}/` })
             socket.onmessage = (e) => {
                 updateRoomLastMessage(e.data)
             }

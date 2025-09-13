@@ -14,10 +14,11 @@ async def post_online_status_true(
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	user = session.exec(select(User).where(User.id == request.state.user.id)).first()
+	user = await session.exec(select(User).where(User.id == request.state.user.id))
+	user = user.first()
 	user.is_online = True
 	session.add(user)
-	session.commit()
+	await session.commit()
 
 	return {"ok": True}
 
@@ -27,9 +28,10 @@ async def post_online_status_false(session: SessionDep, request: Request):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	user = session.exec(select(User).where(User.id == request.state.user.id)).first()
+	user = await session.exec(select(User).where(User.id == request.state.user.id))
+	user = user.first()
 	user.is_online = False
 	session.add(user)
-	session.commit()
+	await session.commit()
 
 	return {"ok": True}

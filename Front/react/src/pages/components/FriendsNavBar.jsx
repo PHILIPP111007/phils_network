@@ -1,9 +1,9 @@
 import "./styles/FriendsNavBar.css"
 import { useEffect, useState, use } from "react"
 import { Link } from "react-router-dom"
-import { FilterOption, HttpMethod, CacheKeys, Language } from "../../data/enums"
-import { UserContext } from "../../data/context"
-import Fetch from "../../API/Fetch"
+import { FilterOption, HttpMethod, CacheKeys, Language } from "../../data/enums.js"
+import { UserContext } from "../../data/context.js"
+import Fetch from "../../API/Fetch.js"
 
 export default function FriendsNavBar() {
 

@@ -8,14 +8,13 @@ from app.models import Subscriber
 
 
 async def get_subscribers_sets(session: SessionDep, id: int):
-    set_1 = (
-        session.exec(select(Subscriber.subscribe_id).where(Subscriber.user_id == id))
-        .unique()
-        .all()
-    )
-    set_2 = (
-        session.exec(select(Subscriber.user_id).where(Subscriber.subscribe_id == id))
-        .unique()
-        .all()
-    )
-    return set_1, set_2
+	set_1 = await session.exec(
+		select(Subscriber.subscribe_id).where(Subscriber.user_id == id)
+	)
+	set_1 = set_1.unique().all()
+
+	set_2 = await session.exec(
+		select(Subscriber.user_id).where(Subscriber.subscribe_id == id)
+	)
+	set_2 = set_2.unique().all()
+	return set_1, set_2

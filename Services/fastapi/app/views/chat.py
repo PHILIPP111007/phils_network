@@ -4,6 +4,7 @@ from datetime import datetime
 from fastapi import APIRouter, Request
 from pydantic import BaseModel
 from sqlmodel import delete, select
+from sqlalchemy.orm import joinedload
 
 from app.constants import BUCKET_NAME, DATETIME_FORMAT, MEDIA_ROOT
 from app.database import SessionDep
@@ -28,7 +29,13 @@ async def get_chat(session: SessionDep, request: Request, id: int):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	room = session.exec(select(Room).where(Room.id == id)).first()
+	room = await session.exec(
+		select(Room)
+		.where(Room.id == id)
+		.options(joinedload(Room.room_subscribers).joinedload(RoomSubscribers.user))
+	)
+	room = room.first()
+
 	if not room:
 		return {"ok": False, "error": "Not found room."}
 
@@ -68,7 +75,8 @@ async def put_chat(
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	room = session.exec(select(Room).where(Room.id == id)).first()
+	room = await session.exec(select(Room).where(Room.id == id))
+	room = room.first()
 	if not room:
 		return {"ok": False, "error": "Not found room."}
 
@@ -81,33 +89,34 @@ async def put_chat(
 				timestamp=datetime.now(),
 			)
 			session.add(room_invitation)
-		session.commit()
+		await session.commit()
 
 	if friends_and_subscribers.subscribers:
 		for user_id in friends_and_subscribers.subscribers:
-			session.exec(
+			await session.exec(
 				delete(RoomSubscribers).where(
 					RoomSubscribers.user_id == user_id,
 					RoomSubscribers.room_id == room.id,
 				)
 			)
-		session.commit()
+		await session.commit()
 
 	if not room.room_subscribers:
-		messages = (
-			session.exec(select(Message).where(Message.room_id == room.id))
-			.unique()
-			.all()
-		)
+		messages = await session.exec(select(Message).where(Message.room_id == room.id))
+		messages = messages.unique().all()
 		for message in messages:
 			if message.file:
 				file_path = os.path.join(MEDIA_ROOT, message.file)
 				s3.delete_object(Bucket=BUCKET_NAME, Key=file_path)
 
-		session.exec(delete(Room).where(Room.id == room.id))
-		session.exec(delete(Message).where(Message.room_id == room.id))
-		session.exec(delete(RoomInvitation).where(RoomInvitation.room_id == room.id))
-		session.exec(delete(RoomSubscribers).where(RoomSubscribers.room_id == room.id))
-		session.commit()
+		await session.exec(delete(Room).where(Room.id == room.id))
+		await session.exec(delete(Message).where(Message.room_id == room.id))
+		await session.exec(
+			delete(RoomInvitation).where(RoomInvitation.room_id == room.id)
+		)
+		await session.exec(
+			delete(RoomSubscribers).where(RoomSubscribers.room_id == room.id)
+		)
+		await session.commit()
 
 	return {"ok": True}

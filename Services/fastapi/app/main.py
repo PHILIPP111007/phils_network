@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request
 from sqlmodel import Session, select
 
 from app.database import engine
+from sqlmodel.ext.asyncio.session import AsyncSession
 from app.models import Token, User
 from app.views import (
 	chat,
@@ -22,7 +23,7 @@ from app.views import (
 
 app = FastAPI(
 	title="phils_network",
-	version="3.0.0",
+	version="1.1.0",
 	description="### Minimalistic social network written using Django, FastAPI and React.",
 	contact={
 		"name": "Roshchin Philipp",
@@ -33,7 +34,10 @@ app = FastAPI(
 		"name": "MIT",
 		"identifier": "MIT",
 	},
+	openapi_url="/docs/openapi.json",
 )
+
+app.openapi_version = "3.0.0"
 
 
 #########################################
@@ -48,10 +52,12 @@ async def middleware_add_user_to_request(request: Request, call_next):
 	token = request.headers.get("Authorization")
 	if token:
 		token = token.split(" ")[1]  # Remove "Bearer"
-		with Session(engine) as session:
-			token = session.exec(select(Token).where(Token.key == token)).first()
+		async with AsyncSession(engine) as session:
+			token = await session.exec(select(Token).where(Token.key == token))
+			token = token.first()
 			if token:
-				user = session.exec(select(User).where(User.id == token.user_id)).one()
+				user = await session.exec(select(User).where(User.id == token.user_id))
+				user = user.one()
 				if user:
 					request.state.user = User(id=user.id, username=user.username)
 					response = await call_next(request)

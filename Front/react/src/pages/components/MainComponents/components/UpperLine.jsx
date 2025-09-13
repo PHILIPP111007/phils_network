@@ -1,13 +1,13 @@
 import "./styles/UpperLine.css"
 import { use } from "react"
 import { useParams } from "react-router-dom"
-import { UserContext, AuthContext } from "../../../../data/context"
-import { useSetUser, useAuth } from "../../../../hooks/useAuth"
-import { showLanguage, setLanguage } from "../../../../modules/language"
-import { CacheKeys, Language } from "../../../../data/enums"
-import showHideBar from "../../../../modules/showHideBar"
+import { UserContext, AuthContext } from "../../../../data/context.js"
+import { useSetUser, useAuth } from "../../../../hooks/useAuth.js"
+import { showLanguage, setLanguage } from "../../../../modules/language.jsx"
+import { CacheKeys, Language } from "../../../../data/enums.js"
+import showHideBar from "../../../../modules/showHideBar.js"
 import menuLogo from "../../../../images/lines_menu_burger_icon.svg"
-import Loading from "../../Loading"
+import Loading from "../../Loading.jsx"
 
 export default function UpperLine(props) {
 
