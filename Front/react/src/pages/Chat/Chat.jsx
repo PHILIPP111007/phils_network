@@ -77,44 +77,52 @@ export default function Chat() {
         }
     }
 
-
     async function downloadFile(message) {
-        var action = `api/v1/file_download/${message.id}/${user.username}/`
-        var token = getToken()
+        try {
+            const action = `api/v1/file_download/${message.id}/${user.username}/`
+            const token = getToken()
 
-        var data = await fetch(`${FETCH_URL}${action}`, {
-            method: "GET",
-            headers: {
-                "Access-Control-Allow-Origin": "*",
-                "Authorization": token ? `Token ${token}` : "",
-            },
-        })
-            .then((data) => {
-                return data.blob()
-            })
-            .catch((error) => console.error(error))
+            const response = await fetch(`${FETCH_URL}${action}`, {
+                method: "GET",
+                headers: {
+                    "Access-Control-Allow-Origin": "*",
+                    "Authorization": token ? `Token ${token}` : "",
+                },
+            });
 
-        if (data) {
-            var blob = new Blob([data], { type: "octet/stream" })
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`)
+            }
 
-            // Create URL for Blob
-            var url = URL.createObjectURL(blob)
+            const contentDisposition = response.headers.get('Content-Disposition')
+            let filename = message.file.split('/').pop()
+            
+            if (contentDisposition) {
+                const filenameMatch = contentDisposition.match(/filename="?(.+)"?/)
+                if (filenameMatch && filenameMatch[1]) {
+                    filename = filenameMatch[1]
+                }
+            }
 
-            var a = document.createElement('a')
+            const blob = await response.blob()
+            const url = URL.createObjectURL(blob)
+
+            const a = document.createElement('a')
             document.body.appendChild(a)
             a.style = "display: none"
             a.href = url
-
-            var message_file_len = message.file.split('/').length - 1
-            a.download = message.file.split('/')[message_file_len]
-
+            a.download = filename
             a.click()
 
-            document.body.removeChild(a)
-            URL.revokeObjectURL(url)
+            setTimeout(() => {
+                document.body.removeChild(a)
+                URL.revokeObjectURL(url)
+            }, 100);
+            
+        } catch (error) {
+            console.error('Download error:', error)
         }
     }
-
 
     async function editRoom() {
         var subscribers = mainSets.value.invitationChanges.subscribers.filter((user) => user.isInRoom === false)

@@ -1,12 +1,10 @@
-# phils_network
+# Phils network v1.1.0
 
 Minimalistic social network written using Django, FastAPI and React.
 
 > You may donate to [phils_network](https://github.com/PHILIPP111007/phils_network) project:
 >
 > * Ethereum: 0xE2e2D675a3843f4ED211BB93847ad18b0A6fe7c6
-
-Welcome to version 1.1.0!
 
 ## What supports this app
 
