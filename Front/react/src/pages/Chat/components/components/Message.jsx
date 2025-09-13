@@ -6,6 +6,7 @@ import { CacheKeys, Language } from "../../../../data/enums.js"
 import ModalMessage from "./components/ModalMessage.jsx"
 import Modal from "../../../components/Modal.jsx"
 import Button from "../../../components/UI/Button.jsx"
+import fileIcon from "../../../../images/file-icon.svg"
 
 export default function Message({ message, downloadFile, deleteMessage }) {
 
@@ -54,6 +55,7 @@ export default function Message({ message, downloadFile, deleteMessage }) {
                             <p className="timestamp">{message.sender.first_name} {message.sender.last_name} @{message.sender.username} {message.timestamp}</p>
                         </Link>
                     </div>
+                    <img src={fileIcon} alt="file icon" width={50} />
                     <div className="downloadButton">
                         <Button onClick={() => downloadFile(message)}>Download file</Button>
                     </div>
@@ -76,6 +78,7 @@ export default function Message({ message, downloadFile, deleteMessage }) {
                             <p className="timestamp">{message.sender.first_name} {message.sender.last_name} @{message.sender.username} {message.timestamp}</p>
                         </Link>
                     </div>
+                    <img src={fileIcon} alt="file icon" width={50} />
                     <div className="downloadButton">
                         <Button onClick={() => downloadFile(message)}>Скачать файл</Button>
                     </div>
