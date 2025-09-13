@@ -23,7 +23,7 @@ from app.views import (
 
 app = FastAPI(
 	title="phils_network",
-	version="3.0.0",
+	version="1.1.0",
 	description="### Minimalistic social network written using Django, FastAPI and React.",
 	contact={
 		"name": "Roshchin Philipp",
@@ -34,7 +34,10 @@ app = FastAPI(
 		"name": "MIT",
 		"identifier": "MIT",
 	},
+	openapi_url="/docs/openapi.json",
 )
+
+app.openapi_version = "3.0.0"
 
 
 #########################################
