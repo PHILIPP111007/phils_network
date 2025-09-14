@@ -57,6 +57,7 @@ input[type=file]::file-selector-button {
 
     .UserCard {
         background-color: rgb(202, 195, 195);
+        color: rgb(0, 0, 0);
     }
 
     .Post,
@@ -170,6 +171,7 @@ input[type=file]::file-selector-button {
 
     .UserCard {
         background-color: rgb(57, 57, 61);
+        color: rgb(205, 205, 205);
     }
 
     .Post,
