@@ -67,7 +67,7 @@ export default function ModalSettings(props) {
                 <Button onClick={() => {
                     props.setModalSettings(false)
                     props.setModalDelAcc(true)
-                }} >
+                }} variant="danger" >
                     delete account
                 </Button>
             </div>
@@ -113,7 +113,7 @@ export default function ModalSettings(props) {
                 <Button onClick={() => {
                     props.setModalSettings(false)
                     props.setModalDelAcc(true)
-                }} >
+                }} variant="danger" >
                     удалить аккаунт
                 </Button>
             </div>

@@ -6,26 +6,26 @@
 
 /* Light Theme */
 
-.light button,
-.light input[type="submit"],
-.light input[type="reset"] {
+.light_theme button,
+.light_theme input[type="submit"],
+.light_theme input[type="reset"] {
     background-color: rgb(205, 205, 205);
     color: rgb(44, 42, 42);
 }
 
-.light textarea {
+.light_theme textarea {
     background-color: rgb(250, 244, 244);
     color: rgb(0, 0, 0);
 }
 
-.light input[type="text"],
-.light input[type="email"],
+.light_theme input[type="text"],
+.light_theme input[type="email"],
 input[type=file]::file-selector-button {
     background-color: rgb(250, 244, 244);
     color: rgb(44, 42, 42);
 }
 
-.light {
+.light_theme {
     background-color: rgb(250, 244, 244);
     color: rgb(0, 0, 0);
 
@@ -104,30 +104,30 @@ input[type=file]::file-selector-button {
 
 /* Dark Theme */
 
-.dark a {
+.dark_theme a {
     color: rgb(205, 205, 205);
 }
 
-.dark button,
-.dark input[type="submit"],
-.dark input[type="reset"],
+.dark_theme button,
+.dark_theme input[type="submit"],
+.dark_theme input[type="reset"],
 input[type=file]::file-selector-button {
     background-color: rgb(101, 101, 110);
     color: rgb(205, 205, 205);
 }
 
-.dark textarea {
+.dark_theme textarea {
     background-color: rgb(43, 43, 43);
     color: rgb(205, 205, 205);
 }
 
-.dark input[type="text"],
-.dark input[type="email"] {
+.dark_theme input[type="text"],
+.dark_theme input[type="email"] {
     background-color: rgb(43, 43, 43);
     color: rgb(205, 205, 205);
 }
 
-.dark {
+.dark_theme {
     background-color: rgb(43, 43, 43);
     color: rgb(205, 205, 205);
 

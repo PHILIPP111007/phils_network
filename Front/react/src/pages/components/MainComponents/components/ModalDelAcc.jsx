@@ -31,7 +31,7 @@ export default function ModalDelAcc() {
             <div className="ModalDelAcc">
                 <h2>Are you sure?</h2>
                 <br />
-                <Button onClick={() => deleteAccount()} >delete account</Button>
+                <Button onClick={() => deleteAccount()} variant="danger" >delete account</Button>
             </div>
         )
     } else if (language === Language.RU) {
@@ -39,7 +39,7 @@ export default function ModalDelAcc() {
             <div className="ModalDelAcc">
                 <h2>Вы уверены?</h2>
                 <br />
-                <Button onClick={() => deleteAccount()} >удалить аккаунт</Button>
+                <Button onClick={() => deleteAccount()} variant="danger" >удалить аккаунт</Button>
             </div>
         )
     }
