@@ -55,7 +55,8 @@ input[type=file]::file-selector-button {
         background-color: rgb(220, 220, 220);
     }
 
-    .UserCard {
+    .UserCard,
+    .W3Card {
         background-color: rgb(202, 195, 195);
         color: rgb(0, 0, 0);
     }
@@ -169,7 +170,8 @@ input[type=file]::file-selector-button {
         background-color: rgba(50, 50, 50);
     }
 
-    .UserCard {
+    .UserCard,
+    .W3Card {
         background-color: rgb(57, 57, 61);
         color: rgb(205, 205, 205);
     }
