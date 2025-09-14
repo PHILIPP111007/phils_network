@@ -9,7 +9,7 @@ import Input from "../../UI/Input.jsx"
 export default function ModalSettings(props) {
 
     var { user, setUser } = use(UserContext)
-    var [userNew, setUserNew] = useState({ first_name: "", last_name: "", email: "" })
+    var [userNew, setUserNew] = useState({ first_name: "", last_name: "", email: "" , ethereum_address: "", infura_api_key: ""})
     var language = localStorage.getItem(CacheKeys.LANGUAGE)
 
     async function userUpdate(event) {
@@ -55,6 +55,22 @@ export default function ModalSettings(props) {
                         placeholder="email"
                         value={userNew.email}
                         onChange={(e) => setUserNew({ ...userNew, email: e.target.value })}
+                    />
+                    <br />
+                    <Input
+                        type="text"
+                        className="form-control"
+                        placeholder="ethereum address"
+                        value={userNew.ethereum_address}
+                        onChange={(e) => setUserNew({ ...userNew, ethereum_address: e.target.value })}
+                    />
+                    <br />
+                    <Input
+                        type="text"
+                        className="form-control"
+                        placeholder="infura api key"
+                        value={userNew.infura_api_key}
+                        onChange={(e) => setUserNew({ ...userNew, infura_api_key: e.target.value })}
                     />
                     <br />
                     <Button onClick={(e) => userUpdate(e)} >upload</Button>
@@ -105,6 +121,22 @@ export default function ModalSettings(props) {
                         placeholder="email"
                         value={userNew.email}
                         onChange={(e) => setUserNew({ ...userNew, email: e.target.value })}
+                    />
+                    <br />
+                    <Input
+                        type="text"
+                        className="form-control"
+                        placeholder="ethereum address"
+                        value={userNew.ethereum_address}
+                        onChange={(e) => setUserNew({ ...userNew, ethereum_address: e.target.value })}
+                    />
+                    <br />
+                    <Input
+                        type="text"
+                        className="form-control"
+                        placeholder="infura api key"
+                        value={userNew.infura_api_key}
+                        onChange={(e) => setUserNew({ ...userNew, infura_api_key: e.target.value })}
                     />
                     <br />
                     <Button onClick={(e) => userUpdate(e)} >upload</Button>

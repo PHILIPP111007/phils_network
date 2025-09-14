@@ -49,6 +49,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 	)
 	is_online = models.BooleanField(default=False)
 
+	ethereum_address = models.CharField(
+		_("ethereum address"), max_length=150, blank=True
+	)
+	infura_api_key = models.CharField(_("infura api key"), max_length=150, blank=True)
+
 	objects = UserManager()
 
 	EMAIL_FIELD = "email"

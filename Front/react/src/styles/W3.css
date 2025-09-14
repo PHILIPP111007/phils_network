@@ -1,0 +1,11 @@
+.W3 {
+    align-items: center;
+    display: flex;
+    margin: 50px auto;
+}
+
+.W3Card {
+    margin: 100px auto;
+    max-width: 800px;
+    padding: 10px;
+}

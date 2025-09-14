@@ -10,6 +10,7 @@ var RoomInvitations = lazy(() => import("../pages/Rooms/components/RoomInvitatio
 var Chat = lazy(() => import("../pages/Chat/Chat.jsx"))
 var Login = lazy(() => import("../pages/Login/Login.jsx"))
 var Register = lazy(() => import("../pages/Register.jsx"))
+var W3 = lazy(() => import("../pages/W3.jsx"))
 
 export var PublicRoutes = [
     {
@@ -71,5 +72,10 @@ export var PrivateRoutes = [
         path: "/chats/:username/:room_id/",
         name: "chat",
         element: <Chat />
+    },
+    {
+        path: "/w3/:username/",
+        name: "W3",
+        element: <W3 />
     },
 ]

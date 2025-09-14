@@ -3,7 +3,7 @@ import "../../styles/Posts.css"
 import { use, useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { useInView } from "react-intersection-observer"
-import Card from 'react-bootstrap/Card';
+import Card from "react-bootstrap/Card"
 import { UserContext, AuthContext } from "../../data/context.js"
 import { useSetUser } from "../../hooks/useAuth.js"
 import { HttpMethod } from "../../data/enums.js"

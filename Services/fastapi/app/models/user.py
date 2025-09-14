@@ -14,6 +14,9 @@ class User(SQLModel, table=True):
 	last_name: str
 	is_online: bool
 
+	ethereum_address: str
+	infura_api_key: str
+
 	# Relations
 	tokens: list["Token"] = Relationship(back_populates="user")
 	blogs: list["Post"] = Relationship(back_populates="user")

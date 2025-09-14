@@ -25,6 +25,9 @@ export default function NavBar() {
                     <p>
                         <Link to={`/friends/${user.username}/`}>Friends</Link>
                     </p>
+                    <p>
+                        <Link to={`/w3/${user.username}/`}>W3</Link>
+                    </p>
                 </nav>
             </aside>
         )
@@ -43,6 +46,9 @@ export default function NavBar() {
                     </p>
                     <p>
                         <Link to={`/friends/${user.username}/`}>Друзья</Link>
+                    </p>
+                    <p>
+                        <Link to={`/w3/${user.username}/`}>W3</Link>
                     </p>
                 </nav>
             </aside>
