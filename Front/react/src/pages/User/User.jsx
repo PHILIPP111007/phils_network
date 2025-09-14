@@ -77,16 +77,20 @@ export default function User() {
     }
 
     async function createPost(text) {
-        setModalPostCreate(false)
-        var newPost = {
-            user: user.id,
-            content: text,
-        }
+        var sendingText = await text.trim()
 
-        var data = await Fetch({ action: "api/v2/blog/", method: HttpMethod.POST, body: newPost })
-        if (data && data.ok) {
-            newPost = { ...data.post, postLen500: data.post.content.length > 500, btnFlag: true }
-            setPosts([newPost, ...posts])
+        if (sendingText.length > 0) {
+            setModalPostCreate(false)
+            var newPost = {
+                user: user.id,
+                content: sendingText,
+            }
+    
+            var data = await Fetch({ action: "api/v2/blog/", method: HttpMethod.POST, body: newPost })
+            if (data && data.ok) {
+                newPost = { ...data.post, postLen500: data.post.content.length > 500, btnFlag: true }
+                setPosts([newPost, ...posts])
+            }
         }
     }
 
