@@ -35,6 +35,7 @@ export default function ModalSettings(props) {
                 <form>
                     <Input
                         type="text"
+                        className="form-control"
                         placeholder="first name"
                         value={userNew.first_name}
                         onChange={(e) => setUserNew({ ...userNew, first_name: e.target.value })}
@@ -42,6 +43,7 @@ export default function ModalSettings(props) {
                     <br />
                     <Input
                         type="text"
+                        className="form-control"
                         placeholder="last name"
                         value={userNew.last_name}
                         onChange={(e) => setUserNew({ ...userNew, last_name: e.target.value })}
@@ -49,6 +51,7 @@ export default function ModalSettings(props) {
                     <br />
                     <Input
                         type="email"
+                        className="form-control"
                         placeholder="email"
                         value={userNew.email}
                         onChange={(e) => setUserNew({ ...userNew, email: e.target.value })}
@@ -57,6 +60,7 @@ export default function ModalSettings(props) {
                     <Button onClick={(e) => userUpdate(e)} >upload</Button>
                     <Input
                         type="reset"
+                        className="form-control"
                         value="reset"
                         onClick={() => setUserNew({ ...user })}
                     />
@@ -81,6 +85,7 @@ export default function ModalSettings(props) {
                 <form>
                     <Input
                         type="text"
+                        className="form-control"
                         placeholder="имя"
                         value={userNew.first_name}
                         onChange={(e) => setUserNew({ ...userNew, first_name: e.target.value })}
@@ -88,6 +93,7 @@ export default function ModalSettings(props) {
                     <br />
                     <Input
                         type="text"
+                        className="form-control"
                         placeholder="фамилия"
                         value={userNew.last_name}
                         onChange={(e) => setUserNew({ ...userNew, last_name: e.target.value })}
@@ -95,6 +101,7 @@ export default function ModalSettings(props) {
                     <br />
                     <Input
                         type="email"
+                        className="form-control"
                         placeholder="email"
                         value={userNew.email}
                         onChange={(e) => setUserNew({ ...userNew, email: e.target.value })}
@@ -103,6 +110,7 @@ export default function ModalSettings(props) {
                     <Button onClick={(e) => userUpdate(e)} >upload</Button>
                     <Input
                         type="reset"
+                        className="form-control"
                         value="reset"
                         onClick={() => setUserNew({ ...user })}
                     />

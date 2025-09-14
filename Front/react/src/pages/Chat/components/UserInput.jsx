@@ -37,7 +37,7 @@ export default function UserInput({ mainSets, sendMessage, editRoom }) {
 
                 <div className="UserInput">
                     <form onChange={e => setSelectedFile(e.target.files[0])} className="uploadFileForm">
-                        <Input id="formFile" class="form-control" type="file" />
+                        <Input id="formFile" className="form-control" type="file" />
                     </form>
                     <img
                         id="SettingsButton"
