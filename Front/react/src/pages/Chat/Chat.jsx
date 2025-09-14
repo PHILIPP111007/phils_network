@@ -51,29 +51,27 @@ export default function Chat() {
         }
     }
 
-    async function sendMessage(text) {
+    async function sendMessage(text, file) {
         var sendingText = await text.trim()
-        if (sendingText.length > 0) {
-            var message = { sender_id: user.id, text: sendingText, file: null, save: true, room: mainSets.value.room.id }
-            await chatSocket.current.send(JSON.stringify({ message: message }))
-        }
-    }
 
-    async function sendFileMessage(event) {
-        event.preventDefault()
+        if (file) {
+            var formData = new FormData()
+            formData.append('file', file)
+            formData.append('text', sendingText)
 
-        var uploadFileInput = document.getElementById("uploadFileInput")
-        var file = uploadFileInput.files[0]
+            var data = await Fetch({
+                action: `api/v1/file_upload/${params.room_id}/`, method: HttpMethod.POST, body: formData, is_uploading_file: true
+            })
 
-        var formData = new FormData()
-        formData.append('file', file)
-
-        var data = await Fetch({
-            action: `api/v1/file_upload/${params.room_id}/`, method: HttpMethod.POST, body: formData, is_uploading_file: true
-        })
-        if (data && data.ok) {
-            var message = { ...data.message, sender_id: user.id, text: "", save: false, sender: { username: user.username, first_name: user.first_name, last_name: user.last_name } }
-            await chatSocket.current.send(JSON.stringify({ message: message }))
+            if (data && data.ok) {
+                var message = { ...data.message, sender_id: user.id, text: sendingText, save: false, sender: { username: user.username, first_name: user.first_name, last_name: user.last_name } }
+                await chatSocket.current.send(JSON.stringify({ message: message }))
+            }
+        } else {
+            if (sendingText.length > 0) {
+                var message = { sender_id: user.id, text: sendingText, file: null, save: true, room: mainSets.value.room.id }
+                await chatSocket.current.send(JSON.stringify({ message: message }))
+            }
         }
     }
 
@@ -242,7 +240,7 @@ export default function Chat() {
 
             <Messages messages={messages} downloadFile={downloadFile} deleteMessage={deleteMessage} />
 
-            <UserInput mainSets={mainSets} sendMessage={sendMessage} editRoom={editRoom} sendFileMessage={sendFileMessage} />
+            <UserInput mainSets={mainSets} sendMessage={sendMessage} editRoom={editRoom} />
 
             <div className="Wrapper-InView" ref={wrapperRef} ></div>
 
