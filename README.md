@@ -143,8 +143,12 @@ Home page:
 
 <img src="pictures/home_page.png" alt="alt text" width="1000"/>
 <br />
-<br />
 
 Chat page:
 
 <img src="pictures/chat_page.png" alt="alt text" width="1000"/>
+
+Ethereum balance:
+
+<img src="pictures/ethereum_balance.png" alt="alt text" width="1000"/>
+<br />
