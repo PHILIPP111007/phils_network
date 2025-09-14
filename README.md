@@ -20,6 +20,8 @@ Minimalistic social network written using Django, FastAPI and React.
 
 * [x] You can send and download files.
 
+* [x] You can see your Ethereum wallet.
+
 \
 Have fun and if you want please leave feedback!
 
