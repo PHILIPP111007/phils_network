@@ -8,11 +8,12 @@ import Input from "../../components/UI/Input.jsx"
 import settingsLogo from "../../../images/three_points_gray.svg"
 import sendIcon from "../../../images/send-icon.svg"
 
-export default function UserInput({ mainSets, sendMessage, editRoom, sendFileMessage }) {
+export default function UserInput({ mainSets, sendMessage, editRoom }) {
 
     var { user } = use(UserContext)
     var [modalRoomEdit, setModalRoomEdit] = useState(false)
     var [text, setText] = useState("")
+    var [selectedFile, setSelectedFile] = useState(null)
     var language = localStorage.getItem(CacheKeys.LANGUAGE)
 
     function hideUserInput() {
@@ -35,9 +36,8 @@ export default function UserInput({ mainSets, sendMessage, editRoom, sendFileMes
                 </Modal>
 
                 <div className="UserInput">
-                    <form onSubmit={e => sendFileMessage(e)} className="uploadFileForm">
-                        <Input id="uploadFileInput" type="file" />
-                        <Input type="submit" value="Send file" />
+                    <form onChange={e => setSelectedFile(e.target.files[0])} className="uploadFileForm">
+                        <Input id="formFile" className="form-control" type="file" />
                     </form>
                     <img
                         id="SettingsButton"
@@ -49,14 +49,14 @@ export default function UserInput({ mainSets, sendMessage, editRoom, sendFileMes
                         alt="settings button"
                     />
                     <textarea
-                        className="TextArea"
+                        class="TextArea"
                         placeholder="Use markdown to format your text..."
                         value={text}
                         maxLength="5000"
                         onChange={(e) => setText(e.target.value)}
                     />
                     <img id="SendButton" src={sendIcon} onClick={() => {
-                        sendMessage(text)
+                        sendMessage(text, selectedFile)
                         setText("")
                     }} alt="send button" />
                 </div>
@@ -70,9 +70,8 @@ export default function UserInput({ mainSets, sendMessage, editRoom, sendFileMes
                 </Modal>
 
                 <div className="UserInput">
-                    <form onSubmit={e => sendFileMessage(e)} className="uploadFileForm">
-                        <Input id="uploadFileInput" type="file" />
-                        <Input type="submit" value="Отправить файл" />
+                    <form onChange={e => setSelectedFile(e.target.files[0])} className="uploadFileForm">
+                        <Input id="formFile" class="form-control" type="file" />
                     </form>
                     <img
                         id="SettingsButton"
@@ -84,14 +83,14 @@ export default function UserInput({ mainSets, sendMessage, editRoom, sendFileMes
                         alt="кнопка настроек"
                     />
                     <textarea
-                        className="TextArea"
+                        class="TextArea"
                         placeholder="Используйте Markdown для форматирования текста..."
                         value={text}
                         maxLength="5000"
                         onChange={(e) => setText(e.target.value)}
                     />
                     <img id="SendButton" src={sendIcon} onClick={() => {
-                        sendMessage(text)
+                        sendMessage(text, selectedFile)
                         setText("")
                     }} alt="кнопка отправки" />
                 </div>

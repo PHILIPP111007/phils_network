@@ -18,8 +18,8 @@ export var HttpMethod = {
 }
 
 export var Theme = {
-    LIGHT: "light",
-    DARK: "dark"
+    LIGHT: "light_theme",
+    DARK: "dark_theme"
 }
 
 export var FilterOption = {

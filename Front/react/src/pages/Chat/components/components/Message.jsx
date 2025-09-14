@@ -55,6 +55,9 @@ export default function Message({ message, downloadFile, deleteMessage }) {
                             <p className="timestamp">{message.sender.first_name} {message.sender.last_name} @{message.sender.username} {message.timestamp}</p>
                         </Link>
                     </div>
+                    <div className="text">
+                        <ReactMarkdown children={message.text} />
+                    </div>
                     <img src={fileIcon} alt="file icon" width={50} />
                     <div className="downloadButton">
                         <Button onClick={() => downloadFile(message)}>Download file</Button>
@@ -77,6 +80,9 @@ export default function Message({ message, downloadFile, deleteMessage }) {
                         <Link to={`/users/${message.sender.username}/`} >
                             <p className="timestamp">{message.sender.first_name} {message.sender.last_name} @{message.sender.username} {message.timestamp}</p>
                         </Link>
+                    </div>
+                    <div className="text">
+                        <ReactMarkdown children={message.text} />
                     </div>
                     <img src={fileIcon} alt="file icon" width={50} />
                     <div className="downloadButton">

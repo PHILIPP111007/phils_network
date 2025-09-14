@@ -31,7 +31,10 @@ class FileAPIView(APIView):
 		self.check_permissions(request=request)
 
 		message = self.service_class.create_message(
-			sender=request.user, room_id=room_id, file=request.FILES.get("file")
+			sender=request.user,
+			room_id=room_id,
+			text=request.POST.get("text"),
+			file=request.FILES.get("file"),
 		)
 
 		return Response(

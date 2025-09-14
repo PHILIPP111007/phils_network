@@ -5,3 +5,4 @@ websockets==15.0.1
 boto3==1.40.25
 django-storages==1.14.6
 asyncpg==0.30.0
+web3

@@ -3,6 +3,7 @@ import "../../styles/Posts.css"
 import { use, useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { useInView } from "react-intersection-observer"
+import Card from "react-bootstrap/Card"
 import { UserContext, AuthContext } from "../../data/context.js"
 import { useSetUser } from "../../hooks/useAuth.js"
 import { HttpMethod } from "../../data/enums.js"
@@ -20,6 +21,7 @@ import LazyDiv from "../components/LazyDiv.jsx"
 import ScrollToTopOrBottom from "../components/MainComponents/components/ScrollToTopOrBottom.jsx"
 import showOnlineStatus from "../../modules/showOnlineStatus.jsx"
 import plusIcon from "../../images/plus-icon.svg"
+import profileIcon from "../../images/icon-profile.svg.png"
 
 export default function User() {
 
@@ -75,16 +77,20 @@ export default function User() {
     }
 
     async function createPost(text) {
-        setModalPostCreate(false)
-        var newPost = {
-            user: user.id,
-            content: text,
-        }
+        var sendingText = await text.trim()
 
-        var data = await Fetch({ action: "api/v2/blog/", method: HttpMethod.POST, body: newPost })
-        if (data && data.ok) {
-            newPost = { ...data.post, postLen500: data.post.content.length > 500, btnFlag: true }
-            setPosts([newPost, ...posts])
+        if (sendingText.length > 0) {
+            setModalPostCreate(false)
+            var newPost = {
+                user: user.id,
+                content: sendingText,
+            }
+    
+            var data = await Fetch({ action: "api/v2/blog/", method: HttpMethod.POST, body: newPost })
+            if (data && data.ok) {
+                newPost = { ...data.post, postLen500: data.post.content.length > 500, btnFlag: true }
+                setPosts([newPost, ...posts])
+            }
         }
     }
 
@@ -129,15 +135,22 @@ export default function User() {
 
             <ScrollToTopOrBottom bottom={false} />
 
-            <div className="UserCard">
-                <h3>{userLocal.first_name} {userLocal.last_name}</h3>
-                <div>@{userLocal.username} {showOnlineStatus({ user: userLocal })}</div>
-                <div className="UserBtns">
+            <Card className="UserCard text-center align-items-center" style={{ width: "100rem" }}>
+                <Card.Img variant="top" src={profileIcon} style={{ width: "40%" }} />
+                <Card.Body>
+                    <Card.Title>{userLocal.first_name} {userLocal.last_name}</Card.Title>
+                    <Card.Text>
+                        @{userLocal.username} {showOnlineStatus({ user: userLocal })}
+                    </Card.Text>
+                </Card.Body>
+                <Card.Body>
+                    <div className="UserBtns">
                     {!isUserGlobal
                         &&
                         <UserStatus id={userLocal.id} status={status} setStatus={setStatus} />}
-                </div>
-            </div>
+                    </div>
+                </Card.Body>
+            </Card>
 
             <Modal modal={modalPostCreate} setModal={setModalPostCreate}>
                 <ModalPostCreate createPost={createPost} />

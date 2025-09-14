@@ -28,6 +28,8 @@ class UserBody(BaseModel):
 	first_name: str
 	last_name: str
 	email: str
+	ethereum_address: str
+	infura_api_key: str
 
 
 @router.get("/api/v2/user/{username}/")
@@ -47,6 +49,8 @@ async def get_user(session: SessionDep, request: Request, username: str):
 		"first_name": query.first_name,
 		"last_name": query.last_name,
 		"is_online": query.is_online,
+		"ethereum_address": query.ethereum_address,
+		"infura_api_key": query.infura_api_key,
 	}
 
 	global_user = user
@@ -65,6 +69,8 @@ async def get_user(session: SessionDep, request: Request, username: str):
 		"first_name": query.first_name,
 		"last_name": query.last_name,
 		"is_online": query.is_online,
+		"ethereum_address": query.ethereum_address,
+		"infura_api_key": query.infura_api_key,
 	}
 
 	result["local_user"] = user
@@ -87,6 +93,9 @@ async def put_user(session: SessionDep, request: Request, user_body: UserBody):
 	user.first_name = user_body.first_name
 	user.last_name = user_body.last_name
 	user.email = user_body.email
+
+	user.ethereum_address = user_body.ethereum_address
+	user.infura_api_key = user_body.infura_api_key
 
 	session.add(user)
 	await session.commit()

@@ -1,10 +1,11 @@
 import "./styles/Button.css"
+import { default as BootstrapButton } from 'react-bootstrap/Button';
 
 var Button = ({ children, ...props }) => {
     return (
-        <button {...props} className="Button">
+        <BootstrapButton className="Button" variant="secondary" {...props} >
             {children}
-        </button>
+        </BootstrapButton>
     )
 }
 

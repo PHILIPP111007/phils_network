@@ -35,7 +35,7 @@ export default function News() {
     useObserver({ inView: inView, func: fetchAddPosts })
 
     return (
-        <div className="News">
+        <div class="News">
             <MainComponents loading={loading} />
 
             <ScrollToTopOrBottom bottom={false} />

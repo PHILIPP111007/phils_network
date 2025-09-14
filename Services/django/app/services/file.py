@@ -13,14 +13,16 @@ from django.contrib.auth.models import User
 
 class FileService:
 	@staticmethod
-	def create_message(sender: User, room_id: int, file):
+	def create_message(sender: User, room_id: int, text: str, file):
 		for bucket in s3.list_buckets()["Buckets"]:
 			if bucket["Name"] == settings.BUCKET_NAME:
 				break
 		else:
 			create_bucket()
 
-		message = Message.objects.create(sender=sender, room_id=room_id, file=file)
+		message = Message.objects.create(
+			sender=sender, room_id=room_id, text=text, file=file
+		)
 
 		file_path = message.file.path
 
