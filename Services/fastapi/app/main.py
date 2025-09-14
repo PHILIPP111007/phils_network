@@ -1,5 +1,7 @@
+from typing import Callable
+
 from fastapi import FastAPI, Request
-from sqlmodel import Session, select
+from sqlmodel import select
 
 from app.database import engine
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -47,7 +49,7 @@ app.openapi_version = "3.0.0"
 
 
 @app.middleware("http")
-async def middleware_add_user_to_request(request: Request, call_next):
+async def middleware_add_user_to_request(request: Request, call_next: Callable):
 	"Middleware to store user in request context"
 
 	token = request.headers.get("Authorization")

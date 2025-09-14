@@ -17,3 +17,5 @@ AWS_SECRET_ACCESS_KEY = environ.get("AWS_SECRET_ACCESS_KEY", "minio123")
 AWS_S3_ENDPOINT_URL = environ.get("AWS_S3_ENDPOINT_URL", "http://s3:9000")
 
 MEDIA_ROOT = os.path.join("/app", "media")
+
+GAS = 21000

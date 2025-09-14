@@ -12,6 +12,7 @@ import ScrollToTopOrBottom from "./components/MainComponents/components/ScrollTo
 import Loading from "./components/Loading.jsx"
 import Button from "./components/UI/Button.jsx"
 import ethereumIcon from "../images/ethereum-eth.svg"
+import arrowRightIcon from "../images/icon-arrow-right.svg"
 
 export default function W3() {
     var params = useParams()
@@ -26,9 +27,9 @@ export default function W3() {
     var [privateKey, setPrivateKey] = useState(null)
     var [friendId, setFriendId] = useState(0)
 
-    async function getEthereumBalance() {
+    async function getEthereumBalance() {   // TODO add cache
         setLoading(true)
-        var data = await Fetch({ action: `api/v2/ethereum_balance/`, method: HttpMethod.GET })
+        var data = await Fetch({ action: "api/v2/ethereum_balance/", method: HttpMethod.GET })
         if (data && data.ok) {
             setEth({ ...data })
         }
@@ -37,7 +38,7 @@ export default function W3() {
 
     async function getTransactions() {
         setLoading(true)
-        var data = await Fetch({ action: `api/v2/get_transactions/`, method: HttpMethod.GET })
+        var data = await Fetch({ action: "api/v2/get_transactions/", method: HttpMethod.GET })
         if (data && data.ok) {
             setTransactions([ ...data.transactions ])
         }
@@ -74,26 +75,26 @@ export default function W3() {
 
     var showTransactions = useMemo(() => {
         return transactions.map((transaction) =>
-            <>
-                <Card className="TransactionCard text-center align-items-center" style={{ width: "100%" }}>
-                    <Card.Body>
-                        Transaction
-                    </Card.Body>
-                    <Card.Text>
-                        <strong>From:</strong> {transaction.sender_id}
-                        <br />
-                        <strong>To:</strong> {transaction.recipient_id}
-                        <br />
-                        <strong>ETH:</strong> {transaction.value}
-                        <br />
-                        <strong>Time:</strong> {transaction.timestamp}
-                        <br />
-                        <strong>Tx hash:</strong> {transaction.tx_hash}
-                        <br />
-                        <strong>Receipt:</strong> {transaction.receipt}
-                    </Card.Text>
-                </Card>
-            </>
+            <Card className="TransactionCard text-center align-items-center" style={{ width: "100%" }}>
+                <Card.Body>
+                    Transaction
+                </Card.Body>
+                <Card.Text>
+                    <strong>{transaction.sender.username}</strong> <img src={arrowRightIcon} width="20px" /> <strong>{transaction.recipient.username}</strong> 
+                    <br />
+                    <strong>ETH:</strong> {transaction.value}
+                    <br />
+                    <strong>Time:</strong> {transaction.timestamp}
+                    <br />
+                    <strong>Tx hash:</strong> {transaction.tx_hash}
+                    <br />
+                    <strong>Receipt:</strong> {transaction.receipt}
+                    <br />
+                    <strong>Current balance:</strong> {transaction.current_balance}
+                    <br />
+                    <strong>Gas price:</strong> {transaction.gas_price}
+                </Card.Text>
+            </Card>
         )
     }, [transactions])
 
@@ -106,7 +107,7 @@ export default function W3() {
     }, [friends])
 
     useEffect(() => {
-        // getEthereumBalance()
+        getEthereumBalance()
         getTransactions()
         getFriends()
     }, [])
@@ -160,7 +161,7 @@ export default function W3() {
                     {showFriends}
                 </Form.Select>
                 <Button variant="secondary" type="submit">
-                    Submit
+                    Send ETH
                 </Button>
             </Form>
 

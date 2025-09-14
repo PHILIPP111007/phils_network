@@ -16,6 +16,8 @@ class Transaction(SQLModel, table=True):
 	tx_hash: str
 	receipt: str
 	value: int
+	current_balance: int
+	gas_price: int
 	sender: "User" = Relationship(
 		sa_relationship=RelationshipProperty(
 			"User",

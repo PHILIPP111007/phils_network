@@ -161,6 +161,8 @@ class Transaction(models.Model):
 	tx_hash = models.CharField(max_length=1_000, blank=True)
 	receipt = models.CharField(max_length=1_000, blank=True)
 	value = models.IntegerField(blank=True)
+	current_balance = models.IntegerField(blank=True, null=True)
+	gas_price = models.IntegerField(blank=True, null=True)
 
 	def __str__(self):
 		return f"{self.sender.username} [ {self.timestamp} ]"
