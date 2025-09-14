@@ -75,8 +75,17 @@ async def put_chat(
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	room = await session.exec(select(Room).where(Room.id == id))
+	room = await session.exec(
+		select(Room)
+		.where(Room.id == id)
+		.options(joinedload(Room.room_subscribers).joinedload(RoomSubscribers.user))
+	)
 	room = room.first()
+
+	room_subscribers_ids: set[int] = set(
+		[subscriber.user_id for subscriber in room.room_subscribers]
+	)
+
 	if not room:
 		return {"ok": False, "error": "Not found room."}
 
@@ -101,9 +110,10 @@ async def put_chat(
 			)
 		await session.commit()
 
-	if not room.room_subscribers:
+	if len(room_subscribers_ids) == 0:
 		messages = await session.exec(select(Message).where(Message.room_id == room.id))
 		messages = messages.unique().all()
+
 		for message in messages:
 			if message.file:
 				file_path = os.path.join(MEDIA_ROOT, message.file)

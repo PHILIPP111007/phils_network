@@ -20,7 +20,9 @@ class FileService:
 		else:
 			create_bucket()
 
-		message = Message.objects.create(sender=sender, room_id=room_id, text=text, file=file)
+		message = Message.objects.create(
+			sender=sender, room_id=room_id, text=text, file=file
+		)
 
 		file_path = message.file.path
 
