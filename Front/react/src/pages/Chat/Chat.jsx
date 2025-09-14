@@ -233,7 +233,7 @@ export default function Chat() {
     useObserver({ inView: inViewLazyDiv, func: fetchAddMessages, flag: !mainSets.value.loading })
 
     return (
-        <div className="Chat">
+        <div class="Chat">
             <MainComponents roomName={mainSets.value.room.name} loading={mainSets.value.loading} />
 
             <ScrollToTopOrBottom bottom={true} />

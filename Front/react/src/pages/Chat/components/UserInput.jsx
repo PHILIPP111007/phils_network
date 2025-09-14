@@ -36,7 +36,7 @@ export default function UserInput({ mainSets, sendMessage, editRoom, sendFileMes
 
                 <div className="UserInput">
                     <form onSubmit={e => sendFileMessage(e)} className="uploadFileForm">
-                        <Input id="uploadFileInput" type="file" />
+                        <Input id="formFile" class="form-control" type="file" />
                         <Input type="submit" value="Send file" />
                     </form>
                     <img
@@ -49,7 +49,7 @@ export default function UserInput({ mainSets, sendMessage, editRoom, sendFileMes
                         alt="settings button"
                     />
                     <textarea
-                        className="TextArea"
+                        class="TextArea"
                         placeholder="Use markdown to format your text..."
                         value={text}
                         maxLength="5000"
@@ -71,7 +71,7 @@ export default function UserInput({ mainSets, sendMessage, editRoom, sendFileMes
 
                 <div className="UserInput">
                     <form onSubmit={e => sendFileMessage(e)} className="uploadFileForm">
-                        <Input id="uploadFileInput" type="file" />
+                        <Input id="formFile" class="form-control" type="file" />
                         <Input type="submit" value="Отправить файл" />
                     </form>
                     <img
@@ -84,7 +84,7 @@ export default function UserInput({ mainSets, sendMessage, editRoom, sendFileMes
                         alt="кнопка настроек"
                     />
                     <textarea
-                        className="TextArea"
+                        class="TextArea"
                         placeholder="Используйте Markdown для форматирования текста..."
                         value={text}
                         maxLength="5000"

@@ -1,6 +1,7 @@
 import "./styles/UpperLine.css"
 import { use } from "react"
 import { useParams } from "react-router-dom"
+import Form from 'react-bootstrap/Form'
 import { UserContext, AuthContext } from "../../../../data/context.js"
 import { useSetUser, useAuth } from "../../../../hooks/useAuth.js"
 import { showLanguage, setLanguage } from "../../../../modules/language.jsx"
@@ -38,9 +39,9 @@ export default function UpperLine(props) {
                 {props.loading && <Loading />}
 
                 <div>
-                    <select onChange={event => setLanguage(event)} className="LanguageSelect" name="language">
+                    <Form.Select onChange={event => setLanguage(event)} className="LanguageSelect form-select d-inline-block w-auto" name="language">
                         {showLanguage()}
-                    </select>
+                    </Form.Select>
                     <img src={menuLogo} onClick={() => showHideBar(props.setBarRef)} alt="menu logo" />
                 </div>
             </div>
@@ -64,9 +65,9 @@ export default function UpperLine(props) {
                 {props.loading && <Loading />}
 
                 <div>
-                    <select onChange={event => setLanguage(event)} className="LanguageSelect" name="language">
+                    <Form.Select onChange={event => setLanguage(event)} className="LanguageSelect form-select d-inline-block w-auto" name="language">
                         {showLanguage()}
-                    </select>
+                    </Form.Select>
                     <img src={menuLogo} onClick={() => showHideBar(props.setBarRef)} alt="логотип меню" />
                 </div>
             </div>

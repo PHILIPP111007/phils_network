@@ -29,6 +29,11 @@ input[type=file]::file-selector-button {
     background-color: rgb(250, 244, 244);
     color: rgb(0, 0, 0);
 
+    .App {
+        background-color: rgb(250, 244, 244);
+        color: rgb(0, 0, 0);
+    }
+
     .UpperLine,
     .NavBar,
     .FriendsNavBar {
@@ -130,6 +135,11 @@ input[type=file]::file-selector-button {
 .dark_theme {
     background-color: rgb(43, 43, 43);
     color: rgb(205, 205, 205);
+
+    .App {
+        background-color: rgb(43, 43, 43);
+        color: rgb(205, 205, 205);
+    }
 
     .UpperLine,
     .NavBar,
