@@ -3,7 +3,6 @@ import requests
 from fastapi import APIRouter, Request
 from web3 import AsyncWeb3
 
-from app.database import SessionDep
 
 router = APIRouter(tags=["w3"])
 
