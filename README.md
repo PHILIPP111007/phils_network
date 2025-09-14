@@ -150,5 +150,5 @@ Chat page:
 
 Ethereum balance:
 
-<img src="pictures/ethereum_balance.png" alt="alt text" width="1000"/>
+<img src="pictures/ethereum_balance_1.png" alt="alt text" width="1000"/>
 <br />
