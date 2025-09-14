@@ -20,7 +20,7 @@ Minimalistic social network written using Django, FastAPI and React.
 
 * [x] You can send and download files.
 
-* [x] You can see your Ethereum wallet.
+* [x] You can see your Ethereum wallet (you need to pass `ethereum address` and `infura api key` in user settings).
 
 \
 Have fun and if you want please leave feedback!
