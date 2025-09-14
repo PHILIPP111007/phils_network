@@ -2,6 +2,8 @@ __all__ = ["FileAPIView", "file_download"]
 
 
 import os
+import gzip
+import shutil
 from wsgiref.util import FileWrapper
 
 from rest_framework import status
@@ -60,17 +62,26 @@ def file_download(request: Request, message_id: int, username: str) -> HttpRespo
 
 	os.makedirs(folders_to_create, exist_ok=True)
 
-	with open(file_path, "wb") as file:
+	compressed_file_path = message.file.path + ".gz"
+
+	with open(compressed_file_path, "wb") as file:
 		s3.download_fileobj(settings.BUCKET_NAME, message.file.path, file)
-		file.seek(0)
+
+	uncompressed_file_path = message.file.path
+	with gzip.open(compressed_file_path, "rb") as f_in:
+		with open(uncompressed_file_path, "wb") as f_out:
+			shutil.copyfileobj(f_in, f_out)
 
 	response = HttpResponse(
-		FileWrapper(open(file_path, "rb")), content_type="application/octet-stream"
+		FileWrapper(open(uncompressed_file_path, "rb")),
+		content_type="application/octet-stream",
 	)
 	response["Content-Disposition"] = (
 		f'attachment; filename="{os.path.basename(message.file.name)}"'
 	)
-	response["Content-Length"] = os.path.getsize(file_path)
+	response["Content-Length"] = os.path.getsize(uncompressed_file_path)
 
-	os.remove(file_path)
+	os.remove(compressed_file_path)
+	os.remove(uncompressed_file_path)
+
 	return response

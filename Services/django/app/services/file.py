@@ -2,6 +2,8 @@ __all__ = ["FileService"]
 
 
 import os
+import gzip
+import tempfile
 
 from app.models import Message
 from app.s3 import create_bucket, s3
@@ -20,9 +22,14 @@ class FileService:
 
 		message = Message.objects.create(sender=sender, room_id=room_id, file=file)
 
-		file_name = message.file.path
-		key = message.file.path
+		file_path = message.file.path
 
-		s3.upload_file(file_name, settings.BUCKET_NAME, key)
+		# Using a temporary file for compression
+		with open(file_path, "rb") as f_in:
+			with tempfile.NamedTemporaryFile() as temp_gz_file:
+				with gzip.open(temp_gz_file.name, "wb") as gz_out:
+					gz_out.write(f_in.read())
+
+				s3.upload_file(temp_gz_file.name, settings.BUCKET_NAME, file_path)
 		os.remove(message.file.path)
 		return message
