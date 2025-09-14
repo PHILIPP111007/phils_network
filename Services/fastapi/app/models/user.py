@@ -52,3 +52,17 @@ class User(SQLModel, table=True):
 			"lazy": "select",
 		},
 	)
+	transactions_transaction_senders: list["Transaction"] = Relationship(
+		back_populates="sender",
+		sa_relationship_kwargs={
+			"primaryjoin": "Transaction.sender_id==User.id",
+			"lazy": "select",
+		},
+	)
+	transactions_transaction_recipients: list["Transaction"] = Relationship(
+		back_populates="recipient",
+		sa_relationship_kwargs={
+			"primaryjoin": "Transaction.recipient_id==User.id",
+			"lazy": "select",
+		},
+	)

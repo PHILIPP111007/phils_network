@@ -56,7 +56,8 @@ input[type=file]::file-selector-button {
     }
 
     .UserCard,
-    .W3Card {
+    .W3Card,
+    .TransactionCard {
         background-color: rgb(202, 195, 195);
         color: rgb(0, 0, 0);
     }
@@ -68,6 +69,7 @@ input[type=file]::file-selector-button {
     .ModalRoomEdit .card,
     .FriendCard,
     .LanguageSelect,
+    .FriendsSelect,
     .Chat .Message {
         background-color: rgb(230, 230, 230);
     }
@@ -103,7 +105,8 @@ input[type=file]::file-selector-button {
         background: rgb(250, 244, 244);
     }
 
-    .LanguageSelect {
+    .LanguageSelect,
+    .FriendsSelect {
         color: rgb(0, 0, 0);
     }
 }
@@ -171,7 +174,8 @@ input[type=file]::file-selector-button {
     }
 
     .UserCard,
-    .W3Card {
+    .W3Card,
+    .TransactionCard {
         background-color: rgb(57, 57, 61);
         color: rgb(205, 205, 205);
     }
@@ -184,6 +188,7 @@ input[type=file]::file-selector-button {
     .FriendCard,
     .uploadFileForm,
     .LanguageSelect,
+    .FriendsSelect,
     .Chat .Message {
         background-color: rgb(57, 57, 61);
     }
@@ -217,7 +222,8 @@ input[type=file]::file-selector-button {
         background: rgb(43, 43, 43);
     }
 
-    .LanguageSelect {
+    .LanguageSelect,
+    .FriendsSelect {
         color: rgb(255, 255, 255);
     }
 }

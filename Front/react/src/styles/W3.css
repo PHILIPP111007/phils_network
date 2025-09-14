@@ -1,7 +1,6 @@
 .W3 {
     align-items: center;
-    display: flex;
-    margin: 50px auto;
+    margin: 50px 20%;
 }
 
 .W3Card {
@@ -9,4 +8,8 @@
     max-width: 800px;
     padding: 10px;
     position: unset;
+}
+
+.TransactionCard {
+    margin-bottom: 50px;
 }

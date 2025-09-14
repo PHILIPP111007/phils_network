@@ -148,3 +148,19 @@ class Message(models.Model):
 
 	def __str__(self):
 		return f"{self.sender.username} [ {self.timestamp} ]"
+
+
+class Transaction(models.Model):
+	sender = models.ForeignKey(
+		User, related_name="transaction_sender", on_delete=models.SET_NULL, null=True
+	)
+	recipient = models.ForeignKey(
+		User, related_name="transaction_recipient", on_delete=models.SET_NULL, null=True
+	)
+	timestamp = models.DateTimeField(auto_now_add=True)
+	tx_hash = models.CharField(max_length=1_000, blank=True)
+	receipt = models.CharField(max_length=1_000, blank=True)
+	value = models.IntegerField(blank=True)
+
+	def __str__(self):
+		return f"{self.sender.username} [ {self.timestamp} ]"

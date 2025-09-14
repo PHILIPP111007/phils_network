@@ -8,3 +8,4 @@ from app.models.room_subscribers import RoomSubscribers
 from app.models.subscriber import Subscriber
 from app.models.token import Token
 from app.models.user import User
+from app.models.transaction import Transaction
