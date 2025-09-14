@@ -157,6 +157,8 @@ async def get_room_invitation(session: SessionDep, request: Request):
 
 	query = await session.exec(
 		select(RoomInvitation).where(RoomInvitation.to_user_id == request.state.user.id)
+		.options(joinedload(RoomInvitation.creator))
+		.options(joinedload(RoomInvitation.room))
 	)
 	query = query.unique().all()
 
