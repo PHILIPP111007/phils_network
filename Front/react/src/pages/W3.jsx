@@ -156,7 +156,11 @@ export default function W3() {
                 <Card.Body>
                     <Card.Title>Ethereum</Card.Title>
                     <Card.Text>
-                        Address: <strong>{user.ethereum_address}</strong>
+                        Address: <strong>
+                            <a href={`https://etherscan.io/address/${user.ethereum_address}`}>
+                                {user.ethereum_address}
+                            </a>
+                        </strong>
                     </Card.Text>
                     <Card.Text>
                         Balance (ETH): <strong>{eth.balance}</strong>
