@@ -2,8 +2,8 @@ import "../styles/W3.css"
 import { use, useEffect, useState, useMemo } from "react"
 import { useParams } from "react-router-dom"
 import Card from "react-bootstrap/Card"
-import Form from 'react-bootstrap/Form'
-import Alert from 'react-bootstrap/Alert'
+import Form from "react-bootstrap/Form"
+import Alert from "react-bootstrap/Alert"
 import { UserContext } from "../data/context.js"
 import { FilterOption, HttpMethod } from "../data/enums.js"
 import rememberPage from "../modules/rememberPage.js"
@@ -198,30 +198,34 @@ export default function W3() {
 
             <Form onSubmit={(e) => sendEth(e)} >
                 <Form.Control
+                    key="form gas"
                     type="number"
                     value={gas}
-                    className="Form form-control"
                     placeholder="Enter GAS value"
                     onChange={e => setGas(e.target.value)}
                     required
                 />
+                <br />
                 <Form.Control
+                    key="form privateKey"
                     type="password"
                     value={privateKey}
-                    className="Form form-control"
                     placeholder="Enter your private key"
                     onChange={e => setPrivateKey(e.target.value)}
                     required
                 />
+                <br />
                 <Form.Control
+                    key="form ethValue"
                     type="number"
                     value={ethValue}
-                    className="Form form-control"
                     placeholder="Enter ETH value"
                     onChange={e => setEthValue(e.target.value)}
                     required
                 />
+                <br />
                 <Form.Select
+                    key="form friendId"
                     value={friendId}
                     className="FriendsSelect form-select d-inline-block w-auto"
                     name="language"

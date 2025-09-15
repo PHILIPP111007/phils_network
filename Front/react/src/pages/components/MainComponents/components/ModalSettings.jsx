@@ -1,10 +1,10 @@
 import "./styles/ModalSettings.css"
 import { use, useEffect, useState } from "react"
+import Form from "react-bootstrap/Form"
 import { UserContext } from "../../../../data/context.js"
 import { HttpMethod, CacheKeys, Language } from "../../../../data/enums.js"
 import Fetch from "../../../../API/Fetch.js"
 import Button from "../../UI/Button.jsx"
-import Input from "../../UI/Input.jsx"
 
 export default function ModalSettings(props) {
 
@@ -32,56 +32,52 @@ export default function ModalSettings(props) {
                 <h2>Settings</h2>
 
                 <label>Change personal info</label>
-                <form>
-                    <Input
+                <Form>
+                    <Form.Control
                         type="text"
-                        className="form-control"
                         placeholder="first name"
                         value={userNew.first_name}
                         onChange={(e) => setUserNew({ ...userNew, first_name: e.target.value })}
                     />
                     <br />
-                    <Input
+                    <Form.Control
                         type="text"
-                        className="form-control"
                         placeholder="last name"
                         value={userNew.last_name}
                         onChange={(e) => setUserNew({ ...userNew, last_name: e.target.value })}
                     />
                     <br />
-                    <Input
+                    <Form.Control
                         type="email"
-                        className="form-control"
                         placeholder="email"
                         value={userNew.email}
                         onChange={(e) => setUserNew({ ...userNew, email: e.target.value })}
                     />
                     <br />
-                    <Input
+                    <Form.Control
                         type="text"
-                        className="form-control"
                         placeholder="ethereum address"
                         value={userNew.ethereum_address}
                         onChange={(e) => setUserNew({ ...userNew, ethereum_address: e.target.value })}
                     />
                     <br />
-                    <Input
+                    <Form.Control
                         type="text"
-                        className="form-control"
                         placeholder="infura api key"
                         value={userNew.infura_api_key}
                         onChange={(e) => setUserNew({ ...userNew, infura_api_key: e.target.value })}
                     />
                     <br />
                     <Button onClick={(e) => userUpdate(e)} >upload</Button>
-                    <Input
+                    <br />
+                    <Form.Control
                         type="reset"
-                        className="form-control"
                         value="reset"
                         onClick={() => setUserNew({ ...user })}
                     />
-                </form>
+                </Form>
 
+                <br />
                 <label>Danger zone</label>
                 <br />
                 <Button onClick={() => {
@@ -98,56 +94,52 @@ export default function ModalSettings(props) {
                 <h2>Настройки</h2>
 
                 <label>Изменить личную информацию</label>
-                <form>
-                    <Input
+                <Form>
+                    <Form.Control
                         type="text"
-                        className="form-control"
                         placeholder="имя"
                         value={userNew.first_name}
                         onChange={(e) => setUserNew({ ...userNew, first_name: e.target.value })}
                     />
                     <br />
-                    <Input
+                    <Form.Control
                         type="text"
-                        className="form-control"
                         placeholder="фамилия"
                         value={userNew.last_name}
                         onChange={(e) => setUserNew({ ...userNew, last_name: e.target.value })}
                     />
                     <br />
-                    <Input
+                    <Form.Control
                         type="email"
-                        className="form-control"
                         placeholder="email"
                         value={userNew.email}
                         onChange={(e) => setUserNew({ ...userNew, email: e.target.value })}
                     />
                     <br />
-                    <Input
+                    <Form.Control
                         type="text"
-                        className="form-control"
                         placeholder="ethereum address"
                         value={userNew.ethereum_address}
                         onChange={(e) => setUserNew({ ...userNew, ethereum_address: e.target.value })}
                     />
                     <br />
-                    <Input
+                    <Form.Control
                         type="text"
-                        className="form-control"
                         placeholder="infura api key"
                         value={userNew.infura_api_key}
                         onChange={(e) => setUserNew({ ...userNew, infura_api_key: e.target.value })}
                     />
                     <br />
-                    <Button onClick={(e) => userUpdate(e)} >upload</Button>
-                    <Input
+                    <Button onClick={(e) => userUpdate(e)} >обновить</Button>
+                    <Form.Control
                         type="reset"
-                        className="form-control"
                         value="reset"
                         onClick={() => setUserNew({ ...user })}
                     />
-                </form>
+                    <br />
+                </Form>
 
+                <br />
                 <label>Опасная зона</label>
                 <br />
                 <Button onClick={() => {

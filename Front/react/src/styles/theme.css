@@ -121,12 +121,19 @@ input[type=file]::file-selector-button {
 }
 
 .dark_theme button,
+.dark_theme input,
 .dark_theme input[type="submit"],
 .dark_theme input[type="reset"],
+.dark_theme .form-control,
 input[type=file]::file-selector-button {
     background-color: rgb(101, 101, 110);
     color: rgb(205, 205, 205);
 }
+
+.dark_theme input::placeholder {
+    color: rgb(80, 80, 80);
+}
+
 
 .dark_theme textarea {
     background-color: rgb(43, 43, 43);

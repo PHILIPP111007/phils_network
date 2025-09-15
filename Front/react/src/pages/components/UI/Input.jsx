@@ -2,6 +2,6 @@
 
 export default function Input(props) {
     return (
-        <input {...props} className={`Input Form form-control ${props.className || ''}`} />
+        <input className={`Input Form form-control ${props.className || ''}`} {...props} />
     )
 }
