@@ -193,5 +193,5 @@ async def send_ethereum(
 			},
 		}
 
-	except Exception as e:
-		return {"ok": False, "error": str(e)}
+	except Exception:
+		return {"ok": False, "error": "Error creating transaction"}
