@@ -113,12 +113,15 @@ async def send_ethereum(
 	recipient = recipient.first()
 	if not recipient:
 		return {"ok": False, "error": "Not found user."}
-
+	
 	recipient = {
 		"id": recipient.id,
 		"username": recipient.username,
 		"recipient_address": recipient.ethereum_address,
 	}
+
+	if not recipient["recipient_address"]:
+		return {"ok": False, "error": "Your friend does not have Ethereum address."}
 
 	user = request.state.user
 	infura_api_key = user.infura_api_key

@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
+	dependencies = [
+		("app", "0005_transaction_current_balance_transaction_gas_price"),
+	]
 
-    dependencies = [
-        ('app', '0005_transaction_current_balance_transaction_gas_price'),
-    ]
-
-    operations = [
-        migrations.AddField(
-            model_name='transaction',
-            name='gas',
-            field=models.IntegerField(blank=True, null=True),
-        ),
-    ]
+	operations = [
+		migrations.AddField(
+			model_name="transaction",
+			name="gas",
+			field=models.IntegerField(blank=True, null=True),
+		),
+	]
