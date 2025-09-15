@@ -12,6 +12,7 @@ import MainComponents from "./components/MainComponents/MainComponents.jsx"
 import ScrollToTopOrBottom from "./components/MainComponents/components/ScrollToTopOrBottom.jsx"
 import Loading from "./components/Loading.jsx"
 import Button from "./components/UI/Button.jsx"
+import { CacheKeys } from "../data/enums.js"
 import ethereumIcon from "../images/ethereum-eth.svg"
 import arrowRightIcon from "../images/icon-arrow-right.svg"
 
@@ -42,19 +43,26 @@ export default function W3() {
     }
     }, [errors])
 
-    async function getEthereumBalance() {   // TODO add cache
+    async function getEthereumBalance() {
         setLoading(true)
-        var data = await Fetch({ action: "api/v2/ethereum_balance/", method: HttpMethod.GET })
-        if (data && data.ok) {
-            setEth({ ...data })
-        } else if (data.error) {
-            setErrors([...errors, data.error])
 
-            setIsVisible(true)
-            setTimeout(function() {
-                setIsVisible(false)
-            }, 5000)
-        }
+        var ethCached = JSON.parse(localStorage.getItem(CacheKeys.ETH))
+        if (ethCached !== null) {
+            setEth({ ...ethCached })
+        } else {
+            var data = await Fetch({ action: "api/v2/ethereum_balance/", method: HttpMethod.GET })
+            if (data && data.ok) {
+                setEth({ ...data })
+                localStorage.setItem(CacheKeys.ETH, JSON.stringify(data))
+            } else if (data.error) {
+                setErrors([...errors, data.error])
+    
+                setIsVisible(true)
+                setTimeout(function() {
+                    setIsVisible(false)
+                }, 5000)
+            }
+        }   
         setLoading(false)
     }
 
@@ -144,8 +152,14 @@ export default function W3() {
         )
     }, [friends])
 
+    function clearEthCache() {
+        localStorage.removeItem(CacheKeys.ETH)
+        setEth({ balance: null, balance_usd: null, usd: null })
+        getEthereumBalance()
+    }
+
     useEffect(() => {
-        // getEthereumBalance()
+        getEthereumBalance()
         getTransactions()
         getFriends()
     }, [])
@@ -175,6 +189,9 @@ export default function W3() {
                     </Card.Text>
                     <Card.Text>
                         USD: <strong>${eth.usd}</strong>
+                    </Card.Text>
+                    <Card.Text>
+                        <Button onClick={() => clearEthCache()} >Clear cache</Button>
                     </Card.Text>
                 </Card.Body>
             </Card>

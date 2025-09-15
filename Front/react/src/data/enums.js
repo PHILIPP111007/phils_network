@@ -36,6 +36,7 @@ export var CacheKeys = {
     MESSAGES: "messages",
     ROOMS: "rooms",
     LANGUAGE: "language",
+    ETH: "ETH",
 }
 
 export var Language = {
