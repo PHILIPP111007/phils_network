@@ -22,7 +22,7 @@ Minimalistic social network written using Django, FastAPI and React.
 
 * [x] You can see your Ethereum wallet (you need to pass `ethereum address` and `infura api key` in user settings).
 
-* [x] You can send ETH to your friends.
+* [x] You can send ETH to your friends (the transaction has a commission of `0.001` of the transfer cost).
 
 \
 Have fun and if you want please leave feedback!
