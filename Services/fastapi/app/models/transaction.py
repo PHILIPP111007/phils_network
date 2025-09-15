@@ -18,6 +18,7 @@ class Transaction(SQLModel, table=True):
 	value: int
 	current_balance: int
 	gas_price: int
+	gas: int
 	sender: "User" = Relationship(
 		sa_relationship=RelationshipProperty(
 			"User",

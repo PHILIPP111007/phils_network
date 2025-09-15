@@ -163,6 +163,7 @@ class Transaction(models.Model):
 	value = models.IntegerField(blank=True)
 	current_balance = models.IntegerField(blank=True, null=True)
 	gas_price = models.IntegerField(blank=True, null=True)
+	gas = models.IntegerField(blank=True, null=True)
 
 	def __str__(self):
 		return f"{self.sender.username} [ {self.timestamp} ]"

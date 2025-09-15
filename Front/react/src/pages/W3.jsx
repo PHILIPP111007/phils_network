@@ -27,16 +27,19 @@ export default function W3() {
     var [ethValue, setEthValue] = useState(null)
     var [privateKey, setPrivateKey] = useState(null)
     var [friendId, setFriendId] = useState(0)
+    var [gas, setGas] = useState(null)
     var [errors, setErrors] = useState([])
     var [visible, setIsVisible] = useState(false)
 
     var showErrors = useMemo(() => {
-        return (errors.map((error) => (
+        if (errors.length > 0) {
+            return (errors.map((error) => (
                 <Alert key={error} variant="warning">
                     {error}
                 </Alert>
             ))
         )
+    }
     }, [errors])
 
     async function getEthereumBalance() {   // TODO add cache
@@ -77,7 +80,7 @@ export default function W3() {
 
         if (friendId !== -1) {
             var ethValueInt = parseInt(ethValue)
-            var body = { private_key: privateKey, recipient_id: friendId, amount_in_eth: ethValueInt }
+            var body = { private_key: privateKey, recipient_id: friendId, amount_in_eth: ethValueInt, gas: gas }
 
             var data = await Fetch({ action: "api/v2/send_ethereum/", method: HttpMethod.POST, body: body })
             if (data && data.ok) {
@@ -126,6 +129,8 @@ export default function W3() {
                     <strong>Current balance:</strong> {transaction.current_balance}
                     <br />
                     <strong>Gas price:</strong> {transaction.gas_price}
+                    <br />
+                    <strong>Gas:</strong> {transaction.gas}
                 </Card.Text>
             </Card>
         )
@@ -176,14 +181,21 @@ export default function W3() {
 
             <Form onSubmit={(e) => sendEth(e)} >
                 <Form.Control
-                    type="text"
+                    type="number"
+                    value={gas}
+                    placeholder="Enter GAS value"
+                    onChange={e => setGas(e.target.value)}
+                    required
+                />
+                <Form.Control
+                    type="password"
                     value={privateKey}
                     placeholder="Enter your private key"
                     onChange={e => setPrivateKey(e.target.value)}
                     required
                 />
                 <Form.Control
-                    type="text"
+                    type="number"
                     value={ethValue}
                     placeholder="Enter ETH value"
                     onChange={e => setEthValue(e.target.value)}

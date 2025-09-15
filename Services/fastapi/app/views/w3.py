@@ -9,7 +9,7 @@ from web3 import AsyncWeb3, Account
 
 from app.database import SessionDep
 from app.models import Transaction, User
-from app.constants import DATETIME_FORMAT, GAS
+from app.constants import DATETIME_FORMAT
 
 
 router = APIRouter(tags=["w3"])
@@ -23,6 +23,7 @@ class TransactionBody(BaseModel):
 	private_key: str
 	recipient_id: int
 	amount_in_eth: float
+	gas: int
 
 
 @router.get("/api/v2/ethereum_balance/")
@@ -143,18 +144,19 @@ async def send_ethereum(
 		# Конвертация количества эфиров в wei
 		value = int(transaction_body.amount_in_eth * 10**18)
 
-		if current_balance < value + (GAS * gas_price):
+		if current_balance < value + (transaction_body.gas * gas_price):
 			return {"ok": False, "error": "Insufficient balance"}
 
 		nonce = await w3.eth.get_transaction_count(sender_address)
+		chain_id = await w3.eth.chain_id
 
 		tx_params = {
 			"nonce": nonce,
 			"to": recipient["recipient_address"],
 			"value": value,
 			"gasPrice": gas_price,
-			"gas": GAS,
-			"chainId": w3.eth.chain_id,
+			"gas": transaction_body.gas,
+			"chainId": chain_id,
 		}
 
 		signed_tx = account.sign_transaction(tx_params)
@@ -170,6 +172,7 @@ async def send_ethereum(
 			timestamp=datetime.now(),
 			current_balance=current_balance,
 			gas_price=gas_price,
+			gas=transaction_body.gas
 		)
 		session.add(transaction)
 		await session.commit()
@@ -187,6 +190,7 @@ async def send_ethereum(
 				"timestamp": transaction.timestamp,
 				"current_balance": transaction.current_balance,
 				"gas_price": transaction.gas_price,
+				"gas": transaction_body.gas,
 				"sender": {
 					"username": request.state.user.username,
 				},
