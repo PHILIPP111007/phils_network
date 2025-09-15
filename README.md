@@ -147,8 +147,9 @@ Home page:
 Chat page:
 
 <img src="pictures/chat_page.png" alt="alt text" width="1000"/>
+<br />
 
 Ethereum balance:
 
-<img src="pictures/ethereum_balance_1.png" alt="alt text" width="1000"/>
+<img src="pictures/ethereum_balance_2.png" alt="alt text" width="1000"/>
 <br />
