@@ -2,7 +2,6 @@ import os
 from datetime import datetime
 
 from fastapi import APIRouter, Request
-from pydantic import BaseModel
 from sqlmodel import delete, select
 from sqlalchemy.orm import joinedload
 
@@ -14,14 +13,10 @@ from app.models import (
 	RoomInvitation,
 	RoomSubscribers,
 )
+from app.request_body import FriendsAndSubscribers
 from app.s3 import s3
 
 router = APIRouter(tags=["chat"])
-
-
-class FriendsAndSubscribers(BaseModel):
-	friends: list[int] = []
-	subscribers: list[int] = []
 
 
 @router.get("/api/v2/room/{id}/")

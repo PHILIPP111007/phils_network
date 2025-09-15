@@ -2,7 +2,6 @@ import os
 from datetime import datetime
 
 from fastapi import APIRouter, Request
-from pydantic import BaseModel
 from sqlmodel import delete, func, select
 from sqlalchemy.orm import joinedload
 
@@ -16,13 +15,9 @@ from app.models import (
 	RoomSubscribers,
 	User,
 )
+from app.request_body import RoomNameAndSubscribers
 
 router = APIRouter(tags=["room"])
-
-
-class RoomNameAndSubscribers(BaseModel):
-	name: str
-	subscribers: list[int] = []
 
 
 @router.get("/api/v2/room/")

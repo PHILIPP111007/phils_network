@@ -1,7 +1,6 @@
 import os
 
 from fastapi import APIRouter, Request
-from pydantic import BaseModel
 from sqlmodel import delete, select
 
 from app.constants import BUCKET_NAME, MEDIA_ROOT
@@ -18,18 +17,10 @@ from app.models import (
 	Token,
 	User,
 )
+from app.request_body import UserBody
 from app.s3 import s3
 
 router = APIRouter(tags=["user"])
-
-
-class UserBody(BaseModel):
-	id: int
-	first_name: str
-	last_name: str
-	email: str
-	ethereum_address: str
-	infura_api_key: str
 
 
 @router.get("/api/v2/user/{username}/")

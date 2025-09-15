@@ -1,24 +1,15 @@
 from datetime import datetime
 
 from fastapi import APIRouter, Request
-from pydantic import BaseModel
 from sqlmodel import delete, select
 
 from app.constants import DATETIME_FORMAT, POSTS_TO_LOAD
 from app.database import SessionDep
 from app.enums import SubscriberStatus
 from app.models import Post, Subscriber, User
+from app.request_body import Content, UserAndContent
 
 router = APIRouter(tags=["post"])
-
-
-class Content(BaseModel):
-	content: str
-
-
-class UserAndContent(BaseModel):
-	user: int
-	content: str
 
 
 @router.get("/api/v2/blog/{username}/{loaded_posts}/")

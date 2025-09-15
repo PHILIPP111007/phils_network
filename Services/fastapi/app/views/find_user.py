@@ -1,17 +1,11 @@
 from fastapi import APIRouter, Request
-from pydantic import BaseModel
 from sqlmodel import select
 
 from app.database import SessionDep
 from app.models import User
+from app.request_body import FindUser
 
 router = APIRouter(tags=["find_user"])
-
-
-class FindUser(BaseModel):
-	username: str | None = None
-	first_name: str | None = None
-	last_name: str | None = None
 
 
 @router.post("/api/v2/find_user/")

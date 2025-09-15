@@ -1,16 +1,13 @@
 from fastapi import APIRouter, Request
-from pydantic import BaseModel
 from sqlmodel import delete, select
 
 from app.database import SessionDep
 from app.enums import DeleteOption, SubscriberStatus
 from app.models import Subscriber
+from app.request_body import Option
+
 
 router = APIRouter(tags=["subscriber"])
-
-
-class Option(BaseModel):
-	option: int
 
 
 @router.get("/api/v2/subscriber/{id}/")
