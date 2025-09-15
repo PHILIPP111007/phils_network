@@ -188,6 +188,9 @@ export default function Register() {
                         • Not use the Service to distribute spam, viruses or other malware.
                         <br />
 
+                        • Do not use the Service to commit illegal acts.
+                        <br />
+
                         • Follow the rules of communication and treat other users with respect.
                         <br />
 
@@ -200,6 +203,9 @@ export default function Register() {
                         • Make changes to the functionality and terms of use of the Service without prior notice. <br />
 
                         • Restrict access to certain functions for individual users.
+                        <br />
+
+                        • Charges a fee of 0.001 of the transaction amount on the Ethereum network.
                         <br />
 
                         4.2. The Service undertakes to:
@@ -278,7 +284,7 @@ export default function Register() {
                         2.1. We may collect the following information about Users:
                         <br />
 
-                        • Personal data: name, email address, phone number and other contact information.
+                        • Personal data: name, email address, phone number and other contact information, including Ethereum wallet address.
                         <br />
 
                         • Profile data: information about the user posted in the profile (photo, biography, etc.).
@@ -458,6 +464,9 @@ export default function Register() {
                         • Не использовать Сервис для распространения спама, вирусов и других вредоносных программ.
                         <br />
 
+                        • Не использовать Сервис для совершения противоправных действий.
+                        <br />
+
                         • Соблюдать правила общения и относиться к другим пользователям с уважением.
                         <br />
 
@@ -470,6 +479,9 @@ export default function Register() {
                         • Вносить изменения в функционал и условия использования Сервиса без предварительного уведомления. <br />
 
                         • Ограничивать доступ к определенным функциям для отдельных пользователей.
+                        <br />
+
+                        • Взимает комиссию в размере 0.001 от суммы транзакции в сети Ethereum
                         <br />
 
                         4.2. Сервис обязуется:
@@ -548,7 +560,7 @@ export default function Register() {
                         2.1. Мы можем собирать следующую информацию о Пользователях:
                         <br />
 
-                        • Персональные данные: имя, адрес электронной почты, номер телефона и другая контактная информация.
+                        • Персональные данные: имя, адрес электронной почты, номер телефона и другая контактная информация, включая адрес Ethereum кошелька.
                         <br />
 
                         • Данные профиля: информация о пользователе, размещенная в профиле (фотография, биография и т. д.).
