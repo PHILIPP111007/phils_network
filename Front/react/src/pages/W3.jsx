@@ -52,8 +52,8 @@ export default function W3() {
         } else {
             var data = await Fetch({ action: "api/v2/ethereum_balance/", method: HttpMethod.GET })
             if (data && data.ok) {
-                setEth({ ...data })
-                localStorage.setItem(CacheKeys.ETH, JSON.stringify(data))
+                setEth({ ...data.data })
+                localStorage.setItem(CacheKeys.ETH, JSON.stringify(data.data))
             } else if (data.error) {
                 setErrors([...errors, data.error])
     
