@@ -3,6 +3,7 @@ import { use, useEffect, useState, useMemo } from "react"
 import { useParams } from "react-router-dom"
 import Card from "react-bootstrap/Card"
 import Form from 'react-bootstrap/Form'
+import Alert from 'react-bootstrap/Alert'
 import { UserContext } from "../data/context.js"
 import { FilterOption, HttpMethod } from "../data/enums.js"
 import rememberPage from "../modules/rememberPage.js"
@@ -26,12 +27,30 @@ export default function W3() {
     var [ethValue, setEthValue] = useState(null)
     var [privateKey, setPrivateKey] = useState(null)
     var [friendId, setFriendId] = useState(0)
+    var [errors, setErrors] = useState([])
+    var [visible, setIsVisible] = useState(false)
+
+    var showErrors = useMemo(() => {
+        return (errors.map((error) => (
+                <Alert key={error} variant="warning">
+                    {error}
+                </Alert>
+            ))
+        )
+    }, [errors])
 
     async function getEthereumBalance() {   // TODO add cache
         setLoading(true)
         var data = await Fetch({ action: "api/v2/ethereum_balance/", method: HttpMethod.GET })
         if (data && data.ok) {
             setEth({ ...data })
+        } else if (data.error) {
+            setErrors([...errors, data.error])
+
+            setIsVisible(true)
+            setTimeout(function() {
+                setIsVisible(false)
+            }, 5000)
         }
         setLoading(false)
     }
@@ -41,6 +60,13 @@ export default function W3() {
         var data = await Fetch({ action: "api/v2/get_transactions/", method: HttpMethod.GET })
         if (data && data.ok) {
             setTransactions([ ...data.transactions ])
+        } else if (data.error) {
+            setErrors([...errors, data.error])
+
+            setIsVisible(true)
+            setTimeout(function() {
+                setIsVisible(false)
+            }, 5000)
         }
         setLoading(false)
     }
@@ -56,6 +82,13 @@ export default function W3() {
             var data = await Fetch({ action: "api/v2/send_ethereum/", method: HttpMethod.POST, body: body })
             if (data && data.ok) {
                 setTransactions([ data.transaction, ...transactions ])
+            } else if (data.error) {
+                setErrors([...errors, data.error])
+
+                setIsVisible(true)
+                setTimeout(function() {
+                    setIsVisible(false)
+                }, 5000)
             }
         }
 
@@ -107,7 +140,7 @@ export default function W3() {
     }, [friends])
 
     useEffect(() => {
-        getEthereumBalance()
+        // getEthereumBalance()
         getTransactions()
         getFriends()
     }, [])
@@ -115,6 +148,8 @@ export default function W3() {
     return (
         <div class="W3">
             <MainComponents loading={loading} />
+
+            {visible && showErrors}
 
             <Card className="W3Card text-center align-items-center" style={{ width: "100%" }}>
                 <Card.Img variant="top" src={ethereumIcon} style={{ width: "40px" }} />
