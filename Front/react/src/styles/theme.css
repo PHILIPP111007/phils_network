@@ -96,12 +96,14 @@ input[type=file]::file-selector-button {
     }
 
     .FriendCard,
-    .FriendCard .name {
+    .FriendCard .name,
+    .Form {
         color: rgb(0, 0, 0);
     }
 
     .Chat #SendButton,
-    .Chat #SettingsButton {
+    .Chat #SettingsButton,
+    .Form {
         background: rgb(250, 244, 244);
     }
 
@@ -208,7 +210,8 @@ input[type=file]::file-selector-button {
     .ModalSettings,
     .ModalPostEdit,
     .ModalDelAcc,
-    .ModalMessage {
+    .ModalMessage,
+    .Form {
         background: rgb(43, 43, 43);
     }
 
@@ -223,7 +226,8 @@ input[type=file]::file-selector-button {
     }
 
     .LanguageSelect,
-    .FriendsSelect {
+    .FriendsSelect,
+    .Form {
         color: rgb(255, 255, 255);
     }
 }

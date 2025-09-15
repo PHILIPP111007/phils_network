@@ -12,4 +12,5 @@
 
 .TransactionCard {
     margin-bottom: 50px;
+    position: unset;
 }

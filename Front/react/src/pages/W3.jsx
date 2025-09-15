@@ -183,6 +183,7 @@ export default function W3() {
                 <Form.Control
                     type="number"
                     value={gas}
+                    className="Form form-control"
                     placeholder="Enter GAS value"
                     onChange={e => setGas(e.target.value)}
                     required
@@ -190,6 +191,7 @@ export default function W3() {
                 <Form.Control
                     type="password"
                     value={privateKey}
+                    className="Form form-control"
                     placeholder="Enter your private key"
                     onChange={e => setPrivateKey(e.target.value)}
                     required
@@ -197,6 +199,7 @@ export default function W3() {
                 <Form.Control
                     type="number"
                     value={ethValue}
+                    className="Form form-control"
                     placeholder="Enter ETH value"
                     onChange={e => setEthValue(e.target.value)}
                     required
