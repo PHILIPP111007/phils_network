@@ -127,7 +127,7 @@ async def send_ethereum(
 	try:
 		account = Account.from_key(transaction_body.private_key)
 		sender_address = account.address
-	except Exception as e:
+	except Exception:
 		return {"ok": False, "error": "Invalid private key"}
 
 	try:
@@ -139,11 +139,14 @@ async def send_ethereum(
 
 		current_balance = await w3.eth.get_balance(sender_address)
 		gas_price = await w3.eth.gas_price
+		
+		# Конвертация количества эфиров в wei
+		value = int(transaction_body.amount_in_eth * 10**18)
+
 		if current_balance < value + (GAS * gas_price):
 			return {"ok": False, "error": "Insufficient balance"}
 
 		nonce = await w3.eth.get_transaction_count(sender_address)
-		value = int(transaction_body.amount_in_eth * 10**18)
 
 		tx_params = {
 			"nonce": nonce,
