@@ -24,6 +24,8 @@ Minimalistic social network written using Django, FastAPI and React.
 
 * [x] You can send ETH to your friends (the transaction has a commission of `0.001` of the transfer cost).
 
+User Agreement: [User Agreement](UserAgreement.md)
+
 \
 Have fun and if you want please leave feedback!
 
