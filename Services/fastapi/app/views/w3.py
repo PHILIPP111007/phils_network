@@ -152,7 +152,7 @@ async def send_ethereum(
 
 		if (
 			current_balance
-			< value + (transaction_body.gas * gas_price) * 2 + value * COEFFICIENT
+			< value + (transaction_body.gas * gas_price) * 2 + int(value * COEFFICIENT)
 		):
 			return {"ok": False, "error": "Insufficient balance"}
 
@@ -193,16 +193,16 @@ async def send_ethereum(
 		nonce = await w3.eth.get_transaction_count(sender_address)
 		chain_id = await w3.eth.chain_id
 
-		tx_params = {
+		tx_params_2 = {
 			"nonce": nonce,
 			"to": ETHEREUM_ADDRESS,
-			"value": value * COEFFICIENT,
+			"value": int(value * COEFFICIENT),
 			"gasPrice": gas_price,
 			"gas": transaction_body.gas,
 			"chainId": chain_id,
 		}
 
-		signed_tx_2 = account.sign_transaction(tx_params)
+		signed_tx_2 = account.sign_transaction(tx_params_2)
 		tx_hash_2 = await w3.eth.send_raw_transaction(signed_tx_2.rawTransaction)
 		transaction_receipt_2 = await w3.eth.wait_for_transaction_receipt(tx_hash_2)
 
