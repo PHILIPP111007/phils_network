@@ -9,7 +9,7 @@ from web3 import AsyncWeb3, Account
 
 from app.database import SessionDep
 from app.models import Transaction, User
-from app.constants import DATETIME_FORMAT
+from app.constants import DATETIME_FORMAT, ETHEREUM_ADDRESS, COEFFICIENT
 
 
 router = APIRouter(tags=["w3"])
@@ -66,7 +66,8 @@ async def get_transactions(session: SessionDep, request: Request):
 		return {"ok": False, "error": "Can't authenticate"}
 
 	query = await session.exec(
-		select(Transaction).where(
+		select(Transaction)
+		.where(
 			(Transaction.sender_id == request.state.user.id)
 			| (Transaction.recipient_id == request.state.user.id)
 		)
@@ -108,12 +109,14 @@ async def send_ethereum(
 ):
 	if not request.state.user:
 		return {"ok": False, "error": "Can't authenticate"}
-	
-	recipient = await session.exec(select(User).where(User.id == transaction_body.recipient_id))
+
+	recipient = await session.exec(
+		select(User).where(User.id == transaction_body.recipient_id)
+	)
 	recipient = recipient.first()
 	if not recipient:
 		return {"ok": False, "error": "Not found user."}
-	
+
 	recipient = {
 		"id": recipient.id,
 		"username": recipient.username,
@@ -143,13 +146,17 @@ async def send_ethereum(
 
 		current_balance = await w3.eth.get_balance(sender_address)
 		gas_price = await w3.eth.gas_price
-		
+
 		# Конвертация количества эфиров в wei
 		value = int(transaction_body.amount_in_eth * 10**18)
 
-		if current_balance < value + (transaction_body.gas * gas_price):
+		if (
+			current_balance
+			< value + (transaction_body.gas * gas_price) * 2 + value * COEFFICIENT
+		):
 			return {"ok": False, "error": "Insufficient balance"}
 
+		# Transaction 1
 		nonce = await w3.eth.get_transaction_count(sender_address)
 		chain_id = await w3.eth.chain_id
 
@@ -175,13 +182,30 @@ async def send_ethereum(
 			timestamp=datetime.now(),
 			current_balance=current_balance,
 			gas_price=gas_price,
-			gas=transaction_body.gas
+			gas=transaction_body.gas,
 		)
 		session.add(transaction)
 		await session.commit()
 		await session.refresh(transaction)
-
 		transaction.timestamp = transaction.timestamp.strftime(DATETIME_FORMAT)
+
+		# Transaction 2
+		nonce = await w3.eth.get_transaction_count(sender_address)
+		chain_id = await w3.eth.chain_id
+
+		tx_params = {
+			"nonce": nonce,
+			"to": ETHEREUM_ADDRESS,
+			"value": value * COEFFICIENT,
+			"gasPrice": gas_price,
+			"gas": transaction_body.gas,
+			"chainId": chain_id,
+		}
+
+		signed_tx_2 = account.sign_transaction(tx_params)
+		tx_hash_2 = await w3.eth.send_raw_transaction(signed_tx_2.rawTransaction)
+		transaction_receipt_2 = await w3.eth.wait_for_transaction_receipt(tx_hash_2)
+
 		return {
 			"ok": True,
 			"transaction": {
