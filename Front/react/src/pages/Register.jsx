@@ -167,7 +167,28 @@ export default function Register() {
                         <strong>3. User Rights and Obligations</strong>
                         <br />
 
-                        3.1. The User has the right to:
+                        3.1. This Agreement shall be governed by and interpreted in accordance with the laws of the Russian Federation.
+                        <br />
+
+                        3.2. In cases where the User is located outside the territory of the Russian Federation, the relations arising from this Agreement shall be governed by the laws of the Russian Federation, unless otherwise established by agreement of the parties.
+                        <br />
+
+                        3.3. All disputes and disagreements arising from this Agreement shall be subject to mandatory claims procedure for settlement.
+                        <br />
+
+                        3.4. The party with a claim shall send the other party a written claim indicating the nature of the claim and all necessary evidence.
+                        <br />
+
+                        3.5. The claim shall be considered within 30 (thirty) calendar days from the date of its receipt. If the dispute is not resolved in the claims procedure, it shall be considered in the court of the Russian Federation at the location of the Service, unless otherwise established by agreement of the parties.
+                        <br />
+
+                        3.6. The User shall send a claim in writing to the e-mail address: r.phil@yandex.ru.
+                        <br />
+
+                        3.7. A claim sent to the specified e-mail address shall be considered a proper method of notification and shall be considered within the time period established by this Agreement.
+                        <br />
+
+                        3.8. The User has the right to:
                         <br />
 
                         • Use all functions of the Service in accordance with this Agreement.
@@ -179,7 +200,7 @@ export default function Register() {
                         • Make suggestions for improving the Service.
                         <br />
 
-                        3.2. The User undertakes to:
+                        3.9. The User undertakes to:
                         <br />
 
                         • Not post materials that violate the rights of third parties, including copyright.
@@ -192,6 +213,9 @@ export default function Register() {
                         <br />
 
                         • Follow the rules of communication and treat other users with respect.
+                        <br />
+
+                        All possible disputes arising from or related to this Agreement shall be resolved in accordance with the current legislation of the Russian Federation.
                         <br />
 
                         <strong>4. Service Rights and Obligations</strong>
@@ -215,6 +239,12 @@ export default function Register() {
                         <br />
 
                         • Eliminate technical malfunctions within a reasonable time.
+                        <br />
+
+                        4.3. The Service is not responsible for payments made by individuals whose actions are deemed illegal or dishonest, or by other legal entities or individuals whose actions violate applicable law.
+                        <br />
+
+                        4.4. The Service reserves the right, at its sole discretion, without explanation or prior notice, to block or terminate access to software and services for Users or other individuals whose actions or payments raise reasonable doubts about their integrity or legality.
                         <br />
 
                         <strong>5. Personal data</strong>
@@ -443,7 +473,28 @@ export default function Register() {
                         <strong>3. Права и обязанности Пользователя</strong>
                         <br />
 
-                        3.1. Пользователь имеет право:
+                        3.1. Настоящее Соглашение регулируется и толкуется в соответствии с законодательством Российской Федерации.
+                        <br />
+
+                        3.2. В случаях, когда Пользователь находится за пределами территории Российской Федерации, отношения, возникающие из настоящего Соглашения, регулируются законодательством Российской Федерации, если иное не установлено соглашением сторон.
+                        <br />
+
+                        3.3. Все споры и разногласия, возникающие из настоящего Соглашения, подлежат обязательному урегулированию в претензионном порядке.
+                        <br />
+
+                        3.4. Сторона, предъявившая претензию, обязана направить другой стороне письменную претензию с указанием существа претензии и приложением всех необходимых доказательств.
+                        <br />
+
+                        3.5. Претензия рассматривается в течение 30 (тридцати) календарных дней с даты ее получения. В случае неурегулирования спора в претензионном порядке он рассматривается в суде Российской Федерации по месту нахождения Сервиса, если иное не установлено соглашением сторон.
+                        <br />
+
+                        3.6. Претензия, направленная Пользователем в письменной форме на адрес электронной почты: r.phil@yandex.ru.
+                        <br />
+
+                        3.7. Претензия, направленная на указанный адрес электронной почты, считается надлежащим способом уведомления и рассматривается в сроки, установленные настоящим Соглашением.
+                        <br />
+
+                        3.8. Пользователь имеет право:
                         <br />
 
                         • Использовать все функции Сервиса в соответствии с настоящим Соглашением.
@@ -455,7 +506,7 @@ export default function Register() {
                         • Вносить предложения по улучшению Сервиса.
                         <br />
 
-                        3.2. Пользователь обязуется:
+                        3.9. Пользователь обязуется:
                         <br />
 
                         • Не размещать материалы, нарушающие права третьих лиц, в том числе авторские права.
@@ -468,6 +519,9 @@ export default function Register() {
                         <br />
 
                         • Соблюдать правила общения и относиться к другим пользователям с уважением.
+                        <br />
+
+                        Все возможные споры, возникающие из настоящего Соглашения или связанные с ним, разрешаются в соответствии с действующим законодательством Российской Федерации.
                         <br />
 
                         <strong>4. Права и обязанности Сервиса</strong>
@@ -491,6 +545,12 @@ export default function Register() {
                         <br />
 
                         • Устранять технические неполадки в разумные сроки.
+                        <br />
+
+                        4.3. Сервис не несет ответственности за платежи, совершенные лицами, чьи действия считаются незаконными или недобросовестными, а также другими юридическими или физическими лицами, чьи действия нарушают применимое законодательство.
+                        <br />
+
+                        4.4. Сервис оставляет за собой право по своему усмотрению, без объяснения причин и предварительного уведомления, блокировать или прекращать доступ к программному обеспечению и сервисам Пользователям или другим лицам, чьи действия или платежи вызывают обоснованные сомнения в их добросовестности или законности.
                         <br />
 
                         <strong>5. Персональные данные</strong>

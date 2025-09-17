@@ -24,8 +24,22 @@
 
 ## 3. User Rights and Obligations
 
+3.1. This Agreement is governed by and construed in accordance with the laws of the Russian Federation.
 
-3.1. The User has the right to:
+3.2. In cases where the User is located outside the Russian Federation, relations arising from this Agreement shall be governed by the laws of the Russian Federation, unless otherwise provided by agreement of the parties.
+
+3.3. All disputes and disagreements arising from this Agreement shall be subject to the mandatory claims procedure.
+
+3.4. The party with a claim is obligated to send the other party a written claim stating the nature of the claim and all necessary evidence.
+
+3.5. The claim will be reviewed within 30 (thirty) calendar days of its receipt. If the dispute is not resolved through the claims procedure, it will be heard in a court of the Russian Federation at the location of the Service, unless otherwise provided by agreement of the parties.
+
+3.6. The User shall send a written claim to the email address: r.phil@yandex.ru.
+
+3.7. A claim sent to the specified e-mail address is considered a proper method of notification and is subject to consideration within the time period established by this Agreement.
+
+
+3.8. The User has the right to:
 
 
 • Use all functions of the Service in accordance with this Agreement.
@@ -37,7 +51,7 @@
 • Make suggestions for improving the Service.
 
 
-3.2. The User undertakes to:
+3.9. The User undertakes to:
 
 
 • Not post materials that violate the rights of third parties, including copyright.
@@ -50,6 +64,9 @@
 
 
 • Follow the rules of communication and treat other users with respect.
+
+
+All possible disputes arising from or related to this Agreement shall be resolved in accordance with the current legislation of the Russian Federation.
 
 
 ## 4. Service Rights and Obligations
@@ -71,6 +88,11 @@
 
 
 • Eliminate technical malfunctions within a reasonable time.
+
+
+4.3. The Service is not responsible for payments made by individuals whose actions are deemed illegal or dishonest, or by other legal entities or individuals whose actions violate applicable law.
+
+4.4. The Service reserves the right, at its sole discretion, without explanation or prior notice, to block or terminate access to software and services for Users or other individuals whose actions or payments raise reasonable doubts about their integrity or legality.
 
 
 ## 5. Personal data
