@@ -63,7 +63,9 @@ class W3Consumer:
 		request: Request,
 		session: SessionDep,
 	):
-		is_valid_account = await self.set_account(private_key=transaction_body.private_key)
+		is_valid_account = await self.set_account(
+			private_key=transaction_body.private_key
+		)
 		if not is_valid_account:
 			return {"ok": False, "error": "Invalid private key"}
 

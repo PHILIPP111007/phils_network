@@ -4,7 +4,6 @@ __all__ = ["FileAPIView", "file_download"]
 import os
 import gzip
 import shutil
-from wsgiref.util import FileWrapper
 
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
@@ -12,13 +11,13 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.conf import settings
+from django.http import HttpResponse, HttpResponseNotAllowed, FileResponse
 
 from app.models import Message
 from app.s3 import create_bucket, s3
 from app.serializers import MessageSerializer
 from app.services import FileService
-from django.conf import settings
-from django.http import HttpResponse, HttpResponseNotAllowed
 
 
 class FileAPIView(APIView):
@@ -59,25 +58,23 @@ def file_download(request: Request, message_id: int, username: str) -> HttpRespo
 		return HttpResponse("Access denied.")
 
 	file_path = message.file.path
+	compressed_file_path = message.file.path + ".gz"
+	uncompressed_file_path = message.file.path
 
 	folders_to_create = file_path.split(os.path.sep)[:-1]
 	folders_to_create = os.path.sep.join(folders_to_create)
 
 	os.makedirs(folders_to_create, exist_ok=True)
 
-	compressed_file_path = message.file.path + ".gz"
-
 	with open(compressed_file_path, "wb") as file:
 		s3.download_fileobj(settings.BUCKET_NAME, message.file.path, file)
 
-	uncompressed_file_path = message.file.path
 	with gzip.open(compressed_file_path, "rb") as f_in:
 		with open(uncompressed_file_path, "wb") as f_out:
 			shutil.copyfileobj(f_in, f_out)
 
-	response = HttpResponse(
-		FileWrapper(open(uncompressed_file_path, "rb")),
-		content_type="application/octet-stream",
+	response = FileResponse(
+		open(uncompressed_file_path, "rb"), content_type="application/octet-stream"
 	)
 	response["Content-Disposition"] = (
 		f'attachment; filename="{os.path.basename(message.file.name)}"'

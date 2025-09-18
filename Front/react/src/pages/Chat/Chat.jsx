@@ -92,16 +92,7 @@ export default function Chat() {
                 throw new Error(`HTTP error! status: ${response.status}`)
             }
 
-            const contentDisposition = response.headers.get('Content-Disposition')
             let filename = message.file.split('/').pop()
-            
-            if (contentDisposition) {
-                const filenameMatch = contentDisposition.match(/filename="?(.+)"?/)
-                if (filenameMatch && filenameMatch[1]) {
-                    filename = filenameMatch[1]
-                }
-            }
-
             const blob = await response.blob()
             const url = URL.createObjectURL(blob)
 
