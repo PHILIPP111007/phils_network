@@ -14,7 +14,6 @@ export default function FindUser(props) {
             <div className="FindUser">
                 <Input
                     type="text"
-                    className="form-control"
                     placeholder="username"
                     value={findUser.username}
                     onChange={(e) => setFindUser({ ...findUser, username: e.target.value })}
@@ -22,7 +21,6 @@ export default function FindUser(props) {
                 <br />
                 <Input
                     type="text"
-                    className="form-control"
                     placeholder="first name"
                     value={findUser.first_name}
                     onChange={(e) => setFindUser({ ...findUser, first_name: e.target.value })}
@@ -30,7 +28,6 @@ export default function FindUser(props) {
                 <br />
                 <Input
                     type="text"
-                    className="form-control"
                     placeholder="last name"
                     value={findUser.last_name}
                     onChange={(e) => setFindUser({ ...findUser, last_name: e.target.value })}
@@ -44,7 +41,6 @@ export default function FindUser(props) {
             <div className="FindUser">
                 <Input
                     type="text"
-                    className="form-control"
                     placeholder="ник"
                     value={findUser.username}
                     onChange={(e) => setFindUser({ ...findUser, username: e.target.value })}
@@ -52,7 +48,6 @@ export default function FindUser(props) {
                 <br />
                 <Input
                     type="text"
-                    className="form-control"
                     placeholder="имя"
                     value={findUser.first_name}
                     onChange={(e) => setFindUser({ ...findUser, first_name: e.target.value })}
@@ -60,7 +55,6 @@ export default function FindUser(props) {
                 <br />
                 <Input
                     type="text"
-                    className="form-control"
                     placeholder="фамилия"
                     value={findUser.last_name}
                     onChange={(e) => setFindUser({ ...findUser, last_name: e.target.value })}

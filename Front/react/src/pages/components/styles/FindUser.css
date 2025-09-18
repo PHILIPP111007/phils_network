@@ -1,9 +1,14 @@
 .FindUser {
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
 
 .FindUser input {
-    margin-bottom: 10px;
+    width: 100%;
+    max-width: 500px;
+    margin-bottom: 5px;
 }
 
 .FindUser button {
