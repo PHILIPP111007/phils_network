@@ -169,3 +169,7 @@ class Transaction(models.Model):
 		return (
 			f"{self.sender.username} -> {self.recipient.username} [ {self.timestamp} ]"
 		)
+	
+	@property
+	def user_transactions_count(self):
+		return Transaction.objects.filter(sender=self.sender).count()
