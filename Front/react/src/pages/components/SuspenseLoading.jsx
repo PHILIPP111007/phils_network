@@ -1,4 +1,5 @@
 import "./styles/SuspenseLoading.css"
+import Spinner from "react-bootstrap/Spinner"
 import { CacheKeys, Language } from "../../data/enums.js"
 
 export default function SuspenseLoading() {
@@ -6,14 +7,18 @@ export default function SuspenseLoading() {
 
     if (language === Language.EN) {
         return (
-            <div className="SuspenseLoading">
-                <h3>Please wait...</h3>
+            <div className="d-flex align-items-center justify-content-center">
+                <Spinner className="SuspenseLoading" animation="border" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                </Spinner>
             </div>
         )
     } else if (language === Language.RU) {
         return (
-            <div className="SuspenseLoading">
-                <h3>Пожалуйста, подождите...</h3>
+            <div className="d-flex align-items-center justify-content-center">
+                <Spinner className="SuspenseLoading" animation="border" role="status">
+                    <span className="visually-hidden">Загрузка...</span>
+                </Spinner>
             </div>
         )
     }

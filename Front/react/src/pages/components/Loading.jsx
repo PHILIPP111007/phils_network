@@ -1,4 +1,5 @@
 import "./styles/Loading.css"
+import Spinner from "react-bootstrap/Spinner"
 import { CacheKeys, Language } from "../../data/enums.js"
 
 export default function Loading() {
@@ -6,14 +7,18 @@ export default function Loading() {
 
     if (language === Language.EN) {
         return (
-            <div className="Loading">
-                <h4>loading...</h4>
+            <div className="d-flex align-items-center justify-content-center">
+                <Spinner className="Loading" animation="border" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                </Spinner>
             </div>
         )
     } else if (language === Language.RU) {
         return (
-            <div className="Loading">
-                <h4>загрузка...</h4>
+            <div className="d-flex align-items-center justify-content-center">
+                <Spinner className="Loading" animation="border" role="status">
+                    <span className="visually-hidden">Загрузка...</span>
+                </Spinner>
             </div>
         )
     }
