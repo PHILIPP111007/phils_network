@@ -69,4 +69,3 @@ class MessageAdmin(admin.ModelAdmin):
 class TransactionAdmin(admin.ModelAdmin):
 	list_display = ("sender", "recipient", "timestamp", "gas_price")
 	search_fields = ("sender__username", "recipient__username")
-	pass
