@@ -33,13 +33,13 @@
         left: 0px;
         right: 0px;
         width: 100%;
-        justify-content: space-between;
+        justify-content: space-around;
     }
 
     .NavBar a {
         float: left;
         text-align: center;
         padding: 10px 20px;
-        font-size: 10px;
+        font-size: 20px;
     }
 }
