@@ -118,14 +118,14 @@ export default function ModalSettings(props) {
                     <br />
                     <Form.Control
                         type="text"
-                        placeholder="ethereum address"
+                        placeholder="ethereum адресс"
                         value={userNew.ethereum_address}
                         onChange={(e) => setUserNew({ ...userNew, ethereum_address: e.target.value })}
                     />
                     <br />
                     <Form.Control
                         type="text"
-                        placeholder="infura api key"
+                        placeholder="infura api ключ"
                         value={userNew.infura_api_key}
                         onChange={(e) => setUserNew({ ...userNew, infura_api_key: e.target.value })}
                     />
