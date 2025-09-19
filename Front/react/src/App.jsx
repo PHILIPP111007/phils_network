@@ -23,6 +23,8 @@ export default function App() {
         first_name: "",
         last_name: "",
         is_online: false,
+        ethereum_address: null,
+        infura_api_key: null,
     })
 
     useAuth({ username: user.username, setIsAuth: setIsAuth })
