@@ -123,7 +123,7 @@ export default function W3() {
                 <Card.Body>
                     Transaction
                 </Card.Body>
-                <Card.Text>
+                <Card.Text className="TransactionCardText">
                     <strong>{transaction.sender.username}</strong> <img src={arrowRightIcon} width="20px" /> <strong>{transaction.recipient.username}</strong> 
                     <br />
                     <strong>ETH:</strong> {transaction.value}
@@ -172,7 +172,7 @@ export default function W3() {
 
             <Card className="W3Card text-center align-items-center" style={{ width: "100%" }}>
                 <Card.Img variant="top" src={ethereumIcon} style={{ width: "40px" }} />
-                <Card.Body>
+                <Card.Body className="W3CardText">
                     <Card.Title>Ethereum</Card.Title>
                     <Card.Text>
                         Address: <strong>

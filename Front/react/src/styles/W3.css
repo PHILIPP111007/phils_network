@@ -10,7 +10,17 @@
     position: unset;
 }
 
+.W3CardText {
+    white-space: pre-line;
+    word-break: break-all;
+}
+
 .TransactionCard {
     margin-bottom: 50px;
     position: unset;
+}
+
+.TransactionCardText {
+    white-space: pre-line;
+    word-break: break-all;
 }
