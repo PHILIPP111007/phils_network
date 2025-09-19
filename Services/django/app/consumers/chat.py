@@ -91,7 +91,9 @@ class DeleteMessageConsumer(AsyncWebsocketConsumer):
 			flag = await _check_permission(room_id=room_id, pk=pk)
 			if flag:
 				delete_message_group = DELETE_MESSAGE_GROUP.format(room_id)
-				await self.channel_layer.group_add(delete_message_group, self.channel_name)
+				await self.channel_layer.group_add(
+					delete_message_group, self.channel_name
+				)
 				await self.accept()
 			else:
 				await self.close()
@@ -113,7 +115,8 @@ class DeleteMessageConsumer(AsyncWebsocketConsumer):
 		# Send message to room group
 		delete_message_group = DELETE_MESSAGE_GROUP.format(room_id)
 		await self.channel_layer.group_send(
-			delete_message_group, {"type": "chat_message", "status": True, "message": message}
+			delete_message_group,
+			{"type": "chat_message", "status": True, "message": message},
 		)
 
 	async def chat_message(self, event):

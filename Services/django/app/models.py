@@ -166,4 +166,6 @@ class Transaction(models.Model):
 	gas = models.IntegerField(blank=True, null=True)
 
 	def __str__(self):
-		return f"{self.sender.username} [ {self.timestamp} ]"
+		return (
+			f"{self.sender.username} -> {self.recipient.username} [ {self.timestamp} ]"
+		)

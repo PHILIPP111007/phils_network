@@ -5,6 +5,7 @@ from app.models import (
 	RoomInvitation,
 	Subscriber,
 	User,
+	Transaction,
 )
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
@@ -62,3 +63,10 @@ class MessageAdmin(admin.ModelAdmin):
 	list_filter = ("sender", "room")
 	ordering = ("-timestamp",)
 	search_fields = ("sender__username",)
+
+
+@admin.register(Transaction)
+class TransactionAdmin(admin.ModelAdmin):
+	list_display = ("sender", "recipient", "timestamp", "gas_price")
+	search_fields = ("sender__username", "recipient__username")
+	pass
