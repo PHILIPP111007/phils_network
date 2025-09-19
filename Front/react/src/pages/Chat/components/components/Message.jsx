@@ -20,9 +20,9 @@ export default function Message({ message, downloadFile, deleteMessage }) {
     }
 
     useEffect(() => {
-        const touchArea = document.getElementById(`Message_${message.id}`)
+        var touchArea = document.getElementById(`Message_${message.id}`)
         let longPressTimeout
-        const LONG_PRESS_DURATION = 500 // duration in milliseconds
+        var LONG_PRESS_DURATION = 500 // duration in milliseconds
 
         touchArea.addEventListener('touchstart', (event) => {
             longPressTimeout = setTimeout(() => {

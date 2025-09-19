@@ -54,6 +54,7 @@ export default function Chat() {
     async function sendMessage(text, file) {
         var sendingText = await text.trim()
 
+        var message = null
         if (file) {
             var formData = new FormData()
             formData.append('file', file)
@@ -64,12 +65,12 @@ export default function Chat() {
             })
 
             if (data && data.ok) {
-                var message = { ...data.message, sender_id: user.id, text: sendingText, save: false, sender: { username: user.username, first_name: user.first_name, last_name: user.last_name } }
+                message = { ...data.message, sender_id: user.id, text: sendingText, save: false, sender: { username: user.username, first_name: user.first_name, last_name: user.last_name } }
                 await chatSocket.current.send(JSON.stringify({ message: message }))
             }
         } else {
             if (sendingText.length > 0) {
-                var message = { sender_id: user.id, text: sendingText, file: null, save: true, room: mainSets.value.room.id }
+                message = { sender_id: user.id, text: sendingText, file: null, save: true, room: mainSets.value.room.id }
                 await chatSocket.current.send(JSON.stringify({ message: message }))
             }
         }
@@ -77,10 +78,10 @@ export default function Chat() {
 
     async function downloadFile(message) {
         try {
-            const action = `api/v1/file_download/${message.id}/${user.username}/`
-            const token = getToken()
+            var action = `api/v1/file_download/${message.id}/${user.username}/`
+            var token = getToken()
 
-            const response = await fetch(`${FETCH_URL}${action}`, {
+            var response = await fetch(`${FETCH_URL}${action}`, {
                 method: "GET",
                 headers: {
                     "Access-Control-Allow-Origin": "*",
@@ -93,10 +94,10 @@ export default function Chat() {
             }
 
             let filename = message.file.split('/').pop()
-            const blob = await response.blob()
-            const url = URL.createObjectURL(blob)
+            var blob = await response.blob()
+            var url = URL.createObjectURL(blob)
 
-            const a = document.createElement('a')
+            var a = document.createElement('a')
             document.body.appendChild(a)
             a.style = "display: none"
             a.href = url
@@ -160,8 +161,6 @@ export default function Chat() {
                 if (data && data.ok) {
                     mainSets.value.isCreator = data.isCreator
                     mainSets.value.room = data.room
-
-                    // console.log(mainSets.value.room)
 
                     mainSets.value.invitationChanges.subscribers = data.room.subscribers_info.map((user) => {
                         return { ...user, isInRoom: true }
