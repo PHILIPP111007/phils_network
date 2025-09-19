@@ -1,1 +1,1 @@
-from app.consumers.chat import ChatConsumer
+from app.consumers.chat import ChatConsumer, DeleteMessageConsumer

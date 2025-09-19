@@ -9,7 +9,7 @@ import { FETCH_URL } from "../../data/constants.js"
 import rememberPage from "../../modules/rememberPage.js"
 import getToken from "../../modules/getToken.js"
 import useObserver from "../../hooks/useObserver"
-import { getWebSocketDjango, getWebSocketFastAPI } from "../../modules/getWebSocket.js"
+import { getWebSocketDjango } from "../../modules/getWebSocket.js"
 import Fetch from "../../API/Fetch.js"
 import MainComponents from "../components/MainComponents/MainComponents.jsx"
 import LazyDiv from "../components/LazyDiv.jsx"
@@ -152,7 +152,8 @@ export default function Chat() {
     }
 
     async function deleteMessage(message) {
-        deleteMessageSocket.current.send(JSON.stringify({ message_id: message.id }))
+        var data = {message: { message_id: message.id, room_id: mainSets.value.room.id }}
+        deleteMessageSocket.current.send(JSON.stringify(data))
     }
 
     useEffect(() => {
@@ -173,7 +174,7 @@ export default function Chat() {
             })
 
         chatSocket.current = getWebSocketDjango({ socket_name: "chatSocket", path: `chat/${params.room_id}/` })
-        deleteMessageSocket.current = getWebSocketFastAPI({ socket_name: "deleteMessageSocket", path: `chat/${params.room_id}/delete_message/` })
+        deleteMessageSocket.current = getWebSocketDjango({ socket_name: "deleteMessageSocket", path: `chat/${params.room_id}/delete_message/` })
 
         var textArea = document.getElementsByClassName("TextArea").item(0)
         var sendButton = document.getElementById("SendButton")
@@ -193,7 +194,7 @@ export default function Chat() {
     useEffect(() => {
         chatSocket.current.onmessage = (e) => {
             var data = JSON.parse(e.data)
-            if (data) {
+            if (data && data.message.id) {
                 setMessages((prev) => [...messages, data.message])
                 Fetch({ action: `api/v2/message_viewed/${data.message.id}/`, method: HttpMethod.POST })
             }
@@ -203,7 +204,7 @@ export default function Chat() {
 
     useEffect(() => {
         deleteMessageSocket.current.onmessage = (e) => {
-            var data = JSON.parse(e.data)
+            var data = JSON.parse(e.data).message
             if (data) {
                 setMessages((prev) => messages.filter(message => {
                     return message.id !== data.message_id
