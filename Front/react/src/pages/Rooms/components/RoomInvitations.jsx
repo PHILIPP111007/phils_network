@@ -40,7 +40,7 @@ export default function RoomInvitations() {
     }
 
     useEffect(() => {
-        Fetch({ action: 'api/v2/invite_chats/', method: HttpMethod.GET })
+        Fetch({ action: "api/v2/invite_chats/", method: HttpMethod.GET })
             .then((data) => {
                 if (data && data.ok) {
                     setRoomInvitations(data.room_invitations)

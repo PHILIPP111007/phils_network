@@ -57,8 +57,8 @@ export default function Chat() {
         var message = null
         if (file) {
             var formData = new FormData()
-            formData.append('file', file)
-            formData.append('text', sendingText)
+            formData.append("file", file)
+            formData.append("text", sendingText)
 
             var data = await Fetch({
                 action: `api/v1/file_upload/${params.room_id}/`, method: HttpMethod.POST, body: formData, is_uploading_file: true
@@ -93,11 +93,11 @@ export default function Chat() {
                 throw new Error(`HTTP error! status: ${response.status}`)
             }
 
-            let filename = message.file.split('/').pop()
+            let filename = message.file.split("/").pop()
             var blob = await response.blob()
             var url = URL.createObjectURL(blob)
 
-            var a = document.createElement('a')
+            var a = document.createElement("a")
             document.body.appendChild(a)
             a.style = "display: none"
             a.href = url
@@ -110,7 +110,7 @@ export default function Chat() {
             }, 100);
             
         } catch (error) {
-            console.error('Download error:', error)
+            console.error("Download error:", error)
         }
     }
 

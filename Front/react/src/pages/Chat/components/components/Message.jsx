@@ -14,7 +14,7 @@ export default function Message({ message, downloadFile, deleteMessage }) {
     var language = localStorage.getItem(CacheKeys.LANGUAGE)
 
     function trimFileName(file) {
-        var file_split = file.split('/')
+        var file_split = file.split("/")
         var file_name_length = file_split.length
         return file_split[file_name_length - 1]
     }
@@ -24,17 +24,17 @@ export default function Message({ message, downloadFile, deleteMessage }) {
         let longPressTimeout
         var LONG_PRESS_DURATION = 500 // duration in milliseconds
 
-        touchArea.addEventListener('touchstart', (event) => {
+        touchArea.addEventListener("touchstart", (event) => {
             longPressTimeout = setTimeout(() => {
                 setModalMessage(true)
             }, LONG_PRESS_DURATION)
         })
 
-        touchArea.addEventListener('touchend', () => {
+        touchArea.addEventListener("touchend", () => {
             clearTimeout(longPressTimeout)
         })
 
-        touchArea.addEventListener('touchcancel', () => {
+        touchArea.addEventListener("touchcancel", () => {
             clearTimeout(longPressTimeout)
         })
     }, [])

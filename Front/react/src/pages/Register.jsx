@@ -70,10 +70,10 @@ export default function Register() {
                     navigate("/login/")
                 }
             } else {
-                setErrors(['Error: passwords must be equal'])
+                setErrors(["Error: passwords must be equal"])
             }
         } else {
-            setErrors(['You must agree with User Agreement'])
+            setErrors(["You must agree with User Agreement"])
         }
     }
 

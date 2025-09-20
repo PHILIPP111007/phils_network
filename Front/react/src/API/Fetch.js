@@ -22,7 +22,7 @@ export default async function Fetch({ action, method, body, token, is_uploading_
                 "Access-Control-Allow-Origin": "*",
                 "Authorization": token ? `Token ${token}` : "",
             },
-            mode: 'cors',
+            mode: "cors",
         })
             .then((response) => response.json())
             .then((data) => {
@@ -57,7 +57,7 @@ export default async function Fetch({ action, method, body, token, is_uploading_
         data = await fetch(url, {
             method: method,
             headers: headers,
-            mode: 'cors',
+            mode: "cors",
             body: body,
         })
             .then((response) => response.json())
