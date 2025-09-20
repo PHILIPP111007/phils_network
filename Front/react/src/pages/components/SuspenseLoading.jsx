@@ -7,16 +7,16 @@ export default function SuspenseLoading() {
 
     if (language === Language.EN) {
         return (
-            <div className="d-flex align-items-center justify-content-center">
-                <Spinner className="SuspenseLoading" animation="border" role="status">
+            <div className="SuspenseLoading d-flex align-items-center justify-content-center">
+                <Spinner animation="border" role="status">
                     <span className="visually-hidden">Loading...</span>
                 </Spinner>
             </div>
         )
     } else if (language === Language.RU) {
         return (
-            <div className="d-flex align-items-center justify-content-center">
-                <Spinner className="SuspenseLoading" animation="border" role="status">
+            <div className="SuspenseLoading d-flex align-items-center justify-content-center">
+                <Spinner animation="border" role="status">
                     <span className="visually-hidden">Загрузка...</span>
                 </Spinner>
             </div>
