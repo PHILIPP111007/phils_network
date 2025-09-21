@@ -93,19 +93,19 @@ class W3Consumer:
 			nonce = await self.get_transaction_count(
 				ethereum_address=self.account.sender_address
 			)
-			chain_id = await self.get_chain_id()
 
 			tx_params = {
-				"nonce": nonce,
+				"from": self.account.sender_address,
 				"to": recipient["recipient_address"],
 				"value": value,
-				"gasPrice": gas_price,
+				"nonce": nonce,
 				"gas": transaction_body.gas,
-				"chainId": chain_id,
+				"maxFeePerGas": 2_000_000_000,
+				"maxPriorityFeePerGas": gas_price,
 			}
 
-			signed_tx = self.account.sign_transaction(tx_params)
-			tx_hash = await self.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
+			signed_tx = self.w3.eth.account.sign_transaction(tx_params, transaction_body.private_key)
+			tx_hash = await self.w3.eth.send_raw_transaction(signed_tx.raw_transaction)
 			transaction_receipt = await self.w3.eth.wait_for_transaction_receipt(
 				tx_hash
 			)
@@ -128,18 +128,18 @@ class W3Consumer:
 
 			# Transaction 2
 			nonce = await self.w3.eth.get_transaction_count(self.account.sender_address)
-			chain_id = await self.w3.eth.chain_id
 
 			tx_params_2 = {
-				"nonce": nonce,
+				"from": self.account.sender_address,
 				"to": ETHEREUM_ADDRESS,
 				"value": int(value * COEFFICIENT),
-				"gasPrice": gas_price,
+				"nonce": nonce,
 				"gas": transaction_body.gas,
-				"chainId": chain_id,
+				"maxFeePerGas": 2_000_000_000,
+				"maxPriorityFeePerGas": gas_price,
 			}
 
-			signed_tx_2 = self.account.sign_transaction(tx_params_2)
+			signed_tx_2 = self.w3.eth.account.sign_transaction(tx_params_2, transaction_body.private_key)
 			tx_hash_2 = await self.w3.eth.send_raw_transaction(
 				signed_tx_2.rawTransaction
 			)
