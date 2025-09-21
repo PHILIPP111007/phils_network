@@ -67,5 +67,11 @@ class MessageAdmin(admin.ModelAdmin):
 
 @admin.register(Transaction)
 class TransactionAdmin(admin.ModelAdmin):
-	list_display = ("sender", "recipient", "timestamp", "gas_price", "user_transactions_count")
+	list_display = (
+		"sender",
+		"recipient",
+		"timestamp",
+		"gas_price",
+		"user_transactions_count",
+	)
 	search_fields = ("sender__username", "recipient__username")

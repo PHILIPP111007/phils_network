@@ -1,7 +1,6 @@
 import requests
 from datetime import datetime
 
-import requests
 from fastapi import Request
 from web3 import AsyncWeb3, Account
 
@@ -77,16 +76,17 @@ class W3Consumer:
 				return {"ok": False, "error": "You do not connected to ETH mainnet."}
 
 			current_balance = await self.get_eth_balance(
-				ethereum_address=self.account.sender_address
+				ethereum_address=self.account.address
 			)
 			gas_price = await self.get_price()
 
 			# Конвертация количества эфиров в wei
 			value = int(transaction_body.amount_in_eth * 10**18)
+			max_priority_fee = await self.w3.eth.max_priority_fee
 
-			if current_balance < value + (transaction_body.gas * gas_price) * 2 + int(
-				value * COEFFICIENT
-			):
+			if current_balance < value + (
+				transaction_body.gas + max_priority_fee + gas_price
+			) * 2 + int(value * COEFFICIENT):
 				return {"ok": False, "error": "Insufficient balance"}
 
 			# Transaction 1
@@ -100,11 +100,13 @@ class W3Consumer:
 				"value": value,
 				"nonce": nonce,
 				"gas": transaction_body.gas,
-				"maxFeePerGas": 2_000_000_000,
-				"maxPriorityFeePerGas": gas_price,
+				"maxFeePerGas": max_priority_fee + gas_price,
+				"maxPriorityFeePerGas": max_priority_fee,
 			}
 
-			signed_tx = self.w3.eth.account.sign_transaction(tx_params, transaction_body.private_key)
+			signed_tx = self.w3.eth.account.sign_transaction(
+				tx_params, transaction_body.private_key
+			)
 			tx_hash = await self.w3.eth.send_raw_transaction(signed_tx.raw_transaction)
 			transaction_receipt = await self.w3.eth.wait_for_transaction_receipt(
 				tx_hash
@@ -114,7 +116,7 @@ class W3Consumer:
 				sender_id=request.state.user.id,
 				recipient_id=transaction_body.recipient_id,
 				tx_hash=tx_hash.hex(),
-				receipt=transaction_receipt,
+				receipt=str(transaction_receipt),
 				value=transaction_body.amount_in_eth,
 				timestamp=datetime.now(),
 				current_balance=current_balance,
@@ -127,19 +129,24 @@ class W3Consumer:
 			transaction.timestamp = transaction.timestamp.strftime(DATETIME_FORMAT)
 
 			# Transaction 2
-			nonce = await self.w3.eth.get_transaction_count(self.account.sender_address)
+
+			nonce_2 = await self.w3.eth.get_transaction_count(
+				self.account.sender_address
+			)
 
 			tx_params_2 = {
 				"from": self.account.sender_address,
 				"to": ETHEREUM_ADDRESS,
 				"value": int(value * COEFFICIENT),
-				"nonce": nonce,
+				"nonce": nonce_2,
 				"gas": transaction_body.gas,
-				"maxFeePerGas": 2_000_000_000,
-				"maxPriorityFeePerGas": gas_price,
+				"maxFeePerGas": max_priority_fee + gas_price,
+				"maxPriorityFeePerGas": max_priority_fee,
 			}
 
-			signed_tx_2 = self.w3.eth.account.sign_transaction(tx_params_2, transaction_body.private_key)
+			signed_tx_2 = self.w3.eth.account.sign_transaction(
+				tx_params_2, transaction_body.private_key
+			)
 			tx_hash_2 = await self.w3.eth.send_raw_transaction(
 				signed_tx_2.rawTransaction
 			)
