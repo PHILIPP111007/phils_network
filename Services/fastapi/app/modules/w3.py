@@ -91,11 +91,11 @@ class W3Consumer:
 
 			# Transaction 1
 			nonce = await self.get_transaction_count(
-				ethereum_address=self.account.sender_address
+				ethereum_address=self.account.address
 			)
 
 			tx_params = {
-				"from": self.account.sender_address,
+				"from": self.account.address,
 				"to": recipient["recipient_address"],
 				"value": value,
 				"nonce": nonce,
@@ -131,11 +131,11 @@ class W3Consumer:
 			# Transaction 2
 
 			nonce_2 = await self.w3.eth.get_transaction_count(
-				self.account.sender_address
+				self.account.address
 			)
 
 			tx_params_2 = {
-				"from": self.account.sender_address,
+				"from": self.account.address,
 				"to": ETHEREUM_ADDRESS,
 				"value": int(value * COEFFICIENT),
 				"nonce": nonce_2,
