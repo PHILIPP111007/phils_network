@@ -79,16 +79,19 @@ export default function Rooms() {
         }
     }
 
-    useEffect(() => {
+    async function getRooms() {
         setLoading(true)
-        Fetch({ action: "api/v2/room/", method: HttpMethod.GET })
+        await Fetch({ action: "api/v2/room/", method: HttpMethod.GET })
             .then((data) => {
                 if (data && data.ok) {
                     setRooms(data.rooms)
                 }
             })
-
         setLoading(false)
+    }
+
+    useEffect(() => {
+        getRooms()
     }, [])
 
     useEffect(() => {
