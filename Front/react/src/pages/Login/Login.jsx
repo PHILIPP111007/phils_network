@@ -1,8 +1,8 @@
 import "./styles/Login.css"
 import { useState, use, useEffect } from "react"
 import { useNavigate, Link } from "react-router-dom"
-import toast from "react-hot-toast"
 import { AuthContext, UserContext } from "../../data/context.js"
+import { notify_success } from "../../modules/notify.js"
 import { HttpMethod, CacheKeys, Language } from "../../data/enums.js"
 import { showLanguage, setLanguage } from "../../modules/language.jsx"
 import getToken from "../../modules/getToken.js"
@@ -44,9 +44,9 @@ export default function Login() {
             setIsAuth(true)
 
             if (language === Language.EN) {
-                toast.success('Successfully login!')
+                notify_success('Successfully login!')
             } else if (language === Language.RU) {
-                toast.success('Вы успешно вошли!')
+                notify_success('Вы успешно вошли!')
             }
 
             await Fetch({ action: "api/v2/online_status/set_true/", method: HttpMethod.POST })

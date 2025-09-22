@@ -5,6 +5,7 @@ import Card from "react-bootstrap/Card"
 import Form from "react-bootstrap/Form"
 import Alert from "react-bootstrap/Alert"
 import { UserContext } from "../data/context.js"
+import { notify } from "../modules/notify.js"
 import { FilterOption, HttpMethod } from "../data/enums.js"
 import rememberPage from "../modules/rememberPage.js"
 import Fetch from "../API/Fetch.js"
@@ -94,6 +95,7 @@ export default function W3() {
             var data = await Fetch({ action: "api/v2/send_ethereum/", method: HttpMethod.POST, body: body })
             if (data && data.ok) {
                 setTransactions([ data.transaction, ...transactions ])
+                notify("Transaction send!")
             } else if (data.error) {
                 setErrors([...errors, data.error])
 

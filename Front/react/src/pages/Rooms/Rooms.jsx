@@ -1,8 +1,8 @@
 import "./styles/Rooms.css"
 import { use, useEffect, useMemo, useRef, useState } from "react"
 import { useParams } from "react-router-dom"
-import toast from "react-hot-toast"
 import { UserContext } from "../../data/context.js"
+import { notify } from "../../modules/notify.js"
 import { HttpMethod, CacheKeys, Language } from "../../data/enums.js"
 import rememberPage from "../../modules/rememberPage.js"
 import { getWebSocketDjango } from "../../modules/getWebSocket.js"
@@ -15,10 +15,7 @@ import Modal from "../components/Modal.jsx"
 import ScrollToTopOrBottom from "../components/MainComponents/components/ScrollToTopOrBottom.jsx"
 import Button from "../components/UI/Button.jsx"
 
-var notify = (msg) => toast(msg)
-
 export default function Rooms() {
-
     var params = useParams()
     rememberPage(`chats/${params.username}`)
 
@@ -76,7 +73,6 @@ export default function Rooms() {
                 newRoom.last_message_text = file_name
             }
 
-
             setRooms((prev) => {
                 var newRooms = [newRoom, ...prev.filter((room) => room.id !== room_id)]
                 return newRooms
@@ -125,7 +121,6 @@ export default function Rooms() {
                         msg += file_name
                     }
                 }
-
                 notify(msg)
             }
             return {
