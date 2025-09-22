@@ -1,10 +1,15 @@
-from app.models import Message, Room
+from app.serializers import MessageSerializer, UserSerializer
+from app.models import Message, Room, User
 
 
 class MessageService:
 	@staticmethod
 	def create(room_id: int, sender_id: int, text: str) -> Message:
-		return Message.objects.create(room_id=room_id, sender_id=sender_id, text=text)
+		obj = Message.objects.create(room_id=room_id, sender_id=sender_id, text=text)
+		message = MessageSerializer(obj).data
+		sender = User.objects.get(pk=message["sender"])
+		message["sender"] = UserSerializer(sender).data
+		return message
 
 	@staticmethod
 	def delete(message_id: int):

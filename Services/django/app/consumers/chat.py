@@ -155,8 +155,7 @@ def _create_message(room_id: int, message: dict) -> dict:
 	msg = MessageService.create(
 		room_id=room_id, sender_id=message["sender_id"], text=message["text"]
 	)
-
-	return MessageSerializer(msg).data
+	return msg
 
 
 @database_sync_to_async

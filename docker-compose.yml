@@ -33,6 +33,7 @@ services:
       AWS_S3_ENDPOINT_URL: http://s3:9000
       AWS_ACCESS_KEY_ID: minio
       AWS_SECRET_ACCESS_KEY: minio123
+      DATETIME_FORMAT: "%Y-%m-%d %H:%M"
 
   fastapi:
     container_name: fastapi
