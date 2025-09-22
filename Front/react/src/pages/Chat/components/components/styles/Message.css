@@ -22,7 +22,6 @@
     }
 }
 
-
 .Message .timestamp {
     color: gray;
 }
@@ -34,4 +33,11 @@
 
 .Message .file {
     display: inline-flex;
+}
+
+.Message .MessageOnlineStatus {
+    display: inline-block;
+    padding: 5px 5px;
+    background-color: green;
+    border-radius: 20px;
 }

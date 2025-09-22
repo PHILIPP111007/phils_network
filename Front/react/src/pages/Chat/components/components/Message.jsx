@@ -52,7 +52,7 @@ export default function Message({ message, downloadFile, deleteMessage }) {
                     </Modal>
                     <div className="info">
                         <Link to={`/users/${message.sender.username}/`} >
-                            <p className="timestamp">{message.sender.first_name} {message.sender.last_name} @{message.sender.username} {message.timestamp}</p>
+                            <p className="timestamp">{message.sender.first_name} {message.sender.last_name} @{message.sender.username} {message.timestamp} {message.sender.is_online && <div className="MessageOnlineStatus"></div>}</p>
                         </Link>
                     </div>
                     <div className="text">
@@ -78,7 +78,7 @@ export default function Message({ message, downloadFile, deleteMessage }) {
                     </Modal>
                     <div className="info">
                         <Link to={`/users/${message.sender.username}/`} >
-                            <p className="timestamp">{message.sender.first_name} {message.sender.last_name} @{message.sender.username} {message.timestamp}</p>
+                            <p className="timestamp">{message.sender.first_name} {message.sender.last_name} @{message.sender.username} {message.timestamp} {message.sender.is_online && <div className="MessageOnlineStatus"></div>}</p>
                         </Link>
                     </div>
                     <div className="text">
@@ -105,7 +105,7 @@ export default function Message({ message, downloadFile, deleteMessage }) {
             </Modal>
             <div className="info">
                 <Link to={`/users/${message.sender.username}/`} >
-                    <p className="timestamp">{message.sender.first_name} {message.sender.last_name} @{message.sender.username} {message.timestamp}</p>
+                    <p className="timestamp">{message.sender.first_name} {message.sender.last_name} @{message.sender.username} {message.timestamp} {message.sender.is_online && <div className="MessageOnlineStatus"></div>}</p>
                 </Link>
             </div>
             <div className="text">

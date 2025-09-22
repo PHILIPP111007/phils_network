@@ -56,6 +56,7 @@ async def get_message(
 				"username": message.sender.username,
 				"first_name": message.sender.first_name,
 				"last_name": message.sender.last_name,
+				"is_online": message.sender.is_online,
 			},
 		}
 		messages.append(message)
