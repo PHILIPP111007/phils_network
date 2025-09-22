@@ -14,11 +14,14 @@ headers -> Authorization -> Token d91dacef1757b45259d45372359d4f7c91a856c2
 POST http://127.0.0.1:8000/api/v1/token/token/logout/
 """
 
-__all__ = ["urlpatterns"]
+__all__ = ["urlpatterns", "websocket_urlpatterns"]
 
+
+from django.urls import include, path
 
 from app.views import FileAPIView, file_download
-from django.urls import include, path
+from app.consumers import ChatConsumer, DeleteMessageConsumer
+
 
 urlpatterns = [
 	path("auth/", include("djoser.urls")),
@@ -31,3 +34,9 @@ file_patterns = [
 ]
 
 urlpatterns += file_patterns
+
+
+websocket_urlpatterns = [
+	path("ws/v1/chat/<str:room>/delete_message/", DeleteMessageConsumer.as_asgi()),
+	path("ws/v1/chat/<str:room>/", ChatConsumer.as_asgi()),
+]
