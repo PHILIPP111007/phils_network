@@ -3,6 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css"
 import "./styles/theme.css"
 import { Suspense, useState } from "react"
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
+import { Toaster } from "react-hot-toast"
 import { AuthContext, UserContext } from "./data/context.js"
 import { PrivateRoutes, PublicRoutes } from "./data/routes.jsx"
 import { useAuth } from "./hooks/useAuth.js"
@@ -36,6 +37,7 @@ export default function App() {
             <UserContext.Provider value={{ user, setUser }}>
                 <BrowserRouter>
                     <div className="App">
+                        <Toaster/>
                         <Suspense fallback={<SuspenseLoading />}>
                             <Routes>
                                 {PrivateRoutes.map((route) =>

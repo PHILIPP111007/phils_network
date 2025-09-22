@@ -1,6 +1,7 @@
 import "./styles/Rooms.css"
 import { use, useEffect, useMemo, useRef, useState } from "react"
 import { useParams } from "react-router-dom"
+import toast from "react-hot-toast"
 import { UserContext } from "../../data/context.js"
 import { HttpMethod, CacheKeys, Language } from "../../data/enums.js"
 import rememberPage from "../../modules/rememberPage.js"
@@ -13,6 +14,8 @@ import RoomNavBar from "./components/RoomNavBar.jsx"
 import Modal from "../components/Modal.jsx"
 import ScrollToTopOrBottom from "../components/MainComponents/components/ScrollToTopOrBottom.jsx"
 import Button from "../components/UI/Button.jsx"
+
+var notify = (msg) => toast(msg)
 
 export default function Rooms() {
 
@@ -50,7 +53,6 @@ export default function Rooms() {
     }, [rooms])
 
     function updateRoomLastMessage(data) {
-        data = JSON.parse(data)
         if (data && data.status) {
             var room_id = Number(data.message.room_id)
             var newRoom = rooms.filter((room) => room.id === room_id)[0]
@@ -98,7 +100,33 @@ export default function Rooms() {
         roomSocket.current = rooms.map((room) => {
             var socket = getWebSocketDjango({ socket_name: "roomSocket", path: `chat/${room.id}/` })
             socket.onmessage = (e) => {
-                updateRoomLastMessage(e.data)
+                var data = JSON.parse(e.data)
+                updateRoomLastMessage(data)
+
+                var msg = ""
+                var username = data.message.sender.username
+                var text = data.message.text
+                var file_name = data.message.file
+
+                msg += username + ": "
+                if (text) {
+                    if (text.length > 30) {
+                        text = text.substring(0, 30) + "..."
+                    }
+                    msg += text
+                }
+                if (file_name) {
+                    if (file_name.length > 30) {
+                        file_name = file_name.substring(0, 30) + "..."
+                    }
+                    if (text) {
+                        msg += " " + file_name
+                    } else {
+                        msg += file_name
+                    }
+                }
+
+                notify(msg)
             }
             return {
                 room_id: room.id,
