@@ -2,6 +2,7 @@ import "./Login/styles/Login.css"
 import { useState, useEffect, useMemo, use } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { UserContext, AuthContext } from "../data/context.js"
+import { notify_success } from "../modules/notify.js"
 import { HttpMethod, Language, CacheKeys } from "../data/enums.js"
 import { showLanguage, setLanguage } from "../modules/language.jsx"
 import Fetch from "../API/Fetch.js"
@@ -64,9 +65,8 @@ export default function Register() {
                 }
 
                 if (typeof data.username === "string") {
-
                     setUser({ ...data })
-
+                    notify_success('Successfully registered!')
                     navigate("/login/")
                 }
             } else {
