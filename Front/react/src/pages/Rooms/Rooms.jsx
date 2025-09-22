@@ -51,7 +51,7 @@ export default function Rooms() {
 
     function updateRoomLastMessage(data) {
         if (data && data.status) {
-            var room_id = Number(data.message.room_id)
+            var room_id = Number(data.message.room)
             var newRoom = rooms.filter((room) => room.id === room_id)[0]
             newRoom.last_message_sender = data.message.sender.username
             newRoom.unread_messages += 1
@@ -104,7 +104,7 @@ export default function Rooms() {
                 var text = data.message.text
                 var file_name = data.message.file
 
-                msg += username + ": "
+                msg += `${username}: `
                 if (text) {
                     if (text.length > 30) {
                         text = text.substring(0, 30) + "..."
