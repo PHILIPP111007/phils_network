@@ -1,5 +1,6 @@
 import "./styles/SettingsBar.css"
 import { use, useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import { AuthContext, UserContext } from "../../../../data/context.js"
 import { HttpMethod, CacheKeys, Theme, Language } from "../../../../data/enums.js"
 import { ROOT_ELEMENT_THEME } from "../../../../data/constants.js"
@@ -12,6 +13,7 @@ export default function SettingsBar(props) {
     var { setUser } = use(UserContext)
     var [theme, setTheme] = useState(Theme.LIGHT)
     var language = localStorage.getItem(CacheKeys.LANGUAGE)
+    var navigate = useNavigate()
 
     useEffect(() => {
         if (localStorage.getItem(CacheKeys.THEME) !== null) {
@@ -48,6 +50,7 @@ export default function SettingsBar(props) {
             last_name: "",
             is_online: false
         })
+        navigate(`/login/`)
     }
 
     if (language === Language.EN) {
