@@ -8,6 +8,14 @@
     color: black;
 }
 
+.NavBar .unreadMessagesCount {
+    display: inline-block;
+    padding: 5px 5px;
+    background-color: red;
+    border-radius: 20px;
+    color: white;
+}
+
 
 @media (pointer: fine),
 (pointer: none) {

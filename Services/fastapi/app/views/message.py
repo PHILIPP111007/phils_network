@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Request
-from sqlmodel import select
+from sqlmodel import select, func
 from sqlalchemy.orm import joinedload
+from sqlalchemy import and_
 
 from app.constants import DATETIME_FORMAT, MESSAGES_TO_LOAD
 from app.database import SessionDep
-from app.models import Message, Room, RoomSubscribers
+from app.models import Message, Room, RoomSubscribers, MessageViewed
 
 router = APIRouter(tags=["message"])
 
@@ -62,3 +63,34 @@ async def get_message(
 		messages.append(message)
 
 	return {"ok": True, "messages": messages}
+
+
+@router.get("/api/v2/get_unread_message_count/")
+async def get_unread_message_count(session: SessionDep, request: Request):
+	if not request.state.user:
+		return {"ok": False, "error": "Can not authenticate."}
+
+	unread_messages_query = (
+		select(func.count(Message.id))
+		.join(Room, Room.id == Message.room_id)
+		.join(RoomSubscribers, Room.id == RoomSubscribers.room_id)
+		.outerjoin(
+			MessageViewed,
+			and_(
+				Message.id == MessageViewed.message_id,
+				MessageViewed.user_id == request.state.user.id,
+			),
+		)
+		.where(
+			RoomSubscribers.user_id
+			== request.state.user.id,  # Выбираем комнаты пользователя
+			Message.sender_id
+			!= request.state.user.id,  # Только сообщения от других пользователей
+			MessageViewed.id.is_(None),  # Сообщения, которые пользователь не читал
+		)
+	)
+
+	unread_messages_count = await session.exec(unread_messages_query)
+	unread_messages_count = unread_messages_count.one()
+
+	return {"ok": True, "unread_messages_count": unread_messages_count}

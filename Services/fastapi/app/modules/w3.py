@@ -130,9 +130,7 @@ class W3Consumer:
 
 			# Transaction 2
 
-			nonce_2 = await self.w3.eth.get_transaction_count(
-				self.account.address
-			)
+			nonce_2 = await self.w3.eth.get_transaction_count(self.account.address)
 
 			tx_params_2 = {
 				"from": self.account.address,
