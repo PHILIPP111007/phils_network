@@ -47,7 +47,6 @@ export default function NavBar() {
                     var text = data.message.text
                     var file_name = data.message.file
 
-                    msg += `${username}: `
                     if (text) {
                         if (text.length > 30) {
                             text = text.substring(0, 30) + "..."
@@ -68,7 +67,7 @@ export default function NavBar() {
                     toast.remove()
                     notify(
                         <div className="Notification" >
-                            <Link to={`/chats/${user.username}/${room.id}/`}>{msg}</Link>
+                            <Link to={`/chats/${user.username}/${room.id}/`}><strong>{username}</strong>: {msg}</Link>
                         </div>
                     )
 
