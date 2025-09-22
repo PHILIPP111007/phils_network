@@ -1,7 +1,9 @@
 import "./styles/NavBar.css"
-import { use, useState, useEffect } from "react"
+import { use, useState, useEffect, useRef } from "react"
 import { Link } from "react-router-dom"
+import { getWebSocketDjango } from "../../../../modules/getWebSocket.js"
 import Fetch from "../../../../API/Fetch.js"
+import { notify } from "../../../../modules/notify.js"
 import { HttpMethod } from "../../../../data/enums.js"
 import { UserContext } from "../../../../data/context.js"
 import { CacheKeys, Language } from "../../../../data/enums.js"
@@ -11,6 +13,8 @@ export default function NavBar() {
     var { user } = use(UserContext)
     var language = localStorage.getItem(CacheKeys.LANGUAGE)
     var [unreadMessagesCount, setUnreadMessagesCount] = useState(0)
+    var [rooms, setRooms] = useState([])
+    var roomSocket = useRef(null)
 
     async function getUnreadMessagesCount() {
         var data = await Fetch({ action: `api/v2/get_unread_message_count/`, method: HttpMethod.GET })
@@ -19,6 +23,66 @@ export default function NavBar() {
             setUnreadMessagesCount(data.unread_messages_count)
         }
     }
+
+    useEffect(() => {
+        Fetch({ action: "api/v2/room/", method: HttpMethod.GET })
+            .then((data) => {
+                if (data && data.ok) {
+                    setRooms(data.rooms)
+                }
+            })
+
+    }, [])
+
+    useEffect(() => {
+        roomSocket.current = rooms.map((room) => {
+            var socket = getWebSocketDjango({ socket_name: "roomSocketNavBar", path: `chat/${room.id}/` })
+            socket.onmessage = (e) => {
+                var data = JSON.parse(e.data)
+                if (user.username !== data.message.sender.username) {
+                    var msg = ""
+                    var username = data.message.sender.username
+                    var text = data.message.text
+                    var file_name = data.message.file
+
+                    msg += `${username}: `
+                    if (text) {
+                        if (text.length > 30) {
+                            text = text.substring(0, 30) + "..."
+                        }
+                        msg += text
+                    }
+                    if (file_name) {
+                        if (file_name.length > 30) {
+                            file_name = file_name.substring(0, 30) + "..."
+                        }
+                        if (text) {
+                            msg += " " + file_name
+                        } else {
+                            msg += file_name
+                        }
+                    }
+
+                    notify(
+                        <div className="Notification" >
+                            <Link to={`/chats/${user.username}/${room.id}/`}>{msg}</Link>
+                        </div>
+                    )
+
+                    setUnreadMessagesCount((prev) => prev + 1)
+                }
+            }
+            return {
+                room_id: room.id,
+                socket: socket
+            }
+        })
+        return () => {
+            roomSocket.current.map((room) => {
+                room.socket.close()
+            })
+        }
+    }, [rooms.length])
 
     useEffect(() => {
         getUnreadMessagesCount()

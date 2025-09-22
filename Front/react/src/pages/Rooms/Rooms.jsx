@@ -2,7 +2,6 @@ import "./styles/Rooms.css"
 import { use, useEffect, useMemo, useRef, useState } from "react"
 import { useParams } from "react-router-dom"
 import { UserContext } from "../../data/context.js"
-import { notify } from "../../modules/notify.js"
 import { HttpMethod, CacheKeys, Language } from "../../data/enums.js"
 import rememberPage from "../../modules/rememberPage.js"
 import { getWebSocketDjango } from "../../modules/getWebSocket.js"
@@ -98,30 +97,6 @@ export default function Rooms() {
             socket.onmessage = (e) => {
                 var data = JSON.parse(e.data)
                 updateRoomLastMessage(data)
-
-                var msg = ""
-                var username = data.message.sender.username
-                var text = data.message.text
-                var file_name = data.message.file
-
-                msg += `${username}: `
-                if (text) {
-                    if (text.length > 30) {
-                        text = text.substring(0, 30) + "..."
-                    }
-                    msg += text
-                }
-                if (file_name) {
-                    if (file_name.length > 30) {
-                        file_name = file_name.substring(0, 30) + "..."
-                    }
-                    if (text) {
-                        msg += " " + file_name
-                    } else {
-                        msg += file_name
-                    }
-                }
-                notify(msg)
             }
             return {
                 room_id: room.id,
