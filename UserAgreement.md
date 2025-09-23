@@ -79,7 +79,6 @@ All possible disputes arising from or related to this Agreement shall be resolve
 
 • Restrict access to certain functions for individual users.
 
-• Charges a fee of 0.001 of the transaction amount on the Ethereum network.
 
 4.2. The Service undertakes to:
 

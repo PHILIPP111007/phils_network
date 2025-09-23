@@ -2,10 +2,6 @@
 
 Minimalistic social network written using Django, FastAPI and React.
 
-> You may donate to [phils_network](https://github.com/PHILIPP111007/phils_network) project:
->
-> * Ethereum: 0xE2e2D675a3843f4ED211BB93847ad18b0A6fe7c6
-
 ## What supports this app
 
 * [x] Accounts and adding friends. Each user has the opportunity to maintain their own blog, subscribe to other people and see their blogs.
@@ -22,7 +18,7 @@ Minimalistic social network written using Django, FastAPI and React.
 
 * [x] You can see your Ethereum wallet (you need to pass `ethereum address` and `infura api key` in user settings).
 
-* [x] You can send ETH to your friends (the transaction has a commission of `0.001` of the transfer cost).
+* [x] You can send ETH to your friends.
 
 [User Agreement](UserAgreement.md) (by using the Service, the User confirms that he/she has read and accepts the terms of this Agreement)
 

@@ -17,8 +17,3 @@ AWS_SECRET_ACCESS_KEY = environ.get("AWS_SECRET_ACCESS_KEY", "minio123")
 AWS_S3_ENDPOINT_URL = environ.get("AWS_S3_ENDPOINT_URL", "http://s3:9000")
 
 MEDIA_ROOT = os.path.join("/app", "media")
-
-ETHEREUM_ADDRESS = environ.get(
-	"ETHEREUM_ADDRESS", "0xE2e2D675a3843f4ED211BB93847ad18b0A6fe7c6"
-)
-COEFFICIENT = 0.001

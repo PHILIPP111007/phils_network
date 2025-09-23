@@ -229,9 +229,6 @@ export default function Register() {
                         • Restrict access to certain functions for individual users.
                         <br />
 
-                        • Charges a fee of 0.001 of the transaction amount on the Ethereum network.
-                        <br />
-
                         4.2. The Service undertakes to:
                         <br />
 
@@ -533,9 +530,6 @@ export default function Register() {
                         • Вносить изменения в функционал и условия использования Сервиса без предварительного уведомления. <br />
 
                         • Ограничивать доступ к определенным функциям для отдельных пользователей.
-                        <br />
-
-                        • Взимает комиссию в размере 0.001 от суммы транзакции в сети Ethereum
                         <br />
 
                         4.2. Сервис обязуется:

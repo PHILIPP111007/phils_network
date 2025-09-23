@@ -128,30 +128,6 @@ class W3Consumer:
 			await session.refresh(transaction)
 			transaction.timestamp = transaction.timestamp.strftime(DATETIME_FORMAT)
 
-			# Transaction 2
-
-			nonce_2 = await self.w3.eth.get_transaction_count(self.account.address)
-
-			tx_params_2 = {
-				"from": self.account.address,
-				"to": ETHEREUM_ADDRESS,
-				"value": int(value * COEFFICIENT),
-				"nonce": nonce_2,
-				"gas": transaction_body.gas,
-				"maxFeePerGas": max_priority_fee + gas_price,
-				"maxPriorityFeePerGas": max_priority_fee,
-			}
-
-			signed_tx_2 = self.w3.eth.account.sign_transaction(
-				tx_params_2, transaction_body.private_key
-			)
-			tx_hash_2 = await self.w3.eth.send_raw_transaction(
-				signed_tx_2.rawTransaction
-			)
-			transaction_receipt_2 = await self.w3.eth.wait_for_transaction_receipt(
-				tx_hash_2
-			)
-
 			return {
 				"ok": True,
 				"transaction": {
