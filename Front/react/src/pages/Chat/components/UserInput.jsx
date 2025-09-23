@@ -37,28 +37,32 @@ export default function UserInput({ mainSets, sendMessage, editRoom }) {
 
                 <div className="UserInput">
                     <form onChange={e => setSelectedFile(e.target.files[0])} className="uploadFileForm">
-                        <Input id="formFile" className="form-control" type="file" />
+                        <Input id="formFile" type="file" />
                     </form>
-                    <img
-                        id="SettingsButton"
-                        src={settingsLogo}
-                        onClick={() => {
-                            hideUserInput()
-                            setModalRoomEdit(true)
-                        }}
-                        alt="settings button"
-                    />
-                    <textarea
-                        class="TextArea"
-                        placeholder="Use markdown to format your text..."
-                        value={text}
-                        maxLength="5000"
-                        onChange={(e) => setText(e.target.value)}
-                    />
-                    <img id="SendButton" src={sendIcon} onClick={() => {
-                        sendMessage(text, selectedFile)
-                        setText("")
-                    }} alt="send button" />
+                    <div className="ButtonsAndTextArea">
+                        <img
+                            id="SettingsButton"
+                            src={settingsLogo}
+                            onClick={() => {
+                                hideUserInput()
+                                setModalRoomEdit(true)
+                            }}
+                            alt="settings button"
+                        />
+                        <textarea
+                            class="TextArea"
+                            placeholder="Use markdown to format your text..."
+                            value={text}
+                            maxLength="5000"
+                            onChange={(e) => setText(e.target.value)}
+                        />
+                        <img id="SendButton" src={sendIcon} onClick={() => {
+                                sendMessage(text, selectedFile)
+                                setText("")
+                            }}
+                            alt="send button"
+                        />
+                    </div>
                 </div>
             </>
         )

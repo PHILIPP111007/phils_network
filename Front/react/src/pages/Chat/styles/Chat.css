@@ -20,23 +20,9 @@
     white-space: pre-line;
 }
 
-.Chat #SendButton {
-    width: 25px;
-    border-top: 1px solid;
-    border-bottom: 1px solid;
-    border-right: 1px solid;
-}
-
 .Chat #SendButton:hover,
 .Chat #SettingsButton:hover {
     cursor: pointer;
-}
-
-.Chat #SettingsButton {
-    width: 30px;
-    border-top: 1px solid;
-    border-bottom: 1px solid;
-    border-left: 1px solid;
 }
 
 .Chat .Wrapper-InView {

@@ -2,36 +2,62 @@
     position: fixed;
     bottom: 10px;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%);
     display: flex;
+    align-items: center;
+}
+
+.UserInput .ButtonsAndTextArea {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .UserInput .TextArea {
-    min-height: 20px;
+    width: 100%;
     padding: 5px;
-    resize: none;
+    min-height: 20px;
+    resize: vertical;
+    box-sizing: border-box;
     field-sizing: content;
     outline: none;
-    overflow: auto;
+    overflow-y: auto;
     font-family: inherit;
     font-size: inherit;
     line-height: inherit;
     border: 1px solid;
-    line-height: 20px;
 }
 
 .UserInput .uploadFileForm {
-    padding: 5px;
+    height: 50%;
+    width: 100%;
+}
+
+.UserInput #SettingsButton {
+    width: 35px;
+    border-top: 1px solid;
+    border-bottom: 1px solid;
+    border-left: 1px solid;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.UserInput #SendButton {
+    width: 35px;
+    border-top: 1px solid;
+    border-bottom: 1px solid;
+    border-right: 1px solid;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
 }
 
 @media (pointer: coarse) {
-
     /* mobile device */
     .UserInput {
-        margin-bottom: 50px;
+        margin-bottom: 60px;
     }
 
-    .UserInput .TextArea {
+    .UserInput .ButtonsAndTextArea {
         margin-bottom: 70px;
         width: 100%;
         position: absolute;
@@ -42,9 +68,7 @@
     }
 }
 
-@media (pointer: fine),
-(pointer: none) {
-
+@media (pointer: fine), (pointer: none) {
     /* desktop */
     .UserInput .TextArea {
         width: 400px;
@@ -52,10 +76,4 @@
         border-right: none;
         border-left: none;
     }
-}
-
-input[type=file]::file-selector-button {
-    border: 2px solid #565655;
-    padding: .2em .4em;
-    border-radius: .2em;
 }

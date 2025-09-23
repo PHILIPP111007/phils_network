@@ -184,7 +184,8 @@ input[type=file]::file-selector-button {
 
     .UserCard,
     .W3Card,
-    .TransactionCard {
+    .TransactionCard,
+    .UserInput .TextArea {
         background-color: rgb(57, 57, 61);
         color: rgb(205, 205, 205);
     }

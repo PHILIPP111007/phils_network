@@ -6,6 +6,8 @@
     display: block;
     text-decoration: none;
     color: black;
+    text-align: center;
+    flex-grow: 1;
 }
 
 .NavBar .unreadMessagesCount {
@@ -16,10 +18,7 @@
     color: white;
 }
 
-
-@media (pointer: fine),
-(pointer: none) {
-
+@media (pointer: fine), (pointer: none) {
     /* desktop */
     .NavBar {
         top: 100px;
@@ -34,7 +33,6 @@
 }
 
 @media (pointer: coarse) {
-
     /* mobile device */
     .NavBar {
         bottom: 0px;
@@ -42,12 +40,20 @@
         right: 0px;
         width: 100%;
         justify-content: space-around;
+        align-items: center;
+        display: flex;
+    }
+
+    .NavBar nav {
+        display: flex;
+        justify-content: space-evenly;
+        width: 100%;
     }
 
     .NavBar a {
-        float: left;
         text-align: center;
         padding: 10px 20px;
         font-size: 20px;
+        text-align: center;
     }
 }
