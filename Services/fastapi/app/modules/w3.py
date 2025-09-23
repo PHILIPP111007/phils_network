@@ -6,7 +6,7 @@ from web3 import AsyncWeb3, Account
 
 from app.database import SessionDep
 from app.models import Transaction
-from app.constants import DATETIME_FORMAT, ETHEREUM_ADDRESS, COEFFICIENT
+from app.constants import DATETIME_FORMAT
 from app.request_body import TransactionBody
 
 
