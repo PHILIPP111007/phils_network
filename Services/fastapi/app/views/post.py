@@ -24,6 +24,7 @@ async def get_post(
 			)
 		)
 		query = query.unique().all()
+		return query
 
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
