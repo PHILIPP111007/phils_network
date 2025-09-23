@@ -62,6 +62,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 	class Meta:
 		indexes = [
 			models.Index(fields=["id"]),
+			models.Index(fields=["username"]),
 			models.Index(fields=["id", "username"]),
 		]
 
@@ -74,7 +75,8 @@ class Post(models.Model):
 
 	class Meta:
 		indexes = [
-			models.Index(fields=["user_id"]),
+			models.Index(fields=["id"]),
+			models.Index(fields=["user_id", "timestamp"]),
 		]
 
 	def __str__(self):
@@ -110,6 +112,11 @@ class Room(models.Model):
 	timestamp = models.DateTimeField(auto_now_add=True)
 	subscribers = models.ManyToManyField(User, blank=True)
 
+	class Meta:
+		indexes = [
+			models.Index(fields=["id"]),
+		]
+
 	def __str__(self):
 		return f"{self.name} [ {self.timestamp} ]"
 
@@ -127,6 +134,13 @@ class RoomInvitation(models.Model):
 	room = models.ForeignKey(Room, on_delete=models.CASCADE)
 	timestamp = models.DateTimeField(auto_now_add=True)
 
+	class Meta:
+		indexes = [
+			models.Index(fields=["id"]),
+			models.Index(fields=["to_user_id"]),
+			models.Index(fields=["room_id", "to_user_id"]),
+		]
+
 	def __str__(self):
 		return f"{self.creator} [ {self.timestamp} ]"
 
@@ -143,6 +157,7 @@ class Message(models.Model):
 
 	class Meta:
 		indexes = [
+			models.Index(fields=["id"]),
 			models.Index(fields=["room_id"]),
 		]
 
@@ -164,6 +179,11 @@ class Transaction(models.Model):
 	current_balance = models.IntegerField(blank=True, null=True)
 	gas_price = models.IntegerField(blank=True, null=True)
 	gas = models.IntegerField(blank=True, null=True)
+
+	class Meta:
+		indexes = [
+			models.Index(fields=["sender_id", "recipient_id", "timestamp"]),
+		]
 
 	def __str__(self):
 		return (

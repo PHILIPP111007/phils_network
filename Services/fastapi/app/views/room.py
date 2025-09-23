@@ -235,8 +235,8 @@ async def post_room_invitation_remove(
 
 	await session.exec(
 		delete(RoomInvitation).where(
-			RoomInvitation.to_user_id == user_id,
 			RoomInvitation.room_id == room_id,
+			RoomInvitation.to_user_id == user_id,
 		)
 	)
 	await session.commit()
