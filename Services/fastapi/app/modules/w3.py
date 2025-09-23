@@ -86,7 +86,7 @@ class W3Consumer:
 
 			if current_balance < value + (
 				transaction_body.gas + max_priority_fee + gas_price
-			) * 2 + int(value * COEFFICIENT):
+			):
 				return {"ok": False, "error": "Insufficient balance"}
 
 			# Transaction 1
