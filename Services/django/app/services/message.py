@@ -1,5 +1,10 @@
+import os
+
+from django.conf import settings
+
 from app.serializers import MessageSerializer, UserSerializer
 from app.models import Message, Room, User
+from app.s3 import s3
 
 
 class MessageService:
@@ -13,7 +18,12 @@ class MessageService:
 
 	@staticmethod
 	def delete(message_id: int):
-		Message.objects.filter(pk=message_id).delete()
+		msg = Message.objects.filter(pk=message_id).first()
+		if msg:
+			if msg.file:
+				file_path = os.path.join(settings.MEDIA_ROOT, msg.file.path)
+				s3.delete_object(Bucket=settings.BUCKET_NAME, Key=file_path)
+			msg.delete()
 
 	@staticmethod
 	def check_permission(room_id: int, subscriber_id: int) -> bool:
