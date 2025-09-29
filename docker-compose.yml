@@ -1,6 +1,6 @@
 services:
-  django:
-    container_name: django
+  django_phils_network:
+    container_name: django_phils_network
     restart: unless-stopped
     build:
       context: .
@@ -35,8 +35,8 @@ services:
       AWS_SECRET_ACCESS_KEY: minio123
       DATETIME_FORMAT: "%Y-%m-%d %H:%M"
 
-  fastapi:
-    container_name: fastapi
+  fastapi_phils_network:
+    container_name: fastapi_phils_network
     restart: unless-stopped
     environment:
       PG_NAME: postgres
@@ -93,8 +93,8 @@ services:
           cpus: "1"
           memory: 4G
 
-  client:
-    container_name: client
+  client_phils_network:
+    container_name: client_phils_network
     restart: unless-stopped
     build:
       context: .
@@ -102,7 +102,7 @@ services:
     ports:
       - 80:80
     depends_on:
-      - django
+      - django_phils_network
     networks:
       - nginx_network
 

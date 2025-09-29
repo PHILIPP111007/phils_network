@@ -93,7 +93,7 @@ export default function Chat() {
                 throw new Error(`HTTP error! status: ${response.status}`)
             }
 
-            let filename = message.file.split("/").pop()
+            let filename = message.file.path.split("/").pop()
             var blob = await response.blob()
             var url = URL.createObjectURL(blob)
 

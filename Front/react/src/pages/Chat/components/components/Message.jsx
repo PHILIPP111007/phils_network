@@ -11,6 +11,7 @@ import fileIcon from "../../../../images/file-icon.svg"
 export default function Message({ message, downloadFile, deleteMessage }) {
 
     var [modalMessage, setModalMessage] = useState(false)
+    const [imageUrl, setImageUrl] = useState(null)
     var language = localStorage.getItem(CacheKeys.LANGUAGE)
 
     function trimFileName(file) {
@@ -39,7 +40,24 @@ export default function Message({ message, downloadFile, deleteMessage }) {
         })
     }, [])
 
-    if (message.file) {
+    useEffect(() => {
+        if (message.file.path) {
+            var byteCharacters = atob(message.file.content)
+                const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            const uint8Array = new Uint8Array(byteNumbers);
+    
+            // Optional: Create a Blob from the Uint8Array if you want to download or manipulate the file
+            const blob = new Blob([uint8Array], { type: 'application/octet-stream' });
+    
+            const url = URL.createObjectURL(blob)
+            setImageUrl(url)
+        }
+    }, [])
+
+    if (message.file.path) {
 
         if (language === Language.EN) {
             return (
@@ -55,6 +73,19 @@ export default function Message({ message, downloadFile, deleteMessage }) {
                             <p className="timestamp">{message.sender.first_name} {message.sender.last_name} @{message.sender.username} {message.timestamp} {message.sender.is_online && <div className="MessageOnlineStatus"></div>}</p>
                         </Link>
                     </div>
+
+                    {imageUrl &&
+                        <>
+                            <div style={{ marginBottom: "20px" }}>
+                            <img 
+                                className="MessageImage"
+                                src={imageUrl} 
+                                alt="Uploaded preview" 
+                            />
+                            </div>
+                        </>
+                    }
+
                     <div className="text">
                         <ReactMarkdown children={message.text} />
                     </div>
@@ -63,7 +94,7 @@ export default function Message({ message, downloadFile, deleteMessage }) {
                         <Button onClick={() => downloadFile(message)}>Download file</Button>
                     </div>
                     <div className="file">
-                        {trimFileName(message.file)}
+                        {trimFileName(message.file.path)}
                     </div>
                 </div>
             )
@@ -81,6 +112,19 @@ export default function Message({ message, downloadFile, deleteMessage }) {
                             <p className="timestamp">{message.sender.first_name} {message.sender.last_name} @{message.sender.username} {message.timestamp} {message.sender.is_online && <div className="MessageOnlineStatus"></div>}</p>
                         </Link>
                     </div>
+
+                    {imageUrl &&
+                        <>
+                            <div style={{ marginBottom: "20px" }}>
+                            <img 
+                                className="MessageImage"
+                                src={imageUrl} 
+                                alt="Uploaded preview" 
+                            />
+                            </div>
+                        </>
+                    }
+
                     <div className="text">
                         <ReactMarkdown children={message.text} />
                     </div>
@@ -89,7 +133,7 @@ export default function Message({ message, downloadFile, deleteMessage }) {
                         <Button onClick={() => downloadFile(message)}>Скачать файл</Button>
                     </div>
                     <div className="file">
-                        {trimFileName(message.file)}
+                        {trimFileName(message.file.path)}
                     </div>
                 </div>
             )
