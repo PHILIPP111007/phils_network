@@ -8,8 +8,8 @@ services:
     expose:
       - 8080
     depends_on:
-      - db
-      - s3
+      - db_phils_network
+      - s3_phils_network
     command: >
       sh -c "python manage.py collectstatic --noinput &&
             python manage.py migrate &&
@@ -22,7 +22,7 @@ services:
     environment:
       PG_NAME: postgres
       PG_USER: postgres
-      PG_HOST: db
+      PG_HOST: db_phils_network
       PG_PORT: "5432"
       PG_PASSWORD: postgres
       SECRET_KEY: weofjweifjewifjewifjewfewf
@@ -41,7 +41,7 @@ services:
     environment:
       PG_NAME: postgres
       PG_USER: postgres
-      PG_HOST: db
+      PG_HOST: db_phils_network
       PG_PORT: "5432"
       PG_PASSWORD: postgres
       DATETIME_FORMAT: "%Y-%m-%d %H:%M"
@@ -56,8 +56,8 @@ services:
     expose:
       - 8080
     depends_on:
-      - db
-      - s3
+      - db_phils_network
+      - s3_phils_network
     command: >
       sh -c "fastapi run --workers 1 --port 8080 app/main.py"
     networks:
@@ -65,18 +65,16 @@ services:
       - db_network
       - s3_network
 
-  db:
-    container_name: db
-    image: postgres:16.3-alpine
+  db_phils_network:
+    container_name: db_phils_network
+    image: postgres:18.0-alpine
     restart: unless-stopped
     environment:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      PGDATA: /var/lib/postgresql/data
     volumes:
-      - postgres-data:/var/lib/postgresql/data/
-      - .:/docker-entrypoint-initdb.d
+      - postgres-data_phils_network:/var/lib/postgresql/data_phils_network/
     expose:
       - 5432
     networks:
@@ -103,37 +101,38 @@ services:
       - 80:80
     depends_on:
       - django_phils_network
+      - fastapi_phils_network
     networks:
       - nginx_network
 
-  s3:
-    container_name: s3
+  s3_phils_network:
+    container_name: s3_phils_network
     image: minio/minio:latest
     restart: unless-stopped
     expose:
       - 9000
-    command: server --address s3:9000 /data
+    command: server --address :9000 /data
     environment:
       MINIO_ROOT_USER: minio
       MINIO_ROOT_PASSWORD: minio123
     networks:
       - s3_network
 
-  cache:
-    container_name: cache
+  cache_phils_network:
+    container_name: cache_phils_network
     restart: unless-stopped
-    image: redis:7.2-alpine 
+    image: redis:7.2-alpine
     expose:
       - 6379
     command: redis-server
     volumes: 
-      - cache:/data
+      - cache_phils_network:/data
     networks:
       - cache_network
 
 volumes:
-  postgres-data:
-  cache:
+  postgres-data_phils_network:
+  cache_phils_network:
     driver: local
 
 networks:
