@@ -43,6 +43,7 @@ export default function Message({ message, downloadFile, deleteMessage }) {
     useEffect(() => {
         if (message.file.path) {
             var blob
+            var uint8Array
             var url
             try {
                 var byteCharacters = atob(message.file.content)
@@ -50,13 +51,13 @@ export default function Message({ message, downloadFile, deleteMessage }) {
                 for (let i = 0; i < byteCharacters.length; i++) {
                     byteNumbers[i] = byteCharacters.charCodeAt(i)
                 }
-                var uint8Array = new Uint8Array(byteNumbers)
-        
+                uint8Array = new Uint8Array(byteNumbers)
                 blob = new Blob([uint8Array], { type: 'application/octet-stream' })
-        
                 url = URL.createObjectURL(blob)
             } catch {
-                console.warn("Error while preview image")
+                uint8Array = new Uint8Array(message.file.content)
+                blob = new Blob([uint8Array], { type: 'application/octet-stream' })
+                url = URL.createObjectURL(blob)
             }
             setImageUrl(url)
         }

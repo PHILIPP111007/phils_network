@@ -59,6 +59,7 @@ export default function UserInput({ mainSets, sendMessage, editRoom }) {
                         <img id="SendButton" src={sendIcon} onClick={() => {
                                 sendMessage(text, selectedFile)
                                 setText("")
+                                setSelectedFile(null)
                             }}
                             alt="send button"
                         />

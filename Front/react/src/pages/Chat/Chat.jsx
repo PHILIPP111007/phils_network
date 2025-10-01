@@ -64,13 +64,16 @@ export default function Chat() {
                 action: `api/v1/file_upload/${params.room_id}/`, method: HttpMethod.POST, body: formData, is_uploading_file: true
             })
 
+            var arrayBuffer = await file.arrayBuffer()
+            var file_content = Array.from(new Uint8Array(arrayBuffer))
+
             if (data && data.ok) {
-                message = { ...data.message, file: { path: data.message.file, content: file }, sender_id: user.id, text: sendingText, save: false, sender: { username: user.username, first_name: user.first_name, last_name: user.last_name } }
+                message = { ...data.message, file: { path: data.message.file, content: file_content }, sender_id: user.id, text: sendingText, sender: { username: user.username, first_name: user.first_name, last_name: user.last_name } }
                 await chatSocket.current.send(JSON.stringify({ message: message }))
             }
         } else {
             if (sendingText.length > 0) {
-                message = { sender_id: user.id, text: sendingText, file: { path: null, content: null }, save: true, room: mainSets.value.room.id }
+                message = { sender_id: user.id, text: sendingText, file: { path: null, content: null }, room: mainSets.value.room.id }
                 await chatSocket.current.send(JSON.stringify({ message: message }))
             }
         }
