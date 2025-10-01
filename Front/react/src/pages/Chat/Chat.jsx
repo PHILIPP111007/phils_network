@@ -217,10 +217,10 @@ export default function Chat() {
     }, [messages])
 
     useEffect(() => {
-        if (inViewWrapper) {
+        if (inViewWrapper && !mainSets.value.loading) {
             scrollToBottom()
         }
-    }, [inViewWrapper, messages.length])
+    }, [inViewWrapper, messages.length, mainSets.value.loading])
 
     useObserver({ inView: inViewLazyDiv, func: fetchAddMessages, flag: !mainSets.value.loading })
 
