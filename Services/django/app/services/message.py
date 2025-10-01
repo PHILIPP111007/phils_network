@@ -14,6 +14,8 @@ class MessageService:
 		message = MessageSerializer(obj).data
 		sender = User.objects.get(pk=message["sender"])
 		message["sender"] = UserSerializer(sender).data
+		message["file"] = {"path": message["file"], "content": None}
+
 		return message
 
 	@staticmethod

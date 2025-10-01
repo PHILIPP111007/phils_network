@@ -48,8 +48,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		text_data = json.loads(text_data)
 
 		message = text_data["message"]
-		if message["file"]:
-			message["file"] = os.path.basename(message["file"])
+		if message["file"]["path"]:
+			message["file"]["path"] = os.path.basename(message["file"]["path"])
 		else:
 			message = await _create_message(room_id=message["room"], message=message)
 

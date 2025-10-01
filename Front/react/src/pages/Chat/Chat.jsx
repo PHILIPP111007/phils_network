@@ -65,12 +65,12 @@ export default function Chat() {
             })
 
             if (data && data.ok) {
-                message = { ...data.message, sender_id: user.id, text: sendingText, save: false, sender: { username: user.username, first_name: user.first_name, last_name: user.last_name } }
+                message = { ...data.message, file: { path: data.message.file, content: file }, sender_id: user.id, text: sendingText, save: false, sender: { username: user.username, first_name: user.first_name, last_name: user.last_name } }
                 await chatSocket.current.send(JSON.stringify({ message: message }))
             }
         } else {
             if (sendingText.length > 0) {
-                message = { sender_id: user.id, text: sendingText, file: null, save: true, room: mainSets.value.room.id }
+                message = { sender_id: user.id, text: sendingText, file: { path: null, content: null }, save: true, room: mainSets.value.room.id }
                 await chatSocket.current.send(JSON.stringify({ message: message }))
             }
         }
