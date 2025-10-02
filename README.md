@@ -148,3 +148,7 @@ Chat page:
 
 <img src="pictures/chat_page_1.png" alt="alt text" width="1000"/>
 <br />
+
+Video:
+
+<video src="pictures/video.mp4" controls></video>
