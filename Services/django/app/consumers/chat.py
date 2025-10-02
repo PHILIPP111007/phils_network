@@ -7,7 +7,6 @@ from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from rest_framework.authtoken.models import Token
 
-from app.serializers import MessageSerializer
 from app.services import MessageService
 
 
@@ -148,11 +147,10 @@ def _check_permission(room_id: int, pk: int) -> bool:
 	return MessageService.check_permission(room_id=room_id, subscriber_id=pk)
 
 
-@database_sync_to_async
-def _create_message(room_id: int, message: dict) -> dict:
+async def _create_message(room_id: int, message: dict) -> dict:
 	"""Create message."""
 
-	msg = MessageService.create(
+	msg = await MessageService.create(
 		room_id=room_id, sender_id=message["sender_id"], text=message["text"]
 	)
 	return msg
