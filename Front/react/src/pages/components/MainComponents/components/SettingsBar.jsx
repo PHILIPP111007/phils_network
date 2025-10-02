@@ -39,7 +39,7 @@ export default function SettingsBar(props) {
 
     async function logout() {
         await Fetch({ action: "api/v2/online_status/set_false/", method: HttpMethod.POST })
-        await Fetch({ action: "api/v1/token/token/logout/", method: HttpMethod.POST })
+        await Fetch({ action: "api/v1/token/logout/", method: HttpMethod.POST })  // TODO
         setIsAuth(false)
         localStorage.removeItem(CacheKeys.TOKEN)
         setUser({

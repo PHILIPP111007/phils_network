@@ -10,14 +10,16 @@ from app.s3 import s3
 
 @database_sync_to_async
 def get_message_serialized_data(db_result):
-    serializer = MessageSerializer(db_result)
-    return serializer.data
+	serializer = MessageSerializer(db_result)
+	return serializer.data
 
 
 class MessageService:
 	@staticmethod
 	async def create(room_id: int, sender_id: int, text: str) -> Message:
-		obj = await Message.objects.acreate(room_id=room_id, sender_id=sender_id, text=text)
+		obj = await Message.objects.acreate(
+			room_id=room_id, sender_id=sender_id, text=text
+		)
 		message = await get_message_serialized_data(db_result=obj)
 		sender = await User.objects.aget(pk=message["sender"])
 		message["sender"] = UserSerializer(sender).data

@@ -19,7 +19,7 @@ export default function Login() {
 
     async function auth() {
         var token = getToken()
-        var data = await Fetch({ action: "api/v1/auth/users/me/", method: HttpMethod.GET })
+        var data = await Fetch({ action: "api/v1/auth/users/me/", method: HttpMethod.GET })  // TODO
 
         if (data && !data.detail && data.username && token) {
             setUser({ ...user, ...data })
@@ -37,7 +37,7 @@ export default function Login() {
 
     async function login(event) {
         event.preventDefault()
-        var data = await Fetch({ action: "api/v1/token/token/login/", method: HttpMethod.POST, body: loginForm, token: "" })
+        var data = await Fetch({ action: "api/v1/token/login/", method: HttpMethod.POST, body: loginForm, token: "" })  // TODO
 
         if (data && !data.detail && data.auth_token) {
             localStorage.setItem(CacheKeys.TOKEN, data.auth_token)

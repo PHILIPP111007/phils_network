@@ -17,23 +17,26 @@ POST http://127.0.0.1:8000/api/v1/token/token/logout/
 __all__ = ["urlpatterns", "websocket_urlpatterns"]
 
 
-from django.urls import include, path
+from django.urls import include, path, re_path
 
-from app.views import FileAPIView, file_download
+from app.views import FileAPIView, file_download, TokenCreateView, TokenDestroyView
 from app.consumers import ChatConsumer, DeleteMessageConsumer
 
 
-urlpatterns = [
+urlpatterns = []
+
+auth_urlpatterns = [
 	path("auth/", include("djoser.urls")),
-	path("token/", include("djoser.urls.authtoken")),
+	re_path(r"^token/login/?$", TokenCreateView.as_view(), name="login"),
+	re_path(r"^token/logout/?$", TokenDestroyView.as_view(), name="logout"),
 ]
 
-file_patterns = [
+file_urlpatterns = [
 	path("file_upload/<int:room_id>/", FileAPIView.as_view()),
 	path("file_download/<int:message_id>/<str:username>/", file_download),
 ]
 
-urlpatterns += file_patterns
+urlpatterns += auth_urlpatterns + file_urlpatterns
 
 
 websocket_urlpatterns = [

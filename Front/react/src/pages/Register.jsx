@@ -27,7 +27,7 @@ export default function Register() {
 
     async function auth() {
         var token = getToken()
-        var data = await Fetch({ action: "api/v1/auth/users/me/", method: HttpMethod.GET })
+        var data = await Fetch({ action: "api/v1/auth/users/me/", method: HttpMethod.GET })  // TODO
 
         if (data && !data.detail && data.username && token) {
             setUser({ ...user, ...data })
