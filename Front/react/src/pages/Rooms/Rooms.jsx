@@ -56,7 +56,7 @@ export default function Rooms() {
             newRoom.unread_messages += 1
 
             var text = data.message.text
-            var file_name = data.message.file
+            var file_name = data.message.file.path
 
             if (text) {
                 if (text.length > 30) {

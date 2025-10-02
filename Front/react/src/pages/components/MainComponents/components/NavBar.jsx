@@ -45,7 +45,7 @@ export default function NavBar() {
                     var msg = ""
                     var username = data.message.sender.username
                     var text = data.message.text
-                    var file_name = data.message.file
+                    var file_name = data.message.file.path
 
                     if (text) {
                         if (text.length > 30) {
