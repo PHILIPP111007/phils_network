@@ -1,5 +1,3 @@
-from datetime import datetime, timezone
-
 from fastapi import APIRouter, Request
 from sqlmodel import delete, select
 
