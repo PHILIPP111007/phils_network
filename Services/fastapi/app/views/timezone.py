@@ -12,14 +12,12 @@ router = APIRouter(tags=["timezone"])
 async def post_timezone(session: SessionDep, request: Request, body: TimezoneData):
     if not request.state.user:
         return {"ok": False, "error": "Can not authenticate."}
-    
-
 
     query = await session.exec(select(User).where(User.id == request.state.user.id))
     user = query.first()
     if not user:
         return {"ok": False, "error": "Not found the global user."}
-    
+
     user.user_timezone = body.timezone
 
     session.add(user)
