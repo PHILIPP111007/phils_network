@@ -2,6 +2,7 @@ import os
 import shutil
 import gzip
 import base64
+from zoneinfo import ZoneInfo
 
 from fastapi import APIRouter, Request
 from sqlmodel import select, func
@@ -101,10 +102,17 @@ async def get_message(
 
 	messages = []
 	for message in query:
+		if request.state.user.user_timezone:
+			user_timezone = request.state.user.user_timezone
+			timezone_obj = ZoneInfo(user_timezone)
+			timestamp = message.timestamp.replace(tzinfo=timezone_obj)
+		else:
+			timestamp = message.timestamp
+
 		message = {
 			"id": message.id,
 			"text": message.text,
-			"timestamp": message.timestamp.strftime(DATETIME_FORMAT),
+			"timestamp": timestamp.strftime(DATETIME_FORMAT),
 			"file": await get_file_content(file_name=message.file),
 			"sender": {
 				"username": message.sender.username,

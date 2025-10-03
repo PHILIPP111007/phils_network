@@ -13,6 +13,7 @@ class User(SQLModel, table=True):
 	first_name: str
 	last_name: str
 	is_online: bool
+	user_timezone: str
 
 	ethereum_address: str
 	infura_api_key: str

@@ -48,6 +48,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 		),
 	)
 	is_online = models.BooleanField(default=False)
+	user_timezone = models.CharField(_("User timezone"), max_length=150, blank=True)
 
 	ethereum_address = models.CharField(
 		_("ethereum address"), max_length=150, blank=True

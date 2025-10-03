@@ -120,6 +120,12 @@ export default function User() {
     }, [params.username])
 
     useEffect(() => {
+        var timezoneOffset = Intl.DateTimeFormat().resolvedOptions().timeZone
+        var body = { timezone: timezoneOffset }
+        Fetch({ action: "api/v2/timezone/", method: HttpMethod.POST, body: body })
+    }, [])
+
+    useEffect(() => {
         if (isAuth) {
             getWebSocketFastAPI({ socket_name: "OnlineSocket", path: `online_status/${user.id}/` })
         }

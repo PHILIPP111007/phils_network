@@ -22,6 +22,7 @@ from app.views import (
 	websocket_delete_messsage,
 	websocket_online_status,
 	w3,
+	timezone,
 )
 
 app = FastAPI(
@@ -65,6 +66,7 @@ async def middleware_add_user_to_request(request: Request, call_next: Callable):
 					request.state.user = User(
 						id=user.id,
 						username=user.username,
+						user_timezone=user.user_timezone,
 						ethereum_address=user.ethereum_address,
 						infura_api_key=user.infura_api_key,
 					)
@@ -89,4 +91,5 @@ app.include_router(message_viewed.router)
 app.include_router(websocket_chat.router)
 app.include_router(websocket_online_status.router)
 app.include_router(websocket_delete_messsage.router)
+app.include_router(timezone.router)
 app.include_router(w3.router)
