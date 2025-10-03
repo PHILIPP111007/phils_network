@@ -1,7 +1,7 @@
 __all__ = ["Post"]
 
 
-from datetime import datetime, timezone
+from datetime import datetime
 
 from sqlmodel import Field, Relationship, SQLModel
 
