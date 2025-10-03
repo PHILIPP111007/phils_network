@@ -1,5 +1,5 @@
 import "./styles/ModalRoomEdit.css"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { Link } from "react-router-dom"
 import { FilterOption, HttpMethod, CacheKeys, Language } from "../../../../data/enums.js"
 import Fetch from "../../../../API/Fetch.js"
@@ -10,13 +10,14 @@ import showOnlineStatus from "../../../../modules/showOnlineStatus.jsx"
 export default function ModalRoomEdit({ mainSets, me, editRoom }) {
 
     var [loading, setLoading] = useState(true)
+    var [renderFlag, setRenderFlag] = useState(false)
     var language = localStorage.getItem(CacheKeys.LANGUAGE)
 
-    async function editSubscribers(subscriber) {
+    function editSubscribers(subscriber) {
         mainSets.value = {
             ...mainSets.value,
             invitationChanges: {
-                friends: mainSets.value.invitationChanges.friends,
+                ...mainSets.value.invitationChanges,
                 subscribers: mainSets.value.invitationChanges.subscribers.map((user) => {
                     if (user.id === subscriber.id) {
                         return { ...user, isInRoom: !user.isInRoom }
@@ -25,24 +26,28 @@ export default function ModalRoomEdit({ mainSets, me, editRoom }) {
                 })
             }
         }
+        setRenderFlag((prev) => !prev)
     }
 
-    async function editFriends(friend) {
+    function editFriends(friend) {
+        var newFriends = mainSets.value.invitationChanges.friends.map((user) => {
+            if (user.id === friend.id) {
+                return {...user, isInRoom: !user.isInRoom}
+            }
+            return user
+        })
+
         mainSets.value = {
             ...mainSets.value,
             invitationChanges: {
-                subscribers: mainSets.value.invitationChanges.subscribers,
-                friends: mainSets.value.invitationChanges.friends.map((user) => {
-                    if (user.id === friend.id) {
-                        return { ...user, isInRoom: !user.isInRoom }
-                    }
-                    return user
-                })
+                ...mainSets.value.invitationChanges,
+                friends: newFriends,
             }
         }
+        setRenderFlag((prev) => !prev)
     }
 
-    function subscribersShow() {
+    var subscribersShow = useCallback(() => {
         if (language === Language.EN) {
             return mainSets.value.invitationChanges.subscribers.map((user) =>
                 <div key={user.username} className="card">
@@ -90,9 +95,9 @@ export default function ModalRoomEdit({ mainSets, me, editRoom }) {
                 </div>
             )
         }
-    }
+    }, [renderFlag])
 
-    function friendsShow() {
+    var friendsShow = useCallback(() => {
         if (language === Language.EN) {
             return mainSets.value.invitationChanges.friends.map((user) =>
                 <div key={user.username} className="card">
@@ -132,7 +137,7 @@ export default function ModalRoomEdit({ mainSets, me, editRoom }) {
                 </div>
             )
         }
-    }
+    }, [renderFlag])
 
     useEffect(() => {
         if (mainSets.value.isCreator) {
