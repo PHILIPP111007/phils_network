@@ -149,7 +149,7 @@ class Message(models.Model):
 	room = models.ForeignKey(Room, on_delete=models.CASCADE)
 	sender = models.ForeignKey(User, related_name="sender", on_delete=models.CASCADE)
 	text = models.TextField(max_length=5000, blank=True, null=True, default=None)
-	timestamp = models.DateTimeField(auto_now_add=True)
+	timestamp = models.DateTimeField(default=timezone.now)
 	file = models.FileField(
 		blank=True, null=True, default=None, upload_to=_user_directory_path
 	)
