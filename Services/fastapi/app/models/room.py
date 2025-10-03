@@ -11,7 +11,7 @@ class Room(SQLModel, table=True):
 
 	id: int = Field(primary_key=True)
 	name: str
-	timestamp: datetime
+	timestamp: datetime = Field(default_factory=lambda: datetime.now())
 	creator_id: int = Field(foreign_key="app_user.id")
 	creator: "User" = Relationship(back_populates="room_creators")
 	room_subscribers: list["RoomSubscribers"] = Relationship(back_populates="room")

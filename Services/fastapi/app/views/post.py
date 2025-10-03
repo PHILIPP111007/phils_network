@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, Request
 from sqlmodel import delete, select
@@ -114,7 +114,6 @@ async def post_post(
 	post = Post(
 		user_id=user_and_content.user,
 		content=user_and_content.content,
-		timestamp=datetime.now(),
 		changed=False,
 	)
 

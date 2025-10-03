@@ -90,7 +90,6 @@ async def put_chat(
 				creator_id=request.state.user.id,
 				to_user_id=friend_id,
 				room_id=room.id,
-				timestamp=datetime.now(),
 			)
 			session.add(room_invitation)
 		await session.commit()

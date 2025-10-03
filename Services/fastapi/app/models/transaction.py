@@ -12,7 +12,7 @@ class Transaction(SQLModel, table=True):
 	id: int = Field(primary_key=True)
 	sender_id: int = Field(foreign_key="app_user.id")
 	recipient_id: int = Field(foreign_key="app_user.id")
-	timestamp: datetime
+	timestamp: datetime = Field(default_factory=lambda: datetime.now())
 	tx_hash: str
 	receipt: str
 	value: int

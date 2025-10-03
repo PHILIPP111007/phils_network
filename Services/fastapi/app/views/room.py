@@ -113,7 +113,6 @@ async def post_room(
 	room = Room(
 		name=room_name_and_subscribers.name,
 		creator_id=request.state.user.id,
-		timestamp=datetime.now(),
 	)
 	session.add(room)
 	await session.commit()
@@ -136,7 +135,6 @@ async def post_room(
 					creator_id=request.state.user.id,
 					room_id=room.id,
 					to_user_id=subscriber.id,
-					timestamp=datetime.now(),
 				)
 				session.add(room_invitation)
 			await session.commit()

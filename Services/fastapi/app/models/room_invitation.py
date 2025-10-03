@@ -14,7 +14,7 @@ class RoomInvitation(SQLModel, table=True):
 	creator_id: int = Field(foreign_key="app_user.id")
 	room_id: int = Field(foreign_key="app_room.id")
 	to_user_id: int = Field(foreign_key="app_user.id")
-	timestamp: datetime
+	timestamp: datetime = Field(default_factory=lambda: datetime.now())
 	room: "Room" = Relationship(back_populates="room_invitations_rooms")
 	creator: "User" = Relationship(
 		sa_relationship=RelationshipProperty(
