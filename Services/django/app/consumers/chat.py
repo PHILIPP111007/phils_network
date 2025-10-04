@@ -1,4 +1,4 @@
-__all__ = ["ChatConsumer"]
+__all__ = ["ChatConsumer", "DeleteMessageConsumer"]
 
 import os
 import json

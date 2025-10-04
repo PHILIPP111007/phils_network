@@ -4,13 +4,12 @@ import { use, useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { useInView } from "react-intersection-observer"
 import Card from "react-bootstrap/Card"
-import { UserContext, AuthContext } from "../../data/context.js"
+import { UserContext } from "../../data/context.js"
 import { useSetUser } from "../../hooks/useAuth.js"
 import { HttpMethod } from "../../data/enums.js"
 import useObserver from "../../hooks/useObserver.js"
 import rememberPage from "../../modules/rememberPage.js"
 import Fetch from "../../API/Fetch.js"
-import { getWebSocketFastAPI } from "../../modules/getWebSocket.js"
 import MainComponents from "../components/MainComponents/MainComponents.jsx"
 import Modal from "../components/Modal.jsx"
 import ModalPostEdit from "./components/ModalPostEdit.jsx"
@@ -26,7 +25,6 @@ import profileIcon from "../../images/icon-profile.svg.png"
 export default function User() {
 
     var { user, setUser } = use(UserContext)
-    var { isAuth } = use(AuthContext)
     var [ref, inView] = useInView()
     var params = useParams()
     var [userLocal, setUserLocal] = useState(user)
@@ -124,12 +122,6 @@ export default function User() {
         var body = { timezone: timezoneOffset }
         Fetch({ action: "api/v2/timezone/", method: HttpMethod.POST, body: body })
     }, [])
-
-    useEffect(() => {
-        if (isAuth) {
-            getWebSocketFastAPI({ socket_name: "OnlineSocket", path: `online_status/${user.id}/` })
-        }
-    }, [isAuth])
 
     useSetUser({ username: params.username, setUser: setUser, setUserLocal: setUserLocal })
 
