@@ -11,7 +11,8 @@ import fileIcon from "../../../../images/file-icon.svg"
 export default function Message({ message, downloadFile, deleteMessage }) {
 
     var [modalMessage, setModalMessage] = useState(false)
-    const [imageUrl, setImageUrl] = useState(null)
+    var [imageUrl, setImageUrl] = useState(null)
+    var [userImageUrl, setUserImageUrl] = useState(null)
     var language = localStorage.getItem(CacheKeys.LANGUAGE)
 
     function trimFileName(file) {
@@ -61,6 +62,18 @@ export default function Message({ message, downloadFile, deleteMessage }) {
             }
             setImageUrl(url)
         }
+
+        if (message.sender.image) {
+            byteCharacters = atob(message.sender.image)
+            byteNumbers = new Array(byteCharacters.length)
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i)
+            }
+            uint8Array = new Uint8Array(byteNumbers)
+            blob = new Blob([uint8Array], { type: 'application/octet-stream' })
+            url = URL.createObjectURL(blob)
+            setUserImageUrl(url)
+        }
     }, [])
 
     if (message.file.path) {
@@ -75,6 +88,13 @@ export default function Message({ message, downloadFile, deleteMessage }) {
                         <ModalMessage message={message} deleteMessage={deleteMessage} />
                     </Modal>
                     <div className="info">
+                        {userImageUrl &&
+                            <img 
+                                className="MessageUserImage"
+                                src={userImageUrl} 
+                                alt="user image" 
+                            />
+                        }
                         <Link to={`/users/${message.sender.username}/`} >
                             <p className="timestamp">{message.sender.first_name} {message.sender.last_name} @{message.sender.username} {message.timestamp} {message.sender.is_online && <div className="MessageOnlineStatus"></div>}</p>
                         </Link>
@@ -83,11 +103,11 @@ export default function Message({ message, downloadFile, deleteMessage }) {
                     {imageUrl &&
                         <>
                             <div style={{ marginBottom: "20px" }}>
-                            <img 
-                                className="MessageImage"
-                                src={imageUrl} 
-                                alt="Uploaded preview" 
-                            />
+                                <img 
+                                    className="MessageImage"
+                                    src={imageUrl} 
+                                    alt="Uploaded preview" 
+                                />
                             </div>
                         </>
                     }
@@ -114,6 +134,13 @@ export default function Message({ message, downloadFile, deleteMessage }) {
                         <ModalMessage message={message} deleteMessage={deleteMessage} />
                     </Modal>
                     <div className="info">
+                        {userImageUrl &&
+                            <img 
+                                className="MessageUserImage"
+                                src={userImageUrl} 
+                                alt="user image" 
+                            />
+                        }
                         <Link to={`/users/${message.sender.username}/`} >
                             <p className="timestamp">{message.sender.first_name} {message.sender.last_name} @{message.sender.username} {message.timestamp} {message.sender.is_online && <div className="MessageOnlineStatus"></div>}</p>
                         </Link>
@@ -154,6 +181,13 @@ export default function Message({ message, downloadFile, deleteMessage }) {
                 <ModalMessage message={message} deleteMessage={deleteMessage} />
             </Modal>
             <div className="info">
+                {userImageUrl &&
+                    <img 
+                        className="MessageUserImage"
+                        src={userImageUrl} 
+                        alt="user image" 
+                    />
+                }
                 <Link to={`/users/${message.sender.username}/`} >
                     <p className="timestamp">{message.sender.first_name} {message.sender.last_name} @{message.sender.username} {message.timestamp} {message.sender.is_online && <div className="MessageOnlineStatus"></div>}</p>
                 </Link>

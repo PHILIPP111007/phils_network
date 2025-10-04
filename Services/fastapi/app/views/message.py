@@ -24,7 +24,21 @@ from app.s3 import s3
 router = APIRouter(tags=["message"])
 
 
-async def get_file_content(file_name: str):
+async def _get_file_content(file_name: str):
+	try:
+		file_path = file_name
+		with open(file_path, "wb") as file:
+			s3.download_fileobj(BUCKET_NAME, file_path, file)
+		with open(file_path, "rb") as file:
+			content = file.read()
+			content_base64 = base64.b64encode(content).decode("utf-8")
+	except Exception:
+		content_base64 = None
+
+	return content_base64
+
+
+async def _get_file_content_gzip(file_name: str):
 	if not file_name:
 		return {"path": file_name, "content": None}
 
@@ -113,12 +127,13 @@ async def get_message(
 			"id": message.id,
 			"text": message.text,
 			"timestamp": timestamp.strftime(DATETIME_FORMAT),
-			"file": await get_file_content(file_name=message.file),
+			"file": await _get_file_content_gzip(file_name=message.file),
 			"sender": {
 				"username": message.sender.username,
 				"first_name": message.sender.first_name,
 				"last_name": message.sender.last_name,
 				"is_online": message.sender.is_online,
+				"image": await _get_file_content(file_name=message.sender.image),
 			},
 		}
 		messages.append(message)

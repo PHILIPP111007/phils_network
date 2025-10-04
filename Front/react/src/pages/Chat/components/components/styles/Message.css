@@ -49,3 +49,9 @@
     border-radius: 8px;
     display: block;
 }
+
+.Message .MessageUserImage {
+    display: inline-block;
+    width: 30px;
+    border-radius: 50%;
+}
