@@ -28,6 +28,7 @@ export default function User() {
     var [ref, inView] = useInView()
     var params = useParams()
     var [userLocal, setUserLocal] = useState(user)
+    var [imageUrl, setImageUrl] = useState(null)
     var [posts, setPosts] = useState([])
     var [status, setStatus] = useState("")
     var [modalPostEdit, setModalPostEdit] = useState(false)
@@ -123,6 +124,23 @@ export default function User() {
         Fetch({ action: "api/v2/timezone/", method: HttpMethod.POST, body: body })
     }, [])
 
+    useEffect(() => {
+        if (userLocal.image) {
+            var byteCharacters = atob(userLocal.image)
+            var byteNumbers = new Array(byteCharacters.length)
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i)
+            }
+            var uint8Array = new Uint8Array(byteNumbers)
+            var blob = new Blob([uint8Array], { type: 'application/octet-stream' })
+            var url = URL.createObjectURL(blob)
+
+            setImageUrl(url)
+        } else {
+            setImageUrl(null)
+        }
+    }, [userLocal.image])
+
     useSetUser({ username: params.username, setUser: setUser, setUserLocal: setUserLocal })
 
     useObserver({ inView: inView, func: getPosts, flag: !mainSets.loading })
@@ -134,7 +152,7 @@ export default function User() {
             <ScrollToTopOrBottom bottom={false} />
 
             <Card className="UserCard text-center align-items-center" style={{ width: "100rem" }}>
-                <Card.Img variant="top" src={profileIcon} style={{ width: "40%" }} />
+                <Card.Img variant="top" src={imageUrl ? imageUrl : profileIcon} style={{ width: "40%" }} />
                 <Card.Body>
                     <Card.Title>{userLocal.first_name} {userLocal.last_name}</Card.Title>
                     <Card.Text>

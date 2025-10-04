@@ -67,6 +67,7 @@ async def middleware_add_user_to_request(request: Request, call_next: Callable):
 						id=user.id,
 						username=user.username,
 						user_timezone=user.user_timezone,
+						image=user.image,
 						ethereum_address=user.ethereum_address,
 						infura_api_key=user.infura_api_key,
 					)

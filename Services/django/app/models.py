@@ -10,7 +10,12 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 
-def _user_directory_path(instance, file_name):
+def _directory_path_for_user(instance, file_name):
+	# file will be uploaded to MEDIA_ROOT / <room.id>/<username>/<timestamp>/<filename>
+	return f"user_{instance.sender.pk}"
+
+
+def _directory_path_for_message(instance, file_name):
 	# file will be uploaded to MEDIA_ROOT / <room.id>/<username>/<timestamp>/<filename>
 	return f"{instance.sender.username}/{instance.room.id}/{instance.timestamp}/{file_name}"
 
@@ -54,6 +59,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 		_("ethereum address"), max_length=150, blank=True
 	)
 	infura_api_key = models.CharField(_("infura api key"), max_length=150, blank=True)
+
+	image = models.FileField(
+		blank=True, null=True, default=None, upload_to=_directory_path_for_user
+	)
 
 	objects = UserManager()
 
@@ -152,7 +161,7 @@ class Message(models.Model):
 	text = models.TextField(max_length=5000, blank=True, null=True, default=None)
 	timestamp = models.DateTimeField(default=timezone.now)
 	file = models.FileField(
-		blank=True, null=True, default=None, upload_to=_user_directory_path
+		blank=True, null=True, default=None, upload_to=_directory_path_for_message
 	)
 	viewed = models.ManyToManyField(User, blank=True)
 

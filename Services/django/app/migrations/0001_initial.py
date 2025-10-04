@@ -218,7 +218,7 @@ class Migration(migrations.Migration):
 						blank=True,
 						default=None,
 						null=True,
-						upload_to=app.models._user_directory_path,
+						upload_to=app.models._directory_path_for_message,
 					),
 				),
 				(

@@ -24,6 +24,7 @@ export default function App() {
         first_name: "",
         last_name: "",
         is_online: false,
+        image: null,
         ethereum_address: null,
         infura_api_key: null,
     })

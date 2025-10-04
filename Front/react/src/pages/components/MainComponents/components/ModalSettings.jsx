@@ -4,18 +4,29 @@ import Form from "react-bootstrap/Form"
 import { UserContext } from "../../../../data/context.js"
 import { HttpMethod, CacheKeys, Language } from "../../../../data/enums.js"
 import Fetch from "../../../../API/Fetch.js"
+import Input from "../../UI/Input.jsx"
 import Button from "../../UI/Button.jsx"
 
 export default function ModalSettings(props) {
 
     var { user, setUser } = use(UserContext)
-    var [userNew, setUserNew] = useState({ first_name: "", last_name: "", email: "" , ethereum_address: "", infura_api_key: ""})
+    var [userNew, setUserNew] = useState({ first_name: "", last_name: "", email: "" , ethereum_address: "", infura_api_key: "", image: null})
     var language = localStorage.getItem(CacheKeys.LANGUAGE)
 
     async function userUpdate(event) {
         event.preventDefault()
-        if (userNew.first_name || userNew.last_name || userNew.email) {
-            var data = await Fetch({ action: `api/v2/user/`, method: HttpMethod.PUT, body: userNew })
+        if (userNew.first_name || userNew.last_name || userNew.email || userNew.image) {
+
+            var formData = new FormData()
+            formData.append('id', userNew.id)
+            formData.append('first_name', userNew.first_name)
+            formData.append('last_name', userNew.last_name)
+            formData.append('email', userNew.email)
+            formData.append('ethereum_address', userNew.ethereum_address)
+            formData.append('infura_api_key', userNew.infura_api_key)
+            formData.append('image', userNew.image)
+
+            var data = await Fetch({ action: "api/v2/user/", method: HttpMethod.PUT, body: formData, is_uploading_file: true })
             if (data.ok) {
                 setUser(data.user)
             }
@@ -70,12 +81,18 @@ export default function ModalSettings(props) {
                     <br />
                     <Button onClick={(e) => userUpdate(e)} >upload</Button>
                     <br />
+                    <br />
                     <Form.Control
                         type="reset"
                         value="reset"
                         onClick={() => setUserNew({ ...user })}
                     />
                 </Form>
+                <br />
+                <form onChange={e => setUserNew({ ...userNew, image: e.target.files[0] })} className="uploadFileForm">
+                    <Input id="formFile" type="file" />
+                </form>
+                <br />
 
                 <br />
                 <label>Danger zone</label>

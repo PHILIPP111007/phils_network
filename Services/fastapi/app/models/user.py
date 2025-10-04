@@ -14,6 +14,7 @@ class User(SQLModel, table=True):
 	last_name: str
 	is_online: bool
 	user_timezone: str
+	image: str
 
 	ethereum_address: str
 	infura_api_key: str

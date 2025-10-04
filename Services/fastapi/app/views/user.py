@@ -1,6 +1,9 @@
 import os
+from typing import Optional
+import tempfile
+import base64
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, Form, UploadFile, File
 from sqlmodel import delete, select
 
 from app.constants import BUCKET_NAME, MEDIA_ROOT
@@ -17,7 +20,6 @@ from app.models import (
 	Token,
 	User,
 )
-from app.request_body import UserBody
 from app.s3 import s3
 
 router = APIRouter(tags=["user"])
@@ -52,6 +54,15 @@ async def get_user(session: SessionDep, request: Request, username: str):
 	query = query.first()
 	if not query:
 		return result
+	try:
+		file_path = f"user_{query.id}"
+		with open(file_path, "wb") as file:
+			s3.download_fileobj(BUCKET_NAME, file_path, file)
+		with open(file_path, "rb") as file:
+			content = file.read()
+			content_base64 = base64.b64encode(content).decode("utf-8")
+	except Exception:
+		content_base64 = None
 
 	user = {
 		"id": query.id,
@@ -60,6 +71,7 @@ async def get_user(session: SessionDep, request: Request, username: str):
 		"first_name": query.first_name,
 		"last_name": query.last_name,
 		"is_online": query.is_online,
+		"image": content_base64,
 		"ethereum_address": query.ethereum_address,
 		"infura_api_key": query.infura_api_key,
 	}
@@ -69,11 +81,21 @@ async def get_user(session: SessionDep, request: Request, username: str):
 
 
 @router.put("/api/v2/user/")
-async def put_user(session: SessionDep, request: Request, user_body: UserBody):
+async def put_user(
+	session: SessionDep,
+	request: Request,
+	id: int = Form(...),
+	first_name: str = Form(...),
+	last_name: str = Form(...),
+	email: str = Form(...),
+	ethereum_address: str = Form(...),
+	infura_api_key: str = Form(...),
+	image: Optional[UploadFile] = File(None),
+):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	user = await session.exec(select(User).where(User.id == user_body.id))
+	user = await session.exec(select(User).where(User.id == id))
 	user = user.first()
 	if not user:
 		return {"ok": False, "error": "Not found user."}
@@ -81,12 +103,23 @@ async def put_user(session: SessionDep, request: Request, user_body: UserBody):
 	if user.id != request.state.user.id:
 		return {"ok": False, "error": "Access denied."}
 
-	user.first_name = user_body.first_name
-	user.last_name = user_body.last_name
-	user.email = user_body.email
+	user.first_name = first_name
+	user.last_name = last_name
+	user.email = email
 
-	user.ethereum_address = user_body.ethereum_address
-	user.infura_api_key = user_body.infura_api_key
+	user.ethereum_address = ethereum_address
+	user.infura_api_key = infura_api_key
+
+	if image:
+		filename = f"user_{user.id}"
+
+		with tempfile.NamedTemporaryFile() as temp_file:
+			with open(temp_file.name, "wb") as f_out:
+				content = await image.read()
+				f_out.write(content)
+
+			s3.upload_file(temp_file.name, BUCKET_NAME, filename)
+			user.image = filename
 
 	session.add(user)
 	await session.commit()
