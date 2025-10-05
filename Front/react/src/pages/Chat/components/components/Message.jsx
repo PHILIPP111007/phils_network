@@ -8,7 +8,7 @@ import Modal from "../../../components/Modal.jsx"
 import Button from "../../../components/UI/Button.jsx"
 import fileIcon from "../../../../images/file-icon.svg"
 
-export default function Message({ message, downloadFile, deleteMessage }) {
+export default function Message({ message, downloadFile, deleteMessage, setParentId }) {
 
     var [modalMessage, setModalMessage] = useState(false)
     var [imageUrl, setImageUrl] = useState(null)
@@ -85,7 +85,7 @@ export default function Message({ message, downloadFile, deleteMessage }) {
                         setModalMessage(true)
                     }}>
                     <Modal modal={modalMessage} setModal={setModalMessage}>
-                        <ModalMessage message={message} deleteMessage={deleteMessage} />
+                        <ModalMessage message={message} deleteMessage={deleteMessage} setParentId={setParentId} />
                     </Modal>
                     <div className="info">
                         {userImageUrl &&
@@ -99,7 +99,6 @@ export default function Message({ message, downloadFile, deleteMessage }) {
                             <p className="timestamp">{message.sender.first_name} {message.sender.last_name} @{message.sender.username} {message.timestamp} {message.sender.is_online && <div className="MessageOnlineStatus"></div>}</p>
                         </Link>
                     </div>
-
                     {imageUrl &&
                         <>
                             <div style={{ marginBottom: "20px" }}>
@@ -122,6 +121,20 @@ export default function Message({ message, downloadFile, deleteMessage }) {
                     <div className="file">
                         {trimFileName(message.file.path)}
                     </div>
+                    <div className="info">
+                        {
+                            message.parent &&
+                            <>
+                                <hr />
+                                <Link to={`/users/${message.parent.sender.username}/`} >
+                                    <p className="timestamp">Reply {message.parent.sender.first_name} {message.parent.sender.last_name} @{message.parent.sender.username} {message.parent.timestamp} {message.parent.sender.is_online && <div className="MessageOnlineStatus"></div>}</p>
+                                </Link>
+                                <div className="text">
+                                    <ReactMarkdown children={message.parent.text} />
+                                </div>
+                            </>
+                        }
+                    </div>
                 </div>
             )
         } else if (language === Language.RU) {
@@ -131,7 +144,7 @@ export default function Message({ message, downloadFile, deleteMessage }) {
                         setModalMessage(true)
                     }}>
                     <Modal modal={modalMessage} setModal={setModalMessage}>
-                        <ModalMessage message={message} deleteMessage={deleteMessage} />
+                        <ModalMessage message={message} deleteMessage={deleteMessage} setParentId={setParentId} />
                     </Modal>
                     <div className="info">
                         {userImageUrl &&
@@ -145,7 +158,6 @@ export default function Message({ message, downloadFile, deleteMessage }) {
                             <p className="timestamp">{message.sender.first_name} {message.sender.last_name} @{message.sender.username} {message.timestamp} {message.sender.is_online && <div className="MessageOnlineStatus"></div>}</p>
                         </Link>
                     </div>
-
                     {imageUrl &&
                         <>
                             <div style={{ marginBottom: "20px" }}>
@@ -168,6 +180,20 @@ export default function Message({ message, downloadFile, deleteMessage }) {
                     <div className="file">
                         {trimFileName(message.file.path)}
                     </div>
+                    <div className="info">
+                        {
+                            message.parent &&
+                            <>
+                                <hr />
+                                <Link to={`/users/${message.parent.sender.username}/`} >
+                                    <p className="timestamp">Ответ {message.parent.sender.first_name} {message.parent.sender.last_name} @{message.parent.sender.username} {message.parent.timestamp} {message.parent.sender.is_online && <div className="MessageOnlineStatus"></div>}</p>
+                                </Link>
+                                <div className="text">
+                                    <ReactMarkdown children={message.parent.text} />
+                                </div>
+                            </>
+                        }
+                    </div>
                 </div>
             )
         }
@@ -178,7 +204,7 @@ export default function Message({ message, downloadFile, deleteMessage }) {
                 setModalMessage(true)
             }}>
             <Modal modal={modalMessage} setModal={setModalMessage}>
-                <ModalMessage message={message} deleteMessage={deleteMessage} />
+                <ModalMessage message={message} deleteMessage={deleteMessage} setParentId={setParentId} />
             </Modal>
             <div className="info">
                 {userImageUrl &&
@@ -195,6 +221,18 @@ export default function Message({ message, downloadFile, deleteMessage }) {
             <div className="text">
                 <ReactMarkdown children={message.text} />
             </div>
+            {
+                message.parent &&
+                <>
+                    <hr />
+                    <Link to={`/users/${message.parent.sender.username}/`} >
+                        <p className="timestamp">Reply {message.parent.sender.first_name} {message.parent.sender.last_name} @{message.parent.sender.username} {message.parent.timestamp} {message.parent.sender.is_online && <div className="MessageOnlineStatus"></div>}</p>
+                    </Link>
+                    <div className="text">
+                        <ReactMarkdown children={message.parent.text} />
+                    </div>
+                </>
+            }
         </div>
     )
 }

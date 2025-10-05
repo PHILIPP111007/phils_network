@@ -151,7 +151,10 @@ async def _create_message(room_id: int, message: dict) -> dict:
 	"""Create message."""
 
 	msg = await MessageService.create(
-		room_id=room_id, sender_id=message["sender_id"], text=message["text"]
+		room_id=room_id,
+		sender_id=message["sender_id"],
+		text=message["text"],
+		parent_id=message["parent_id"],
 	)
 	return msg
 

@@ -78,6 +78,11 @@ async def _get_file_content_gzip(file_name: str):
 	return {"path": uncompressed_file_path, "content": content_base64}
 
 
+def _filter_message(msg: dict, messages_ids: list[int]):
+	if msg["parent_id"] not in messages_ids:
+		return msg
+
+
 @router.get("/api/v2/room/{id}/{loaded_messages}/")
 async def get_message(
 	session: SessionDep, request: Request, id: int, loaded_messages: int
@@ -109,6 +114,7 @@ async def get_message(
 		.limit(MESSAGES_TO_LOAD)
 		.order_by(Message.timestamp.desc())
 		.options(joinedload(Message.sender))
+		.options(joinedload(Message.parent))
 	)
 	query = query.unique().all()
 	if not query:
@@ -116,6 +122,28 @@ async def get_message(
 
 	messages = []
 	for message in query:
+		if message.parent is not None:
+			if request.state.user.user_timezone:
+				user_timezone = request.state.user.user_timezone
+				timezone_obj = ZoneInfo(user_timezone)
+				timestamp = message.parent.timestamp.replace(tzinfo=timezone_obj)
+			else:
+				timestamp = message.parent.timestamp
+
+			parent = {
+				"sender_id": message.parent.sender_id,
+				"text": message.parent.text,
+				"timestamp": timestamp.strftime(DATETIME_FORMAT),
+				"sender": {
+					"username": message.parent.sender.username,
+					"first_name": message.parent.sender.first_name,
+					"last_name": message.parent.sender.last_name,
+					"is_online": message.parent.sender.is_online,
+				},
+			}
+		else:
+			parent = None
+
 		if request.state.user.user_timezone:
 			user_timezone = request.state.user.user_timezone
 			timezone_obj = ZoneInfo(user_timezone)
@@ -127,6 +155,7 @@ async def get_message(
 			"id": message.id,
 			"text": message.text,
 			"timestamp": timestamp.strftime(DATETIME_FORMAT),
+			"parent_id": message.parent_id,
 			"file": await _get_file_content_gzip(file_name=message.file),
 			"sender": {
 				"username": message.sender.username,
@@ -135,8 +164,18 @@ async def get_message(
 				"is_online": message.sender.is_online,
 				"image": await _get_file_content(file_name=message.sender.image),
 			},
+			"parent": parent,
 		}
 		messages.append(message)
+
+	messages_ids = list(map(lambda msg: msg["id"], messages))
+	messages = list(
+		filter(
+			lambda msg: _filter_message(msg=msg, messages_ids=messages_ids), messages
+		)
+	)
+
+	# print(messages)
 
 	return {"ok": True, "messages": messages}
 

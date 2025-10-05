@@ -51,6 +51,15 @@
     border-bottom-right-radius: 5px;
 }
 
+.ParentMessage {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: block;
+    align-items: center;
+}
+
 @media (pointer: coarse) {
     /* mobile device */
     .UserInput {

@@ -164,6 +164,9 @@ class Message(models.Model):
 		blank=True, null=True, default=None, upload_to=_directory_path_for_message
 	)
 	viewed = models.ManyToManyField(User, blank=True)
+	parent = models.ForeignKey(
+		"self", on_delete=models.SET_NULL, null=True, blank=True, default=None
+	)
 
 	class Meta:
 		indexes = [

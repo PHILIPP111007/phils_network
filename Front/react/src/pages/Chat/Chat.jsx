@@ -21,6 +21,8 @@ export default function Chat() {
 
     var { user } = use(UserContext)
     var [messages, setMessages] = useState([])
+    var [parentId, setParentId] = useState(null)
+    var [parentMessage, setParentMessage] = useState(null)
     var mainSets = useSignal({
         room: {
             id: undefined,
@@ -68,15 +70,31 @@ export default function Chat() {
             var file_content = Array.from(new Uint8Array(arrayBuffer))
 
             if (data && data.ok) {
-                message = { ...data.message, file: { path: data.message.file, content: file_content }, sender_id: user.id, text: sendingText, sender: { username: user.username, first_name: user.first_name, last_name: user.last_name } }
+                message = { 
+                    ...data.message,
+                    file: {
+                        path: data.message.file,
+                        content: file_content
+                    },
+                    sender_id: user.id,
+                    text: sendingText,
+                    sender: {
+                        username: user.username,
+                        first_name: user.first_name,
+                        last_name: user.last_name
+                    },
+                    parent_id: parentId,
+                }
                 await chatSocket.current.send(JSON.stringify({ message: message }))
             }
         } else {
             if (sendingText.length > 0) {
-                message = { sender_id: user.id, text: sendingText, file: { path: null, content: null }, room: mainSets.value.room.id }
+                message = { sender_id: user.id, text: sendingText, parent_id: parentId, file: { path: null, content: null }, room: mainSets.value.room.id }
                 await chatSocket.current.send(JSON.stringify({ message: message }))
             }
         }
+
+        setParentId(null)
     }
 
     async function downloadFile(message) {
@@ -222,6 +240,19 @@ export default function Chat() {
         }
     }, [inViewWrapper, messages.length, mainSets.value.loading])
 
+    useEffect(() => {
+        if (parentId !== null) {
+            var message = messages.filter((msg) => {
+                return msg.id === parentId
+            })
+            message = message[0]
+            setParentMessage({ ...message })
+        } else {
+            setParentMessage(null)
+        }
+    }, [parentId])
+
+
     useObserver({ inView: inViewLazyDiv, func: fetchAddMessages, flag: !mainSets.value.loading })
 
     return (
@@ -232,9 +263,9 @@ export default function Chat() {
 
             <LazyDiv Ref={refLazyDivinView} />
 
-            <Messages messages={messages} downloadFile={downloadFile} deleteMessage={deleteMessage} />
+            <Messages messages={messages} downloadFile={downloadFile} deleteMessage={deleteMessage} setParentId={setParentId} />
 
-            <UserInput mainSets={mainSets} sendMessage={sendMessage} editRoom={editRoom} />
+            <UserInput mainSets={mainSets} sendMessage={sendMessage} editRoom={editRoom} parentMessage={parentMessage} />
 
             <div className="Wrapper-InView" ref={wrapperRef} ></div>
 

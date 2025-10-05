@@ -16,12 +16,23 @@ def get_message_serialized_data(db_result):
 
 class MessageService:
 	@staticmethod
-	async def create(room_id: int, sender_id: int, text: str) -> Message:
-		obj = await Message.objects.acreate(
-			room_id=room_id, sender_id=sender_id, text=text
+	async def create(
+		room_id: int, sender_id: int, text: str, parent_id: int | None
+	) -> Message:
+		query = await Message.objects.acreate(
+			room_id=room_id, sender_id=sender_id, text=text, parent_id=parent_id
 		)
-		message = await get_message_serialized_data(db_result=obj)
+		if parent_id:
+			parent = await Message.objects.aget(pk=parent_id)
+			parent_data = await get_message_serialized_data(db_result=parent)
+			sender = await User.objects.aget(pk=parent_data["sender"])
+			parent_data["sender"] = UserSerializer(sender).data
+		else:
+			parent_data = None
+
+		message = await get_message_serialized_data(db_result=query)
 		sender = await User.objects.aget(pk=message["sender"])
+		message["parent"] = parent_data
 		message["sender"] = UserSerializer(sender).data
 		message["file"] = {"path": message["file"], "content": None}
 

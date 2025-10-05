@@ -5,7 +5,7 @@ import { CacheKeys, Language } from "../../../../../data/enums.js"
 import Button from "../../../../components/UI/Button.jsx"
 
 
-export default function ModalMessage({ message, deleteMessage }) {
+export default function ModalMessage({ message, deleteMessage, setParentId }) {
 
     var { user } = use(UserContext)
     var language = localStorage.getItem(CacheKeys.LANGUAGE)
@@ -20,6 +20,9 @@ export default function ModalMessage({ message, deleteMessage }) {
                 <Button onClick={() => copyText()}>Copy</Button>
                 <br />
                 <br />
+                <Button onClick={() => setParentId(message.id)}>Reply</Button>
+                <br />
+                <br />
                 {(message.sender.username === user.username)
                     &&
                     <Button onClick={() => deleteMessage(message)}>Delete</Button>
@@ -30,6 +33,9 @@ export default function ModalMessage({ message, deleteMessage }) {
         return (
             <div className="ModalMessage">
                 <Button onClick={() => copyText()}>Скопировать</Button>
+                <br />
+                <br />
+                <Button onClick={() => setParentId(message.id)}>Ответить</Button>
                 <br />
                 <br />
                 {(message.sender.username === user.username)

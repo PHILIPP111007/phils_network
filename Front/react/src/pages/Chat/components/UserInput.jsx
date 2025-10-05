@@ -1,5 +1,7 @@
 import "./styles/UserInput.css"
 import { useState, use, useEffect } from "react"
+import { Link } from "react-router-dom"
+import ReactMarkdown from "react-markdown"
 import { UserContext } from "../../../data/context.js"
 import { CacheKeys, Language } from "../../../data/enums.js"
 import Modal from "../../components/Modal.jsx"
@@ -8,7 +10,7 @@ import Input from "../../components/UI/Input.jsx"
 import settingsLogo from "../../../images/three_points_gray.svg"
 import sendIcon from "../../../images/send-icon.svg"
 
-export default function UserInput({ mainSets, sendMessage, editRoom }) {
+export default function UserInput({ mainSets, sendMessage, editRoom, parentMessage }) {
 
     var { user } = use(UserContext)
     var [modalRoomEdit, setModalRoomEdit] = useState(false)
@@ -35,6 +37,22 @@ export default function UserInput({ mainSets, sendMessage, editRoom }) {
                     <ModalRoomEdit mainSets={mainSets} me={user} editRoom={editRoom} />
                 </Modal>
 
+                {
+                    parentMessage &&
+                    <>
+                        <div className="ParentMessage">
+                            <div className="info">
+                                <Link to={`/users/${parentMessage.sender.username}/`} >
+                                    <p className="timestamp">{parentMessage.sender.first_name} {parentMessage.sender.last_name} @{parentMessage.sender.username} {parentMessage.timestamp} {parentMessage.sender.is_online && <div className="MessageOnlineStatus"></div>}</p>
+                                </Link>
+                            </div>
+                            <div className="text">
+                                <ReactMarkdown children={parentMessage.text} />
+                            </div>
+                        </div>
+                        <br />
+                    </>
+                }
                 <div className="UserInput">
                     <form onChange={e => setSelectedFile(e.target.files[0])} className="uploadFileForm">
                         <Input id="formFile" type="file" />
@@ -74,6 +92,22 @@ export default function UserInput({ mainSets, sendMessage, editRoom }) {
                     <ModalRoomEdit mainSets={mainSets} me={user} editRoom={editRoom} />
                 </Modal>
 
+                {
+                    parentMessage &&
+                    <>
+                        <div className="ParentMessage">
+                            <div className="info">
+                                <Link to={`/users/${parentMessage.sender.username}/`} >
+                                    <p className="timestamp">{parentMessage.sender.first_name} {parentMessage.sender.last_name} @{parentMessage.sender.username} {parentMessage.timestamp} {parentMessage.sender.is_online && <div className="MessageOnlineStatus"></div>}</p>
+                                </Link>
+                            </div>
+                            <div className="text">
+                                <ReactMarkdown children={parentMessage.text} />
+                            </div>
+                        </div>
+                        <br />
+                    </>
+                }
                 <div className="UserInput">
                     <form onChange={e => setSelectedFile(e.target.files[0])} className="uploadFileForm">
                         <Input id="formFile" type="file" />
