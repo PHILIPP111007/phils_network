@@ -15,18 +15,25 @@ export default function ModalSettings(props) {
 
     async function userUpdate(event) {
         event.preventDefault()
-        if (userNew.first_name || userNew.last_name || userNew.email || userNew.image) {
 
+        var user_body = {
+            first_name: userNew.first_name,
+            last_name: userNew.last_name,
+            email: userNew.email,
+            ethereum_address: userNew.ethereum_address,
+            infura_api_key: userNew.infura_api_key,
+        }
+
+        var data = await Fetch({ action: "api/v2/user/", method: HttpMethod.PUT, body: user_body })
+        if (data.ok) {
+            setUser(data.user)
+        }
+
+        if (userNew.image) {
             var formData = new FormData()
-            formData.append('id', userNew.id)
-            formData.append('first_name', userNew.first_name)
-            formData.append('last_name', userNew.last_name)
-            formData.append('email', userNew.email)
-            formData.append('ethereum_address', userNew.ethereum_address)
-            formData.append('infura_api_key', userNew.infura_api_key)
             formData.append('image', userNew.image)
 
-            var data = await Fetch({ action: "api/v2/user/", method: HttpMethod.PUT, body: formData, is_uploading_file: true })
+            data = await Fetch({ action: "api/v2/user_image/", method: HttpMethod.PUT, body: formData, is_uploading_file: true })
             if (data.ok) {
                 setUser(data.user)
             }

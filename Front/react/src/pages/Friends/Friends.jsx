@@ -15,11 +15,9 @@ export default function Friends() {
 
     var params = useParams()
     var language = localStorage.getItem(CacheKeys.LANGUAGE)
-    rememberPage(`friends/${params.username}`)
-
-
     var [users, setUsers] = useState([])
     var [loading, setLoading] = useState(false)
+    rememberPage(`friends/${params.username}`)
 
     async function findFunc(findUser) {
         setUsers([])
