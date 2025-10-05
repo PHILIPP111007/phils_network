@@ -19,3 +19,4 @@ AWS_S3_ENDPOINT_URL = environ.get("AWS_S3_ENDPOINT_URL", "http://s3:9000")
 MEDIA_ROOT = os.path.join("/app", "media")
 
 MAX_ALLOWED_FILE_SIZE_FOR_PREVIEW = 30 * 1024 * 1024  # 30 Mb
+USER_IMAGE_PATH = "user_{}"

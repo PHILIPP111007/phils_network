@@ -15,6 +15,7 @@ from app.constants import (
 	BUCKET_NAME,
 	MEDIA_ROOT,
 	MAX_ALLOWED_FILE_SIZE_FOR_PREVIEW,
+	USER_IMAGE_PATH,
 )
 from app.database import SessionDep
 from app.models import Message, Room, RoomSubscribers, MessageViewed
@@ -153,6 +154,8 @@ async def get_message(
 		else:
 			timestamp = message.timestamp
 
+		image_path = USER_IMAGE_PATH.format(message.sender.id)
+
 		message = {
 			"id": message.id,
 			"text": message.text,
@@ -164,7 +167,7 @@ async def get_message(
 				"first_name": message.sender.first_name,
 				"last_name": message.sender.last_name,
 				"is_online": message.sender.is_online,
-				"image": await _get_file_content(file_name=message.sender.image),
+				"image": await _get_file_content(file_name=image_path),
 			},
 			"parent": parent,
 		}

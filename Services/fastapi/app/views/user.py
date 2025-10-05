@@ -6,7 +6,7 @@ import base64
 from fastapi import APIRouter, Request, Form, UploadFile, File
 from sqlmodel import delete, select
 
-from app.constants import BUCKET_NAME, MEDIA_ROOT
+from app.constants import BUCKET_NAME, MEDIA_ROOT, USER_IMAGE_PATH
 from app.database import SessionDep
 from app.models import (
 	DjangoAdminLog,
@@ -111,15 +111,15 @@ async def put_user(
 	user.infura_api_key = infura_api_key
 
 	if image:
-		filename = f"user_{user.id}"
+		image_path = USER_IMAGE_PATH.format(user.id)
 
 		with tempfile.NamedTemporaryFile() as temp_file:
 			with open(temp_file.name, "wb") as f_out:
 				content = await image.read()
 				f_out.write(content)
 
-			s3.upload_file(temp_file.name, BUCKET_NAME, filename)
-			user.image = filename
+			s3.upload_file(temp_file.name, BUCKET_NAME, image_path)
+			user.image = image_path
 
 	session.add(user)
 	await session.commit()
