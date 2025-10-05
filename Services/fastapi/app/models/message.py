@@ -22,7 +22,7 @@ class Message(SQLModel, table=True):
 	sender: "User" = Relationship(back_populates="messages")
 	room: "Room" = Relationship(back_populates="messages")
 	viewed: list["MessageViewed"] = Relationship(back_populates="message")
-	replies: list["Message"] = Relationship(
+	reply: "Message" = Relationship(
 		back_populates="parent", sa_relationship_kwargs={"remote_side": "Message.id"}
 	)
-	parent: Optional["Message"] = Relationship(back_populates="replies")
+	parent: Optional["Message"] = Relationship(back_populates="reply")

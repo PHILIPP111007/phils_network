@@ -82,6 +82,9 @@ def _filter_message(msg: dict, messages_ids: list[int]):
 	if msg["parent_id"] not in messages_ids:
 		return msg
 
+	if msg["parent"] is not None:
+		return msg
+
 
 @router.get("/api/v2/room/{id}/{loaded_messages}/")
 async def get_message(
@@ -114,7 +117,6 @@ async def get_message(
 		.limit(MESSAGES_TO_LOAD)
 		.order_by(Message.timestamp.desc())
 		.options(joinedload(Message.sender))
-		.options(joinedload(Message.parent))
 	)
 	query = query.unique().all()
 	if not query:
@@ -122,23 +124,23 @@ async def get_message(
 
 	messages = []
 	for message in query:
-		if message.parent is not None:
+		if message.parent_id is not None:
 			if request.state.user.user_timezone:
 				user_timezone = request.state.user.user_timezone
 				timezone_obj = ZoneInfo(user_timezone)
-				timestamp = message.parent.timestamp.replace(tzinfo=timezone_obj)
+				timestamp = message.reply.timestamp.replace(tzinfo=timezone_obj)
 			else:
-				timestamp = message.parent.timestamp
+				timestamp = message.reply.timestamp
 
 			parent = {
-				"sender_id": message.parent.sender_id,
-				"text": message.parent.text,
+				"sender_id": message.reply.sender_id,
+				"text": message.reply.text,
 				"timestamp": timestamp.strftime(DATETIME_FORMAT),
 				"sender": {
-					"username": message.parent.sender.username,
-					"first_name": message.parent.sender.first_name,
-					"last_name": message.parent.sender.last_name,
-					"is_online": message.parent.sender.is_online,
+					"username": message.reply.sender.username,
+					"first_name": message.reply.sender.first_name,
+					"last_name": message.reply.sender.last_name,
+					"is_online": message.reply.sender.is_online,
 				},
 			}
 		else:
@@ -174,8 +176,6 @@ async def get_message(
 			lambda msg: _filter_message(msg=msg, messages_ids=messages_ids), messages
 		)
 	)
-
-	# print(messages)
 
 	return {"ok": True, "messages": messages}
 
