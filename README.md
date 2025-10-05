@@ -20,6 +20,12 @@ Minimalistic social network written using Django, FastAPI and React.
 
 * [x] You can send ETH to your friends.
 
+* [x] Message image preview in the chat.
+
+* [x] You can add a photo to your account.
+
+* [x] You can reply to messages.
+
 [User Agreement](UserAgreement.md) (by using the Service, the User confirms that he/she has read and accepts the terms of this Agreement)
 
 \
