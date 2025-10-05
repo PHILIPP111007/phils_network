@@ -48,7 +48,8 @@ export default function SettingsBar(props) {
             email: "",
             first_name: "",
             last_name: "",
-            is_online: false
+            is_online: false,
+            image: null,
         })
         navigate(`/login/`)
     }
