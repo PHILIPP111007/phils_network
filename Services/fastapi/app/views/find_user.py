@@ -4,6 +4,8 @@ from sqlmodel import select
 from app.database import SessionDep
 from app.models import User
 from app.request_body import FindUser
+from app.modules import get_file_content
+from app.constants import USER_IMAGE_PATH
 
 router = APIRouter(tags=["find_user"])
 
@@ -59,6 +61,8 @@ async def post_find_user(session: SessionDep, request: Request, find_user: FindU
 
 	users = []
 	for user in find_users:
+		image_path = USER_IMAGE_PATH.format(user.id)
+
 		user = {
 			"id": user.id,
 			"username": user.username,
@@ -66,6 +70,7 @@ async def post_find_user(session: SessionDep, request: Request, find_user: FindU
 			"first_name": user.first_name,
 			"last_name": user.last_name,
 			"is_online": user.is_online,
+			"image": await get_file_content(file_name=image_path),
 		}
 		users.append(user)
 

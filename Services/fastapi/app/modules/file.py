@@ -11,7 +11,6 @@ from app.constants import (
 from app.s3 import s3
 
 
-
 async def get_file_content(file_name: str):
 	try:
 		file_path = file_name
@@ -64,4 +63,3 @@ async def get_file_content_gzip(file_name: str):
 	os.remove(uncompressed_file_path)
 
 	return {"path": uncompressed_file_path, "content": content_base64}
-

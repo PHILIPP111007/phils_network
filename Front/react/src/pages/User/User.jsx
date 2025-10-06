@@ -8,6 +8,7 @@ import { UserContext } from "../../data/context.js"
 import { useSetUser } from "../../hooks/useAuth.js"
 import { HttpMethod } from "../../data/enums.js"
 import useObserver from "../../hooks/useObserver.js"
+import { getFileUrl } from "../../modules/getFileUrl.js"
 import rememberPage from "../../modules/rememberPage.js"
 import Fetch from "../../API/Fetch.js"
 import MainComponents from "../components/MainComponents/MainComponents.jsx"
@@ -126,15 +127,7 @@ export default function User() {
 
     useEffect(() => {
         if (userLocal.image) {
-            var byteCharacters = atob(userLocal.image)
-            var byteNumbers = new Array(byteCharacters.length)
-            for (let i = 0; i < byteCharacters.length; i++) {
-                byteNumbers[i] = byteCharacters.charCodeAt(i)
-            }
-            var uint8Array = new Uint8Array(byteNumbers)
-            var blob = new Blob([uint8Array], { type: 'application/octet-stream' })
-            var url = URL.createObjectURL(blob)
-
+            var url = getFileUrl(userLocal.image)
             setImageUrl(url)
         } else {
             setImageUrl(null)

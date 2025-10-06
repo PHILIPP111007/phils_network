@@ -33,3 +33,11 @@
 .FriendCard a {
     text-decoration: none;
 }
+
+.FriendCard .FriendCardUserImage {
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+}

@@ -2,6 +2,7 @@ import "./styles/Message.css"
 import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import ReactMarkdown from "react-markdown"
+import { getFileUrl } from "../../../../modules/getFileUrl.js"
 import { CacheKeys, Language } from "../../../../data/enums.js"
 import ModalMessage from "./components/ModalMessage.jsx"
 import Modal from "../../../components/Modal.jsx"
@@ -43,57 +44,20 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
     }, [])
 
     useEffect(() => {
-        var blob
-        var uint8Array
         var url
-        var byteCharacters
-        var byteNumbers
 
         if (message.file.path) {
-            try {
-                byteCharacters = atob(message.file.content)
-                byteNumbers = new Array(byteCharacters.length)
-                for (let i = 0; i < byteCharacters.length; i++) {
-                    byteNumbers[i] = byteCharacters.charCodeAt(i)
-                }
-                uint8Array = new Uint8Array(byteNumbers)
-                blob = new Blob([uint8Array], { type: 'application/octet-stream' })
-                url = URL.createObjectURL(blob)
-            } catch {
-                uint8Array = new Uint8Array(message.file.content)
-                blob = new Blob([uint8Array], { type: 'application/octet-stream' })
-                url = URL.createObjectURL(blob)
-            }
+            url = getFileUrl(message.file.content)
             setImageUrl(url)
         }
 
         if (message.parent && message.parent.file.path) {
-            try {
-                byteCharacters = atob(message.parent.file.content)
-                byteNumbers = new Array(byteCharacters.length)
-                for (let i = 0; i < byteCharacters.length; i++) {
-                    byteNumbers[i] = byteCharacters.charCodeAt(i)
-                }
-                uint8Array = new Uint8Array(byteNumbers)
-                blob = new Blob([uint8Array], { type: 'application/octet-stream' })
-                url = URL.createObjectURL(blob)
-            } catch {
-                uint8Array = new Uint8Array(message.parent.file.content)
-                blob = new Blob([uint8Array], { type: 'application/octet-stream' })
-                url = URL.createObjectURL(blob)
-            }
+            url = getFileUrl(message.parent.file.content)
             setParentImageUrl(url)
         }
 
         if (message.sender.image) {
-            byteCharacters = atob(message.sender.image)
-            byteNumbers = new Array(byteCharacters.length)
-            for (let i = 0; i < byteCharacters.length; i++) {
-                byteNumbers[i] = byteCharacters.charCodeAt(i)
-            }
-            uint8Array = new Uint8Array(byteNumbers)
-            blob = new Blob([uint8Array], { type: 'application/octet-stream' })
-            url = URL.createObjectURL(blob)
+            url = getFileUrl(message.sender.image)
             setUserImageUrl(url)
         }
     }, [])

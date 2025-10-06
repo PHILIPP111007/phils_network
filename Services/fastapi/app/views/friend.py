@@ -6,7 +6,8 @@ from sqlmodel import select
 from app.database import SessionDep
 from app.enums import FilterOption
 from app.models import User
-from app.modules import get_subscribers_sets
+from app.modules import get_subscribers_sets, get_file_content
+from app.constants import USER_IMAGE_PATH
 
 router = APIRouter(tags=["friend"])
 
@@ -74,6 +75,8 @@ async def get_friends(session: SessionDep, request: Request, option: FilterOptio
 	query = await option_func()
 	if option != FilterOption.SUBSCRIBERS_COUNT.value:
 		for user in query:
+			image_path = USER_IMAGE_PATH.format(user.id)
+
 			user = {
 				"id": user.id,
 				"username": user.username,
@@ -81,6 +84,7 @@ async def get_friends(session: SessionDep, request: Request, option: FilterOptio
 				"first_name": user.first_name,
 				"last_name": user.last_name,
 				"is_online": user.is_online,
+				"image": await get_file_content(file_name=image_path),
 			}
 			users.append(user)
 		return {"ok": True, "query": users}
