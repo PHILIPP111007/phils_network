@@ -5,7 +5,7 @@ import { CacheKeys, Language } from "../../../../../data/enums.js"
 import Button from "../../../../components/UI/Button.jsx"
 
 
-export default function ModalMessage({ message, deleteMessage, setParentId }) {
+export default function ModalMessage({ message, deleteMessage, setParentId, setModalMessage }) {
 
     var { user } = use(UserContext)
     var language = localStorage.getItem(CacheKeys.LANGUAGE)
@@ -17,10 +17,16 @@ export default function ModalMessage({ message, deleteMessage, setParentId }) {
     if (language === Language.EN) {
         return (
             <div className="ModalMessage">
-                <Button onClick={() => copyText()}>Copy</Button>
+                <Button onClick={() => {
+                    copyText()
+                    setModalMessage(false)
+                }}>Copy</Button>
                 <br />
                 <br />
-                <Button onClick={() => setParentId(message.id)}>Reply</Button>
+                <Button onClick={() => {
+                    setParentId(message.id)
+                    setModalMessage(false)
+                }}>Reply</Button>
                 <br />
                 <br />
                 {(message.sender.username === user.username)
@@ -32,10 +38,16 @@ export default function ModalMessage({ message, deleteMessage, setParentId }) {
     } else if (language === Language.RU) {
         return (
             <div className="ModalMessage">
-                <Button onClick={() => copyText()}>Скопировать</Button>
+                <Button onClick={() => {
+                    copyText()
+                    setModalMessage(false)
+                }}>Скопировать</Button>
                 <br />
                 <br />
-                <Button onClick={() => setParentId(message.id)}>Ответить</Button>
+                <Button onClick={() => {
+                    setParentId(message.id)
+                    setModalMessage(false)
+                }}>Ответить</Button>
                 <br />
                 <br />
                 {(message.sender.username === user.username)

@@ -51,7 +51,7 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
             setImageUrl(url)
         }
 
-        if (message.parent && message.parent.file.path) {
+        if (message.parent && message.parent.file && message.parent.file.path) {
             url = getFileUrl(message.parent.file.content)
             setParentImageUrl(url)
         }
@@ -212,7 +212,7 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
                 setModalMessage(true)
             }}>
             <Modal modal={modalMessage} setModal={setModalMessage}>
-                <ModalMessage message={message} deleteMessage={deleteMessage} setParentId={setParentId} />
+                <ModalMessage message={message} deleteMessage={deleteMessage} setParentId={setParentId} setModalMessage={setModalMessage} />
             </Modal>
             <div className="info">
                 {userImageUrl &&

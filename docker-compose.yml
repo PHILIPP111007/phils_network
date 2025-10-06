@@ -73,8 +73,9 @@ services:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+      # PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
-      - postgres-data_phils_network:/var/lib/postgresql/data_phils_network/
+      - pgdata:/var/lib/postgresql/data/pgdata
     expose:
       - 5432
     networks:
@@ -131,7 +132,8 @@ services:
       - cache_network
 
 volumes:
-  postgres-data_phils_network:
+  pgdata:
+    driver: local
   cache_phils_network:
     driver: local
 
