@@ -2,6 +2,7 @@ import "./styles/ModalSettings.css"
 import { use, useEffect, useState } from "react"
 import Form from "react-bootstrap/Form"
 import { UserContext } from "../../../../data/context.js"
+import { notify_success } from "../../../../modules/notify.js"
 import { HttpMethod, CacheKeys, Language } from "../../../../data/enums.js"
 import Fetch from "../../../../API/Fetch.js"
 import Input from "../../UI/Input.jsx"
@@ -27,6 +28,7 @@ export default function ModalSettings(props) {
         var data = await Fetch({ action: "api/v2/user/", method: HttpMethod.PUT, body: user_body })
         if (data.ok) {
             setUser(data.user)
+            notify_success("User information has been updated")
         }
 
         if (userNew.image) {
@@ -36,6 +38,7 @@ export default function ModalSettings(props) {
             data = await Fetch({ action: "api/v2/user_image/", method: HttpMethod.PUT, body: formData, is_uploading_file: true })
             if (data.ok) {
                 setUser(data.user)
+                notify_success("User photo has been updated")
             }
         }
     }
