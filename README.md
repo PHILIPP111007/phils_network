@@ -1,4 +1,4 @@
-# Phils network v1.1.4
+# Phils network v1.1.5
 
 Minimalistic social network written using Django, FastAPI and React.
 
@@ -152,7 +152,7 @@ Home page:
 
 Chat page:
 
-<img src="pictures/chat_page_1.png" alt="alt text" width="1000"/>
+<img src="pictures/chat_page.png" alt="alt text" width="1000"/>
 <br />
 
 Video:

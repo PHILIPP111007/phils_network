@@ -12,6 +12,7 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
 
     var [modalMessage, setModalMessage] = useState(false)
     var [imageUrl, setImageUrl] = useState(null)
+    var [parentImageUrl, setParentImageUrl] = useState(null)
     var [userImageUrl, setUserImageUrl] = useState(null)
     var language = localStorage.getItem(CacheKeys.LANGUAGE)
 
@@ -42,13 +43,16 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
     }, [])
 
     useEffect(() => {
+        var blob
+        var uint8Array
+        var url
+        var byteCharacters
+        var byteNumbers
+
         if (message.file.path) {
-            var blob
-            var uint8Array
-            var url
             try {
-                var byteCharacters = atob(message.file.content)
-                var byteNumbers = new Array(byteCharacters.length)
+                byteCharacters = atob(message.file.content)
+                byteNumbers = new Array(byteCharacters.length)
                 for (let i = 0; i < byteCharacters.length; i++) {
                     byteNumbers[i] = byteCharacters.charCodeAt(i)
                 }
@@ -61,6 +65,24 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
                 url = URL.createObjectURL(blob)
             }
             setImageUrl(url)
+        }
+
+        if (message.parent && message.parent.file.path) {
+            try {
+                byteCharacters = atob(message.parent.file.content)
+                byteNumbers = new Array(byteCharacters.length)
+                for (let i = 0; i < byteCharacters.length; i++) {
+                    byteNumbers[i] = byteCharacters.charCodeAt(i)
+                }
+                uint8Array = new Uint8Array(byteNumbers)
+                blob = new Blob([uint8Array], { type: 'application/octet-stream' })
+                url = URL.createObjectURL(blob)
+            } catch {
+                uint8Array = new Uint8Array(message.parent.file.content)
+                blob = new Blob([uint8Array], { type: 'application/octet-stream' })
+                url = URL.createObjectURL(blob)
+            }
+            setParentImageUrl(url)
         }
 
         if (message.sender.image) {
@@ -126,6 +148,17 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
                             message.parent &&
                             <>
                                 <hr />
+                                {parentImageUrl &&
+                                    <>
+                                        <div style={{ marginBottom: "20px" }}>
+                                            <img 
+                                                className="MessageImage"
+                                                src={parentImageUrl} 
+                                                alt="Uploaded preview" 
+                                            />
+                                        </div>
+                                    </>
+                                }
                                 <Link to={`/users/${message.parent.sender.username}/`} >
                                     <p className="timestamp">{message.parent.sender.first_name} {message.parent.sender.last_name} @{message.parent.sender.username} {message.parent.timestamp} {message.parent.sender.is_online && <div className="MessageOnlineStatus"></div>}</p>
                                 </Link>
@@ -185,6 +218,17 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
                             message.parent &&
                             <>
                                 <hr />
+                                {parentImageUrl &&
+                                    <>
+                                        <div style={{ marginBottom: "20px" }}>
+                                            <img 
+                                                className="MessageImage"
+                                                src={parentImageUrl} 
+                                                alt="Uploaded preview" 
+                                            />
+                                        </div>
+                                    </>
+                                }
                                 <Link to={`/users/${message.parent.sender.username}/`} >
                                     <p className="timestamp">{message.parent.sender.first_name} {message.parent.sender.last_name} @{message.parent.sender.username} {message.parent.timestamp} {message.parent.sender.is_online && <div className="MessageOnlineStatus"></div>}</p>
                                 </Link>
@@ -226,6 +270,17 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
                     message.parent &&
                     <>
                         <hr />
+                        {parentImageUrl &&
+                            <>
+                                <div style={{ marginBottom: "20px" }}>
+                                    <img 
+                                        className="MessageImage"
+                                        src={parentImageUrl} 
+                                        alt="Uploaded preview" 
+                                    />
+                                </div>
+                            </>
+                        }
                         <Link to={`/users/${message.parent.sender.username}/`} >
                             <p className="timestamp">{message.parent.sender.first_name} {message.parent.sender.last_name} @{message.parent.sender.username} {message.parent.timestamp} {message.parent.sender.is_online && <div className="MessageOnlineStatus"></div>}</p>
                         </Link>

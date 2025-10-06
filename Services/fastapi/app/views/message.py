@@ -1,7 +1,3 @@
-import os
-import shutil
-import gzip
-import base64
 from zoneinfo import ZoneInfo
 
 from fastapi import APIRouter, Request
@@ -12,71 +8,13 @@ from sqlalchemy import and_
 from app.constants import (
 	DATETIME_FORMAT,
 	MESSAGES_TO_LOAD,
-	BUCKET_NAME,
-	MEDIA_ROOT,
-	MAX_ALLOWED_FILE_SIZE_FOR_PREVIEW,
 	USER_IMAGE_PATH,
 )
 from app.database import SessionDep
 from app.models import Message, Room, RoomSubscribers, MessageViewed
-from app.s3 import s3
-
+from app.modules import get_file_content, get_file_content_gzip
 
 router = APIRouter(tags=["message"])
-
-
-async def _get_file_content(file_name: str):
-	try:
-		file_path = file_name
-		with open(file_path, "wb") as file:
-			s3.download_fileobj(BUCKET_NAME, file_path, file)
-		with open(file_path, "rb") as file:
-			content = file.read()
-			content_base64 = base64.b64encode(content).decode("utf-8")
-	except Exception:
-		content_base64 = None
-
-	return content_base64
-
-
-async def _get_file_content_gzip(file_name: str):
-	if not file_name:
-		return {"path": file_name, "content": None}
-
-	file_path = os.path.join(MEDIA_ROOT, file_name)
-	compressed_file_path = file_path + ".gz"
-	uncompressed_file_path = file_path
-
-	response = s3.head_object(Bucket=BUCKET_NAME, Key=file_path)
-	file_size = response["ContentLength"]
-
-	if file_size > MAX_ALLOWED_FILE_SIZE_FOR_PREVIEW:
-		return {"path": file_name, "content": None}
-
-	folders_to_create = file_path.split(os.path.sep)[:-1]
-	folders_to_create = os.path.sep.join(folders_to_create)
-
-	os.makedirs(folders_to_create, exist_ok=True)
-
-	# Скачиваем файл
-	with open(compressed_file_path, "wb") as file:
-		s3.download_fileobj(BUCKET_NAME, file_path, file)
-
-	# Разжимаем файл
-	with gzip.open(compressed_file_path, "rb") as f_in:
-		with open(uncompressed_file_path, "wb") as f_out:
-			shutil.copyfileobj(f_in, f_out)
-
-	# Читаем контент
-	with open(uncompressed_file_path, "rb") as file:
-		content = file.read()
-		content_base64 = base64.b64encode(content).decode("utf-8")
-
-	# Удаляем временные файлы
-	os.remove(compressed_file_path)
-	os.remove(uncompressed_file_path)
-
-	return {"path": uncompressed_file_path, "content": content_base64}
 
 
 def _filter_message(msg: dict, messages_ids: list[int]):
@@ -143,6 +81,7 @@ async def get_message(
 					"last_name": message.reply.sender.last_name,
 					"is_online": message.reply.sender.is_online,
 				},
+				"file": await get_file_content_gzip(file_name=message.reply.file),
 			}
 		else:
 			parent = None
@@ -161,13 +100,13 @@ async def get_message(
 			"text": message.text,
 			"timestamp": timestamp.strftime(DATETIME_FORMAT),
 			"parent_id": message.parent_id,
-			"file": await _get_file_content_gzip(file_name=message.file),
+			"file": await get_file_content_gzip(file_name=message.file),
 			"sender": {
 				"username": message.sender.username,
 				"first_name": message.sender.first_name,
 				"last_name": message.sender.last_name,
 				"is_online": message.sender.is_online,
-				"image": await _get_file_content(file_name=image_path),
+				"image": await get_file_content(file_name=image_path),
 			},
 			"parent": parent,
 		}
