@@ -66,7 +66,7 @@ async def put_chat(
 	request: Request,
 	id: int,
 	friends_and_subscribers: FriendsAndSubscribers,
-) -> dict[str, bool]:
+):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 

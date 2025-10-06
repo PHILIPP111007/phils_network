@@ -142,9 +142,7 @@ async def put_user_image(
 
 
 @router.delete("/api/v2/user/{username}/")
-async def delete_user(
-	session: SessionDep, request: Request, username: str
-) -> dict[str, bool]:
+async def delete_user(session: SessionDep, request: Request, username: str):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 

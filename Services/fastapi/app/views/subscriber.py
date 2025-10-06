@@ -11,9 +11,7 @@ router = APIRouter(tags=["subscriber"])
 
 
 @router.get("/api/v2/subscriber/{id}/")
-async def get_subscriber(
-	session: SessionDep, request: Request, id: int
-) -> dict[str, int]:
+async def get_subscriber(session: SessionDep, request: Request, id: int):
 	async def _filter(user_id: int, subscribe_id: int) -> list[Subscriber]:
 		query = await session.exec(
 			select(Subscriber).where(
@@ -44,9 +42,7 @@ async def get_subscriber(
 
 
 @router.post("/api/v2/subscriber/{id}/")
-async def post_subscriber(
-	session: SessionDep, request: Request, id: int
-) -> dict[str, bool]:
+async def post_subscriber(session: SessionDep, request: Request, id: int):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
@@ -60,7 +56,7 @@ async def post_subscriber(
 @router.delete("/api/v2/subscriber/{id}/")
 async def delete_subscriber(
 	session: SessionDep, request: Request, id: int, option: Option
-) -> dict[str, bool]:
+):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 

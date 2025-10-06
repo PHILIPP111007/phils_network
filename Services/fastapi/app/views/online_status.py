@@ -8,9 +8,7 @@ router = APIRouter(tags=["online_status"])
 
 
 @router.post("/api/v2/online_status/set_true/")
-async def post_online_status_true(
-	session: SessionDep, request: Request
-) -> dict[str, bool]:
+async def post_online_status_true(session: SessionDep, request: Request):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 

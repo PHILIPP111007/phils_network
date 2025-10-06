@@ -181,7 +181,7 @@ async def get_room_invitation(session: SessionDep, request: Request):
 @router.post("/api/v2/invite_chats/{user_id}/add_room/{room_id}/")
 async def post_room_invitation_add(
 	session: SessionDep, request: Request, user_id: int, room_id: int
-) -> dict[str, bool]:
+):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
@@ -227,7 +227,7 @@ async def post_room_invitation_add(
 @router.post("/api/v2/invite_chats/{user_id}/remove_room/{room_id}/")
 async def post_room_invitation_remove(
 	session: SessionDep, request: Request, user_id: int, room_id: int
-) -> dict[str, bool]:
+):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 

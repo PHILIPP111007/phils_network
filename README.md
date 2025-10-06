@@ -70,6 +70,16 @@ Go to <http://0.0.0.0:8080/docs> to see Swagger documentation
 
 If you are hosting this site, then go to `Front/react/src/data/constants.js` and replace `SERVER_HOST` with your server IP
 
+## Tests
+
+To run tests, use:
+
+```bash
+micromamba activate phils_network
+
+pytest
+```
+
 ## Development installation
 
 Postgres.

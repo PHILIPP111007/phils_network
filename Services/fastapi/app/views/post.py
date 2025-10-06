@@ -136,9 +136,7 @@ async def post_post(
 
 
 @router.delete("/api/v2/blog/{id}/")
-async def delete_post(
-	session: SessionDep, request: Request, id: int
-) -> dict[str, bool]:
+async def delete_post(session: SessionDep, request: Request, id: int):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
