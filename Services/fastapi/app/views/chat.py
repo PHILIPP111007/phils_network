@@ -86,12 +86,20 @@ async def put_chat(
 
 	if friends_and_subscribers.friends:
 		for friend_id in friends_and_subscribers.friends:
-			room_invitation = RoomInvitation(
-				creator_id=request.state.user.id,
-				to_user_id=friend_id,
-				room_id=room.id,
-			)
-			session.add(room_invitation)
+			room_invitation = await session.exec(select(RoomInvitation).where(
+				RoomInvitation.creator_id == request.state.user.id,
+				RoomInvitation.to_user_id == friend_id,
+				RoomInvitation.room_id == room.id,
+			))
+			room_invitation = room_invitation.first()
+
+			if not room_invitation:	
+				room_invitation = RoomInvitation(
+					creator_id=request.state.user.id,
+					to_user_id=friend_id,
+					room_id=room.id,
+				)
+				session.add(room_invitation)
 		await session.commit()
 
 	if friends_and_subscribers.subscribers:
