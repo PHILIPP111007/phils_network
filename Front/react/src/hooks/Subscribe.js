@@ -4,16 +4,14 @@ import Fetch from "../API/Fetch.js"
 export default class Subscribe {
 
     static deleteFriend(props) {
-        var body = { option: DeleteOptionEnum.DELETE_FRIEND }
-        Fetch({ action: `api/v2/subscriber/${props.id}/`, method: HttpMethod.DELETE, body: body })
+        Fetch({ action: `api/v2/delete_subscriber/${DeleteOptionEnum.DELETE_FRIEND}/${props.id}/`, method: HttpMethod.DELETE })
             .then(() => {
                 props.setStatus(undefined)
             })
     }
 
     static deleteSubscriber(props) {
-        var body = { option: DeleteOptionEnum.DELETE_SUBSCRIBER }
-        Fetch({ action: `api/v2/subscriber/${props.id}/`, method: HttpMethod.DELETE, body: body })
+        Fetch({ action: `api/v2/delete_subscriber/${DeleteOptionEnum.DELETE_SUBSCRIBER}/${props.id}/`, method: HttpMethod.DELETE })
             .then(() => {
                 props.setStatus(undefined)
             })

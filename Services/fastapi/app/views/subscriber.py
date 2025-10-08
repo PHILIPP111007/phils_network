@@ -4,7 +4,6 @@ from sqlmodel import delete, select
 from app.database import SessionDep
 from app.enums import DeleteOption, SubscriberStatus
 from app.models import Subscriber
-from app.request_body import Option
 
 
 router = APIRouter(tags=["subscriber"])
@@ -53,18 +52,21 @@ async def post_subscriber(session: SessionDep, request: Request, id: int):
 	return {"ok": True}
 
 
-@router.delete("/api/v2/subscriber/{id}/")
+@router.delete("/api/v2/delete_subscriber/{option}/{id}/")
 async def delete_subscriber(
-	session: SessionDep, request: Request, id: int, option: Option
+	session: SessionDep,
+	request: Request,
+	option: int,
+	id: int,
 ):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
 
-	if not option.option:
+	if not option:
 		return {"ok": False, "error": "Not provided an option."}
 
 	subscribe = None
-	if option.option == DeleteOption.DELETE_FRIEND.value:
+	if option == DeleteOption.DELETE_FRIEND.value:
 		subscribe = await session.exec(
 			select(Subscriber).where(
 				Subscriber.user_id == request.state.user.id,
@@ -75,7 +77,7 @@ async def delete_subscriber(
 		if not subscribe:
 			return {"ok": False, "error": "Not found subscriber."}
 
-	elif option.option == DeleteOption.DELETE_SUBSCRIBER.value:
+	elif option == DeleteOption.DELETE_SUBSCRIBER.value:
 		subscribe = await session.exec(
 			select(Subscriber).where(
 				Subscriber.user_id == id,
