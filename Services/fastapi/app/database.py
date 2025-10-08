@@ -1,9 +1,10 @@
-__all__ = ["get_session", "SessionDep", "engine"]
+__all__ = ["get_session", "SessionDep", "engine", "test_engine"]
 
 
 from typing import Annotated
 
 from fastapi import Depends
+from sqlmodel import StaticPool
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine
 
@@ -13,11 +14,19 @@ DATABASE_URL = (
 	f"postgresql+asyncpg://{PG_USER}:{PG_PASSWORD}@{PG_HOST}:{PG_PORT}/{PG_NAME}"
 )
 
-engine = create_async_engine(DATABASE_URL)
+
+test_engine = create_async_engine(
+	"sqlite+aiosqlite://",
+	connect_args={"check_same_thread": False},
+	poolclass=StaticPool,
+	echo=False,
+)
+
+prod_engine = create_async_engine(DATABASE_URL)
 
 
 async def get_session():
-	async with AsyncSession(engine) as session:
+	async with AsyncSession(prod_engine) as session:
 		yield session
 
 

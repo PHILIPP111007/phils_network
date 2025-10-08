@@ -1,10 +1,12 @@
+import os
 from typing import Callable
 
 from fastapi import FastAPI, Request
 from sqlmodel import select
-
-from app.database import engine
 from sqlmodel.ext.asyncio.session import AsyncSession
+
+from app.constants import TESTING
+from app.database import prod_engine, test_engine
 from app.models import Token, User
 from app.views import (
 	chat,
@@ -24,6 +26,14 @@ from app.views import (
 	w3,
 	timezone,
 )
+
+
+engine = None
+if TESTING == "1":
+	engine = test_engine
+else:
+	engine = prod_engine
+
 
 app = FastAPI(
 	title="phils_network",
@@ -51,29 +61,33 @@ app.openapi_version = "3.0.0"
 
 @app.middleware("http")
 async def middleware_add_user_to_request(request: Request, call_next: Callable):
-	"Middleware to store user in request context"
+	"""Middleware to store user in request context"""
 
 	token = request.headers.get("Authorization")
+	request.state.user = None  # Устанавливаем по умолчанию
+
 	if token:
-		token = token.split(" ")[1]  # Remove "Bearer"
-		async with AsyncSession(engine) as session:
-			token = await session.exec(select(Token).where(Token.key == token))
-			token = token.first()
-			if token:
-				user = await session.exec(select(User).where(User.id == token.user_id))
-				user = user.one()
-				if user:
-					request.state.user = User(
-						id=user.id,
-						username=user.username,
-						user_timezone=user.user_timezone,
-						image=user.image,
-						ethereum_address=user.ethereum_address,
-						infura_api_key=user.infura_api_key,
+		if " " in token:
+			token = token.split(" ")[1]  # Remove "Bearer"
+
+			async with AsyncSession(engine) as session:
+				token_obj = await session.exec(select(Token).where(Token.key == token))
+				token_obj = token_obj.first()
+				if token_obj:
+					user = await session.exec(
+						select(User).where(User.id == token_obj.user_id)
 					)
-					response = await call_next(request)
-					return response
-	request.state.user = None
+					user = user.one()
+					if user:
+						request.state.user = User(
+							id=user.id,
+							username=user.username,
+							user_timezone=user.user_timezone,
+							image=user.image,
+							ethereum_address=user.ethereum_address,
+							infura_api_key=user.infura_api_key,
+						)
+
 	response = await call_next(request)
 	return response
 

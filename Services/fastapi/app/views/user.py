@@ -1,5 +1,4 @@
 import os
-from typing import Optional
 import tempfile
 import base64
 

@@ -61,7 +61,7 @@ docker-compose up
 
 docker compose up --build
 
-docker-compose run django python manage.py createsuperuser
+docker-compose run django_phils_network python manage.py createsuperuser
 ```
 
 Then go to <http://0.0.0.0/> \
@@ -75,9 +75,7 @@ If you are hosting this site, then go to `Front/react/src/data/constants.js` and
 To run tests, use:
 
 ```bash
-micromamba activate phils_network
-
-pytest
+docker compose run -e TEST=1 --build fastapi_phils_network pytest
 ```
 
 ## Development installation
