@@ -173,3 +173,20 @@ async def test_post_subscriber(session: AsyncSession, client: TestClient):
 	subscribe = subscribe.unique().all()
 
 	assert len(subscribe) == 0
+
+
+async def test_delete_subscriber(session: AsyncSession, client: TestClient):
+	user, token = await get_or_create_default_user(session=session)
+	test_user, test_token = await get_or_create_user(
+		session=session, username="test_user", token_key="2"
+	)
+
+	await session.refresh(token)
+	await session.refresh(user)
+	await session.refresh(test_user)
+
+	response = client.delete(
+		f"/api/v2/subscriber/{test_user.id}/",
+		headers={"Authorization": f"Bearer {token.key}"},
+	)
+	assert response.status_code == 422
