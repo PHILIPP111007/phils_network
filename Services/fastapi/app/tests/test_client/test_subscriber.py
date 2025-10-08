@@ -186,7 +186,126 @@ async def test_delete_subscriber(session: AsyncSession, client: TestClient):
 	await session.refresh(test_user)
 
 	response = client.delete(
-		f"/api/v2/subscriber/{test_user.id}/",
+		f"/api/v2/delete_subscriber/100/{test_user.id}/",
 		headers={"Authorization": f"Bearer {token.key}"},
 	)
-	assert response.status_code == 422
+	assert response.status_code == 200
+
+	data = response.json()
+
+	assert data["ok"] == False
+	assert data["error"] == "Wrong option."
+
+	response = client.delete(
+		f"/api/v2/delete_subscriber/{DeleteOption.DELETE_FRIEND.value}/{test_user.id}/",
+		headers={"Authorization": f"Bearer {token.key}"},
+	)
+	assert response.status_code == 200
+
+	data = response.json()
+
+	assert data["ok"] == False
+	assert data["error"] == "Not found subscriber."
+
+	response = client.delete(
+		f"/api/v2/delete_subscriber/{DeleteOption.DELETE_SUBSCRIBER.value}/{test_user.id}/",
+		headers={"Authorization": f"Bearer {token.key}"},
+	)
+	assert response.status_code == 200
+
+	data = response.json()
+
+	assert data["ok"] == False
+	assert data["error"] == "Not found subscriber."
+
+	subscribe = Subscriber(user_id=user.id, subscribe_id=test_user.id)
+	session.add(subscribe)
+	await session.commit()
+
+	await session.refresh(token)
+	await session.refresh(user)
+	await session.refresh(test_user)
+
+	response = client.delete(
+		f"/api/v2/delete_subscriber/{DeleteOption.DELETE_SUBSCRIBER.value}/{test_user.id}/",
+		headers={"Authorization": f"Bearer {token.key}"},
+	)
+	assert response.status_code == 200
+
+	data = response.json()
+
+	assert data["ok"] == False
+	assert data["error"] == "Not found subscriber."
+
+	await session.refresh(token)
+	await session.refresh(user)
+	await session.refresh(test_user)
+
+	response = client.delete(
+		f"/api/v2/delete_subscriber/{DeleteOption.DELETE_FRIEND.value}/{test_user.id}/",
+		headers={"Authorization": f"Bearer {token.key}"},
+	)
+	assert response.status_code == 200
+
+	data = response.json()
+
+	assert data["ok"] == True
+
+	await session.refresh(token)
+	await session.refresh(user)
+	await session.refresh(test_user)
+
+	subscribe = await session.exec(
+		select(Subscriber).where(
+			Subscriber.user_id == user.id,
+			Subscriber.subscribe_id == test_user.id,
+		)
+	)
+
+	subscribe = subscribe.unique().all()
+
+	assert len(subscribe) == 0
+
+	subscribe = Subscriber(user_id=test_user.id, subscribe_id=user.id)
+	session.add(subscribe)
+	await session.commit()
+
+	await session.refresh(token)
+	await session.refresh(user)
+	await session.refresh(test_user)
+
+	response = client.delete(
+		f"/api/v2/delete_subscriber/{DeleteOption.DELETE_FRIEND.value}/{test_user.id}/",
+		headers={"Authorization": f"Bearer {token.key}"},
+	)
+	assert response.status_code == 200
+
+	data = response.json()
+
+	assert data["ok"] == False
+	assert data["error"] == "Not found subscriber."
+
+	response = client.delete(
+		f"/api/v2/delete_subscriber/{DeleteOption.DELETE_SUBSCRIBER.value}/{test_user.id}/",
+		headers={"Authorization": f"Bearer {token.key}"},
+	)
+	assert response.status_code == 200
+
+	data = response.json()
+
+	assert data["ok"] == True
+
+	await session.refresh(token)
+	await session.refresh(user)
+	await session.refresh(test_user)
+
+	subscribe = await session.exec(
+		select(Subscriber).where(
+			Subscriber.user_id == test_user.id,
+			Subscriber.subscribe_id == user.id,
+		)
+	)
+
+	subscribe = subscribe.unique().all()
+
+	assert len(subscribe) == 0
