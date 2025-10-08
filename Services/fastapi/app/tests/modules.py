@@ -1,5 +1,7 @@
+from io import BytesIO
 from datetime import datetime
 
+from fastapi import UploadFile
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
@@ -21,7 +23,6 @@ async def get_or_create_default_user(session: AsyncSession):
 	user = result.first()
 
 	if user:
-		# Если пользователь существует, найдем его токен
 		token_result = await session.exec(select(Token).where(Token.user_id == user.id))
 		token = token_result.first()
 		return user, token
@@ -56,7 +57,6 @@ async def get_or_create_user(session: AsyncSession, username: str, token_key: st
 	user = result.first()
 
 	if user:
-		# Если пользователь существует, найдем его токен
 		token_result = await session.exec(select(Token).where(Token.user_id == user.id))
 		token = token_result.first()
 		return user, token
@@ -84,3 +84,9 @@ async def get_or_create_user(session: AsyncSession, username: str, token_key: st
 	await session.refresh(user)
 
 	return user, token
+
+
+def create_upload_file(filename: str = "test.jpg"):
+	content = b"\xff\xd8\xff\xe0\x00\x10JFIF\x00\x01\x01\x01\x00H\x00H\x00\x00..."
+	buffer = BytesIO(content)
+	return UploadFile(buffer, filename=filename)

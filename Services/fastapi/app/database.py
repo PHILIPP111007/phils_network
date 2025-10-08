@@ -4,29 +4,34 @@ __all__ = ["get_session", "SessionDep", "engine", "test_engine"]
 from typing import Annotated
 
 from fastapi import Depends
+from sqlmodel import SQLModel
 from sqlmodel import StaticPool
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine
 
-from app.constants import PG_HOST, PG_NAME, PG_PASSWORD, PG_PORT, PG_USER
+from app.constants import PG_HOST, PG_NAME, PG_PASSWORD, PG_PORT, PG_USER, TESTING
 
-DATABASE_URL = (
+PROD_DATABASE_URL = (
 	f"postgresql+asyncpg://{PG_USER}:{PG_PASSWORD}@{PG_HOST}:{PG_PORT}/{PG_NAME}"
 )
 
+TEST_DATABASE_URL = "sqlite+aiosqlite://"
 
-test_engine = create_async_engine(
-	"sqlite+aiosqlite://",
-	connect_args={"check_same_thread": False},
-	poolclass=StaticPool,
-	echo=False,
-)
 
-prod_engine = create_async_engine(DATABASE_URL)
+engine = None
+if TESTING == "1":
+	engine = create_async_engine(
+		TEST_DATABASE_URL,
+		connect_args={"check_same_thread": False},
+		poolclass=StaticPool,
+		echo=False,
+	)
+else:
+	engine = create_async_engine(PROD_DATABASE_URL)
 
 
 async def get_session():
-	async with AsyncSession(prod_engine) as session:
+	async with AsyncSession(engine) as session:
 		yield session
 
 

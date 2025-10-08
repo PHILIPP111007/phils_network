@@ -170,6 +170,8 @@ async def delete_user(session: SessionDep, request: Request, username: str):
 		if not room.room_subscribers:
 			await session.exec(delete(Room).where(Room.id == room.id))
 
+	await session.refresh(user)
+
 	messages = await session.exec(select(Message).where(Message.sender_id == user.id))
 	messages = messages.unique().all()
 

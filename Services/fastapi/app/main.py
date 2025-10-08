@@ -5,8 +5,7 @@ from fastapi import FastAPI, Request
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from app.constants import TESTING
-from app.database import prod_engine, test_engine
+from app.database import engine
 from app.models import Token, User
 from app.views import (
 	chat,
@@ -26,13 +25,6 @@ from app.views import (
 	w3,
 	timezone,
 )
-
-
-engine = None
-if TESTING == "1":
-	engine = test_engine
-else:
-	engine = prod_engine
 
 
 app = FastAPI(

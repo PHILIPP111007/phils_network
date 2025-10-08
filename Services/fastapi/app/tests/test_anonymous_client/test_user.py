@@ -1,21 +1,13 @@
-from io import BytesIO
-
 from fastapi.testclient import TestClient
-from fastapi import UploadFile
 
 from app.main import app
+from app.tests.modules import create_upload_file
 
 
 client = TestClient(app)
 
 ANONYMOUS_USER = "user"
 RESPONSE_CAN_NOT_AUTHENTICATE = {"ok": False, "error": "Can not authenticate."}
-
-
-def create_upload_file(filename="test.jpg"):
-	content = b"\xff\xd8\xff\xe0\x00\x10JFIF\x00\x01\x01\x01\x00H\x00H\x00\x00..."  # пример JPEG-данных
-	buffer = BytesIO(content)
-	return UploadFile(buffer, filename=filename)
 
 
 def test_get_user():

@@ -1,4 +1,4 @@
-FROM python:3.13.7-slim
+FROM python:3.13.8-slim
 WORKDIR /app
 
 # do not put stdout and stderr in a buffer
