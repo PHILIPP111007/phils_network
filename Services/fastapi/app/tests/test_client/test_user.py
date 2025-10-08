@@ -1,10 +1,6 @@
-import pytest
 from fastapi.testclient import TestClient
-from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from app.models import User, Token
-from app.database import SessionDep
 from app.tests.fixtures import (
 	test_engine_fixture,
 	session_fixture,
@@ -15,7 +11,6 @@ from app.tests.modules import (
 	get_or_create_user,
 	create_upload_file,
 	DEFAULT_USER_TOKEN_KEY,
-	DEFAULT_USER_USERNAME,
 )
 
 
