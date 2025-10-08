@@ -5,7 +5,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.models import User, Token
 from app.database import SessionDep
-from app.tests.database import (
+from app.tests.fixtures import (
 	test_engine_fixture,
 	session_fixture,
 	client_fixture,
