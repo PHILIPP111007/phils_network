@@ -1,4 +1,4 @@
-FROM node:24.9-alpine as client
+FROM node:24.10-alpine as client
 WORKDIR /app
 
 RUN npm install -g npm
@@ -11,7 +11,7 @@ COPY ./Front/react/* /app/
 
 RUN npm run build
 
-FROM nginx:1.29.1-alpine
+FROM nginx:1.29.2-alpine
 
 RUN rm /usr/share/nginx/html/*
 COPY --from=client /app/dist /usr/share/nginx/html
