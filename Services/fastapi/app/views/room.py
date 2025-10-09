@@ -95,6 +95,9 @@ async def get_room(session: SessionDep, request: Request):
 		}
 		rooms.append(room)
 
+	if len(rooms) == 0:
+		return {"ok": False, "error": "Not found rooms."}
+
 	return {"ok": True, "rooms": rooms}
 
 
@@ -137,8 +140,8 @@ async def post_room(
 					to_user_id=subscriber.id,
 				)
 				session.add(room_invitation)
-			await session.commit()
 
+	await session.commit()
 	await session.refresh(room)
 	return {"ok": True, "room": room}
 

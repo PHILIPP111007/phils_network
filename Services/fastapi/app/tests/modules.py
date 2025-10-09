@@ -5,7 +5,7 @@ from fastapi import UploadFile
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from app.models import User, Token
+from app.models import User, Token, Subscriber
 
 
 DEFAULT_USER_USERNAME = "admin"
@@ -90,3 +90,11 @@ def create_upload_file(filename: str = "test.jpg"):
 	content = b"\xff\xd8\xff\xe0\x00\x10JFIF\x00\x01\x01\x01\x00H\x00H\x00\x00..."
 	buffer = BytesIO(content)
 	return UploadFile(buffer, filename=filename)
+
+
+async def get_or_create_subscription(
+	session: AsyncSession, user_id: int, subscribe_id: int
+):
+	subscribe = Subscriber(user_id=user_id, subscribe_id=subscribe_id)
+	session.add(subscribe)
+	await session.commit()

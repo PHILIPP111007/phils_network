@@ -10,6 +10,7 @@ from app.tests.fixtures import (
 from app.tests.modules import (
 	get_or_create_default_user,
 	get_or_create_user,
+	get_or_create_subscription,
 )
 from app.models import Subscriber
 from app.enums import DeleteOption, SubscriberStatus
@@ -48,9 +49,9 @@ async def test_get_subscriber(session: AsyncSession, client: TestClient):
 	assert data["ok"] == True
 	assert data["status"] == SubscriberStatus.NO_DATA.value
 
-	subscribe = Subscriber(user_id=user.id, subscribe_id=test_user.id)
-	session.add(subscribe)
-	await session.commit()
+	await get_or_create_subscription(
+		session=session, user_id=user.id, subscribe_id=test_user.id
+	)
 
 	await session.refresh(token)
 	await session.refresh(test_user)
@@ -88,9 +89,9 @@ async def test_get_subscriber(session: AsyncSession, client: TestClient):
 	assert data["ok"] == True
 	assert data["status"] == SubscriberStatus.NO_DATA.value
 
-	subscribe = Subscriber(user_id=test_user.id, subscribe_id=user.id)
-	session.add(subscribe)
-	await session.commit()
+	await get_or_create_subscription(
+		session=session, user_id=test_user.id, subscribe_id=user.id
+	)
 
 	await session.refresh(token)
 	await session.refresh(user)
@@ -110,9 +111,9 @@ async def test_get_subscriber(session: AsyncSession, client: TestClient):
 	await session.refresh(user)
 	await session.refresh(test_user)
 
-	subscribe = Subscriber(user_id=user.id, subscribe_id=test_user.id)
-	session.add(subscribe)
-	await session.commit()
+	await get_or_create_subscription(
+		session=session, user_id=user.id, subscribe_id=test_user.id
+	)
 
 	await session.refresh(token)
 	await session.refresh(user)
