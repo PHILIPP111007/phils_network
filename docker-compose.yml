@@ -28,7 +28,7 @@ services:
       SECRET_KEY: weofjweifjewifjewifjewfewf
       DEBUG: "0"
       ALLOWED_HOSTS: "*"
-      REDIS_HOST: "cache"
+      REDIS_HOST: "cache_phils_network"
       REDIS_PORT: "6379"
       AWS_S3_ENDPOINT_URL: http://s3:9000
       AWS_ACCESS_KEY_ID: minio
@@ -59,7 +59,7 @@ services:
       - db_phils_network
       - s3_phils_network
     command: >
-      sh -c "fastapi run --workers 1 --port 8080 app/main.py"
+      sh -c "uvicorn app.main:app --reload --host 0.0.0.0 --port 8080"
     networks:
       - nginx_network
       - db_network

@@ -15,12 +15,19 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
     var [imageUrl, setImageUrl] = useState(null)
     var [parentImageUrl, setParentImageUrl] = useState(null)
     var [userImageUrl, setUserImageUrl] = useState(null)
+    var [likes, setLikes] = useState(null)
     var language = localStorage.getItem(CacheKeys.LANGUAGE)
 
     function trimFileName(file) {
         var file_split = file.split("/")
         var file_name_length = file_split.length
         return file_split[file_name_length - 1]
+    }
+
+    function showLikes() {
+        return (
+            <div className="Likes">&#10084; {likes}</div>
+        )
     }
 
     useEffect(() => {
@@ -132,6 +139,9 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
                             </>
                         }
                     </div>
+                    {
+                        likes && showLikes()
+                    }
                 </div>
             )
         } else if (language === Language.RU) {
@@ -202,6 +212,9 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
                             </>
                         }
                     </div>
+                    {
+                        likes && showLikes()
+                    }
                 </div>
             )
         }
@@ -254,6 +267,9 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
                     </>
                 }
             </div>
+            {
+                likes && showLikes()
+            }
         </div>
     )
 }

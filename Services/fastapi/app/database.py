@@ -4,7 +4,6 @@ __all__ = ["get_session", "SessionDep", "engine", "test_engine"]
 from typing import Annotated
 
 from fastapi import Depends
-from sqlmodel import SQLModel
 from sqlmodel import StaticPool
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine

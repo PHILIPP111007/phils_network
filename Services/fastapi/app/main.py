@@ -1,4 +1,3 @@
-import os
 from typing import Callable
 
 from fastapi import FastAPI, Request
@@ -100,3 +99,8 @@ app.include_router(websocket_online_status.router)
 app.include_router(websocket_delete_messsage.router)
 app.include_router(timezone.router)
 app.include_router(w3.router)
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8080)

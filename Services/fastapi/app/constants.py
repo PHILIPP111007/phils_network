@@ -21,4 +21,4 @@ MEDIA_ROOT = os.path.join("/app", "media")
 MAX_ALLOWED_FILE_SIZE_FOR_PREVIEW = 30 * 1024 * 1024  # 30 Mb
 USER_IMAGE_PATH = "user_{}"
 
-TESTING = os.getenv("TEST")
+TESTING = environ.get("TEST", "0")
