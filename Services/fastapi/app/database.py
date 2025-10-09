@@ -1,4 +1,4 @@
-__all__ = ["get_session", "SessionDep", "engine", "test_engine"]
+__all__ = ["get_session", "SessionDep", "engine"]
 
 
 from typing import Annotated

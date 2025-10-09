@@ -85,7 +85,7 @@ export default function User() {
                 user: user.id,
                 content: sendingText,
             }
-    
+
             var data = await Fetch({ action: "api/v2/blog/", method: HttpMethod.POST, body: newPost })
             if (data && data.ok) {
                 newPost = { ...data.post, postLen500: data.post.content.length > 500, btnFlag: true }
@@ -145,7 +145,7 @@ export default function User() {
             <ScrollToTopOrBottom bottom={false} />
 
             <Card className="UserCard text-center align-items-center" style={{ width: "100rem" }}>
-                <Card.Img variant="top" className="UserCardImage" src={imageUrl ? imageUrl : profileIcon}/>
+                <Card.Img variant="top" className="UserCardImage" src={imageUrl ? imageUrl : profileIcon} />
                 <Card.Body>
                     <Card.Title>{userLocal.first_name} {userLocal.last_name}</Card.Title>
                     <Card.Text>
@@ -154,9 +154,9 @@ export default function User() {
                 </Card.Body>
                 <Card.Body>
                     <div className="UserBtns">
-                    {!isUserGlobal
-                        &&
-                        <UserStatus id={userLocal.id} status={status} setStatus={setStatus} />}
+                        {!isUserGlobal
+                            &&
+                            <UserStatus id={userLocal.id} status={status} setStatus={setStatus} />}
                     </div>
                 </Card.Body>
             </Card>

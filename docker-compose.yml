@@ -1,6 +1,6 @@
 services:
-  django_phils_network:
-    container_name: django_phils_network
+  django:
+    container_name: django
     restart: unless-stopped
     build:
       context: .
@@ -8,8 +8,8 @@ services:
     expose:
       - 8080
     depends_on:
-      - db_phils_network
-      - s3_phils_network
+      - db
+      - s3
     command: >
       sh -c "python manage.py collectstatic --noinput &&
             python manage.py migrate &&
@@ -22,26 +22,26 @@ services:
     environment:
       PG_NAME: postgres
       PG_USER: postgres
-      PG_HOST: db_phils_network
+      PG_HOST: db
       PG_PORT: "5432"
       PG_PASSWORD: postgres
       SECRET_KEY: weofjweifjewifjewifjewfewf
       DEBUG: "0"
       ALLOWED_HOSTS: "*"
-      REDIS_HOST: "cache_phils_network"
+      REDIS_HOST: "cache"
       REDIS_PORT: "6379"
       AWS_S3_ENDPOINT_URL: http://s3:9000
       AWS_ACCESS_KEY_ID: minio
       AWS_SECRET_ACCESS_KEY: minio123
       DATETIME_FORMAT: "%Y-%m-%d %H:%M%z"
 
-  fastapi_phils_network:
-    container_name: fastapi_phils_network
+  fastapi:
+    container_name: fastapi
     restart: unless-stopped
     environment:
       PG_NAME: postgres
       PG_USER: postgres
-      PG_HOST: db_phils_network
+      PG_HOST: db
       PG_PORT: "5432"
       PG_PASSWORD: postgres
       DATETIME_FORMAT: "%Y-%m-%d %H:%M%z"
@@ -56,8 +56,8 @@ services:
     expose:
       - 8080
     depends_on:
-      - db_phils_network
-      - s3_phils_network
+      - db
+      - s3
     command: >
       sh -c "uvicorn app.main:app --reload --host 0.0.0.0 --port 8080"
     networks:
@@ -65,8 +65,8 @@ services:
       - db_network
       - s3_network
 
-  db_phils_network:
-    container_name: db_phils_network
+  db:
+    container_name: db
     image: postgres:17.6-alpine
     restart: unless-stopped
     environment:
@@ -92,8 +92,8 @@ services:
           cpus: "1"
           memory: 4G
 
-  client_phils_network:
-    container_name: client_phils_network
+  client:
+    container_name: client
     restart: unless-stopped
     build:
       context: .
@@ -101,13 +101,13 @@ services:
     ports:
       - 80:80
     depends_on:
-      - django_phils_network
-      - fastapi_phils_network
+      - django
+      - fastapi
     networks:
       - nginx_network
 
-  s3_phils_network:
-    container_name: s3_phils_network
+  s3:
+    container_name: s3
     image: minio/minio:latest
     restart: unless-stopped
     expose:
@@ -119,22 +119,22 @@ services:
     networks:
       - s3_network
 
-  cache_phils_network:
-    container_name: cache_phils_network
+  cache:
+    container_name: cache
     restart: unless-stopped
     image: redis:7.2-alpine
     expose:
       - 6379
     command: redis-server
     volumes: 
-      - cache_phils_network:/data
+      - cache:/data
     networks:
       - cache_network
 
 volumes:
   pgdata:
     driver: local
-  cache_phils_network:
+  cache:
     driver: local
 
 networks:

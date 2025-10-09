@@ -17,14 +17,13 @@ from app.views import (
 	post,
 	room,
 	subscriber,
+	timezone,
 	user,
+	w3,
 	websocket_chat,
 	websocket_delete_messsage,
 	websocket_online_status,
-	w3,
-	timezone,
 )
-
 
 app = FastAPI(
 	title="phils_network",
@@ -102,5 +101,6 @@ app.include_router(w3.router)
 
 
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8080)
+	import uvicorn
+
+	uvicorn.run(app, host="0.0.0.0", port=8080)
