@@ -1,0 +1,23 @@
+{
+  "[python]": {
+    "defaultInterpreterPath": "~/micromamba/envs/phils_network/bin/python",
+    "editor.tabSize": 4,
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit",
+      "source.organizeImports": "explicit"
+    },
+    "languageServer": "Pylance",
+    "analysis.autoImportCompletions": true,
+    "analysis.typeCheckingMode": "basic",
+  },
+  "[mypy]": {
+    "enabled": true,
+    "runUsingActiveInterpreter": true,
+    "debugLogging": true,
+  },
+  "files.autoSave": "off",
+  "editor.formatOnSave": true,
+  "mypy-type-checker.importStrategy": "fromEnvironment"
+}

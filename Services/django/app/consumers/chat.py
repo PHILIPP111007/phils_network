@@ -1,14 +1,12 @@
 __all__ = ["ChatConsumer", "DeleteMessageConsumer"]
 
-import os
 import json
+import os
 
+from app.services import MessageService
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from rest_framework.authtoken.models import Token
-
-from app.services import MessageService
-
 
 CHAT_GROUP = "chat_{}"
 DELETE_MESSAGE_GROUP = "delete_message_{}"
@@ -46,11 +44,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 		text_data = json.loads(text_data)
 
-		message = text_data["message"]
+		message: dict = text_data["message"]
 		if message["file"]["path"]:
 			message["file"]["path"] = os.path.basename(message["file"]["path"])
 		else:
-			message = await _create_message(room_id=message["room"], message=message)
+			if message.get("room"):
+				message = await _create_message(
+					room_id=message["room"], message=message
+				)
 
 		# Send message to room group
 		chat_group = CHAT_GROUP.format(message["room"])
