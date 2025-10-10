@@ -59,7 +59,7 @@ services:
       - db
       - s3
     command: >
-      sh -c "uvicorn app.main:app --reload --host 0.0.0.0 --port 8080"
+      sh -c "uvicorn app.main:app --reload --host 0.0.0.0 --port 8080 --workers 1"
     networks:
       - nginx_network
       - db_network
