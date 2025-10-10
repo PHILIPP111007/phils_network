@@ -33,6 +33,8 @@ export default function SettingsBar(props) {
                 localStorage.setItem(CacheKeys.THEME, Theme.LIGHT)
                 break
             default:
+                setTheme(Theme.LIGHT)
+                localStorage.setItem(CacheKeys.THEME, Theme.LIGHT)
                 break
         }
     }
