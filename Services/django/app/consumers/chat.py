@@ -156,6 +156,7 @@ async def _create_message(room_id: int, message: dict) -> dict:
 		sender_id=message["sender_id"],
 		text=message["text"],
 		parent_id=message["parent_id"],
+		sender_image=message["sender"]["image"],
 	)
 	return msg
 

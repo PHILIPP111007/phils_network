@@ -1,11 +1,11 @@
 import os
 
-from django.conf import settings
-from channels.db import database_sync_to_async
-
-from app.serializers import MessageSerializer, UserSerializer
 from app.models import Message, Room, User
 from app.s3 import s3
+from app.serializers import MessageSerializer, UserSerializer
+from channels.db import database_sync_to_async
+
+from django.conf import settings
 
 
 @database_sync_to_async
@@ -17,7 +17,7 @@ def get_message_serialized_data(db_result):
 class MessageService:
 	@staticmethod
 	async def create(
-		room_id: int, sender_id: int, text: str, parent_id: int | None
+		room_id: int, sender_id: int, text: str, parent_id: int | None, sender_image
 	) -> Message:
 		query = await Message.objects.acreate(
 			room_id=room_id, sender_id=sender_id, text=text, parent_id=parent_id
@@ -34,6 +34,7 @@ class MessageService:
 		sender = await User.objects.aget(pk=message["sender"])
 		message["parent"] = parent_data
 		message["sender"] = UserSerializer(sender).data
+		message["sender"]["image"] = sender_image
 		message["file"] = {"path": message["file"], "content": None}
 
 		return message

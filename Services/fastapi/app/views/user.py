@@ -1,13 +1,12 @@
+import base64
 import os
 import tempfile
-import base64
 
-from fastapi import APIRouter, Request, UploadFile, File
+from fastapi import APIRouter, File, Request, UploadFile
 from sqlmodel import delete, select
 
 from app.constants import BUCKET_NAME, MEDIA_ROOT, USER_IMAGE_PATH
 from app.database import SessionDep
-from app.request_body import UserBody
 from app.models import (
 	DjangoAdminLog,
 	Message,
@@ -20,6 +19,7 @@ from app.models import (
 	Token,
 	User,
 )
+from app.request_body import UserBody
 from app.s3 import s3
 
 router = APIRouter(tags=["user"])
@@ -35,6 +35,16 @@ async def get_user(session: SessionDep, request: Request, username: str):
 	if not query:
 		return {"ok": False, "error": "Not found the global user."}
 
+	try:
+		file_path = f"user_{query.id}"
+		with open(file_path, "wb") as file:
+			s3.download_fileobj(BUCKET_NAME, file_path, file)
+		with open(file_path, "rb") as file:
+			content = file.read()
+			content_base64 = base64.b64encode(content).decode("utf-8")
+	except Exception:
+		content_base64 = None
+
 	user = {
 		"id": query.id,
 		"username": query.username,
@@ -42,6 +52,7 @@ async def get_user(session: SessionDep, request: Request, username: str):
 		"first_name": query.first_name,
 		"last_name": query.last_name,
 		"is_online": query.is_online,
+		"image": content_base64,
 		"ethereum_address": query.ethereum_address,
 		"infura_api_key": query.infura_api_key,
 	}

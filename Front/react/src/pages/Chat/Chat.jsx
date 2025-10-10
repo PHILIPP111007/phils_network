@@ -81,7 +81,8 @@ export default function Chat() {
                     sender: {
                         username: user.username,
                         first_name: user.first_name,
-                        last_name: user.last_name
+                        last_name: user.last_name,
+                        image: user.image,
                     },
                     parent_id: parentId,
                 }
@@ -89,7 +90,22 @@ export default function Chat() {
             }
         } else {
             if (sendingText.length > 0) {
-                message = { sender_id: user.id, text: sendingText, parent_id: parentId, file: { path: null, content: null }, room: mainSets.value.room.id }
+                message = {
+                    sender_id: user.id,
+                    text: sendingText,
+                    parent_id: parentId,
+                    sender: {
+                        username: user.username,
+                        first_name: user.first_name,
+                        last_name: user.last_name,
+                        image: user.image,
+                    },
+                    file: {
+                        path: null,
+                        content: null
+                    },
+                    room: mainSets.value.room.id
+                }
                 await chatSocket.current.send(JSON.stringify({ message: message }))
             }
         }
