@@ -11,7 +11,7 @@ import Button from "../../UI/Button.jsx"
 export default function ModalSettings(props) {
 
     var { user, setUser } = use(UserContext)
-    var [userNew, setUserNew] = useState({ first_name: "", last_name: "", email: "" , ethereum_address: "", infura_api_key: "", image: null})
+    var [userNew, setUserNew] = useState({ first_name: "", last_name: "", email: "", ethereum_address: "", infura_api_key: "", image: null })
     var language = localStorage.getItem(CacheKeys.LANGUAGE)
 
     async function userUpdate(event) {
@@ -100,7 +100,7 @@ export default function ModalSettings(props) {
                 </Form>
                 <br />
                 <form onChange={e => setUserNew({ ...userNew, image: e.target.files[0] })} className="uploadFileForm">
-                    <Input id="formFile" type="file" />
+                    <Input id="formFile" type="file" accept="image/*" />
                 </form>
                 <br />
 
@@ -165,6 +165,11 @@ export default function ModalSettings(props) {
                     />
                     <br />
                 </Form>
+                <br />
+                <form onChange={e => setUserNew({ ...userNew, image: e.target.files[0] })} className="uploadFileForm">
+                    <Input id="formFile" type="file" accept="image/*" />
+                </form>
+                <br />
 
                 <br />
                 <label>Опасная зона</label>
