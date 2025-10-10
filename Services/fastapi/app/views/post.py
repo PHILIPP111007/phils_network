@@ -67,7 +67,7 @@ async def get_post(
 		if request.state.user.user_timezone:
 			user_timezone = request.state.user.user_timezone
 			timezone_obj = ZoneInfo(user_timezone)
-			timestamp = post.timestamp.replace(tzinfo=timezone_obj)
+			timestamp = post.timestamp.astimezone(timezone_obj)
 		else:
 			timestamp = post.timestamp
 

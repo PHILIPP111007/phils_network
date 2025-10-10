@@ -68,7 +68,7 @@ async def get_message(
 			if request.state.user.user_timezone:
 				user_timezone = request.state.user.user_timezone
 				timezone_obj = ZoneInfo(user_timezone)
-				timestamp = message.reply.timestamp.replace(tzinfo=timezone_obj)
+				timestamp = message.reply.timestamp.astimezone(timezone_obj)
 			else:
 				timestamp = message.reply.timestamp
 
@@ -90,7 +90,7 @@ async def get_message(
 		if request.state.user.user_timezone:
 			user_timezone = request.state.user.user_timezone
 			timezone_obj = ZoneInfo(user_timezone)
-			timestamp = message.timestamp.replace(tzinfo=timezone_obj)
+			timestamp = message.timestamp.astimezone(timezone_obj)
 		else:
 			timestamp = message.timestamp
 

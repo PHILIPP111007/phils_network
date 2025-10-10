@@ -1,8 +1,8 @@
 from zoneinfo import ZoneInfo
 
 from fastapi import APIRouter, Request
-from sqlmodel import select
 from sqlalchemy.orm import joinedload
+from sqlmodel import select
 
 from app.constants import DATETIME_FORMAT, POSTS_TO_LOAD
 from app.database import SessionDep
@@ -49,7 +49,7 @@ async def get_news(session: SessionDep, request: Request, loaded_posts: int):
 		if request.state.user.user_timezone:
 			user_timezone = request.state.user.user_timezone
 			timezone_obj = ZoneInfo(user_timezone)
-			timestamp = post.timestamp.replace(tzinfo=timezone_obj)
+			timestamp = post.timestamp.astimezone(timezone_obj)
 		else:
 			timestamp = post.timestamp
 
