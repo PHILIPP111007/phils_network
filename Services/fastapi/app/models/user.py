@@ -68,3 +68,4 @@ class User(SQLModel, table=True):
 			"lazy": "select",
 		},
 	)
+	likes: list["MessageLike"] = Relationship(back_populates="user")

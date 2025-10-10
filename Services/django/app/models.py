@@ -178,6 +178,13 @@ class Message(models.Model):
 		return f"{self.sender.username} [ {self.timestamp} ]"
 
 
+class MessageLike(models.Model):
+	user = models.ForeignKey(User, related_name="user_like", on_delete=models.CASCADE)
+	message = models.ForeignKey(
+		Message, related_name="message_like", on_delete=models.CASCADE
+	)
+
+
 class Transaction(models.Model):
 	sender = models.ForeignKey(
 		User, related_name="transaction_sender", on_delete=models.SET_NULL, null=True

@@ -1,5 +1,6 @@
 from app.models.django_admin_log import DjangoAdminLog
 from app.models.message import Message
+from app.models.message_like import MessageLike
 from app.models.message_viewed import MessageViewed
 from app.models.post import Post
 from app.models.room import Room
@@ -7,5 +8,5 @@ from app.models.room_invitation import RoomInvitation
 from app.models.room_subscribers import RoomSubscribers
 from app.models.subscriber import Subscriber
 from app.models.token import Token
-from app.models.user import User
 from app.models.transaction import Transaction
+from app.models.user import User

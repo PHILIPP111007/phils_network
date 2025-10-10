@@ -1,8 +1,7 @@
 __all__ = ["Message"]
 
-from typing import Optional
-
 from datetime import datetime
+from typing import Optional
 
 from sqlmodel import Field, Relationship, SQLModel
 
@@ -26,3 +25,4 @@ class Message(SQLModel, table=True):
 		back_populates="parent", sa_relationship_kwargs={"remote_side": "Message.id"}
 	)
 	parent: Optional["Message"] = Relationship(back_populates="reply")
+	likes: list["MessageLike"] = Relationship(back_populates="message")

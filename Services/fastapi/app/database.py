@@ -38,5 +38,5 @@ SessionDep = Annotated[AsyncSession, Depends(get_session)]
 
 
 # docker ps
-# docker exec -it db_phils_network sh
-# psql postgres --username=postgres --host=db_phils_network --port=5432
+# docker exec -it db sh
+# psql postgres --username=postgres --host=db --port=5432

@@ -70,7 +70,7 @@ export default function Chat() {
             var file_content = Array.from(new Uint8Array(arrayBuffer))
 
             if (data && data.ok) {
-                message = { 
+                message = {
                     ...data.message,
                     file: {
                         path: data.message.file,
@@ -129,7 +129,7 @@ export default function Chat() {
                 document.body.removeChild(a)
                 URL.revokeObjectURL(url)
             }, 100);
-            
+
         } catch (error) {
             console.error("Download error:", error)
         }
@@ -173,8 +173,50 @@ export default function Chat() {
     }
 
     async function deleteMessage(message) {
-        var data = {message: { message_id: message.id, room_id: mainSets.value.room.id }}
+        var data = { message: { message_id: message.id, room_id: mainSets.value.room.id } }
         deleteMessageSocket.current.send(JSON.stringify(data))
+    }
+
+    async function likeMessage(messageId) {
+        var data = await Fetch({ action: `api/v2/like_message/${messageId}/`, method: HttpMethod.POST })
+
+        if (data && data.ok) {
+            var newMessage = messages.filter((message) => {
+                return message.id === messageId
+            })[0]
+
+            newMessage.likes += 1
+
+            var updatedMessages = messages.map((message) => {
+                if (message.id === messageId) {
+                    return newMessage
+                }
+                return message
+            })
+
+            setMessages((prev) => [...updatedMessages])
+        }
+    }
+
+    async function unLikeMessage(messageId) {
+        var data = await Fetch({ action: `api/v2/unlike_message/${messageId}/`, method: HttpMethod.POST })
+
+        if (data && data.ok) {
+            var newMessage = messages.filter((message) => {
+                return message.id === messageId
+            })[0]
+
+            newMessage.likes -= 1
+
+            var updatedMessages = messages.map((message) => {
+                if (message.id === messageId) {
+                    return newMessage
+                }
+                return message
+            })
+
+            setMessages((prev) => [...updatedMessages])
+        }
     }
 
     useEffect(() => {
@@ -263,7 +305,7 @@ export default function Chat() {
 
             <LazyDiv Ref={refLazyDivinView} />
 
-            <Messages messages={messages} downloadFile={downloadFile} deleteMessage={deleteMessage} setParentId={setParentId} />
+            <Messages messages={messages} downloadFile={downloadFile} deleteMessage={deleteMessage} setParentId={setParentId} likeMessage={likeMessage} unLikeMessage={unLikeMessage} />
 
             <UserInput mainSets={mainSets} sendMessage={sendMessage} editRoom={editRoom} parentMessage={parentMessage} />
 

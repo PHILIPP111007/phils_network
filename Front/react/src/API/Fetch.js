@@ -27,8 +27,13 @@ export default async function Fetch({ action, method, body, token, is_uploading_
             .then((response) => response.json())
             .then((data) => {
                 if (!data.ok) {
-                    console.warn(`Not 2xx response: ${data.error}`)
-                    console.warn(data.detail)
+                    if (data.error) {
+                        console.warn(`Not 2xx response: ${data.error}`)
+                    }
+
+                    if (data.detail) {
+                        console.warn(data.detail)
+                    }
                 }
                 return data
             })
@@ -64,8 +69,13 @@ export default async function Fetch({ action, method, body, token, is_uploading_
             .then((response) => response.json())
             .then((data) => {
                 if (!data.ok) {
-                    console.warn(`Not 2xx response: ${data.error}`)
-                    console.warn(data.detail)
+                    if (data.error) {
+                        console.warn(`Not 2xx response: ${data.error}`)
+                    }
+
+                    if (data.detail) {
+                        console.warn(data.detail)
+                    }
                 }
                 return data
             })

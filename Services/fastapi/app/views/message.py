@@ -1,9 +1,9 @@
 from zoneinfo import ZoneInfo
 
 from fastapi import APIRouter, Request
-from sqlmodel import select, func
-from sqlalchemy.orm import joinedload
 from sqlalchemy import and_
+from sqlalchemy.orm import joinedload
+from sqlmodel import delete, func, select
 
 from app.constants import (
 	DATETIME_FORMAT,
@@ -11,7 +11,7 @@ from app.constants import (
 	USER_IMAGE_PATH,
 )
 from app.database import SessionDep
-from app.models import Message, Room, RoomSubscribers, MessageViewed
+from app.models import Message, MessageLike, MessageViewed, Room, RoomSubscribers
 from app.modules import get_file_content, get_file_content_gzip
 
 router = APIRouter(tags=["message"])
@@ -56,6 +56,7 @@ async def get_message(
 		.limit(MESSAGES_TO_LOAD)
 		.order_by(Message.timestamp.desc())
 		.options(joinedload(Message.sender))
+		.options(joinedload(Message.likes))
 	)
 	query = query.unique().all()
 	if not query:
@@ -109,6 +110,7 @@ async def get_message(
 				"image": await get_file_content(file_name=image_path),
 			},
 			"parent": parent,
+			"likes": len(message.likes),
 		}
 		messages.append(message)
 
@@ -151,3 +153,51 @@ async def get_unread_message_count(session: SessionDep, request: Request):
 	unread_messages_count = unread_messages_count.one()
 
 	return {"ok": True, "unread_messages_count": unread_messages_count}
+
+
+@router.post("/api/v2/like_message/{message_id}/")
+async def post_message_like(session: SessionDep, request: Request, message_id: int):
+	if not request.state.user:
+		return {"ok": False, "error": "Can not authenticate."}
+
+	message = await session.exec(select(Message).where(Message.id == message_id))
+	message = message.first()
+	if not message:
+		return {"ok": False, "error": "Not found message."}
+
+	message_like = await session.exec(
+		select(MessageLike).where(
+			MessageLike.user_id == request.state.user.id,
+			MessageLike.message_id == message_id,
+		)
+	)
+	message_like = message_like.first()
+	if message_like:
+		return {"ok": False, "error": "Current message has your like."}
+
+	message_like = MessageLike(user_id=request.state.user.id, message_id=message_id)
+	session.add(message_like)
+	await session.commit()
+
+	return {"ok": True}
+
+
+@router.post("/api/v2/unlike_message/{message_id}/")
+async def post_message_unlike(session: SessionDep, request: Request, message_id: int):
+	if not request.state.user:
+		return {"ok": False, "error": "Can not authenticate."}
+
+	message = await session.exec(select(Message).where(Message.id == message_id))
+	message = message.first()
+	if not message:
+		return {"ok": False, "error": "Not found message."}
+
+	await session.exec(
+		delete(MessageLike).where(
+			MessageLike.user_id == request.state.user.id,
+			MessageLike.message_id == message_id,
+		)
+	)
+	await session.commit()
+
+	return {"ok": True}

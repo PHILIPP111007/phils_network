@@ -5,7 +5,7 @@ import { CacheKeys, Language } from "../../../../../data/enums.js"
 import Button from "../../../../components/UI/Button.jsx"
 
 
-export default function ModalMessage({ message, deleteMessage, setParentId, setModalMessage }) {
+export default function ModalMessage({ message, deleteMessage, setParentId, setModalMessage, likeMessage, unLikeMessage }) {
 
     var { user } = use(UserContext)
     var language = localStorage.getItem(CacheKeys.LANGUAGE)
@@ -29,6 +29,18 @@ export default function ModalMessage({ message, deleteMessage, setParentId, setM
                 }}>Reply</Button>
                 <br />
                 <br />
+                <Button onClick={() => {
+                    likeMessage(message.id)
+                    setModalMessage(false)
+                }}>&#10084; Like</Button>
+                <br />
+                <br />
+                <Button onClick={() => {
+                    unLikeMessage(message.id)
+                    setModalMessage(false)
+                }}>&#128078; Unlike</Button>
+                <br />
+                <br />
                 {(message.sender.username === user.username)
                     &&
                     <Button onClick={() => deleteMessage(message)}>Delete</Button>
@@ -48,6 +60,18 @@ export default function ModalMessage({ message, deleteMessage, setParentId, setM
                     setParentId(message.id)
                     setModalMessage(false)
                 }}>Ответить</Button>
+                <br />
+                <br />
+                <Button onClick={() => {
+                    likeMessage(message.id)
+                    setModalMessage(false)
+                }}>&#10084; Лайк</Button>
+                <br />
+                <br />
+                <Button onClick={() => {
+                    unLikeMessage(message.id)
+                    setModalMessage(false)
+                }}>&#128078; Не нравится</Button>
                 <br />
                 <br />
                 {(message.sender.username === user.username)
