@@ -21,13 +21,12 @@ from app.constants import (
 PROD_DATABASE_URL = (
 	f"postgresql+asyncpg://{PG_USER}:{PG_PASSWORD}@{PG_HOST}:{PG_PORT}/{PG_NAME}"
 )
-
-DEVEL_DATABASE_URL = "sqlite+aiosqlite://"
-TEST_DATABASE_URL = "sqlite+aiosqlite:///../django/db.sqlite3"
+TEST_DATABASE_URL = "sqlite+aiosqlite://"
+DEVEL_DATABASE_URL = "sqlite+aiosqlite:///../django/db.sqlite3"
 
 
 engine = None
-if DEVELOPMENT:
+if DEVELOPMENT == "1":
 	engine = create_async_engine(
 		DEVEL_DATABASE_URL,
 		connect_args={"check_same_thread": False},
