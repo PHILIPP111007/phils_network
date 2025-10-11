@@ -12,7 +12,7 @@ export default function ModalPostCreate(props) {
             <div className="ModalPostEdit">
                 <textarea
                     value={text}
-                    class="form-control"
+                    className="form-control"
                     maxLength="5000"
                     placeholder="Use markdown to format your text..."
                     onChange={(e) => setText(e.target.value)}
@@ -28,7 +28,7 @@ export default function ModalPostCreate(props) {
             <div className="ModalPostEdit">
                 <textarea
                     value={text}
-                    class="form-control"
+                    className="form-control"
                     maxLength="5000"
                     placeholder="Используйте Markdown для форматирования текста..."
                     onChange={(e) => setText(e.target.value)}

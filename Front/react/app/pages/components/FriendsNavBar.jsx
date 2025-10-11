@@ -29,7 +29,7 @@ export default function FriendsNavBar() {
                     </p>
                     <p>
                         <Link to={`/friends/${user.username}/subscribers-section/`}>
-                            subscribers {subscribersCount !== 0 && <span id="subscribersCount" class="badge">{subscribersCount}</span>}
+                            subscribers {subscribersCount !== 0 && <span id="subscribersCount" className="badge">{subscribersCount}</span>}
                         </Link>
                     </p>
                     <p>

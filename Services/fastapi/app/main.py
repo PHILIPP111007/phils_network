@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from app.constants import TESTING
+from app.constants import DEVELOPMENT
 from app.database import engine
 from app.models import Token, User
 from app.views import (
@@ -50,10 +50,8 @@ app.openapi_version = "3.0.0"
 # Middleware ############################
 #########################################
 
-if TESTING == "1":
-	origins = [
-		"http://localhost:3000",
-	]
+if DEVELOPMENT == "1":
+	origins = ["http://localhost:3000", "http://127.0.0.1:3000"]
 
 	app.add_middleware(
 		CORSMiddleware,

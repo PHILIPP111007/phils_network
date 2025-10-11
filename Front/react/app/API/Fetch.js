@@ -23,16 +23,12 @@ export default async function Fetch({ api_version, action, method, body, token, 
         url = `${PROD_FETCH_URL}api/v${api_version}/${action}`
     )
 
-    console.log(url)
-
-
     if (method === HttpMethod.GET) {
         data = await fetch(url, {
             method: "GET",
             headers: {
                 "Accept": "application/json;text/plain",
                 "Content-Type": "application/json;charset=UTF-8",
-                "Access-Control-Allow-Origin": "*",
                 "Authorization": token ? `Token ${token}` : "",
             },
             mode: "cors",
@@ -60,7 +56,6 @@ export default async function Fetch({ api_version, action, method, body, token, 
         if (is_uploading_file) {
             headers = {
                 "Accept": "application/json;text/plain",
-                "Access-Control-Allow-Origin": "*",
                 "Authorization": token ? `Token ${token}` : "",
             }
         } else {
@@ -68,7 +63,6 @@ export default async function Fetch({ api_version, action, method, body, token, 
             headers = {
                 "Accept": "application/json;text/plain",
                 "Content-Type": "application/json;charset=UTF-8",
-                "Access-Control-Allow-Origin": "*",
                 "Authorization": token ? `Token ${token}` : "",
             }
         }

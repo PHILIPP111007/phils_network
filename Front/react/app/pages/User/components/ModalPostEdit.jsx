@@ -10,7 +10,7 @@ export default function ModalPostEdit(props) {
             <div className="ModalPostEdit">
                 <textarea
                     value={props.mainSets.post.content}
-                    class="form-control"
+                    className="form-control"
                     maxLength="5000"
                     placeholder="Use markdown to format your text..."
                     onChange={(e) => props.setMainSets({
@@ -27,7 +27,7 @@ export default function ModalPostEdit(props) {
             <div className="ModalPostEdit">
                 <textarea
                     value={props.mainSets.post.content}
-                    class="form-control"
+                    className="form-control"
                     maxLength="5000"
                     placeholder="Используйте Markdown для форматирования текста..."
                     onChange={(e) => props.setMainSets({

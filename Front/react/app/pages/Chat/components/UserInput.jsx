@@ -68,17 +68,17 @@ export default function UserInput({ mainSets, sendMessage, editRoom, parentMessa
                             alt="settings button"
                         />
                         <textarea
-                            class="TextArea"
+                            className="TextArea"
                             placeholder="Use markdown to format your text..."
                             value={text}
                             maxLength="5000"
                             onChange={(e) => setText(e.target.value)}
                         />
                         <img id="SendButton" src={sendIcon} onClick={() => {
-                                sendMessage(text, selectedFile)
-                                setText("")
-                                setSelectedFile(null)
-                            }}
+                            sendMessage(text, selectedFile)
+                            setText("")
+                            setSelectedFile(null)
+                        }}
                             alt="send button"
                         />
                     </div>
@@ -123,16 +123,16 @@ export default function UserInput({ mainSets, sendMessage, editRoom, parentMessa
                             alt="кнопка настроек"
                         />
                         <textarea
-                            class="TextArea"
+                            className="TextArea"
                             placeholder="Используйте Markdown для форматирования текста..."
                             value={text}
                             maxLength="5000"
                             onChange={(e) => setText(e.target.value)}
                         />
                         <img id="SendButton" src={sendIcon} onClick={() => {
-                                sendMessage(text, selectedFile)
-                                setText("")
-                            }}
+                            sendMessage(text, selectedFile)
+                            setText("")
+                        }}
                             alt="кнопка отправки"
                         />
                     </div>

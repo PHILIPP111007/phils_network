@@ -196,7 +196,7 @@ export default function W3() {
 
     if (language === Language.EN) {
         return (
-            <div class="W3">
+            <div className="W3">
                 <MainComponents loading={loading} />
 
                 {visible && showErrors}
@@ -284,7 +284,7 @@ export default function W3() {
         )
     } else if (language === Language.RU) {
         return (
-            <div class="W3">
+            <div className="W3">
                 <MainComponents loading={loading} />
 
                 {visible && showErrors}

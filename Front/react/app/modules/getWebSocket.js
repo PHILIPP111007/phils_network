@@ -1,9 +1,17 @@
-import { WEBSOCKET_DJANGO_URL, WEBSOCKET_FASTAPI_URL } from "../data/constants.js"
+import { DEVELOPMENT, WEBSOCKET_DJANGO_URL, WEBSOCKET_FASTAPI_URL, DEVELOPMENT_WEBSOCKET_DJANGO_URL, DEVELOPMENT_WEBSOCKET_FASTAPI_URL } from "../data/constants.js"
 import getToken from "./getToken"
 
 export function getWebSocketDjango({ socket_name, path }) {
+    var url
+
+    if (DEVELOPMENT === "1") {
+        url = DEVELOPMENT_WEBSOCKET_DJANGO_URL
+    } else {
+        url = WEBSOCKET_DJANGO_URL
+    }
+
     var socket = new WebSocket(
-        WEBSOCKET_DJANGO_URL
+        url
         + path
         + `?token_key=${getToken()}`
     )
@@ -20,8 +28,16 @@ export function getWebSocketDjango({ socket_name, path }) {
 }
 
 export function getWebSocketFastAPI({ socket_name, path }) {
+    var url
+
+    if (DEVELOPMENT === "1") {
+        url = DEVELOPMENT_WEBSOCKET_FASTAPI_URL
+    } else {
+        url = WEBSOCKET_FASTAPI_URL
+    }
+
     var socket = new WebSocket(
-        WEBSOCKET_FASTAPI_URL
+        url
         + path
         + `?token_key=${getToken()}`
     )
