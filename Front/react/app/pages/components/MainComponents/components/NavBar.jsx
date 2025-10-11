@@ -19,7 +19,7 @@ export default function NavBar() {
     var params = useParams()
 
     async function getUnreadMessagesCount() {
-        var data = await Fetch({ action: `api/v2/get_unread_message_count/`, method: HttpMethod.GET })
+        var data = await Fetch({ api_version: 2, action: `get_unread_message_count/`, method: HttpMethod.GET })
 
         if (data && data.ok) {
             setUnreadMessagesCount(data.unread_messages_count)
@@ -27,7 +27,7 @@ export default function NavBar() {
     }
 
     useEffect(() => {
-        Fetch({ action: "api/v2/room/", method: HttpMethod.GET })
+        Fetch({ api_version: 2, action: "room/", method: HttpMethod.GET })
             .then((data) => {
                 if (data && data.ok) {
                     setRooms(data.rooms)

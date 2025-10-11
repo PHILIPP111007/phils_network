@@ -1,8 +1,8 @@
 import { HttpMethod } from "../data/enums"
-import { FETCH_URL } from "../data/constants"
+import { DEVELOPMENT, PROD_FETCH_URL, DEVELOPMENT_DJANGO_FETCH_URL, DEVELOPMENT_FASTAPI_FETCH_URL } from "../data/constants"
 import getToken from "../modules/getToken"
 
-export default async function Fetch({ action, method, body, token, is_uploading_file }) {
+export default async function Fetch({ api_version, action, method, body, token, is_uploading_file }) {
 
     // External token gives by auth() func
 
@@ -10,8 +10,21 @@ export default async function Fetch({ action, method, body, token, is_uploading_
         token = getToken()
     }
 
+    var url
     var data
-    var url = `${FETCH_URL}${action}`
+
+    if (DEVELOPMENT == "1") {
+        if (api_version === 1) {
+            url = `${DEVELOPMENT_DJANGO_FETCH_URL}api/v${api_version}/${action}`
+        } else if (api_version === 2) {
+            url = `${DEVELOPMENT_FASTAPI_FETCH_URL}api/v${api_version}/${action}`
+        }
+    } else (
+        url = `${PROD_FETCH_URL}api/v${api_version}/${action}`
+    )
+
+    console.log(url)
+
 
     if (method === HttpMethod.GET) {
         data = await fetch(url, {

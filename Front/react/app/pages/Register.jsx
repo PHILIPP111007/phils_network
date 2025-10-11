@@ -27,7 +27,7 @@ export default function Register() {
 
     async function auth() {
         var token = getToken()
-        var data = await Fetch({ action: "api/v1/auth/users/me/", method: HttpMethod.GET })
+        var data = await Fetch({ api_version: 1, action: "auth/users/me/", method: HttpMethod.GET })
 
         if (data && !data.detail && data.username && token) {
             setUser({ ...user, ...data })
@@ -47,7 +47,7 @@ export default function Register() {
             if (registerForm.password === registerForm.password2) {
                 setErrors([])
 
-                var data = await Fetch({ action: "api/v1/auth/users/", method: HttpMethod.POST, body: registerForm, token: "" })
+                var data = await Fetch({ api_version: 1, action: "auth/users/", method: HttpMethod.POST, body: registerForm, token: "" })
 
                 var new_errors = []
                 if (data.username) {

@@ -12,7 +12,7 @@ export default function FriendsNavBar() {
     var language = localStorage.getItem(CacheKeys.LANGUAGE)
 
     useEffect(() => {
-        Fetch({ action: `api/v2/friends/${FilterOption.SUBSCRIBERS_COUNT}/`, method: HttpMethod.GET })
+        Fetch({ api_version: 2, action: `friends/${FilterOption.SUBSCRIBERS_COUNT}/`, method: HttpMethod.GET })
             .then((data) => {
                 if (data && data.ok) {
                     setSubscribersCount(data.query)

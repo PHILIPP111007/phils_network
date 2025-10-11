@@ -28,7 +28,7 @@ export default function Rooms() {
     async function createRoom(room) {
         room.subscribers.push(user.id)
 
-        var data = await Fetch({ action: "api/v2/room/", method: HttpMethod.POST, body: room })
+        var data = await Fetch({ api_version: 2, action: "room/", method: HttpMethod.POST, body: room })
         if (data && data.ok) {
             var newRooms = [data.room, ...rooms]
             setRooms(newRooms)
@@ -81,7 +81,7 @@ export default function Rooms() {
 
     async function getRooms() {
         setLoading(true)
-        await Fetch({ action: "api/v2/room/", method: HttpMethod.GET })
+        await Fetch({ api_version: 2, action: "room/", method: HttpMethod.GET })
             .then((data) => {
                 if (data && data.ok) {
                     setRooms(data.rooms)

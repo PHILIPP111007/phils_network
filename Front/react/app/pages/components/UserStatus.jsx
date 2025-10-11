@@ -10,7 +10,7 @@ export default function UserStatus(props) {
 
     useEffect(() => {
         if (!props.status) {
-            Fetch({ action: `api/v2/subscriber/${props.id}/`, method: HttpMethod.GET })
+            Fetch({ api_version: 2, action: `subscriber/${props.id}/`, method: HttpMethod.GET })
                 .then((data) => {
                     if (data && data.status) {
                         props.setStatus(data.status)

@@ -32,7 +32,7 @@ export default function ModalRoomEdit({ mainSets, me, editRoom }) {
     function editFriends(friend) {
         var newFriends = mainSets.value.invitationChanges.friends.map((user) => {
             if (user.id === friend.id) {
-                return {...user, isInRoom: !user.isInRoom}
+                return { ...user, isInRoom: !user.isInRoom }
             }
             return user
         })
@@ -143,7 +143,7 @@ export default function ModalRoomEdit({ mainSets, me, editRoom }) {
         if (mainSets.value.isCreator) {
             setLoading(true)
 
-            Fetch({ action: `api/v2/friends/${FilterOption.FRIENDS}/`, method: HttpMethod.GET })
+            Fetch({ api_version: 2, action: `friends/${FilterOption.FRIENDS}/`, method: HttpMethod.GET })
                 .then((data) => {
                     if (data && data.ok) {
                         var response = data.query

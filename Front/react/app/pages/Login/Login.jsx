@@ -19,7 +19,7 @@ export default function Login() {
 
     async function auth() {
         var token = getToken()
-        var data = await Fetch({ action: "api/v1/auth/users/me/", method: HttpMethod.GET })
+        var data = await Fetch({ api_version: 1, action: "auth/users/me/", method: HttpMethod.GET })
 
         if (data && !data.detail && data.username && token) {
             setUser({ ...user, ...data })
@@ -37,7 +37,7 @@ export default function Login() {
 
     async function login(event) {
         event.preventDefault()
-        var data = await Fetch({ action: "api/v1/token/login/", method: HttpMethod.POST, body: loginForm, token: "" })
+        var data = await Fetch({ api_version: 1, action: "token/login/", method: HttpMethod.POST, body: loginForm, token: "" })
 
         if (data && !data.detail && data.auth_token) {
             localStorage.setItem(CacheKeys.TOKEN, data.auth_token)
@@ -49,7 +49,7 @@ export default function Login() {
                 notify_success('Вы успешно вошли!')
             }
 
-            await Fetch({ action: "api/v2/online_status/set_true/", method: HttpMethod.POST })
+            await Fetch({ api_version: 2, action: "online_status/set_true/", method: HttpMethod.POST })
 
             auth()
         }

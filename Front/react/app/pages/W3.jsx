@@ -41,8 +41,8 @@ export default function W3() {
                     {error}
                 </Alert>
             ))
-        )
-    }
+            )
+        }
     }, [errors])
 
     async function getEthereumBalance() {
@@ -52,32 +52,32 @@ export default function W3() {
         if (ethCached !== null) {
             setEth({ ...ethCached })
         } else {
-            var data = await Fetch({ action: "api/v2/ethereum_balance/", method: HttpMethod.GET })
+            var data = await Fetch({ api_version: 2, action: "ethereum_balance/", method: HttpMethod.GET })
             if (data && data.ok) {
                 setEth({ ...data.data })
                 localStorage.setItem(CacheKeys.ETH, JSON.stringify(data.data))
             } else if (data.error) {
                 setErrors([...errors, data.error])
-    
+
                 setIsVisible(true)
-                setTimeout(function() {
+                setTimeout(function () {
                     setIsVisible(false)
                 }, 5000)
             }
-        }   
+        }
         setLoading(false)
     }
 
     async function getTransactions() {
         setLoading(true)
-        var data = await Fetch({ action: "api/v2/get_transactions/", method: HttpMethod.GET })
+        var data = await Fetch({ api_version: 2, action: "get_transactions/", method: HttpMethod.GET })
         if (data && data.ok) {
-            setTransactions([ ...data.transactions ])
+            setTransactions([...data.transactions])
         } else if (data.error) {
             setErrors([...errors, data.error])
 
             setIsVisible(true)
-            setTimeout(function() {
+            setTimeout(function () {
                 setIsVisible(false)
             }, 5000)
         }
@@ -92,15 +92,15 @@ export default function W3() {
             var ethValueInt = parseInt(ethValue)
             var body = { private_key: privateKey, recipient_id: friendId, amount_in_eth: ethValueInt, gas: gas }
 
-            var data = await Fetch({ action: "api/v2/send_ethereum/", method: HttpMethod.POST, body: body })
+            var data = await Fetch({ api_version: 2, action: "send_ethereum/", method: HttpMethod.POST, body: body })
             if (data && data.ok) {
-                setTransactions([ data.transaction, ...transactions ])
+                setTransactions([data.transaction, ...transactions])
                 notify("Transaction send!")
             } else if (data.error) {
                 setErrors([...errors, data.error])
 
                 setIsVisible(true)
-                setTimeout(function() {
+                setTimeout(function () {
                     setIsVisible(false)
                 }, 5000)
             }
@@ -113,7 +113,7 @@ export default function W3() {
     async function getFriends() {
         setLoading(true)
 
-        var data = await Fetch({ action: `api/v2/friends/${FilterOption.FRIENDS}/`, method: HttpMethod.GET })
+        var data = await Fetch({ api_version: 2, action: `friends/${FilterOption.FRIENDS}/`, method: HttpMethod.GET })
         if (data && data.ok) {
             setFriends(data.query)
         }
@@ -128,7 +128,7 @@ export default function W3() {
                         Transaction
                     </Card.Body>
                     <Card.Text className="TransactionCardText">
-                        <strong>{transaction.sender.username}</strong> <img src={arrowRightIcon} width="20px" /> <strong>{transaction.recipient.username}</strong> 
+                        <strong>{transaction.sender.username}</strong> <img src={arrowRightIcon} width="20px" /> <strong>{transaction.recipient.username}</strong>
                         <br />
                         <strong>ETH:</strong> {transaction.value}
                         <br />
@@ -153,7 +153,7 @@ export default function W3() {
                         Транзакция
                     </Card.Body>
                     <Card.Text className="TransactionCardText">
-                        <strong>{transaction.sender.username}</strong> <img src={arrowRightIcon} width="20px" /> <strong>{transaction.recipient.username}</strong> 
+                        <strong>{transaction.sender.username}</strong> <img src={arrowRightIcon} width="20px" /> <strong>{transaction.recipient.username}</strong>
                         <br />
                         <strong>ETH:</strong> {transaction.value}
                         <br />

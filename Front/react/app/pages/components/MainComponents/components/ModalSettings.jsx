@@ -25,7 +25,7 @@ export default function ModalSettings(props) {
             infura_api_key: userNew.infura_api_key,
         }
 
-        var data = await Fetch({ action: "api/v2/user/", method: HttpMethod.PUT, body: user_body })
+        var data = await Fetch({ api_version: 2, action: "user/", method: HttpMethod.PUT, body: user_body })
         if (data.ok) {
             setUser(data.user)
             notify_success("User information has been updated")
@@ -35,7 +35,7 @@ export default function ModalSettings(props) {
             var formData = new FormData()
             formData.append('image', userNew.image)
 
-            data = await Fetch({ action: "api/v2/user_image/", method: HttpMethod.PUT, body: formData, is_uploading_file: true })
+            data = await Fetch({ api_version: 2, action: "user_image/", method: HttpMethod.PUT, body: formData, is_uploading_file: true })
             if (data.ok) {
                 setUser(data.user)
                 notify_success("User photo has been updated")

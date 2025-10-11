@@ -12,7 +12,7 @@ export default function ModalDelAcc() {
     var language = localStorage.getItem(CacheKeys.LANGUAGE)
 
     async function deleteAccount() {
-        var data = await Fetch({ action: `api/v2/user/${user.username}/`, method: HttpMethod.DELETE })
+        var data = await Fetch({ api_version: 2, action: `user/${user.username}/`, method: HttpMethod.DELETE })
         if (data.ok) {
             localStorage.clear()
             setIsAuth(false)
