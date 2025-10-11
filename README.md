@@ -125,7 +125,23 @@ micromamba activate phils_network
 **Phils_network** supports `gunicorn` (with `uvicorn` async workers).
 
 ```sh
+export DEVELOPMENT=1
+
+cd Services/django
+
+python manage.py migrate
+
 bash gunicorn.sh
+```
+
+FastAPI:
+
+```bash
+export DEVELOPMENT=1
+
+cd Services/fastapi
+
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 1
 ```
 
 \
@@ -138,19 +154,25 @@ npm install
 ```
 
 \
-By default, django server runs on the 0.0.0.0 host and 8000 port (see `phils_network/Services/django/gunicorn.sh` file). So make sure that SERVER_HOST and SERVER_PORT variables in the `phils_network/Front/react/src/data/constants.js` file are similar to your backend.
+By default, django server runs on the 0.0.0.0 host and 8080 port (see `phils_network/Services/django/gunicorn.sh` file). So make sure that SERVER_HOST and SERVER_PORT variables in the `phils_network/Front/react/app/data/constants.js` file are similar to your backend.
+
+```js
+// Change code in this file:
+// ./Front/react/app/data/constants.js
+
+var SERVER_HOST = "0.0.0.0"
+var FAST_API_SERVER_PORT = "8000"
+var DJANGO_SERVER_PORT = "8080"
+
+export var FETCH_URL = `http://${SERVER_HOST}:${FAST_API_SERVER_PORT}/`
+export var WEBSOCKET_DJANGO_URL = `ws://${SERVER_HOST}:${DJANGO_SERVER_PORT}/ws/v1/`
+export var WEBSOCKET_FASTAPI_URL = `ws://${SERVER_HOST}:${FAST_API_SERVER_PORT}/ws/v2/`
+```
 
 Create production frontend app.
 
 ```sh
-npm run build
-```
-
-Run the frontend app.
-
-```sh
-npm install -g serve
-serve -s build
+npm run dev
 ```
 
 Home page:

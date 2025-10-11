@@ -1,9 +1,11 @@
 from typing import Callable
 
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
+from app.constants import TESTING
 from app.database import engine
 from app.models import Token, User
 from app.views import (
@@ -47,6 +49,19 @@ app.openapi_version = "3.0.0"
 #########################################
 # Middleware ############################
 #########################################
+
+if TESTING == "1":
+	origins = [
+		"http://localhost:3000",
+	]
+
+	app.add_middleware(
+		CORSMiddleware,
+		allow_origins=origins,
+		allow_credentials=True,  # Allow cookies to be included in cross-origin requests
+		allow_methods=["*"],  # Allow all HTTP methods (GET, POST, PUT, DELETE, etc.)
+		allow_headers=["*"],  # Allow all headers in cross-origin requests
+	)
 
 
 @app.middleware("http")

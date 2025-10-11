@@ -13,6 +13,7 @@ SECRET_KEY: str = environ.get("SECRET_KEY", "12345")
 
 # SECURITY WARNING: don"t run with debug turned on in production!
 DEBUG: bool = not not int(environ.get("DEBUG", "0"))
+DEVELOPMENT = environ.get("DEVELOPMENT", "0")
 
 
 ALLOWED_HOSTS: list[str] = environ.get("ALLOWED_HOSTS", "*").split(",")
@@ -41,6 +42,7 @@ THIRD_PARTY_APPS: list[str] = [
 	"django_extensions",
 	"storages",
 	"boto3",
+	"corsheaders",
 ]
 
 LOCAL_APPS: list[str] = [
@@ -53,6 +55,7 @@ INSTALLED_APPS = THIRD_PARTY_APPS + DJANGO_APPS + LOCAL_APPS
 DJANGO_MIDDLEWARE: list[str] = [
 	"django.middleware.security.SecurityMiddleware",
 	"django.contrib.sessions.middleware.SessionMiddleware",
+	"corsheaders.middleware.CorsMiddleware",
 	"django.middleware.common.CommonMiddleware",
 	"django.middleware.csrf.CsrfViewMiddleware",
 	"django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -106,16 +109,24 @@ CHANNEL_LAYERS = {
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
-	"default": {
-		"ENGINE": "django.db.backends.postgresql",
-		"NAME": environ.get("PG_NAME", "postgres"),
-		"USER": environ.get("PG_USER", "postgres"),
-		"HOST": environ.get("PG_HOST", "localhost"),
-		"PORT": int(environ.get("PG_PORT", "5432")),
-		"PASSWORD": environ.get("PG_PASSWORD", "postgres"),
-	},
-}
+if DEVELOPMENT == "1":
+	DATABASES = {
+		"default": {
+			"ENGINE": "django.db.backends.sqlite3",
+			"NAME": BASE_DIR / "db.sqlite3",
+		}
+	}
+else:
+	DATABASES = {
+		"default": {
+			"ENGINE": "django.db.backends.postgresql",
+			"NAME": environ.get("PG_NAME", "postgres"),
+			"USER": environ.get("PG_USER", "postgres"),
+			"HOST": environ.get("PG_HOST", "localhost"),
+			"PORT": int(environ.get("PG_PORT", "5432")),
+			"PASSWORD": environ.get("PG_PASSWORD", "postgres"),
+		},
+	}
 
 
 # Password validation
@@ -162,6 +173,11 @@ MEDIA_ROOT = BASE_DIR / "media"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD: str = "django.db.models.BigAutoField"
+
+
+CORS_ALLOWED_ORIGINS = [
+	"http://localhost:3000",
+]
 
 
 # REST FRAMEWORK settings

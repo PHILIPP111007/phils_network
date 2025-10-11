@@ -22,3 +22,4 @@ MAX_ALLOWED_FILE_SIZE_FOR_PREVIEW = 30 * 1024 * 1024  # 30 Mb
 USER_IMAGE_PATH = "user_{}"
 
 TESTING = environ.get("TEST", "0")
+DEVELOPMENT = environ.get("DEVELOPMENT", "0")
