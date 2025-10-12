@@ -25,7 +25,7 @@ from app.s3 import s3
 router = APIRouter(tags=["user"])
 
 
-@router.get("/api/v2/user/{username}/")
+@router.get("/user/{username}/")
 async def get_user(session: SessionDep, request: Request, username: str):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
@@ -91,7 +91,7 @@ async def get_user(session: SessionDep, request: Request, username: str):
 	return result
 
 
-@router.put("/api/v2/user/")
+@router.put("/user/")
 async def put_user(
 	session: SessionDep,
 	request: Request,
@@ -119,7 +119,7 @@ async def put_user(
 	return {"ok": True, "user": user}
 
 
-@router.put("/api/v2/user_image/")
+@router.put("/user_image/")
 async def put_user_image(
 	session: SessionDep,
 	request: Request,
@@ -151,7 +151,7 @@ async def put_user_image(
 	return {"ok": True, "user": user}
 
 
-@router.delete("/api/v2/user/{username}/")
+@router.delete("/user/{username}/")
 async def delete_user(session: SessionDep, request: Request, username: str):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}

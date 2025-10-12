@@ -7,7 +7,7 @@ from app.models import MessageViewed
 router = APIRouter(tags=["message_viewed"])
 
 
-@router.post("/api/v2/message_viewed/{message_id}/")
+@router.post("/message_viewed/{message_id}/")
 async def post_message_viewed(session: SessionDep, request: Request, message_id: int):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}

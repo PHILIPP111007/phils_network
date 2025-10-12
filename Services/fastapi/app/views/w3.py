@@ -11,7 +11,7 @@ from app.request_body import TransactionBody
 router = APIRouter(tags=["w3"])
 
 
-@router.get("/api/v2/ethereum_balance/")
+@router.get("/ethereum_balance/")
 async def get_ethereum_balance(request: Request):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
@@ -42,7 +42,7 @@ async def get_ethereum_balance(request: Request):
 	}
 
 
-@router.get("/api/v2/get_transactions/")
+@router.get("/get_transactions/")
 async def get_transactions(session: SessionDep, request: Request):
 	if not request.state.user:
 		return {"ok": False, "error": "Can't authenticate"}
@@ -85,7 +85,7 @@ async def get_transactions(session: SessionDep, request: Request):
 	return {"ok": True, "transactions": transactions}
 
 
-@router.post("/api/v2/send_ethereum/")
+@router.post("/send_ethereum/")
 async def send_ethereum(
 	session: SessionDep, request: Request, transaction_body: TransactionBody
 ):

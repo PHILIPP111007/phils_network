@@ -20,7 +20,7 @@ from app.request_body import RoomNameAndSubscribers
 router = APIRouter(tags=["room"])
 
 
-@router.get("/api/v2/room/")
+@router.get("/room/")
 async def get_room(session: SessionDep, request: Request):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
@@ -101,7 +101,7 @@ async def get_room(session: SessionDep, request: Request):
 	return {"ok": True, "rooms": rooms}
 
 
-@router.post("/api/v2/room/")
+@router.post("/room/")
 async def post_room(
 	session: SessionDep,
 	request: Request,
@@ -146,7 +146,7 @@ async def post_room(
 	return {"ok": True, "room": room}
 
 
-@router.get("/api/v2/invite_chats/")
+@router.get("/invite_chats/")
 async def get_room_invitation(session: SessionDep, request: Request):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
@@ -181,7 +181,7 @@ async def get_room_invitation(session: SessionDep, request: Request):
 	return {"ok": True, "room_invitations": room_invitations}
 
 
-@router.post("/api/v2/invite_chats/{user_id}/add_room/{room_id}/")
+@router.post("/invite_chats/{user_id}/add_room/{room_id}/")
 async def post_room_invitation_add(
 	session: SessionDep, request: Request, user_id: int, room_id: int
 ):
@@ -227,7 +227,7 @@ async def post_room_invitation_add(
 	return {"ok": True}
 
 
-@router.post("/api/v2/invite_chats/{user_id}/remove_room/{room_id}/")
+@router.post("/invite_chats/{user_id}/remove_room/{room_id}/")
 async def post_room_invitation_remove(
 	session: SessionDep, request: Request, user_id: int, room_id: int
 ):

@@ -9,7 +9,7 @@ from app.models import Subscriber
 router = APIRouter(tags=["subscriber"])
 
 
-@router.get("/api/v2/subscriber/{id}/")
+@router.get("/subscriber/{id}/")
 async def get_subscriber(session: SessionDep, request: Request, id: int):
 	async def _filter(user_id: int, subscribe_id: int) -> list[Subscriber]:
 		query = await session.exec(
@@ -40,7 +40,7 @@ async def get_subscriber(session: SessionDep, request: Request, id: int):
 	return {"ok": True, "status": status}
 
 
-@router.post("/api/v2/subscriber/{id}/")
+@router.post("/subscriber/{id}/")
 async def post_subscriber(session: SessionDep, request: Request, id: int):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
@@ -52,7 +52,7 @@ async def post_subscriber(session: SessionDep, request: Request, id: int):
 	return {"ok": True}
 
 
-@router.delete("/api/v2/delete_subscriber/{option}/{id}/")
+@router.delete("/delete_subscriber/{option}/{id}/")
 async def delete_subscriber(
 	session: SessionDep,
 	request: Request,

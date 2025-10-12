@@ -19,7 +19,7 @@ from app.s3 import s3
 router = APIRouter(tags=["chat"])
 
 
-@router.get("/api/v2/room/{id}/")
+@router.get("/room/{id}/")
 async def get_chat(session: SessionDep, request: Request, id: int):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
@@ -60,7 +60,7 @@ async def get_chat(session: SessionDep, request: Request, id: int):
 	}
 
 
-@router.put("/api/v2/room/{id}/")
+@router.put("/room/{id}/")
 async def put_chat(
 	session: SessionDep,
 	request: Request,

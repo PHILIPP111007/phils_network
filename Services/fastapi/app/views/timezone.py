@@ -8,7 +8,7 @@ from app.models import User
 router = APIRouter(tags=["timezone"])
 
 
-@router.post("/api/v2/timezone/")
+@router.post("/timezone/")
 async def post_timezone(session: SessionDep, request: Request, body: TimezoneData):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}

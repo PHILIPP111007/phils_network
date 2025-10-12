@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from app.constants import DEVELOPMENT
+from app.constants import DEVELOPMENT, API_PREFIX
 from app.database import engine
 from app.models import Token, User
 from app.views import (
@@ -95,22 +95,22 @@ async def middleware_add_user_to_request(request: Request, call_next: Callable):
 	return response
 
 
-app.include_router(online_status.router)
-app.include_router(post.router)
-app.include_router(news.router)
-app.include_router(subscriber.router)
-app.include_router(find_user.router)
-app.include_router(friend.router)
-app.include_router(room.router)
-app.include_router(user.router)
-app.include_router(chat.router)
-app.include_router(message.router)
-app.include_router(message_viewed.router)
-app.include_router(websocket_chat.router)
-app.include_router(websocket_online_status.router)
-app.include_router(websocket_delete_messsage.router)
-app.include_router(timezone.router)
-app.include_router(w3.router)
+app.include_router(online_status.router, prefix=API_PREFIX)
+app.include_router(post.router, prefix=API_PREFIX)
+app.include_router(news.router, prefix=API_PREFIX)
+app.include_router(subscriber.router, prefix=API_PREFIX)
+app.include_router(find_user.router, prefix=API_PREFIX)
+app.include_router(friend.router, prefix=API_PREFIX)
+app.include_router(room.router, prefix=API_PREFIX)
+app.include_router(user.router, prefix=API_PREFIX)
+app.include_router(chat.router, prefix=API_PREFIX)
+app.include_router(message.router, prefix=API_PREFIX)
+app.include_router(message_viewed.router, prefix=API_PREFIX)
+app.include_router(websocket_chat.router, prefix=API_PREFIX)
+app.include_router(websocket_online_status.router, prefix=API_PREFIX)
+app.include_router(websocket_delete_messsage.router, prefix=API_PREFIX)
+app.include_router(timezone.router, prefix=API_PREFIX)
+app.include_router(w3.router, prefix=API_PREFIX)
 
 
 if __name__ == "__main__":

@@ -12,7 +12,7 @@ from app.request_body import Content, UserAndContent
 router = APIRouter(tags=["post"])
 
 
-@router.get("/api/v2/blog/{username}/{loaded_posts}/")
+@router.get("/blog/{username}/{loaded_posts}/")
 async def get_post(
 	session: SessionDep, request: Request, username: str, loaded_posts: int
 ):
@@ -89,7 +89,7 @@ async def get_post(
 	return {"ok": True, "posts": posts}
 
 
-@router.put("/api/v2/blog/{id}/")
+@router.put("/blog/{id}/")
 async def put_post(session: SessionDep, request: Request, id: int, content: Content):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
@@ -111,7 +111,7 @@ async def put_post(session: SessionDep, request: Request, id: int, content: Cont
 	return {"ok": True, "post": post}
 
 
-@router.post("/api/v2/blog/")
+@router.post("/blog/")
 async def post_post(
 	session: SessionDep, request: Request, user_and_content: UserAndContent
 ):
@@ -135,7 +135,7 @@ async def post_post(
 	return {"ok": True, "post": post}
 
 
-@router.delete("/api/v2/blog/{id}/")
+@router.delete("/blog/{id}/")
 async def delete_post(session: SessionDep, request: Request, id: int):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}

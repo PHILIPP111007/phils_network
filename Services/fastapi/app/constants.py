@@ -23,3 +23,6 @@ USER_IMAGE_PATH = "user_{}"
 
 TESTING = environ.get("TEST", "0")
 DEVELOPMENT = environ.get("DEVELOPMENT", "0")
+
+API_VERSION = 2
+API_PREFIX = f"/api/v{API_VERSION}"

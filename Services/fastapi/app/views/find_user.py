@@ -10,7 +10,7 @@ from app.constants import USER_IMAGE_PATH
 router = APIRouter(tags=["find_user"])
 
 
-@router.post("/api/v2/find_user/")
+@router.post("/find_user/")
 async def post_find_user(session: SessionDep, request: Request, find_user: FindUser):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}

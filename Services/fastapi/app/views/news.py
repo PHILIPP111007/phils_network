@@ -12,7 +12,7 @@ from app.modules import get_subscribers_sets
 router = APIRouter(tags=["news"])
 
 
-@router.get("/api/v2/news/{loaded_posts}/")
+@router.get("/news/{loaded_posts}/")
 async def get_news(session: SessionDep, request: Request, loaded_posts: int):
 	async def _get_friends(id: int):
 		set_1, set_2 = await get_subscribers_sets(session=session, id=id)

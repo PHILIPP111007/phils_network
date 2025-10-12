@@ -221,3 +221,5 @@ AWS_S3_ENDPOINT_URL = environ.get("AWS_S3_ENDPOINT_URL", "http://s3:9000")
 BUCKET_NAME = "philsnetwork"
 
 DATETIME_FORMAT: str = environ.get("DATETIME_FORMAT", "%Y-%m-%d %H:%M")
+
+API_VERSION = 1

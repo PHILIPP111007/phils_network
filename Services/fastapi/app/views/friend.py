@@ -12,7 +12,7 @@ from app.constants import USER_IMAGE_PATH
 router = APIRouter(tags=["friend"])
 
 
-@router.get("/api/v2/friends/{option}/")
+@router.get("/friends/{option}/")
 async def get_friends(session: SessionDep, request: Request, option: FilterOption):
 	async def _get_friends(id: int) -> list[User]:
 		set_1, set_2 = await get_subscribers_sets(session=session, id=id)

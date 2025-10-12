@@ -25,7 +25,7 @@ def _filter_message(msg: dict, messages_ids: list[int]):
 		return msg
 
 
-@router.get("/api/v2/room/{id}/{loaded_messages}/")
+@router.get("/room/{id}/{loaded_messages}/")
 async def get_message(
 	session: SessionDep, request: Request, id: int, loaded_messages: int
 ):
@@ -124,7 +124,7 @@ async def get_message(
 	return {"ok": True, "messages": messages}
 
 
-@router.get("/api/v2/get_unread_message_count/")
+@router.get("/get_unread_message_count/")
 async def get_unread_message_count(session: SessionDep, request: Request):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
@@ -155,7 +155,7 @@ async def get_unread_message_count(session: SessionDep, request: Request):
 	return {"ok": True, "unread_messages_count": unread_messages_count}
 
 
-@router.post("/api/v2/like_message/{message_id}/")
+@router.post("/like_message/{message_id}/")
 async def post_message_like(session: SessionDep, request: Request, message_id: int):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
@@ -182,7 +182,7 @@ async def post_message_like(session: SessionDep, request: Request, message_id: i
 	return {"ok": True}
 
 
-@router.post("/api/v2/unlike_message/{message_id}/")
+@router.post("/unlike_message/{message_id}/")
 async def post_message_unlike(session: SessionDep, request: Request, message_id: int):
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
