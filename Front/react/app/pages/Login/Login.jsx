@@ -3,7 +3,7 @@ import { useState, use, useEffect } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import { AuthContext, UserContext } from "../../data/context.js"
 import { notify_success } from "../../modules/notify.js"
-import { HttpMethod, CacheKeys, Language } from "../../data/enums.js"
+import { HttpMethod, CacheKeys, Language, APIVersion } from "../../data/enums.js"
 import { showLanguage, setLanguage } from "../../modules/language.jsx"
 import getToken from "../../modules/getToken.js"
 import Fetch from "../../API/Fetch.js"
@@ -19,7 +19,7 @@ export default function Login() {
 
     async function auth() {
         var token = getToken()
-        var data = await Fetch({ api_version: 1, action: "auth/users/me/", method: HttpMethod.GET })
+        var data = await Fetch({ api_version: APIVersion.V1, action: "auth/users/me/", method: HttpMethod.GET })
 
         if (data && !data.detail && data.username && token) {
             setUser({ ...user, ...data })
@@ -37,7 +37,7 @@ export default function Login() {
 
     async function login(event) {
         event.preventDefault()
-        var data = await Fetch({ api_version: 1, action: "token/login/", method: HttpMethod.POST, body: loginForm, token: "" })
+        var data = await Fetch({ api_version: APIVersion.V1, action: "token/login/", method: HttpMethod.POST, body: loginForm, token: "" })
 
         if (data && !data.detail && data.auth_token) {
             localStorage.setItem(CacheKeys.TOKEN, data.auth_token)
@@ -49,7 +49,7 @@ export default function Login() {
                 notify_success('Вы успешно вошли!')
             }
 
-            await Fetch({ api_version: 2, action: "online_status/set_true/", method: HttpMethod.POST })
+            await Fetch({ api_version: APIVersion.V2, action: "online_status/set_true/", method: HttpMethod.POST })
 
             auth()
         }

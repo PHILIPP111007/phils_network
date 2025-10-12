@@ -6,7 +6,7 @@ import Form from "react-bootstrap/Form"
 import Alert from "react-bootstrap/Alert"
 import { UserContext } from "../data/context.js"
 import { notify } from "../modules/notify.js"
-import { FilterOption, HttpMethod } from "../data/enums.js"
+import { FilterOption, HttpMethod, APIVersion } from "../data/enums.js"
 import rememberPage from "../modules/rememberPage.js"
 import Fetch from "../API/Fetch.js"
 import MainComponents from "./components/MainComponents/MainComponents.jsx"
@@ -52,7 +52,7 @@ export default function W3() {
         if (ethCached !== null) {
             setEth({ ...ethCached })
         } else {
-            var data = await Fetch({ api_version: 2, action: "ethereum_balance/", method: HttpMethod.GET })
+            var data = await Fetch({ api_version: APIVersion.V2, action: "ethereum_balance/", method: HttpMethod.GET })
             if (data && data.ok) {
                 setEth({ ...data.data })
                 localStorage.setItem(CacheKeys.ETH, JSON.stringify(data.data))
@@ -70,7 +70,7 @@ export default function W3() {
 
     async function getTransactions() {
         setLoading(true)
-        var data = await Fetch({ api_version: 2, action: "get_transactions/", method: HttpMethod.GET })
+        var data = await Fetch({ api_version: APIVersion.V2, action: "get_transactions/", method: HttpMethod.GET })
         if (data && data.ok) {
             setTransactions([...data.transactions])
         } else if (data.error) {
@@ -92,7 +92,7 @@ export default function W3() {
             var ethValueInt = parseInt(ethValue)
             var body = { private_key: privateKey, recipient_id: friendId, amount_in_eth: ethValueInt, gas: gas }
 
-            var data = await Fetch({ api_version: 2, action: "send_ethereum/", method: HttpMethod.POST, body: body })
+            var data = await Fetch({ api_version: APIVersion.V2, action: "send_ethereum/", method: HttpMethod.POST, body: body })
             if (data && data.ok) {
                 setTransactions([data.transaction, ...transactions])
                 notify("Transaction send!")
@@ -113,7 +113,7 @@ export default function W3() {
     async function getFriends() {
         setLoading(true)
 
-        var data = await Fetch({ api_version: 2, action: `friends/${FilterOption.FRIENDS}/`, method: HttpMethod.GET })
+        var data = await Fetch({ api_version: APIVersion.V2, action: `friends/${FilterOption.FRIENDS}/`, method: HttpMethod.GET })
         if (data && data.ok) {
             setFriends(data.query)
         }

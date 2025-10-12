@@ -2,7 +2,7 @@ import "./styles/SettingsBar.css"
 import { use, useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { AuthContext, UserContext } from "../../../../data/context.js"
-import { HttpMethod, CacheKeys, Theme, Language } from "../../../../data/enums.js"
+import { HttpMethod, CacheKeys, Theme, Language, APIVersion } from "../../../../data/enums.js"
 import { ROOT_ELEMENT_THEME } from "../../../../data/constants.js"
 import Fetch from "../../../../API/Fetch.js"
 import Button from "../../UI/Button.jsx"
@@ -40,8 +40,8 @@ export default function SettingsBar(props) {
     }
 
     async function logout() {
-        await Fetch({ api_version: 2, action: "online_status/set_false/", method: HttpMethod.POST })
-        await Fetch({ api_version: 1, action: "token/logout/", method: HttpMethod.POST })
+        await Fetch({ api_version: APIVersion.V2, action: "online_status/set_false/", method: HttpMethod.POST })
+        await Fetch({ api_version: APIVersion.V1, action: "token/logout/", method: HttpMethod.POST })
         setIsAuth(false)
         localStorage.removeItem(CacheKeys.TOKEN)
         setUser({

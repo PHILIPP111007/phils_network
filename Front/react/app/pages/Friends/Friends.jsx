@@ -1,7 +1,7 @@
 import "./styles/Friends.css"
 import { useState } from "react"
 import { useParams } from "react-router-dom"
-import { HttpMethod, CacheKeys, Language } from "../../data/enums.js"
+import { HttpMethod, CacheKeys, Language, APIVersion } from "../../data/enums.js"
 import rememberPage from "../../modules/rememberPage.js"
 import Fetch from "../../API/Fetch.js"
 import MainComponents from "../components/MainComponents/MainComponents.jsx"
@@ -24,7 +24,7 @@ export default function Friends() {
         if (findUser.username || findUser.first_name || findUser.last_name) {
             setLoading(true)
 
-            var data = await Fetch({ api_version: 2, action: "find_user/", method: HttpMethod.POST, body: findUser })
+            var data = await Fetch({ api_version: APIVersion.V2, action: "find_user/", method: HttpMethod.POST, body: findUser })
             if (data && data.ok) {
                 setUsers(data.users)
             }

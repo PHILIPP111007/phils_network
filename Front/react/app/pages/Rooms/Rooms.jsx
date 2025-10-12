@@ -2,7 +2,7 @@ import "./styles/Rooms.css"
 import { use, useEffect, useMemo, useRef, useState } from "react"
 import { useParams } from "react-router-dom"
 import { UserContext } from "../../data/context.js"
-import { HttpMethod, CacheKeys, Language } from "../../data/enums.js"
+import { HttpMethod, CacheKeys, Language, APIVersion } from "../../data/enums.js"
 import rememberPage from "../../modules/rememberPage.js"
 import { getWebSocketDjango } from "../../modules/getWebSocket.js"
 import Fetch from "../../API/Fetch.js"
@@ -28,7 +28,7 @@ export default function Rooms() {
     async function createRoom(room) {
         room.subscribers.push(user.id)
 
-        var data = await Fetch({ api_version: 2, action: "room/", method: HttpMethod.POST, body: room })
+        var data = await Fetch({ api_version: APIVersion.V2, action: "room/", method: HttpMethod.POST, body: room })
         if (data && data.ok) {
             var newRooms = [data.room, ...rooms]
             setRooms(newRooms)
@@ -81,7 +81,7 @@ export default function Rooms() {
 
     async function getRooms() {
         setLoading(true)
-        await Fetch({ api_version: 2, action: "room/", method: HttpMethod.GET })
+        await Fetch({ api_version: APIVersion.V2, action: "room/", method: HttpMethod.GET })
             .then((data) => {
                 if (data && data.ok) {
                     setRooms(data.rooms)

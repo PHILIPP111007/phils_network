@@ -1,7 +1,7 @@
 import "./styles/FriendsNavBar.css"
 import { useEffect, useState, use } from "react"
 import { Link } from "react-router-dom"
-import { FilterOption, HttpMethod, CacheKeys, Language } from "../../data/enums.js"
+import { FilterOption, HttpMethod, CacheKeys, Language, APIVersion } from "../../data/enums.js"
 import { UserContext } from "../../data/context.js"
 import Fetch from "../../API/Fetch.js"
 
@@ -12,7 +12,7 @@ export default function FriendsNavBar() {
     var language = localStorage.getItem(CacheKeys.LANGUAGE)
 
     useEffect(() => {
-        Fetch({ api_version: 2, action: `friends/${FilterOption.SUBSCRIBERS_COUNT}/`, method: HttpMethod.GET })
+        Fetch({ api_version: APIVersion.V2, action: `friends/${FilterOption.SUBSCRIBERS_COUNT}/`, method: HttpMethod.GET })
             .then((data) => {
                 if (data && data.ok) {
                     setSubscribersCount(data.query)

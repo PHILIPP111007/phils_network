@@ -1,6 +1,6 @@
 import "./styles/RoomInvitations.css"
 import { use, useState, useEffect } from "react"
-import { HttpMethod } from "../../../data/enums.js"
+import { HttpMethod, APIVersion } from "../../../data/enums.js"
 import Fetch from "../../../API/Fetch.js"
 import { UserContext } from "../../../data/context.js"
 import rememberPage from "../../../modules/rememberPage.js"
@@ -16,7 +16,7 @@ export default function RoomInvitations() {
 
 
     async function add_room(room_id) {
-        await Fetch({ api_version: 2, action: `invite_chats/${user.id}/add_room/${room_id}/`, method: HttpMethod.POST })
+        await Fetch({ api_version: APIVersion.V2, action: `invite_chats/${user.id}/add_room/${room_id}/`, method: HttpMethod.POST })
             .then((data) => {
                 if (data && data.ok) {
                     setRoomInvitations((prev) => {
@@ -28,7 +28,7 @@ export default function RoomInvitations() {
     }
 
     async function remove_room(room_id) {
-        await Fetch({ api_version: 2, action: `invite_chats/${user.id}/remove_room/${room_id}/`, method: HttpMethod.POST })
+        await Fetch({ api_version: APIVersion.V2, action: `invite_chats/${user.id}/remove_room/${room_id}/`, method: HttpMethod.POST })
             .then((data) => {
                 if (data && data.ok) {
                     setRoomInvitations((prev) => {
@@ -40,7 +40,7 @@ export default function RoomInvitations() {
     }
 
     useEffect(() => {
-        Fetch({ api_version: 2, action: "invite_chats/", method: HttpMethod.GET })
+        Fetch({ api_version: APIVersion.V2, action: "invite_chats/", method: HttpMethod.GET })
             .then((data) => {
                 if (data && data.ok) {
                     setRoomInvitations(data.room_invitations)

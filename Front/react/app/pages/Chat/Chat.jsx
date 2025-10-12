@@ -3,7 +3,7 @@ import { useEffect, useRef, useState, use } from "react"
 import { useSignal } from "@preact/signals-react"
 import { useNavigate, useParams } from "react-router-dom"
 import { useInView } from "react-intersection-observer"
-import { HttpMethod } from "../../data/enums.js"
+import { HttpMethod, APIVersion } from "../../data/enums.js"
 import { UserContext } from "../../data/context.js"
 import { PROD_FETCH_URL } from "../../data/constants.js"
 import rememberPage from "../../modules/rememberPage.js"
@@ -63,7 +63,7 @@ export default function Chat() {
             formData.append("text", sendingText)
 
             var data = await Fetch({
-                api_version: 1, action: `file_upload/${params.room_id}/`, method: HttpMethod.POST, body: formData, is_uploading_file: true
+                api_version: APIVersion.V1, action: `file_upload/${params.room_id}/`, method: HttpMethod.POST, body: formData, is_uploading_file: true
             })
 
             var arrayBuffer = await file.arrayBuffer()
@@ -164,7 +164,7 @@ export default function Chat() {
         if (friends.length > 0 || subscribers.length > 0) {
             var body = { subscribers: subscribers, friends: friends }
 
-            var data = await Fetch({ api_version: 2, action: `room/${params.room_id}/`, method: HttpMethod.PUT, body: body })
+            var data = await Fetch({ api_version: APIVersion.V2, action: `room/${params.room_id}/`, method: HttpMethod.PUT, body: body })
             if (data && data.ok) {
                 navigate(`/chats/${user.username}/`)
             }
@@ -175,13 +175,13 @@ export default function Chat() {
         var msgs_len = messages.length
         if (flag || msgs_len > 0) {
             mainSets.value.loading = true
-            var data = await Fetch({ api_version: 2, action: `room/${params.room_id}/${msgs_len}/`, method: HttpMethod.GET })
+            var data = await Fetch({ api_version: APIVersion.V2, action: `room/${params.room_id}/${msgs_len}/`, method: HttpMethod.GET })
 
             if (data && data.ok) {
                 setMessages((prev) => [...data.messages.reverse(), ...messages])
 
                 data.messages.forEach(message => {
-                    Fetch({ api_version: 2, action: `message_viewed/${message.id}/`, method: HttpMethod.POST })
+                    Fetch({ api_version: APIVersion.V2, action: `message_viewed/${message.id}/`, method: HttpMethod.POST })
                 })
             }
             mainSets.value.loading = false
@@ -194,7 +194,7 @@ export default function Chat() {
     }
 
     async function likeMessage(messageId) {
-        var data = await Fetch({ api_version: 2, action: `like_message/${messageId}/`, method: HttpMethod.POST })
+        var data = await Fetch({ api_version: APIVersion.V2, action: `like_message/${messageId}/`, method: HttpMethod.POST })
 
         if (data && data.ok) {
             var newMessage = messages.filter((message) => {
@@ -215,7 +215,7 @@ export default function Chat() {
     }
 
     async function unLikeMessage(messageId) {
-        var data = await Fetch({ api_version: 2, action: `unlike_message/${messageId}/`, method: HttpMethod.POST })
+        var data = await Fetch({ api_version: APIVersion.V2, action: `unlike_message/${messageId}/`, method: HttpMethod.POST })
 
         if (data && data.ok) {
             var newMessage = messages.filter((message) => {
@@ -236,7 +236,7 @@ export default function Chat() {
     }
 
     useEffect(() => {
-        Fetch({ api_version: 2, action: `room/${params.room_id}/`, method: HttpMethod.GET })
+        Fetch({ api_version: APIVersion.V2, action: `room/${params.room_id}/`, method: HttpMethod.GET })
             .then((data) => {
                 if (data && data.ok) {
                     mainSets.value.isCreator = data.isCreator
@@ -275,7 +275,7 @@ export default function Chat() {
             var data = JSON.parse(e.data)
             if (data && data.message.id) {
                 setMessages((prev) => [...messages, data.message])
-                Fetch({ api_version: 2, action: `message_viewed/${data.message.id}/`, method: HttpMethod.POST })
+                Fetch({ api_version: APIVersion.V2, action: `message_viewed/${data.message.id}/`, method: HttpMethod.POST })
             }
             scrollToBottom()
         }

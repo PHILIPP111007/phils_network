@@ -6,7 +6,7 @@ import { useInView } from "react-intersection-observer"
 import Card from "react-bootstrap/Card"
 import { UserContext } from "../../data/context.js"
 import { useSetUser } from "../../hooks/useAuth.js"
-import { HttpMethod } from "../../data/enums.js"
+import { HttpMethod, APIVersion } from "../../data/enums.js"
 import useObserver from "../../hooks/useObserver.js"
 import { getFileUrl } from "../../modules/getFileUrl.js"
 import rememberPage from "../../modules/rememberPage.js"
@@ -58,7 +58,7 @@ export default function User() {
             postsLength = posts.length
         }
 
-        var data = await Fetch({ api_version: 2, action: `blog/${params.username}/${postsLength}/`, method: HttpMethod.GET })
+        var data = await Fetch({ api_version: APIVersion.V2, action: `blog/${params.username}/${postsLength}/`, method: HttpMethod.GET })
         if (data && data.ok) {
             var newPosts = data.posts.map(post => {
                 return { ...post, postLen500: post.content.length > 500 }
@@ -69,7 +69,7 @@ export default function User() {
     }
 
     async function deletePost(oldPost) {
-        var data = await Fetch({ api_version: 2, action: `blog/${oldPost.id}/`, method: HttpMethod.DELETE })
+        var data = await Fetch({ api_version: APIVersion.V2, action: `blog/${oldPost.id}/`, method: HttpMethod.DELETE })
         if (data && data.ok) {
             setPosts((prev) => prev.filter(post => post.id !== oldPost.id))
             setModalPostEdit(false)
@@ -86,7 +86,7 @@ export default function User() {
                 content: sendingText,
             }
 
-            var data = await Fetch({ api_version: 2, action: "blog/", method: HttpMethod.POST, body: newPost })
+            var data = await Fetch({ api_version: APIVersion.V2, action: "blog/", method: HttpMethod.POST, body: newPost })
             if (data && data.ok) {
                 newPost = { ...data.post, postLen500: data.post.content.length > 500, btnFlag: true }
                 setPosts([newPost, ...posts])
@@ -100,7 +100,7 @@ export default function User() {
             setModalPostEdit(false)
             newPost.changed = true
 
-            var data = await Fetch({ api_version: 2, action: `blog/${newPost.id}/`, method: HttpMethod.PUT, body: newPost })
+            var data = await Fetch({ api_version: APIVersion.V2, action: `blog/${newPost.id}/`, method: HttpMethod.PUT, body: newPost })
             if (data && data.ok) {
                 setPosts(posts.map(post => {
                     if (post.id === newPost.id) {
@@ -122,7 +122,7 @@ export default function User() {
     useEffect(() => {
         var timezoneOffset = Intl.DateTimeFormat().resolvedOptions().timeZone
         var body = { timezone: timezoneOffset }
-        Fetch({ api_version: 2, action: "timezone/", method: HttpMethod.POST, body: body })
+        Fetch({ api_version: APIVersion.V2, action: "timezone/", method: HttpMethod.POST, body: body })
     }, [])
 
     useEffect(() => {

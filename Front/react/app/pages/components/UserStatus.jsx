@@ -1,6 +1,6 @@
 import "./styles/UserStatus.css"
 import { useEffect } from "react"
-import { HttpMethod, UserStatusEnum, CacheKeys, Language } from "../../data/enums.js"
+import { HttpMethod, UserStatusEnum, CacheKeys, Language, APIVersion } from "../../data/enums.js"
 import Subscribe from "../../hooks/Subscribe.js"
 import Fetch from "../../API/Fetch.js"
 import Button from "./UI/Button.jsx"
@@ -10,7 +10,7 @@ export default function UserStatus(props) {
 
     useEffect(() => {
         if (!props.status) {
-            Fetch({ api_version: 2, action: `subscriber/${props.id}/`, method: HttpMethod.GET })
+            Fetch({ api_version: APIVersion.V2, action: `subscriber/${props.id}/`, method: HttpMethod.GET })
                 .then((data) => {
                     if (data && data.status) {
                         props.setStatus(data.status)

@@ -1,7 +1,7 @@
 import "./styles/ModalRoomEdit.css"
 import { useEffect, useState, useCallback } from "react"
 import { Link } from "react-router-dom"
-import { FilterOption, HttpMethod, CacheKeys, Language } from "../../../../data/enums.js"
+import { FilterOption, HttpMethod, CacheKeys, Language, APIVersion } from "../../../../data/enums.js"
 import Fetch from "../../../../API/Fetch.js"
 import Loading from "../../../components/Loading.jsx"
 import Button from "../../../components/UI/Button.jsx"
@@ -143,7 +143,7 @@ export default function ModalRoomEdit({ mainSets, me, editRoom }) {
         if (mainSets.value.isCreator) {
             setLoading(true)
 
-            Fetch({ api_version: 2, action: `friends/${FilterOption.FRIENDS}/`, method: HttpMethod.GET })
+            Fetch({ api_version: APIVersion.V2, action: `friends/${FilterOption.FRIENDS}/`, method: HttpMethod.GET })
                 .then((data) => {
                     if (data && data.ok) {
                         var response = data.query

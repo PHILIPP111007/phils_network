@@ -2,7 +2,7 @@ import "./styles/RoomNavBar.css"
 import { use, useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import { UserContext } from "../../../data/context.js"
-import { HttpMethod, CacheKeys, Language } from "../../../data/enums.js"
+import { HttpMethod, CacheKeys, Language, APIVersion } from "../../../data/enums.js"
 import Fetch from "../../../API/Fetch.js"
 
 export default function RoomNavBar() {
@@ -12,7 +12,7 @@ export default function RoomNavBar() {
     var language = localStorage.getItem(CacheKeys.LANGUAGE)
 
     useEffect(() => {
-        Fetch({ api_version: 2, action: "invite_chats/", method: HttpMethod.GET })
+        Fetch({ api_version: APIVersion.V2, action: "invite_chats/", method: HttpMethod.GET })
             .then((data) => {
                 if (data && data.ok) {
                     setRoomInvitationsLength(data.room_invitations.length)

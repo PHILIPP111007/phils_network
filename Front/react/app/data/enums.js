@@ -43,3 +43,8 @@ export var Language = {
     EN: "English",
     RU: "Русский",
 }
+
+export var APIVersion = {
+    V1: 1,
+    V2: 2,
+}

@@ -1,6 +1,6 @@
 import "./styles/ModalDelAcc.css"
 import { use } from "react"
-import { HttpMethod, CacheKeys, Language } from "../../../../data/enums.js"
+import { HttpMethod, CacheKeys, Language, APIVersion } from "../../../../data/enums.js"
 import { AuthContext, UserContext } from "../../../../data/context.js"
 import Fetch from "../../../../API/Fetch.js"
 import Button from "../../../components/UI/Button.jsx"
@@ -12,7 +12,7 @@ export default function ModalDelAcc() {
     var language = localStorage.getItem(CacheKeys.LANGUAGE)
 
     async function deleteAccount() {
-        var data = await Fetch({ api_version: 2, action: `user/${user.username}/`, method: HttpMethod.DELETE })
+        var data = await Fetch({ api_version: APIVersion.V2, action: `user/${user.username}/`, method: HttpMethod.DELETE })
         if (data.ok) {
             localStorage.clear()
             setIsAuth(false)

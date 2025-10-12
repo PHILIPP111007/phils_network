@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo, use } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { UserContext, AuthContext } from "../data/context.js"
 import { notify_success } from "../modules/notify.js"
-import { HttpMethod, Language, CacheKeys } from "../data/enums.js"
+import { HttpMethod, Language, CacheKeys, APIVersion } from "../data/enums.js"
 import { showLanguage, setLanguage } from "../modules/language.jsx"
 import Fetch from "../API/Fetch.js"
 import getToken from "../modules/getToken.js"
@@ -27,7 +27,7 @@ export default function Register() {
 
     async function auth() {
         var token = getToken()
-        var data = await Fetch({ api_version: 1, action: "auth/users/me/", method: HttpMethod.GET })
+        var data = await Fetch({ api_version: APIVersion.V1, action: "auth/users/me/", method: HttpMethod.GET })
 
         if (data && !data.detail && data.username && token) {
             setUser({ ...user, ...data })
@@ -47,7 +47,7 @@ export default function Register() {
             if (registerForm.password === registerForm.password2) {
                 setErrors([])
 
-                var data = await Fetch({ api_version: 1, action: "auth/users/", method: HttpMethod.POST, body: registerForm, token: "" })
+                var data = await Fetch({ api_version: APIVersion.V1, action: "auth/users/", method: HttpMethod.POST, body: registerForm, token: "" })
 
                 var new_errors = []
                 if (data.username) {

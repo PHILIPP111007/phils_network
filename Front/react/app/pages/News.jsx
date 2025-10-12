@@ -2,7 +2,7 @@ import "../styles/Posts.css"
 import { useState } from "react"
 import { useInView } from "react-intersection-observer"
 import { useParams } from "react-router-dom"
-import { HttpMethod } from "../data/enums.js"
+import { HttpMethod, APIVersion } from "../data/enums.js"
 import rememberPage from "../modules/rememberPage.js"
 import useObserver from "../hooks/useObserver.js"
 import Fetch from "../API/Fetch.js"
@@ -22,7 +22,7 @@ export default function News() {
 
     async function fetchAddPosts() {
         setLoading(true)
-        var data = await Fetch({ api_version: 2, action: `news/${posts.length}/`, method: HttpMethod.GET })
+        var data = await Fetch({ api_version: APIVersion.V2, action: `news/${posts.length}/`, method: HttpMethod.GET })
         if (data && data.ok) {
             var newPosts = data.posts.map(post => {
                 return { ...post, postLen500: post.content.length > 500 }
