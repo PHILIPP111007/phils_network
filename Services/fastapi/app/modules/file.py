@@ -1,12 +1,15 @@
+import base64
+import gzip
 import os
 import shutil
-import gzip
-import base64
+from io import BytesIO
+
+from PIL import Image
 
 from app.constants import (
 	BUCKET_NAME,
-	MEDIA_ROOT,
 	MAX_ALLOWED_FILE_SIZE_FOR_PREVIEW,
+	MEDIA_ROOT,
 )
 from app.s3 import s3
 
@@ -16,6 +19,13 @@ async def get_file_content(file_name: str):
 		file_path = file_name
 		with open(file_path, "wb") as file:
 			s3.download_fileobj(BUCKET_NAME, file_path, file)
+
+		with open(file_path, "rb") as file:
+			content = file.read()
+			img = Image.open(BytesIO(content))
+			img = img.resize((30, 30))
+			img.save(file_path, "PNG")
+
 		with open(file_path, "rb") as file:
 			content = file.read()
 			content_base64 = base64.b64encode(content).decode("utf-8")
