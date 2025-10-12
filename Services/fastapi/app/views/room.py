@@ -14,6 +14,7 @@ from app.models import (
 	RoomInvitation,
 	RoomSubscribers,
 	User,
+	MessageViewed,
 )
 from app.request_body import RoomNameAndSubscribers
 
@@ -217,10 +218,25 @@ async def post_room_invitation_add(
 		if not flag:
 			room_subscriber = RoomSubscribers(user_id=user.id, room_id=room.id)
 			session.add(room_subscriber)
+
+			messages = await session.exec(
+				select(Message).where(Message.room_id == room_id)
+			)
+			messages = messages.unique().all()
+
+			for message in messages:
+				message_viewed = MessageViewed(
+					message_id=message.id, user_id=request.state.user.id
+				)
+				session.add(message_viewed)
+
 			await session.commit()
 		else:
 			await session.exec(
-				delete(RoomInvitation).where(RoomInvitation.id == room_id)
+				delete(RoomInvitation).where(
+					RoomInvitation.room_id == room_id,
+					RoomInvitation.to_user_id == user.id,
+				)
 			)
 			await session.commit()
 
