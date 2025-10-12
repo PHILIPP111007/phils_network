@@ -76,14 +76,14 @@ services:
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - pgdata:/var/lib/postgresql/data/pgdata
-      - ./postgresql.conf:/etc/postgresql/postgresql.conf
+      - ./dockerfiles/postgresql.conf:/etc/postgresql/postgresql.conf
     expose:
       - 5432
-    command: ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf", "-p", "5432", "-h", "db"]
+    command: [ "postgres", "-c", "config_file=/etc/postgresql/postgresql.conf", "-p", "5432", "-h", "db" ]
     networks:
       - db_network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d postgres" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -128,7 +128,7 @@ services:
     expose:
       - 6379
     command: redis-server
-    volumes: 
+    volumes:
       - cache:/data
     networks:
       - cache_network
