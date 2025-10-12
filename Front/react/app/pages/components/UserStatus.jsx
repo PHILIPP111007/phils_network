@@ -19,8 +19,10 @@ export default function UserStatus(props) {
         }
     }, [props.status])
 
+    var DictUserStatusDiv
+
     if (language === Language.EN) {
-        var DictUserStatusDiv = {
+        DictUserStatusDiv = {
             [UserStatusEnum.IS_FRIEND]: (
                 <Button onClick={() => {
                     Subscribe.deleteFriend({
@@ -75,7 +77,7 @@ export default function UserStatus(props) {
             </div>
         )
     } else if (language === Language.RU) {
-        var DictUserStatusDiv = {
+        DictUserStatusDiv = {
             [UserStatusEnum.IS_FRIEND]: (
                 <Button onClick={() => {
                     Subscribe.deleteFriend({
