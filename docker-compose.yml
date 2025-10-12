@@ -118,6 +118,8 @@ services:
     environment:
       MINIO_ROOT_USER: minio
       MINIO_ROOT_PASSWORD: minio123
+    volumes:
+      - minio_data:/data
     networks:
       - s3_network
 
@@ -137,6 +139,8 @@ volumes:
   pgdata:
     driver: local
   cache:
+    driver: local
+  minio_data:
     driver: local
 
 networks:
