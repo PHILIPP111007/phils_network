@@ -175,7 +175,7 @@ MEDIA_ROOT = BASE_DIR / "media"
 DEFAULT_AUTO_FIELD: str = "django.db.models.BigAutoField"
 
 
-if DEVELOPMENT:
+if DEVELOPMENT == "1":
 	CORS_ALLOW_ALL_ORIGINS = True
 	CSRF_TRUSTED_ORIGINS = ["http://localhost:3000", "http://127.0.0.1:3000"]
 
@@ -183,7 +183,7 @@ if DEVELOPMENT:
 		"http://localhost:3000",
 		"http://127.0.0.1:3000",
 		"http://0.0.0.0:3000",
-		"ws://0.0.0.0:8080/ws/",
+		"ws://0.0.0.0:8080",
 	]
 
 	CHANNELS_ALLOWED_HOSTS = ["localhost", "127.0.0.1", "0.0.0.0"]
