@@ -13,6 +13,8 @@ export default async function Fetch({ api_version, action, method, body, token, 
     var url
     var data
 
+    action = encodeURIComponent(action)
+
     if (DEVELOPMENT == "1") {
         if (api_version === APIVersion.V1) {
             url = `${DEVELOPMENT_DJANGO_FETCH_URL}api/v${api_version}/${action}`
