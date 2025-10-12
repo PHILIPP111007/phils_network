@@ -1,4 +1,4 @@
-import { HttpMethod } from "../data/enums"
+import { HttpMethod, APIVersion } from "../data/enums"
 import { DEVELOPMENT, PROD_FETCH_URL, DEVELOPMENT_DJANGO_FETCH_URL, DEVELOPMENT_FASTAPI_FETCH_URL } from "../data/constants"
 import getToken from "../modules/getToken"
 
@@ -14,9 +14,9 @@ export default async function Fetch({ api_version, action, method, body, token, 
     var data
 
     if (DEVELOPMENT == "1") {
-        if (api_version === 1) {
+        if (api_version === APIVersion.V1) {
             url = `${DEVELOPMENT_DJANGO_FETCH_URL}api/v${api_version}/${action}`
-        } else if (api_version === 2) {
+        } else if (api_version === APIVersion.V2) {
             url = `${DEVELOPMENT_FASTAPI_FETCH_URL}api/v${api_version}/${action}`
         }
     } else (
