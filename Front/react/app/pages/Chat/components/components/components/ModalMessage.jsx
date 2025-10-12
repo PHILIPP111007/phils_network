@@ -32,12 +32,14 @@ export default function ModalMessage({ message, deleteMessage, setParentId, setM
                 <Button onClick={() => {
                     likeMessage(message.id)
                     setModalMessage(false)
+                    message.likes += 1
                 }}>&#10084; Like</Button>
                 <br />
                 <br />
                 <Button onClick={() => {
                     unLikeMessage(message.id)
                     setModalMessage(false)
+                    message.likes -= 1
                 }}>&#128078; Unlike</Button>
                 <br />
                 <br />
@@ -65,12 +67,14 @@ export default function ModalMessage({ message, deleteMessage, setParentId, setM
                 <Button onClick={() => {
                     likeMessage(message.id)
                     setModalMessage(false)
+                    message.likes += 1
                 }}>&#10084; Лайк</Button>
                 <br />
                 <br />
                 <Button onClick={() => {
                     unLikeMessage(message.id)
                     setModalMessage(false)
+                    message.likes -= 1
                 }}>&#128078; Не нравится</Button>
                 <br />
                 <br />

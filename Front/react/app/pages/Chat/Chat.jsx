@@ -194,45 +194,11 @@ export default function Chat() {
     }
 
     async function likeMessage(messageId) {
-        var data = await Fetch({ api_version: APIVersion.V2, action: `like_message/${messageId}/`, method: HttpMethod.POST })
-
-        if (data && data.ok) {
-            var newMessage = messages.filter((message) => {
-                return message.id === messageId
-            })[0]
-
-            newMessage.likes += 1
-
-            var updatedMessages = messages.map((message) => {
-                if (message.id === messageId) {
-                    return newMessage
-                }
-                return message
-            })
-
-            setMessages((prev) => [...updatedMessages])
-        }
+        await Fetch({ api_version: APIVersion.V2, action: `like_message/${messageId}/`, method: HttpMethod.POST })
     }
 
     async function unLikeMessage(messageId) {
-        var data = await Fetch({ api_version: APIVersion.V2, action: `unlike_message/${messageId}/`, method: HttpMethod.POST })
-
-        if (data && data.ok) {
-            var newMessage = messages.filter((message) => {
-                return message.id === messageId
-            })[0]
-
-            newMessage.likes -= 1
-
-            var updatedMessages = messages.map((message) => {
-                if (message.id === messageId) {
-                    return newMessage
-                }
-                return message
-            })
-
-            setMessages((prev) => [...updatedMessages])
-        }
+        await Fetch({ api_version: APIVersion.V2, action: `unlike_message/${messageId}/`, method: HttpMethod.POST })
     }
 
     useEffect(() => {

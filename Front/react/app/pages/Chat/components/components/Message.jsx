@@ -79,7 +79,7 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
                         setModalMessage(true)
                     }}>
                     <Modal modal={modalMessage} setModal={setModalMessage}>
-                        <ModalMessage message={message} deleteMessage={deleteMessage} setParentId={setParentId} likeMessage={likeMessage} unLikeMessage={unLikeMessage} />
+                        <ModalMessage message={message} deleteMessage={deleteMessage} setParentId={setParentId} setModalMessage={setModalMessage} likeMessage={likeMessage} unLikeMessage={unLikeMessage} />
                     </Modal>
                     <div className="info">
                         {userImageUrl &&
@@ -150,7 +150,7 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
                         setModalMessage(true)
                     }}>
                     <Modal modal={modalMessage} setModal={setModalMessage}>
-                        <ModalMessage message={message} deleteMessage={deleteMessage} setParentId={setParentId} likeMessage={likeMessage} unLikeMessage={unLikeMessage} />
+                        <ModalMessage message={message} deleteMessage={deleteMessage} setParentId={setParentId} setModalMessage={setModalMessage} likeMessage={likeMessage} unLikeMessage={unLikeMessage} />
                     </Modal>
                     <div className="info">
                         {userImageUrl &&
