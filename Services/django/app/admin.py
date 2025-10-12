@@ -1,12 +1,14 @@
 from app.models import (
 	Message,
+	MessageLike,
 	Post,
 	Room,
 	RoomInvitation,
 	Subscriber,
-	User,
 	Transaction,
+	User,
 )
+
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
@@ -63,6 +65,11 @@ class MessageAdmin(admin.ModelAdmin):
 	list_filter = ("sender", "room")
 	ordering = ("-timestamp",)
 	search_fields = ("sender__username",)
+
+
+@admin.register(MessageLike)
+class MessageLikeAdmin(admin.ModelAdmin):
+	pass
 
 
 @admin.register(Transaction)
