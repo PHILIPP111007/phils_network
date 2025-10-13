@@ -86,6 +86,7 @@ export default function Chat() {
                         image: user.image,
                     },
                     parent_id: parentId,
+                    likes: 0,
                 }
                 await chatSocket.current.send(JSON.stringify({ message: message }))
             }
@@ -105,7 +106,8 @@ export default function Chat() {
                         path: null,
                         content: null
                     },
-                    room: mainSets.value.room.id
+                    room: mainSets.value.room.id,
+                    likes: 0,
                 }
                 await chatSocket.current.send(JSON.stringify({ message: message }))
             }

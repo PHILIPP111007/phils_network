@@ -36,6 +36,7 @@ class MessageService:
 		message["sender"] = UserSerializer(sender).data
 		message["sender"]["image"] = sender_image
 		message["file"] = {"path": message["file"], "content": None}
+		message["likes"] = 0
 
 		return message
 
