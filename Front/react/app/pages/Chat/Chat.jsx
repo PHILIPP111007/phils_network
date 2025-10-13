@@ -226,8 +226,12 @@ export default function Chat() {
             setMessages((prevMessages) =>
                 prevMessages.map((message) => {
                     if (message.id === data.message_id) {
-                        const change = data.like_or_unlike === LikeOrUnlike.LIKE ? 1 : -1
-                        return { ...message, likes: message.likes + change }
+                        var change = data.like_or_unlike === LikeOrUnlike.LIKE ? 1 : -1
+                        var newLikes = message.likes + change
+                        if (newLikes < 0) {
+                            newLikes = 0
+                        }
+                        return { ...message, likes: newLikes }
                     }
                     return message
                 })
