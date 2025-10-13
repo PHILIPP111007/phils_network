@@ -17,16 +17,15 @@ POST http://127.0.0.1:8000/api/v1/token/token/logout/
 __all__ = ["urlpatterns", "websocket_urlpatterns"]
 
 
-from django.urls import include, path, re_path
-
-from app.views import FileAPIView, file_download, TokenCreateView, TokenDestroyView
 from app.consumers import (
 	ChatConsumer,
 	DeleteMessageConsumer,
-	OnlineStatusConsumer,
 	LikeMessageConsumer,
+	OnlineStatusConsumer,
 )
+from app.views import FileAPIView, TokenCreateView, TokenDestroyView, file_download
 
+from django.urls import include, path, re_path
 
 urlpatterns = []
 
