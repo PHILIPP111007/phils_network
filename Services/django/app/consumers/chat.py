@@ -4,12 +4,14 @@ import json
 import os
 
 from app.services import MessageService
+
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from rest_framework.authtoken.models import Token
 
 CHAT_GROUP = "chat_{}"
 DELETE_MESSAGE_GROUP = "delete_message_{}"
+LIKE_MESSAGE_GROUP = "like_message_{}"
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -114,6 +116,63 @@ class DeleteMessageConsumer(AsyncWebsocketConsumer):
 
 		# Send message to room group
 		delete_message_group = DELETE_MESSAGE_GROUP.format(room_id)
+		await self.channel_layer.group_send(
+			delete_message_group,
+			{"type": "chat_message", "status": True, "message": message},
+		)
+
+	async def chat_message(self, event):
+		"""Receive message from room group and send it to WebSocket."""
+
+		await self.send(
+			text_data=json.dumps(
+				{
+					"status": True,
+					"message": event["message"],
+				}
+			)
+		)
+
+
+class LikeMessageConsumer(AsyncWebsocketConsumer):
+	async def connect(self):
+		"""
+		Join room group.
+		If the user is not a subscriber to the conversation,
+		he will be disconnected.
+		"""
+
+		token_key = self.scope["query_string"].decode().split("=")[-1]
+		pk = await _get_user_pk(token_key=token_key)
+
+		if not pk:
+			await self.close()
+		else:
+			room_id = int(self.scope["url_route"]["kwargs"]["room"])
+			flag = await _check_permission(room_id=room_id, pk=pk)
+			if flag:
+				delete_message_group = LIKE_MESSAGE_GROUP.format(room_id)
+				await self.channel_layer.group_add(
+					delete_message_group, self.channel_name
+				)
+				await self.accept()
+			else:
+				await self.close()
+
+	async def receive(self, text_data):
+		"""
+		Called with a decoded WebSocket frame.
+		Receive message from WebSocket, create message in the DB
+		and send it to room group.
+		"""
+
+		text_data = json.loads(text_data)
+
+		message = text_data["message"]
+		room_id = message["room_id"]
+
+		# Send message to room group
+		delete_message_group = LIKE_MESSAGE_GROUP.format(room_id)
 		await self.channel_layer.group_send(
 			delete_message_group,
 			{"type": "chat_message", "status": True, "message": message},

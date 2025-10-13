@@ -1,7 +1,7 @@
 import { useMemo } from "react"
 import Message from "./components/Message.jsx"
 
-export default function Messages({ messages, downloadFile, deleteMessage, setParentId, likeMessage, unLikeMessage }) {
+export default function Messages({ messages, downloadFile, deleteMessage, setParentId, likeMessage, unLikeMessage, handleMessageLike }) {
 
     var showMessages = useMemo(() => {
         return (
@@ -17,7 +17,7 @@ export default function Messages({ messages, downloadFile, deleteMessage, setPar
                 />
             )
         )
-    }, [messages.length])
+    }, [messages.length, handleMessageLike, likeMessage, unLikeMessage])
 
     return (
         <div className="Messages">

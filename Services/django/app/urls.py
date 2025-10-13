@@ -20,7 +20,12 @@ __all__ = ["urlpatterns", "websocket_urlpatterns"]
 from django.urls import include, path, re_path
 
 from app.views import FileAPIView, file_download, TokenCreateView, TokenDestroyView
-from app.consumers import ChatConsumer, DeleteMessageConsumer, OnlineStatusConsumer
+from app.consumers import (
+	ChatConsumer,
+	DeleteMessageConsumer,
+	OnlineStatusConsumer,
+	LikeMessageConsumer,
+)
 
 
 urlpatterns = []
@@ -41,6 +46,7 @@ urlpatterns += auth_urlpatterns + file_urlpatterns
 
 websocket_urlpatterns = [
 	path("ws/v1/chat/<str:room>/delete_message/", DeleteMessageConsumer.as_asgi()),
+	path("ws/v1/chat/<str:room>/like_message/", LikeMessageConsumer.as_asgi()),
 	path("ws/v1/chat/<str:room>/", ChatConsumer.as_asgi()),
 	path("ws/v1/online_status/<str:user_id>/", OnlineStatusConsumer.as_asgi()),
 ]

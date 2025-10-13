@@ -1,9 +1,9 @@
 import "./styles/Chat.css"
-import { useEffect, useRef, useState, use } from "react"
+import { useEffect, useRef, useState, useCallback, use } from "react"
 import { useSignal } from "@preact/signals-react"
 import { useNavigate, useParams } from "react-router-dom"
 import { useInView } from "react-intersection-observer"
-import { HttpMethod, APIVersion } from "../../data/enums.js"
+import { HttpMethod, APIVersion, LikeOrUnlike } from "../../data/enums.js"
 import { UserContext } from "../../data/context.js"
 import { PROD_FETCH_URL } from "../../data/constants.js"
 import rememberPage from "../../modules/rememberPage.js"
@@ -39,6 +39,7 @@ export default function Chat() {
     var params = useParams()
     var navigate = useNavigate()
     var chatSocket = useRef(null)
+    var likeMessageSocket = useRef(null)
     var deleteMessageSocket = useRef(null)
     var wrapperRef = useRef(null)
     var [refLazyDivinView, inViewLazyDiv] = useInView()
@@ -194,12 +195,45 @@ export default function Chat() {
     }
 
     async function likeMessage(messageId) {
-        await Fetch({ api_version: APIVersion.V2, action: `like_message/${messageId}/`, method: HttpMethod.POST })
+        var data = await Fetch({ api_version: APIVersion.V2, action: `like_message/${messageId}/`, method: HttpMethod.POST })
+
+        if (data && data.ok) {
+            var message = {
+                room_id: mainSets.value.room.id,
+                message_id: messageId,
+                like_or_unlike: LikeOrUnlike.LIKE,
+            }
+            await likeMessageSocket.current.send(JSON.stringify({ message: message }))
+        }
     }
 
     async function unLikeMessage(messageId) {
-        await Fetch({ api_version: APIVersion.V2, action: `unlike_message/${messageId}/`, method: HttpMethod.POST })
+        var data = await Fetch({ api_version: APIVersion.V2, action: `unlike_message/${messageId}/`, method: HttpMethod.POST })
+
+        if (data && data.ok) {
+            var message = {
+                room_id: mainSets.value.room.id,
+                message_id: messageId,
+                like_or_unlike: LikeOrUnlike.UNLIKE,
+            }
+            await likeMessageSocket.current.send(JSON.stringify({ message: message }))
+        }
     }
+
+    var handleMessageLike = useCallback((e) => {
+        var data = JSON.parse(e.data).message
+        if (data) {
+            setMessages((prevMessages) =>
+                prevMessages.map((message) => {
+                    if (message.id === data.message_id) {
+                        const change = data.like_or_unlike === LikeOrUnlike.LIKE ? 1 : -1
+                        return { ...message, likes: message.likes + change }
+                    }
+                    return message
+                })
+            )
+        }
+    }, [])
 
     useEffect(() => {
         Fetch({ api_version: APIVersion.V2, action: `room/${params.room_id}/`, method: HttpMethod.GET })
@@ -220,6 +254,7 @@ export default function Chat() {
 
         chatSocket.current = getWebSocketDjango({ socket_name: "chatSocket", path: `chat/${params.room_id}/` })
         deleteMessageSocket.current = getWebSocketDjango({ socket_name: "deleteMessageSocket", path: `chat/${params.room_id}/delete_message/` })
+        likeMessageSocket.current = getWebSocketDjango({ socket_name: "likeMessageSocket", path: `chat/${params.room_id}/like_message/` })
 
         var textArea = document.getElementsByClassName("TextArea").item(0)
         var sendButton = document.getElementById("SendButton")
@@ -233,6 +268,7 @@ export default function Chat() {
         return () => {
             chatSocket.current.close()
             deleteMessageSocket.current.close()
+            likeMessageSocket.current.close()
         }
     }, [])
 
@@ -257,6 +293,14 @@ export default function Chat() {
             }
         }
     }, [messages])
+
+    useEffect(() => {
+        likeMessageSocket.current.onmessage = handleMessageLike
+
+        return () => {
+            likeMessageSocket.current.onmessage = null
+        };
+    }, [handleMessageLike])
 
     useEffect(() => {
         if (inViewWrapper && !mainSets.value.loading) {
@@ -287,7 +331,7 @@ export default function Chat() {
 
             <LazyDiv Ref={refLazyDivinView} />
 
-            <Messages messages={messages} downloadFile={downloadFile} deleteMessage={deleteMessage} setParentId={setParentId} likeMessage={likeMessage} unLikeMessage={unLikeMessage} />
+            <Messages messages={messages} downloadFile={downloadFile} deleteMessage={deleteMessage} setParentId={setParentId} likeMessage={likeMessage} unLikeMessage={unLikeMessage} handleMessageLike={handleMessageLike} />
 
             <UserInput mainSets={mainSets} sendMessage={sendMessage} editRoom={editRoom} parentMessage={parentMessage} />
 
