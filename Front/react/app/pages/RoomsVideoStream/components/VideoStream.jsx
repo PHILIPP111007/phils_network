@@ -9,16 +9,16 @@ export default function VideoStream() {
 
     var { user } = use(UserContext)
     var params = useParams()
-    const videoRef = useRef(null)
-    const canvasRef = useRef(null)
-    const ws = useRef(null)
-    const [isConnected, setIsConnected] = useState(false)
-    const [isStreaming, setIsStreaming] = useState(false)
-    const [error, setError] = useState("")
-    const [cameraAccess, setCameraAccess] = useState(false)
-    const [activeUsers, setActiveUsers] = useState([])
-    const streamRef = useRef(null)
-    const animationRef = useRef(null)
+    var videoRef = useRef(null)
+    var canvasRef = useRef(null)
+    var ws = useRef(null)
+    var [isConnected, setIsConnected] = useState(false)
+    var [isStreaming, setIsStreaming] = useState(false)
+    var [error, setError] = useState("")
+    var [cameraAccess, setCameraAccess] = useState(false)
+    var [activeUsers, setActiveUsers] = useState([])
+    var streamRef = useRef(null)
+    var animationRef = useRef(null)
 
     rememberPage(`video_stream/${params.username}/${params.room_id}`)
 
@@ -32,7 +32,7 @@ export default function VideoStream() {
         }
     }, [])
 
-    const checkCameraAccess = async () => {
+    var checkCameraAccess = async () => {
         try {
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
                 setError("Ваш браузер не поддерживает доступ к камере.")
@@ -40,7 +40,7 @@ export default function VideoStream() {
                 return
             }
 
-            const permissions = await navigator.permissions.query({ name: "camera" })
+            var permissions = await navigator.permissions.query({ name: "camera" })
             setCameraAccess(permissions.state !== "denied")
 
             if (permissions.state === "denied") {
@@ -53,7 +53,7 @@ export default function VideoStream() {
         }
     }
 
-    const connectWebSocket = () => {
+    var connectWebSocket = () => {
         try {
             ws.current = getWebSocketDjango({
                 socket_name: "videoStreamSocket",
@@ -63,7 +63,7 @@ export default function VideoStream() {
 
             ws.current.onmessage = (event) => {
                 try {
-                    const data = JSON.parse(event.data)
+                    var data = JSON.parse(event.data)
 
                     if (data.type === "broadcast_frame") {
                         // Получаем кадр от другого пользователя
@@ -71,12 +71,12 @@ export default function VideoStream() {
 
                         // Обновляем список активных пользователей
                         setActiveUsers(prev => {
-                            const users = new Set(prev)
+                            var users = new Set(prev)
                             users.add(user.username)
                             return Array.from(users)
                         })
                         setActiveUsers(prev => {
-                            const users = new Set(prev)
+                            var users = new Set(prev)
                             users.add(data.user.username)
                             return Array.from(users)
                         })
@@ -96,13 +96,13 @@ export default function VideoStream() {
         }
     }
 
-    const disconnectWebSocket = () => {
+    var disconnectWebSocket = () => {
         if (ws.current) {
             ws.current.close(1000, "Page closed")
         }
     }
 
-    const startStreaming = async () => {
+    var startStreaming = async () => {
         try {
             setError("")
 
@@ -110,7 +110,7 @@ export default function VideoStream() {
                 throw new Error("getUserMedia не поддерживается в вашем браузере")
             }
 
-            const stream = await navigator.mediaDevices.getUserMedia({
+            var stream = await navigator.mediaDevices.getUserMedia({
                 video: {
                     width: { ideal: 640 },
                     height: { ideal: 480 },
@@ -143,7 +143,7 @@ export default function VideoStream() {
         }
     }
 
-    const stopStreaming = () => {
+    var stopStreaming = () => {
         if (streamRef.current) {
             streamRef.current.getTracks().forEach(track => {
                 track.stop()
@@ -163,19 +163,19 @@ export default function VideoStream() {
         setIsStreaming(false)
     }
 
-    const captureAndSendFrames = () => {
+    var captureAndSendFrames = () => {
         if (isStreaming === true && ws.current.readyState === WebSocket.OPEN) {
-            const video = videoRef.current
-            const canvas = canvasRef.current
+            var video = videoRef.current
+            var canvas = canvasRef.current
 
-            const context = canvas.getContext("2d")
+            var context = canvas.getContext("2d")
 
             canvas.width = video.videoWidth
             canvas.height = video.videoHeight
 
             context.drawImage(video, 0, 0, canvas.width, canvas.height)
 
-            const frameData = canvas.toDataURL("image/jpeg", 0.7)
+            var frameData = canvas.toDataURL("image/jpeg", 0.7)
 
             try {
                 ws.current.send(JSON.stringify({
@@ -196,11 +196,11 @@ export default function VideoStream() {
         }
     }
 
-    const displayProcessedFrame = (frameData, user) => {
-        const img = new Image()
+    var displayProcessedFrame = (frameData, user) => {
+        var img = new Image()
         img.onload = () => {
             if (canvasRef.current) {
-                const mainContext = canvasRef.current.getContext("2d")
+                var mainContext = canvasRef.current.getContext("2d")
                 mainContext.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
                 mainContext.drawImage(img, 0, 0, canvasRef.current.width, canvasRef.current.height)
 
@@ -216,7 +216,7 @@ export default function VideoStream() {
         img.src = frameData
     }
 
-    const retryConnection = () => {
+    var retryConnection = () => {
         setError("")
         disconnectWebSocket()
         setTimeout(() => {
