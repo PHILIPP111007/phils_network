@@ -1,0 +1,12 @@
+.RoomsVideoStream .RoomCard {
+    margin-top: 10px;
+    word-break: break-all;
+}
+
+.RoomsVideoStream .RoomCard .link {
+    text-decoration: none;
+}
+
+.RoomsVideoStream .RoomCard .content {
+    padding: 20px;
+}

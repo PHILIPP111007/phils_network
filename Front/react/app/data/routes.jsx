@@ -10,6 +10,8 @@ var RoomInvitations = lazy(() => import("../pages/Rooms/components/RoomInvitatio
 var Chat = lazy(() => import("../pages/Chat/Chat.jsx"))
 var Login = lazy(() => import("../pages/Login/Login.jsx"))
 var Register = lazy(() => import("../pages/Register.jsx"))
+var RoomsVideoStream = lazy(() => import("../pages/RoomsVideoStream/RoomsVideoStream.jsx"))
+var VideoStream = lazy(() => import("../pages/RoomsVideoStream/components/VideoStream.jsx"))
 var W3 = lazy(() => import("../pages/W3.jsx"))
 
 export var PublicRoutes = [
@@ -72,6 +74,16 @@ export var PrivateRoutes = [
         path: "/chats/:username/:room_id/",
         name: "chat",
         element: <Chat />
+    },
+    {
+        path: "/video_stream/:username/",
+        name: "Video stream rooms",
+        element: <RoomsVideoStream />
+    },
+    {
+        path: "/video_stream/:username/:room_id/",
+        name: "Video stream",
+        element: <VideoStream />
     },
     {
         path: "/w3/:username/",

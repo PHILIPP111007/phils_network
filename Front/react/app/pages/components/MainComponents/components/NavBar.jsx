@@ -107,6 +107,9 @@ export default function NavBar() {
                         <Link to={`/friends/${user.username}/`}>Friends</Link>
                     </p>
                     <p>
+                        <Link to={`/video_stream/${user.username}/`}>Video conference</Link>
+                    </p>
+                    <p>
                         <Link to={`/w3/${user.username}/`}>W3</Link>
                     </p>
                 </nav>
@@ -127,6 +130,9 @@ export default function NavBar() {
                     </p>
                     <p>
                         <Link to={`/friends/${user.username}/`}>Друзья</Link>
+                    </p>
+                    <p>
+                        <Link to={`/video_stream/${user.username}/`}>Видео конференции</Link>
                     </p>
                     <p>
                         <Link to={`/w3/${user.username}/`}>W3</Link>

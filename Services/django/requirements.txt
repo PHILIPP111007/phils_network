@@ -11,3 +11,4 @@ uvicorn[standard]==0.37.0
 whitenoise==6.11.0
 psycopg[binary]==3.2.10
 django-cors-headers==4.9.0
+Pillow

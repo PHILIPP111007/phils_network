@@ -1,0 +1,12 @@
+.RoomsVideoStream {
+    margin: 100px auto;
+    max-width: 800px;
+}
+
+@media (pointer: coarse) {
+
+    /* mobile device */
+    .RoomsVideoStream {
+        min-width: 200px;
+    }
+}

@@ -22,6 +22,7 @@ from app.consumers import (
 	DeleteMessageConsumer,
 	LikeMessageConsumer,
 	OnlineStatusConsumer,
+	VideoStreamConsumer,
 )
 from app.views import FileAPIView, TokenCreateView, TokenDestroyView, file_download
 
@@ -48,4 +49,5 @@ websocket_urlpatterns = [
 	path("ws/v1/chat/<str:room>/like_message/", LikeMessageConsumer.as_asgi()),
 	path("ws/v1/chat/<str:room>/", ChatConsumer.as_asgi()),
 	path("ws/v1/online_status/<str:user_id>/", OnlineStatusConsumer.as_asgi()),
+	path("ws/v1/video_stream/<str:room>/", VideoStreamConsumer.as_asgi()),
 ]
