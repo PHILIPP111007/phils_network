@@ -26,6 +26,8 @@ Minimalistic social network written using Django, FastAPI and React.
 
 * [x] You can reply to messages.
 
+* [x] You can take part in video conferences.
+
 [User Agreement](UserAgreement.md) (by using the Service, the User confirms that he/she has read and accepts the terms of this Agreement)
 
 \
