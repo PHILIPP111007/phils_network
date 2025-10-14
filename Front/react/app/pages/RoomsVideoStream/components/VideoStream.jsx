@@ -21,6 +21,11 @@ export default function VideoStream() {
     var streamRef = useRef(null)
     var animationRef = useRef(null)
 
+    var [isAudioStreaming, setIsAudioStreaming] = useState(false)
+    var audioContextRef = useRef(null)
+    var audioStreamRef = useRef(null)
+    var audioProcessorRef = useRef(null)
+
     rememberPage(`video_stream/${params.username}/${params.room_id}`)
 
     useEffect(() => {
@@ -29,7 +34,7 @@ export default function VideoStream() {
 
         return () => {
             disconnectWebSocket()
-            stopStreaming()
+            stopStreamingVideo()
         }
     }, [])
 
@@ -66,23 +71,32 @@ export default function VideoStream() {
                 try {
                     var data = JSON.parse(event.data)
 
+                    if (currentUser === null) {
+                        setCurrentUser(data.user)
+                    }
+
+                    // Обновляем список активных пользователей
+                    setActiveUsers(prev => {
+                        var users = new Set(prev)
+                        users.add(user.username)
+                        return Array.from(users)
+                    })
+                    setActiveUsers(prev => {
+                        var users = new Set(prev)
+                        users.add(data.user.username)
+                        return Array.from(users)
+                    })
+
                     if (data.type === "broadcast_frame") {
                         // Получаем кадр от другого пользователя
+                        displayProcessedFrame(data.frame)
+
+                    } else if (data.type === "broadcast_audio") {
                         setCurrentUser(data.user)
-                        displayProcessedFrame(data.frame, data.user)
 
-                        // Обновляем список активных пользователей
-                        setActiveUsers(prev => {
-                            var users = new Set(prev)
-                            users.add(user.username)
-                            return Array.from(users)
-                        })
-                        setActiveUsers(prev => {
-                            var users = new Set(prev)
-                            users.add(data.user.username)
-                            return Array.from(users)
-                        })
-
+                        if (user.username !== data.user.username) {
+                            playReceivedAudio(data.audio)
+                        }
                     } else if (data.type === "error") {
                         console.error("Server error:", data.message)
                         setError(`Server error: ${data.message}`)
@@ -91,7 +105,6 @@ export default function VideoStream() {
                     console.error("Error parsing WebSocket message:", err)
                 }
             }
-
         } catch (err) {
             console.error("Error creating WebSocket:", err)
             setError("Failed to establish WebSocket connection")
@@ -104,7 +117,7 @@ export default function VideoStream() {
         }
     }
 
-    var startStreaming = async () => {
+    var startStreamingVideo = async () => {
         try {
             setError("")
 
@@ -118,7 +131,7 @@ export default function VideoStream() {
                     height: { ideal: 480 },
                     frameRate: { ideal: 15, max: 30 }
                 },
-                audio: false
+                audio: false,
             })
 
             streamRef.current = stream
@@ -128,6 +141,38 @@ export default function VideoStream() {
 
                 setIsStreaming(true)
             }
+        } catch (error) {
+            console.error("Error accessing camera:", error)
+            let errorMessage = "Не удалось получить доступ к камере. "
+
+            if (error.name === "NotAllowedError") {
+                errorMessage += "Доступ к камере запрещен."
+            } else if (error.name === "NotFoundError") {
+                errorMessage += "Камера не найдена."
+            } else {
+                errorMessage += error.message
+            }
+
+            setError(errorMessage)
+        }
+    }
+
+    var startStreamingAudio = async () => {
+        try {
+            setError("")
+
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                throw new Error("getUserMedia не поддерживается в вашем браузере")
+            }
+
+            var stream = await navigator.mediaDevices.getUserMedia({
+                video: false,
+                audio: true,
+            })
+
+            audioStreamRef.current = stream
+
+            startAudioProcessing(stream)
 
         } catch (error) {
             console.error("Error accessing camera:", error)
@@ -145,7 +190,7 @@ export default function VideoStream() {
         }
     }
 
-    var stopStreaming = () => {
+    var stopStreamingVideo = () => {
         if (streamRef.current) {
             streamRef.current.getTracks().forEach(track => {
                 track.stop()
@@ -163,7 +208,124 @@ export default function VideoStream() {
         }
 
         setIsStreaming(false)
+    }
+
+    var stopStreamingAudio = () => {
+        if (audioProcessorRef.current) {
+            audioProcessorRef.current.disconnect()
+            audioProcessorRef.current = null
+        }
+        if (audioContextRef.current) {
+            audioContextRef.current.close()
+            audioContextRef.current = null
+        }
+        if (audioStreamRef.current) {
+            audioStreamRef.current.getTracks().forEach(track => track.stop())
+            audioStreamRef.current = null
+        }
+        setIsAudioStreaming(false)
         setCurrentUser(null)
+    }
+
+    var base64EncodeAudio = (audioBuffer) => {
+        try {
+            var array = new Uint8Array(audioBuffer.length)
+            for (var i = 0; i < audioBuffer.length; i++) {
+                var sample = Math.max(-1, Math.min(1, audioBuffer[i]))
+                array[i] = Math.floor((sample + 1) * 127) // Конвертируем в [0, 255]
+            }
+
+            var binaryString = String.fromCharCode.apply(null, array)
+            return btoa(binaryString)
+        } catch (error) {
+            console.error("Error encoding audio:", error)
+            return ""
+        }
+    }
+
+    var base64DecodeAudio = (base64Data) => {
+        try {
+            var binaryString = atob(base64Data)
+            var array = new Uint8Array(binaryString.length)
+            for (var i = 0; i < binaryString.length; i++) {
+                array[i] = binaryString.charCodeAt(i)
+            }
+
+            var floatBuffer = new Float32Array(array.length)
+            for (var i = 0; i < array.length; i++) {
+                floatBuffer[i] = (array[i] / 127) - 1 // Конвертируем обратно в [-1, 1]
+            }
+
+            return floatBuffer
+        } catch (error) {
+            console.error("Error decoding audio:", error)
+            return new Float32Array(0)
+        }
+    }
+
+    var startAudioProcessing = (stream) => {
+        try {
+            console.log("Starting audio processing...")
+
+            // Создаем AudioContext
+            audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)()
+            console.log("AudioContext created")
+
+            // Проверяем, есть ли аудиотреки
+            if (!stream.getAudioTracks().length) {
+                console.error("No audio tracks in stream")
+                return
+            }
+
+            var source = audioContextRef.current.createMediaStreamSource(stream)
+            console.log("MediaStreamSource created")
+
+            audioProcessorRef.current = audioContextRef.current.createScriptProcessor(4096, 1, 1)
+            console.log("ScriptProcessorNode created")
+
+            audioProcessorRef.current.onaudioprocess = (event) => {
+                if (isAudioStreaming && ws.current.readyState === WebSocket.OPEN) {
+                    var audioData = event.inputBuffer.getChannelData(0)
+                    var encoded = base64EncodeAudio(audioData)
+
+                    if (encoded) {
+                        try {
+                            ws.current.send(JSON.stringify({
+                                type: "audio_data",
+                                audio: encoded,
+                                room: params.room_id,
+                                user: user,
+                                active_users: activeUsers,
+                            }))
+                        } catch (sendError) {
+                            console.error("Error sending audio:", sendError)
+                        }
+                    }
+                }
+            }
+
+            source.connect(audioProcessorRef.current)
+            audioProcessorRef.current.connect(audioContextRef.current.destination)
+            setIsAudioStreaming(true)
+            console.log("Audio processing started successfully")
+
+        } catch (error) {
+            console.error("Error starting audio processing:", error)
+            setIsAudioStreaming(false)
+        }
+    }
+
+    var playReceivedAudio = (audioData) => {
+        var audioContext = new (window.AudioContext || window.webkitAudioContext)()
+        var decodedData = base64DecodeAudio(audioData)
+
+        var buffer = audioContext.createBuffer(1, decodedData.length, audioContext.sampleRate)
+        buffer.copyToChannel(decodedData, 0)
+
+        var source = audioContext.createBufferSource()
+        source.buffer = buffer
+        source.connect(audioContext.destination)
+        source.start()
     }
 
     var captureAndSendFrames = () => {
@@ -199,18 +361,13 @@ export default function VideoStream() {
         }
     }
 
-    var displayProcessedFrame = (frameData, user) => {
+    var displayProcessedFrame = (frameData) => {
         var img = new Image()
         img.onload = () => {
             if (canvasRef.current) {
                 var mainContext = canvasRef.current.getContext("2d")
                 mainContext.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
                 mainContext.drawImage(img, 0, 0, canvasRef.current.width, canvasRef.current.height)
-
-                // Добавляем идентификатор пользователя на canvas
-                mainContext.fillStyle = "white"
-                mainContext.font = "16px Arial"
-                mainContext.fillText(`${user.first_name} ${user.last_name} @${user.username}`, 10, 30)
             }
         }
         img.onerror = () => {
@@ -232,6 +389,15 @@ export default function VideoStream() {
             captureAndSendFrames()
         }
     }, [isStreaming])
+
+
+    useEffect(() => {
+        if (isAudioStreaming === true) {
+            startStreamingAudio()
+        } else {
+            stopStreamingAudio()
+        }
+    }, [isAudioStreaming])
 
     return (
         <>
@@ -288,7 +454,7 @@ export default function VideoStream() {
                 }}>
                     <div style={{ marginBottom: "15px" }}>
                         <button
-                            onClick={() => startStreaming()}
+                            onClick={() => startStreamingVideo()}
                             disabled={!isConnected || isStreaming}
                             style={{
                                 margin: "5px",
@@ -305,7 +471,7 @@ export default function VideoStream() {
                         </button>
 
                         <button
-                            onClick={stopStreaming}
+                            onClick={() => stopStreamingVideo()}
                             disabled={!isStreaming}
                             style={{
                                 margin: "5px",
@@ -319,6 +485,23 @@ export default function VideoStream() {
                             }}
                         >
                             ⏹️ Остановить
+                        </button>
+                        <button
+                            onClick={() => {
+                                setIsAudioStreaming((prev) => !prev)
+                            }}
+                            style={{
+                                margin: "5px",
+                                padding: "12px 24px",
+                                backgroundColor: isAudioStreaming ? "#dc3545" : "#007bff",
+                                color: "white",
+                                border: "none",
+                                borderRadius: "5px",
+                                cursor: "pointer",
+                                fontSize: "16px"
+                            }}
+                        >
+                            {isAudioStreaming ? "🔇 Выкл. аудио" : "🔊 Вкл. аудио"}
                         </button>
                     </div>
                 </div>

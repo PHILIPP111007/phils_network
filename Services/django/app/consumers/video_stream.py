@@ -47,17 +47,22 @@ class VideoStreamConsumer(AsyncWebsocketConsumer):
 		try:
 			data = json.loads(text_data)
 
+			room_id = data["room"]
+			video_streaming_group = VIDEO_STREAMING_GROUP.format(room_id)
+
+			current_user = None
+			if data["type"] == "audio_data":
+				current_user = data["user"]["username"]
+
 			if data["type"] == "video_frame":
-				room_id = data["room"]
-				video_streaming_group = VIDEO_STREAMING_GROUP.format(room_id)
+				if current_user is None:
+					active_users = sorted(data["active_users"])
+					if len(active_users) != 0:
+						one_active_user = active_users[0]
+						current_user = data["user"]["username"]
 
-				active_users = sorted(data["active_users"])
-				if len(active_users) != 0:
-					one_active_user = active_users[0]
-					current_user = data["user"]["username"]
-
-					if one_active_user != current_user:
-						return
+						if one_active_user != current_user:
+							return
 
 				# Обрабатываем кадр и рассылаем всем участникам комнаты
 				processed_frame = await self.process_frame_async(data["frame"])
@@ -74,6 +79,17 @@ class VideoStreamConsumer(AsyncWebsocketConsumer):
 						},
 					)
 
+			elif data["type"] == "audio_data":
+				await self.channel_layer.group_send(
+                video_streaming_group,
+					{
+						"type": "broadcast_audio",
+						"audio": data["audio"],
+						"user": data["user"],
+						"active_users": data["active_users"],
+					},
+				)
+
 		except Exception:
 			await self.close()
 
@@ -89,6 +105,16 @@ class VideoStreamConsumer(AsyncWebsocketConsumer):
 					"active_users": event["active_users"],
 				}
 			)
+		)
+	
+	async def broadcast_audio(self, event):
+		"""Отправляет аудио всем клиентам в комнате"""
+		await self.send(
+			text_data=json.dumps({
+				"type": "broadcast_audio", 
+				"audio": event["audio"],
+				"user": event["user"],
+			})
 		)
 
 	async def process_frame_async(self, frame_data):
