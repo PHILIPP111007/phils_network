@@ -559,6 +559,20 @@ export default function VideoStream() {
                 </div>
 
                 <canvas style={{ display: "none" }} />
+                {
+                    activeUsers.length > 0
+                    && <>
+                        <br />
+                        <br />
+                        <br />
+                        <h3>Список подключенных пользователей</h3>
+                        {
+                            activeUsers.map((username) => {
+                                return <div>@{username}</div>
+                            })
+                        }
+                    </>
+                }
             </div>
         </>
     )
