@@ -1,4 +1,4 @@
-import { use, useRef, useEffect, useState } from "react"
+import { use, useRef, useEffect, useState, useMemo } from "react"
 import { useParams } from "react-router-dom"
 import { UserContext } from "../../../data/context.js"
 import { getWebSocketDjango } from "../../../modules/getWebSocket.js"
@@ -8,7 +8,9 @@ import MainComponents from "../../components/MainComponents/MainComponents.jsx"
 export default function VideoStream() {
 
     var { user } = use(UserContext)
-    var [currentUser, setCurrentUser] = useState(null)
+    var [currentSpeaker, setCurrentSpeaker] = useState(null)
+    var [isSpeaking, setIsSpeaking] = useState(false)
+
     var params = useParams()
     var videoRef = useRef(null)
     var canvasRef = useRef(null)
@@ -35,8 +37,13 @@ export default function VideoStream() {
         return () => {
             disconnectWebSocket()
             stopStreamingVideo()
+            stopStreamingAudio()
+
+            if (animationRef.current) {
+                cancelAnimationFrame(animationRef.current)
+            }
         }
-    }, [])
+    }, [params.room_id])
 
     var checkCameraAccess = async () => {
         try {
@@ -71,29 +78,22 @@ export default function VideoStream() {
                 try {
                     var data = JSON.parse(event.data)
 
-                    if (currentUser === null) {
-                        setCurrentUser(data.user)
-                    }
-
                     // Обновляем список активных пользователей
                     setActiveUsers(prev => {
-                        var users = new Set(prev)
-                        users.add(user.username)
-                        return Array.from(users)
-                    })
-                    setActiveUsers(prev => {
-                        var users = new Set(prev)
-                        users.add(data.user.username)
-                        return Array.from(users)
-                    })
+                        var users = new Set(prev);
+                        if (data.user && data.user.username) {
+                            users.add(data.user.username);
+                        }
+                        return Array.from(users);
+                    });
 
                     if (data.type === "broadcast_frame") {
                         // Получаем кадр от другого пользователя
+                        setCurrentSpeaker(() => data.user)
                         displayProcessedFrame(data.frame)
 
                     } else if (data.type === "broadcast_audio") {
-                        setCurrentUser(data.user)
-
+                        setCurrentSpeaker(() => data.user)
                         if (user.username !== data.user.username) {
                             playReceivedAudio(data.audio)
                         }
@@ -114,6 +114,7 @@ export default function VideoStream() {
     var disconnectWebSocket = () => {
         if (ws.current) {
             ws.current.close(1000, "Page closed")
+            ws.current = null
         }
     }
 
@@ -173,7 +174,6 @@ export default function VideoStream() {
             audioStreamRef.current = stream
 
             startAudioProcessing(stream)
-
         } catch (error) {
             console.error("Error accessing camera:", error)
             let errorMessage = "Не удалось получить доступ к камере. "
@@ -208,11 +208,13 @@ export default function VideoStream() {
         }
 
         setIsStreaming(false)
+        setIsSpeaking(() => false)
     }
 
     var stopStreamingAudio = () => {
         if (audioProcessorRef.current) {
             audioProcessorRef.current.disconnect()
+            audioProcessorRef.current.onaudioprocess = null
             audioProcessorRef.current = null
         }
         if (audioContextRef.current) {
@@ -224,19 +226,22 @@ export default function VideoStream() {
             audioStreamRef.current = null
         }
         setIsAudioStreaming(false)
-        setCurrentUser(null)
+        setIsSpeaking(() => false)
+        setCurrentSpeaker(() => null)
     }
 
     var base64EncodeAudio = (audioBuffer) => {
         try {
-            var array = new Uint8Array(audioBuffer.length)
+            // Конвертируем Float32 в Int16
+            var array = new Int16Array(audioBuffer.length)
             for (var i = 0; i < audioBuffer.length; i++) {
                 var sample = Math.max(-1, Math.min(1, audioBuffer[i]))
-                array[i] = Math.floor((sample + 1) * 127) // Конвертируем в [0, 255]
+                array[i] = sample < 0 ? sample * 0x8000 : sample * 0x7FFF
             }
 
-            var binaryString = String.fromCharCode.apply(null, array)
-            return btoa(binaryString)
+            // Конвертируем Int16Array в base64 правильно
+            var binaryString = new Uint8Array(array.buffer)
+            return btoa(String.fromCharCode.apply(null, binaryString))
         } catch (error) {
             console.error("Error encoding audio:", error)
             return ""
@@ -246,14 +251,16 @@ export default function VideoStream() {
     var base64DecodeAudio = (base64Data) => {
         try {
             var binaryString = atob(base64Data)
-            var array = new Uint8Array(binaryString.length)
+            var bytes = new Uint8Array(binaryString.length)
             for (var i = 0; i < binaryString.length; i++) {
-                array[i] = binaryString.charCodeAt(i)
+                bytes[i] = binaryString.charCodeAt(i)
             }
 
-            var floatBuffer = new Float32Array(array.length)
-            for (var i = 0; i < array.length; i++) {
-                floatBuffer[i] = (array[i] / 127) - 1 // Конвертируем обратно в [-1, 1]
+            // Конвертируем обратно в Int16, затем в Float32
+            var int16Array = new Int16Array(bytes.buffer)
+            var floatBuffer = new Float32Array(int16Array.length)
+            for (var i = 0; i < int16Array.length; i++) {
+                floatBuffer[i] = int16Array[i] < 0 ? int16Array[i] / 0x8000 : int16Array[i] / 0x7FFF
             }
 
             return floatBuffer
@@ -312,6 +319,7 @@ export default function VideoStream() {
         } catch (error) {
             console.error("Error starting audio processing:", error)
             setIsAudioStreaming(false)
+            setIsSpeaking(false)
         }
     }
 
@@ -329,37 +337,69 @@ export default function VideoStream() {
     }
 
     var captureAndSendFrames = () => {
-        if (isStreaming === true && ws.current.readyState === WebSocket.OPEN) {
-            var video = videoRef.current
-            var canvas = canvasRef.current
-
-            var context = canvas.getContext("2d")
-
-            canvas.width = video.videoWidth
-            canvas.height = video.videoHeight
-
-            context.drawImage(video, 0, 0, canvas.width, canvas.height)
-
-            var frameData = canvas.toDataURL("image/jpeg", 0.7)
-
-            try {
-                ws.current.send(JSON.stringify({
-                    type: "video_frame",
-                    frame: frameData,
-                    room: params.room_id,
-                    user: user,
-                    active_users: activeUsers,
-                }))
-            } catch (err) {
-                console.error("Error sending frame:", err)
-            }
-
-            // Ограничиваем FPS для уменьшения нагрузки
-            setTimeout(() => {
-                animationRef.current = requestAnimationFrame(captureAndSendFrames)
-            }, 100) // ~10 FPS
+        if (!isStreaming || !ws.current || ws.current.readyState !== WebSocket.OPEN || !isSpeaking) {
+            return
         }
+
+        var video = videoRef.current
+        var canvas = canvasRef.current
+
+        if (!video || !canvas || video.videoWidth === 0 || video.videoHeight === 0) {
+            animationRef.current = requestAnimationFrame(captureAndSendFrames)
+            return
+        }
+
+        var context = canvas.getContext("2d")
+        canvas.width = video.videoWidth
+        canvas.height = video.videoHeight
+        context.drawImage(video, 0, 0, canvas.width, canvas.height)
+
+        var frameData = canvas.toDataURL("image/jpeg", 0.7)
+
+        try {
+            ws.current.send(JSON.stringify({
+                type: "video_frame",
+                frame: frameData,
+                room: params.room_id,
+                user: user,
+                active_users: activeUsers,
+            }))
+        } catch (err) {
+            console.error("Error sending frame:", err)
+        }
+
+        // Ограничиваем FPS для уменьшения нагрузки
+        setTimeout(() => {
+            if (isStreaming && isSpeaking) {
+                animationRef.current = requestAnimationFrame(captureAndSendFrames)
+            }
+        }, 100) // ~10 FPS
     }
+
+    useEffect(() => {
+        if (isStreaming && isSpeaking && isAudioStreaming) {
+            animationRef.current = requestAnimationFrame(captureAndSendFrames)
+        } else {
+            if (animationRef.current) {
+                cancelAnimationFrame(animationRef.current)
+                animationRef.current = null
+            }
+        }
+
+        return () => {
+            if (animationRef.current) {
+                cancelAnimationFrame(animationRef.current)
+                animationRef.current = null
+            }
+        }
+    }, [isStreaming, isSpeaking, isAudioStreaming])
+
+    useEffect(() => {
+        if (!isSpeaking && animationRef.current) {
+            cancelAnimationFrame(animationRef.current)
+            animationRef.current = null
+        }
+    }, [isSpeaking])
 
     var displayProcessedFrame = (frameData) => {
         var img = new Image()
@@ -385,19 +425,37 @@ export default function VideoStream() {
     }
 
     useEffect(() => {
-        if (isStreaming === true) {
-            captureAndSendFrames()
-        }
-    }, [isStreaming])
-
-
-    useEffect(() => {
-        if (isAudioStreaming === true) {
+        if (isAudioStreaming) {
+            setIsSpeaking(true)
             startStreamingAudio()
         } else {
+            setIsSpeaking(false)
             stopStreamingAudio()
         }
     }, [isAudioStreaming])
+
+    useEffect(() => {
+        disconnectWebSocket()
+        connectWebSocket()
+    }, [params.room_id])
+
+    useEffect(() => {
+        let speakerTimeout;
+
+        if (currentSpeaker) {
+            // Сбрасываем спикера через 3 секунды без активности
+            speakerTimeout = setTimeout(() => {
+                setCurrentSpeaker(null);
+                console.log("Speaker timeout - resetting current speaker");
+            }, 3000);
+        }
+
+        return () => {
+            if (speakerTimeout) {
+                clearTimeout(speakerTimeout);
+            }
+        };
+    }, [currentSpeaker]);
 
     return (
         <>
@@ -552,7 +610,7 @@ export default function VideoStream() {
                         </div>
                         <div style={{ marginTop: "10px", color: "#666" }}>
                             {
-                                currentUser !== null && `${currentUser.first_name} ${currentUser.last_name} @${currentUser.username}`
+                                currentSpeaker !== null && `${currentSpeaker.first_name} ${currentSpeaker.last_name} @${currentSpeaker.username}`
                             }
                         </div>
                     </div>
