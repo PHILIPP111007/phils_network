@@ -80,12 +80,12 @@ export default function VideoStream() {
 
                     // Обновляем список активных пользователей
                     setActiveUsers(prev => {
-                        var users = new Set(prev);
+                        var users = new Set(prev)
                         if (data.user && data.user.username) {
-                            users.add(data.user.username);
+                            users.add(data.user.username)
                         }
-                        return Array.from(users);
-                    });
+                        return Array.from(users)
+                    })
 
                     if (data.type === "broadcast_frame") {
                         // Получаем кадр от другого пользователя
@@ -440,22 +440,22 @@ export default function VideoStream() {
     }, [params.room_id])
 
     useEffect(() => {
-        let speakerTimeout;
+        let speakerTimeout
 
         if (currentSpeaker) {
             // Сбрасываем спикера через 3 секунды без активности
             speakerTimeout = setTimeout(() => {
-                setCurrentSpeaker(null);
-                console.log("Speaker timeout - resetting current speaker");
-            }, 3000);
+                setCurrentSpeaker(null)
+                console.log("Speaker timeout - resetting current speaker")
+            }, 3000)
         }
 
         return () => {
             if (speakerTimeout) {
-                clearTimeout(speakerTimeout);
+                clearTimeout(speakerTimeout)
             }
-        };
-    }, [currentSpeaker]);
+        }
+    }, [currentSpeaker])
 
     return (
         <>
