@@ -8,6 +8,7 @@ import MainComponents from "../../components/MainComponents/MainComponents.jsx"
 export default function VideoStream() {
 
     var { user } = use(UserContext)
+    var [currentUser, setCurrentUser] = useState(null)
     var params = useParams()
     var videoRef = useRef(null)
     var canvasRef = useRef(null)
@@ -67,6 +68,7 @@ export default function VideoStream() {
 
                     if (data.type === "broadcast_frame") {
                         // Получаем кадр от другого пользователя
+                        setCurrentUser(data.user)
                         displayProcessedFrame(data.frame, data.user)
 
                         // Обновляем список активных пользователей
@@ -161,6 +163,7 @@ export default function VideoStream() {
         }
 
         setIsStreaming(false)
+        setCurrentUser(null)
     }
 
     var captureAndSendFrames = () => {
@@ -360,9 +363,13 @@ export default function VideoStream() {
                             }}
                         />
                         <div style={{ marginTop: "10px", color: "#666" }}>
-                            {activeUsers.length > 0
-                                ? `Получаем видео от ${activeUsers.length} пользователей`
-                                : "Ожидание трансляций от других пользователей"
+                            {
+                                activeUsers.length === 0 && "Ожидание трансляций от других пользователей"
+                            }
+                        </div>
+                        <div style={{ marginTop: "10px", color: "#666" }}>
+                            {
+                                currentUser !== null && `${currentUser.first_name} ${currentUser.last_name} @${currentUser.username}`
                             }
                         </div>
                     </div>
