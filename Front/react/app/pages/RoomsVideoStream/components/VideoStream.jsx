@@ -99,12 +99,14 @@ export default function VideoStream() {
                     })
 
                     if (data.type === "broadcast_frame") {
-                        var n = Number(Date.now() - data.timestamp)
+                        if (data.is_speaking && (!currentSpeaker || currentSpeaker.username !== data.user.username)) {
+                            setCurrentSpeaker(data.user)
+                        }
 
-                        if (n < 1_000) {
-                            if (!currentSpeaker) {
-                                displayProcessedFrame(data.frame)
-                            } else if (data.is_speaking) {
+                        var delay = Number(Date.now() - data.timestamp)
+                        if (delay < 1_000) {
+                            // Всегда показываем кадр если нет текущего спикера ИЛИ если это текущий спикер
+                            if (!currentSpeaker || (currentSpeaker && currentSpeaker.username === data.user.username)) {
                                 displayProcessedFrame(data.frame)
                             }
                         }
@@ -477,6 +479,23 @@ export default function VideoStream() {
         }
         img.src = frameData
     }
+
+    useEffect(() => {
+        let speakerTimeout
+
+        if (currentSpeaker) {
+            // Сбрасываем спикера через 3 секунды без активности
+            speakerTimeout = setTimeout(() => {
+                setCurrentSpeaker(null)
+            }, 3000)
+        }
+
+        return () => {
+            if (speakerTimeout) {
+                clearTimeout(speakerTimeout)
+            }
+        }
+    }, [currentSpeaker])
 
     var retryConnection = () => {
         setError("")
