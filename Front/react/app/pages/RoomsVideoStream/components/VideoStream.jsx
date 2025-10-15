@@ -31,6 +31,7 @@ export default function VideoStream() {
 
     var frameTimerRef = useRef(null)
     var speakerTimerRef = useRef(null)
+    // var timerRef = useRef(null)
 
     rememberPage(`video_stream/${params.username}/${params.room_id}`)
 
@@ -69,6 +70,7 @@ export default function VideoStream() {
             setCameraAccess(true)
         }
     }
+
     var connectWebSocket = () => {
         try {
             ws.current = getWebSocketDjango({
@@ -91,34 +93,16 @@ export default function VideoStream() {
                     })
 
                     if (data.type === "broadcast_frame") {
-                        if (frameTimerRef.current) {
-                            clearTimeout(frameTimerRef.current)
-                            frameTimerRef.current = null
-                        }
                         if (data.is_speaking) {
-                            if (currentSpeaker && currentSpeaker.username !== data.user.username) {
-                                // Задержка отображения только при смене спикера
-                                frameTimerRef.current = setTimeout(() => {
-                                    displayProcessedFrame(data.frame)
-                                    setCurrentSpeaker(data.user)
-                                }, 1000)
-                            } else {
-                                // Без задержки если тот же спикер или нет текущего
-                                displayProcessedFrame(data.frame)
-                                setCurrentSpeaker(data.user)
-                            }
+                            displayProcessedFrame(data.frame)
                         }
 
                     } else if (data.type === "broadcast_audio") {
-                        // Всегда обновляем спикера сразу для аудио
-
-                        if (data.is_speaking) { // TODO
-                            if (speakerTimerRef.current) {
+                        if (data.is_speaking) {
+                            if (currentSpeaker && currentSpeaker.username !== data.user.username) {
                                 clearTimeout(speakerTimerRef.current)
                                 speakerTimerRef.current = null
-                            }
-                            if (currentSpeaker && currentSpeaker.username !== data.user.username) {
-                                frameTimerRef.current = setTimeout(() => {
+                                speakerTimerRef.current = setTimeout(() => {
                                     setCurrentSpeaker(data.user)
                                 }, 500)
                             } else {
@@ -491,7 +475,7 @@ export default function VideoStream() {
     }, [params.room_id])
 
     useEffect(() => {
-        let speakerTimeout
+        var speakerTimeout
 
         if (currentSpeaker) {
             // Сбрасываем спикера через 3 секунды без активности
@@ -507,6 +491,17 @@ export default function VideoStream() {
             }
         }
     }, [currentSpeaker])
+
+    useEffect(() => {
+        return () => {
+            if (frameTimerRef.current) {
+                clearTimeout(frameTimerRef.current)
+            }
+            if (speakerTimerRef.current) {
+                clearTimeout(speakerTimerRef.current)
+            }
+        }
+    }, [])
 
     return (
         <>
@@ -700,7 +695,7 @@ export default function VideoStream() {
                         <h3>Список подключенных пользователей</h3>
                         {
                             activeUsers.map((username) => {
-                                return <div>@{username}</div>
+                                return <div key={username}>@{username}</div>
                             })
                         }
                     </>
