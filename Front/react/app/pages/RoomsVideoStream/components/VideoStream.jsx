@@ -92,7 +92,10 @@ export default function VideoStream() {
                     })
 
                     if (data.type === "broadcast_frame") {
-                        if (data.is_speaking) {
+                        if (!currentSpeaker) {
+                            displayProcessedFrame(data.frame)
+                        }
+                        if (data.is_speaking && currentSpeaker && currentSpeaker.username === data.user.username) {
                             displayProcessedFrame(data.frame)
                         }
 
@@ -330,6 +333,7 @@ export default function VideoStream() {
                                     user: user,
                                     active_users: activeUsers,
                                     is_speaking: true,
+                                    current_speaker: currentSpeaker,
                                 }))
                             } catch (sendError) {
                                 console.error("Error sending audio:", sendError)
@@ -392,6 +396,7 @@ export default function VideoStream() {
                 user: user,
                 active_users: activeUsers,
                 is_speaking: isSpeaking,
+                current_speaker: currentSpeaker,
             }))
         } catch (err) {
             console.error("Error sending frame:", err)

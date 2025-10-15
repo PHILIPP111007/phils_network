@@ -52,21 +52,36 @@ class VideoStreamConsumer(AsyncWebsocketConsumer):
 
 			if data["type"] == "video_frame":
 				if data["is_speaking"]:
-					# Обрабатываем кадр и рассылаем всем участникам комнаты
-					processed_frame = await self.process_frame_async(data["frame"])
+					flag = False
+					if data["current_speaker"]:
+						if (
+							data["current_speaker"]["username"]
+							== data["user"]["username"]
+						):
+							flag = True
+					else:
+						flag = True
 
-					if processed_frame:
-						# Отправляем обработанный кадр ВСЕМ подключенным клиентам
-						await self.channel_layer.group_send(
-							video_streaming_group,
-							{
-								"type": "broadcast_frame",
-								"frame": processed_frame,
-								"user": data["user"],
-								"active_users": data["active_users"],
-								"is_speaking": data["is_speaking"],
-							},
-						)
+					if flag:
+						# Максимум 5 кадров в очереди:
+						if self.executor._work_queue.qsize() > 5:
+							return
+
+						# Обрабатываем кадр и рассылаем всем участникам комнаты
+						processed_frame = await self.process_frame_async(data["frame"])
+						if processed_frame:
+							# Отправляем обработанный кадр ВСЕМ подключенным клиентам
+							await self.channel_layer.group_send(
+								video_streaming_group,
+								{
+									"type": "broadcast_frame",
+									"frame": processed_frame,
+									"user": data["user"],
+									"active_users": data["active_users"],
+									"is_speaking": data["is_speaking"],
+									"current_speaker": data["current_speaker"],
+								},
+							)
 
 			elif data["type"] == "audio_data":
 				await self.channel_layer.group_send(
@@ -77,6 +92,7 @@ class VideoStreamConsumer(AsyncWebsocketConsumer):
 						"user": data["user"],
 						"active_users": data["active_users"],
 						"is_speaking": data["is_speaking"],
+						"current_speaker": data["current_speaker"],
 					},
 				)
 
@@ -94,6 +110,7 @@ class VideoStreamConsumer(AsyncWebsocketConsumer):
 					"user": event["user"],
 					"active_users": event["active_users"],
 					"is_speaking": event["is_speaking"],
+					"current_speaker": event["current_speaker"],
 				}
 			)
 		)
@@ -108,6 +125,7 @@ class VideoStreamConsumer(AsyncWebsocketConsumer):
 					"user": event["user"],
 					"active_users": event["active_users"],
 					"is_speaking": event["is_speaking"],
+					"current_speaker": event["current_speaker"],
 				}
 			)
 		)
