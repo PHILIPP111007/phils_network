@@ -31,7 +31,6 @@ export default function VideoStream() {
 
     var frameTimerRef = useRef(null)
     var speakerTimerRef = useRef(null)
-    // var timerRef = useRef(null)
 
     rememberPage(`video_stream/${params.username}/${params.room_id}`)
 
@@ -242,7 +241,6 @@ export default function VideoStream() {
             audioStreamRef.current.getTracks().forEach(track => track.stop())
             audioStreamRef.current = null
         }
-        setIsAudioStreaming(false)
         setIsSpeaking(false)
         setCurrentSpeaker(null)
     }
@@ -253,7 +251,7 @@ export default function VideoStream() {
             var array = new Int16Array(audioBuffer.length)
             for (var i = 0; i < audioBuffer.length; i++) {
                 var sample = Math.max(-1, Math.min(1, audioBuffer[i]))
-                array[i] = sample < 0 ? sample * 0x8000 : sample * 0x7FFF
+                array[i] = sample * 0x7FFF
             }
 
             // Конвертируем Int16Array в base64 правильно
@@ -277,7 +275,7 @@ export default function VideoStream() {
             var int16Array = new Int16Array(bytes.buffer)
             var floatBuffer = new Float32Array(int16Array.length)
             for (var i = 0; i < int16Array.length; i++) {
-                floatBuffer[i] = int16Array[i] < 0 ? int16Array[i] / 0x8000 : int16Array[i] / 0x7FFF
+                floatBuffer[i] = int16Array[i] / 0x7FFF
             }
 
             return floatBuffer
@@ -345,12 +343,10 @@ export default function VideoStream() {
 
             source.connect(audioProcessorRef.current)
             audioProcessorRef.current.connect(audioContextRef.current.destination)
-            setIsAudioStreaming(true)
             console.log("Audio processing started successfully")
 
         } catch (error) {
             console.error("Error starting audio processing:", error)
-            setIsAudioStreaming(false)
             setIsSpeaking(false)
         }
     }
@@ -459,12 +455,10 @@ export default function VideoStream() {
 
     useEffect(() => {
         if (isAudioStreaming) {
-            setIsSpeaking(true)
             if (!audioStreamRef.current) {
                 startStreamingAudio()
             }
         } else {
-            setIsSpeaking(false)
             stopStreamingAudio()
         }
     }, [isAudioStreaming])
