@@ -24,9 +24,13 @@ export default function VideoStream() {
     var animationRef = useRef(null)
 
     var [isAudioStreaming, setIsAudioStreaming] = useState(false)
+    var [audioLevel, setAudioLevel] = useState(0)
     var audioContextRef = useRef(null)
     var audioStreamRef = useRef(null)
     var audioProcessorRef = useRef(null)
+
+    var frameTimerRef = useRef(null)
+    var speakerTimerRef = useRef(null)
 
     rememberPage(`video_stream/${params.username}/${params.room_id}`)
 
@@ -65,7 +69,6 @@ export default function VideoStream() {
             setCameraAccess(true)
         }
     }
-
     var connectWebSocket = () => {
         try {
             ws.current = getWebSocketDjango({
@@ -88,14 +91,43 @@ export default function VideoStream() {
                     })
 
                     if (data.type === "broadcast_frame") {
-                        // Получаем кадр от другого пользователя
-                        setCurrentSpeaker(() => data.user)
-                        displayProcessedFrame(data.frame)
+                        if (frameTimerRef.current) {
+                            clearTimeout(frameTimerRef.current)
+                            frameTimerRef.current = null
+                        }
+                        if (data.is_speaking) {
+                            if (currentSpeaker && currentSpeaker.username !== data.user.username) {
+                                // Задержка отображения только при смене спикера
+                                frameTimerRef.current = setTimeout(() => {
+                                    displayProcessedFrame(data.frame)
+                                    setCurrentSpeaker(data.user)
+                                }, 1000)
+                            } else {
+                                // Без задержки если тот же спикер или нет текущего
+                                displayProcessedFrame(data.frame)
+                                setCurrentSpeaker(data.user)
+                            }
+                        }
 
                     } else if (data.type === "broadcast_audio") {
-                        setCurrentSpeaker(() => data.user)
-                        if (user.username !== data.user.username) {
-                            playReceivedAudio(data.audio)
+                        // Всегда обновляем спикера сразу для аудио
+
+                        if (data.is_speaking) { // TODO
+                            if (speakerTimerRef.current) {
+                                clearTimeout(speakerTimerRef.current)
+                                speakerTimerRef.current = null
+                            }
+                            if (currentSpeaker && currentSpeaker.username !== data.user.username) {
+                                frameTimerRef.current = setTimeout(() => {
+                                    setCurrentSpeaker(data.user)
+                                }, 500)
+                            } else {
+                                setCurrentSpeaker(data.user)
+                            }
+
+                            if (user.username !== data.user.username) {
+                                playReceivedAudio(data.audio)
+                            }
                         }
                     } else if (data.type === "error") {
                         console.error("Server error:", data.message)
@@ -208,7 +240,8 @@ export default function VideoStream() {
         }
 
         setIsStreaming(false)
-        setIsSpeaking(() => false)
+        setIsSpeaking(false)
+        setCurrentSpeaker(null)
     }
 
     var stopStreamingAudio = () => {
@@ -226,8 +259,8 @@ export default function VideoStream() {
             audioStreamRef.current = null
         }
         setIsAudioStreaming(false)
-        setIsSpeaking(() => false)
-        setCurrentSpeaker(() => null)
+        setIsSpeaking(false)
+        setCurrentSpeaker(null)
     }
 
     var base64EncodeAudio = (audioBuffer) => {
@@ -293,20 +326,35 @@ export default function VideoStream() {
             audioProcessorRef.current.onaudioprocess = (event) => {
                 if (isAudioStreaming && ws.current.readyState === WebSocket.OPEN) {
                     var audioData = event.inputBuffer.getChannelData(0)
-                    var encoded = base64EncodeAudio(audioData)
 
-                    if (encoded) {
-                        try {
-                            ws.current.send(JSON.stringify({
-                                type: "audio_data",
-                                audio: encoded,
-                                room: params.room_id,
-                                user: user,
-                                active_users: activeUsers,
-                            }))
-                        } catch (sendError) {
-                            console.error("Error sending audio:", sendError)
+                    // Расчет уровня звука
+                    var sum = 0
+                    for (var i = 0; i < audioData.length; i++) {
+                        sum += Math.abs(audioData[i])
+                    }
+                    var level = sum / audioData.length
+                    setAudioLevel(level)
+
+                    // Отправка только если звук выше порога
+                    if (level > 0.005) {
+                        var encoded = base64EncodeAudio(audioData)
+                        if (encoded) {
+                            setIsSpeaking(true)
+                            try {
+                                ws.current.send(JSON.stringify({
+                                    type: "audio_data",
+                                    audio: encoded,
+                                    room: params.room_id,
+                                    user: user,
+                                    active_users: activeUsers,
+                                    is_speaking: true,
+                                }))
+                            } catch (sendError) {
+                                console.error("Error sending audio:", sendError)
+                            }
                         }
+                    } else {
+                        setIsSpeaking(false)
                     }
                 }
             }
@@ -363,6 +411,7 @@ export default function VideoStream() {
                 room: params.room_id,
                 user: user,
                 active_users: activeUsers,
+                is_speaking: isSpeaking,
             }))
         } catch (err) {
             console.error("Error sending frame:", err)
@@ -427,7 +476,9 @@ export default function VideoStream() {
     useEffect(() => {
         if (isAudioStreaming) {
             setIsSpeaking(true)
-            startStreamingAudio()
+            if (!audioStreamRef.current) {
+                startStreamingAudio()
+            }
         } else {
             setIsSpeaking(false)
             stopStreamingAudio()
@@ -613,6 +664,29 @@ export default function VideoStream() {
                                 currentSpeaker !== null && `${currentSpeaker.first_name} ${currentSpeaker.last_name} @${currentSpeaker.username}`
                             }
                         </div>
+                        {
+                            isAudioStreaming &&
+
+                            <div style={{ marginTop: "10px" }}>
+                                Уровень звука:
+                                <div style={{
+                                    width: "200px",
+                                    height: "20px",
+                                    backgroundColor: "#ddd",
+                                    display: "inline-block",
+                                    marginLeft: "10px",
+                                    borderRadius: "10px",
+                                    overflow: "hidden"
+                                }}>
+                                    <div style={{
+                                        width: `${Math.min(audioLevel * 1000, 100)}%`,
+                                        height: "100%",
+                                        backgroundColor: audioLevel > 0.01 ? "#4CAF50" : "#f44336",
+                                        transition: "width 0.1s"
+                                    }} />
+                                </div>
+                            </div>
+                        }
                     </div>
                 </div>
 

@@ -67,7 +67,7 @@ def get_workers_count() -> int:
 def get_threads_count() -> int:
 	"""2-4 x $(NUM_CORES)"""
 
-	return 1
+	return 5
 
 
 #
