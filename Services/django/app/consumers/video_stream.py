@@ -1,14 +1,10 @@
-import asyncio
-import base64
 import json
 import logging
 from concurrent.futures import ThreadPoolExecutor
-from io import BytesIO
 
 from app.services import MessageService
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
-from PIL import Image
 from rest_framework.authtoken.models import Token
 
 from django.conf import settings
@@ -16,6 +12,7 @@ from django.conf import settings
 logger = logging.getLogger(__name__)
 
 VIDEO_STREAMING_GROUP = "video_streaming_group_{}"
+AUDIO_STREAMING_GROUP = "audio_streaming_group_{}"
 
 
 class VideoStreamConsumer(AsyncWebsocketConsumer):
@@ -50,49 +47,25 @@ class VideoStreamConsumer(AsyncWebsocketConsumer):
 			room_id = data["room"]
 			video_streaming_group = VIDEO_STREAMING_GROUP.format(room_id)
 
-			if data["type"] == "video_frame":
-				if data["is_speaking"]:
-					flag = False
-					if data["current_speaker"]:
-						if (
-							data["current_speaker"]["username"]
-							== data["user"]["username"]
-						):
-							flag = True
-					else:
-						flag = True
+			if data["is_speaking"]:
+				# flag = False
+				# if data["current_speaker"]:
+				# 	if data["current_speaker"]["username"] == data["user"]["username"]:
+				# 		flag = True
+				# else:
+				# 	flag = True
 
-					if flag:
-						# Максимум 5 кадров в очереди:
-						if self.executor._work_queue.qsize() > 5:
-							return
-
-						# Обрабатываем кадр и рассылаем всем участникам комнаты
-						processed_frame = await self.process_frame_async(data["frame"])
-						if processed_frame:
-							# Отправляем обработанный кадр ВСЕМ подключенным клиентам
-							await self.channel_layer.group_send(
-								video_streaming_group,
-								{
-									"type": "broadcast_frame",
-									"frame": processed_frame,
-									"user": data["user"],
-									"active_users": data["active_users"],
-									"is_speaking": data["is_speaking"],
-									"current_speaker": data["current_speaker"],
-								},
-							)
-
-			elif data["type"] == "audio_data":
+				# if flag:
 				await self.channel_layer.group_send(
 					video_streaming_group,
 					{
-						"type": "broadcast_audio",
-						"audio": data["audio"],
+						"type": "broadcast_frame",
+						"frame": data["frame"],
 						"user": data["user"],
 						"active_users": data["active_users"],
 						"is_speaking": data["is_speaking"],
 						"current_speaker": data["current_speaker"],
+						"timestamp": data["timestamp"],
 					},
 				)
 
@@ -111,9 +84,53 @@ class VideoStreamConsumer(AsyncWebsocketConsumer):
 					"active_users": event["active_users"],
 					"is_speaking": event["is_speaking"],
 					"current_speaker": event["current_speaker"],
+					"timestamp": event["timestamp"],
 				}
 			)
 		)
+
+
+class AudioStreamConsumer(AsyncWebsocketConsumer):
+	async def connect(self):
+		token_key = self.scope["query_string"].decode().split("=")[-1]
+		pk = await _get_user_pk(token_key=token_key)
+
+		if not pk:
+			await self.close()
+		else:
+			room_id = int(self.scope["url_route"]["kwargs"]["room"])
+			flag = await _check_permission(room_id=room_id, pk=pk)
+			if flag:
+				audio_streaming_group = AUDIO_STREAMING_GROUP.format(room_id)
+				await self.channel_layer.group_add(
+					audio_streaming_group, self.channel_name
+				)
+				await self.accept()
+			else:
+				await self.close()
+
+	async def receive(self, text_data):
+		try:
+			data = json.loads(text_data)
+
+			room_id = data["room"]
+			audio_streaming_group = AUDIO_STREAMING_GROUP.format(room_id)
+
+			await self.channel_layer.group_send(
+				audio_streaming_group,
+				{
+					"type": "broadcast_audio",
+					"audio": data["audio"],
+					"user": data["user"],
+					"active_users": data["active_users"],
+					"is_speaking": data["is_speaking"],
+					"current_speaker": data["current_speaker"],
+					"timestamp": data["timestamp"],
+				},
+			)
+
+		except Exception:
+			await self.close()
 
 	async def broadcast_audio(self, event):
 		"""Отправляет аудио всем клиентам в комнате"""
@@ -126,38 +143,10 @@ class VideoStreamConsumer(AsyncWebsocketConsumer):
 					"active_users": event["active_users"],
 					"is_speaking": event["is_speaking"],
 					"current_speaker": event["current_speaker"],
+					"timestamp": event["timestamp"],
 				}
 			)
 		)
-
-	async def process_frame_async(self, frame_data):
-		loop = asyncio.get_event_loop()
-		result = await loop.run_in_executor(
-			self.executor, self.process_frame, frame_data
-		)
-		return result
-
-	def process_frame(self, frame_data):
-		"""Обработка кадра"""
-
-		try:
-			# Извлекаем base64 данные
-			header, encoded = frame_data.split(",", 1)
-			image_bytes = base64.b64decode(encoded)
-
-			# Открываем изображение
-			image = Image.open(BytesIO(image_bytes))
-
-			# Конвертируем обратно
-			buffer = BytesIO()
-			image.save(buffer, format="JPEG", quality=80, optimize=True)
-			processed_b64 = base64.b64encode(buffer.getvalue()).decode("utf-8")
-
-			return f"data:image/jpeg;base64,{processed_b64}"
-
-		except Exception as e:
-			logger.error(f"Frame processing error: {e}")
-			return
 
 
 @database_sync_to_async

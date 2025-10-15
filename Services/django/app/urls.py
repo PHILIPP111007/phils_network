@@ -18,6 +18,7 @@ __all__ = ["urlpatterns", "websocket_urlpatterns"]
 
 
 from app.consumers import (
+	AudioStreamConsumer,
 	ChatConsumer,
 	DeleteMessageConsumer,
 	LikeMessageConsumer,
@@ -50,4 +51,5 @@ websocket_urlpatterns = [
 	path("ws/v1/chat/<str:room>/", ChatConsumer.as_asgi()),
 	path("ws/v1/online_status/<str:user_id>/", OnlineStatusConsumer.as_asgi()),
 	path("ws/v1/video_stream/<str:room>/", VideoStreamConsumer.as_asgi()),
+	path("ws/v1/audio_stream/<str:room>/", AudioStreamConsumer.as_asgi()),
 ]
