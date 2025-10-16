@@ -278,6 +278,7 @@ export default function VideoStream() {
             audioStreamRef.current = null
         }
         setIsSpeaking(false)
+        setCurrentSpeaker(() => null)
     }
 
     var base64EncodeAudio = (audioBuffer) => {
