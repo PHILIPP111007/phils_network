@@ -245,6 +245,7 @@ export default function VideoStream() {
             videoRef.current.srcObject = null
         }
         setIsStreaming(false)
+        setCurrentSpeaker(() => null)
     }
 
     var stopStreamingAudio = () => {
@@ -262,6 +263,7 @@ export default function VideoStream() {
             audioStreamRef.current = null
         }
         setIsSpeaking(false)
+        setCurrentSpeaker(() => null)
     }
 
     var base64EncodeAudio = (audioBuffer) => {
@@ -309,7 +311,7 @@ export default function VideoStream() {
         try {
             console.log("Starting audio processing...")
 
-            // Создаем AudioContext
+            // Создаем AudioContext в приостановленном состоянии
             audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)()
             console.log("AudioContext created")
 
@@ -319,6 +321,17 @@ export default function VideoStream() {
                 return
             }
 
+            // +++ ДОБАВЛЕНО: Резюмируем контекст по пользовательскому жесту +++
+            var resumeAudioContext = async () => {
+                if (audioContextRef.current && audioContextRef.current.state === 'suspended') {
+                    await audioContextRef.current.resume()
+                    console.log("AudioContext resumed")
+                }
+            }
+
+            // Вызываем резюмирование при создании
+            resumeAudioContext()
+
             var source = audioContextRef.current.createMediaStreamSource(stream)
             console.log("MediaStreamSource created")
 
@@ -327,6 +340,12 @@ export default function VideoStream() {
 
             audioProcessorRef.current.onaudioprocess = (event) => {
                 if (isAudioStreaming && webSocketAudio.current.readyState === WebSocket.OPEN) {
+                    // +++ ДОБАВЛЕНО: Проверяем состояние контекста +++
+                    if (audioContextRef.current.state !== 'running') {
+                        resumeAudioContext()
+                        return
+                    }
+
                     var audioData = event.inputBuffer.getChannelData(0)
 
                     // Расчет уровня звука
@@ -357,8 +376,6 @@ export default function VideoStream() {
                                 console.error("Error sending audio:", sendError)
                             }
                         }
-                    } else {
-                        setIsSpeaking(false)
                     }
                 }
             }
@@ -492,6 +509,10 @@ export default function VideoStream() {
                 cancelAnimationFrame(animationRef.current)
                 animationRef.current = null
             }
+        }
+
+        if (isFullscreen) {
+            animationRef.current = requestAnimationFrame(captureAndSendFrames)
         }
 
         return () => {
