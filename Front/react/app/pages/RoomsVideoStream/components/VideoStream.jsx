@@ -130,7 +130,10 @@ export default function VideoStream() {
                             }
 
                             if (user.username !== data.user.username) {
-                                playReceivedAudio(data.audio)
+                                var delay = Number(Date.now() - data.timestamp)
+                                if (delay < 100) {
+                                    playReceivedAudio(data.audio)
+                                }
                             }
                         }
                     } else if (data.type === "error") {
