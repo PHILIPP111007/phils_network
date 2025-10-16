@@ -54,7 +54,7 @@ export default function VideoStream() {
         }
     }
 
-    var connectWebSocket = () => {
+    var connectWebSocket = async () => {
         try {
             webSocketVideo.current = getWebSocketDjango({
                 socket_name: "videoStreamSocket",
@@ -68,9 +68,9 @@ export default function VideoStream() {
                 setIsConnected: setIsConnected
             })
 
-            webSocketVideo.current.onmessage = (event) => {
+            webSocketVideo.current.onmessage = async (event) => {
                 try {
-                    var data = JSON.parse(event.data)
+                    var data = await JSON.parse(event.data)
 
                     // Обновляем список активных пользователей
                     setActiveUsers(prev => {
@@ -84,17 +84,18 @@ export default function VideoStream() {
                     if (data.type === "broadcast_frame") {
                         if (data.is_speaking) {
                             var delay = Number(Date.now() - data.timestamp)
-                            if (delay < 300) {
-                                if (currentSpeaker && currentSpeaker.username !== data.user.username) {
-                                    clearTimeout(frameTimerRef.current)
-                                    frameTimerRef.current = setTimeout(() => {
-                                        setCurrentSpeaker(data.user)
-                                        displayProcessedFrame(data.frame)
-                                    }, 300)
-                                } else {
-                                    setCurrentSpeaker(data.user)
-                                    displayProcessedFrame(data.frame)
-                                }
+                            if (delay < 500) {
+                                // if (currentSpeaker && currentSpeaker.username !== data.user.username) {
+                                //     clearTimeout(frameTimerRef.current)
+                                //     frameTimerRef.current = setTimeout(() => {
+                                //         setCurrentSpeaker(data.user)
+                                //         displayProcessedFrame(data.frame)
+                                //     }, 300)
+                                // } else {
+                                //     setCurrentSpeaker(data.user)
+                                //     displayProcessedFrame(data.frame)
+                                // }
+                                await displayProcessedFrame(data.frame)
                             }
                         }
                     } else if (data.type === "error") {
@@ -106,9 +107,9 @@ export default function VideoStream() {
                 }
             }
 
-            webSocketAudio.current.onmessage = (event) => {
+            webSocketAudio.current.onmessage = async (event) => {
                 try {
-                    var data = JSON.parse(event.data)
+                    var data = await JSON.parse(event.data)
 
                     // Обновляем список активных пользователей
                     setActiveUsers(prev => {
@@ -121,19 +122,20 @@ export default function VideoStream() {
 
                     if (data.type === "broadcast_audio") {
                         if (data.is_speaking) {
-                            if (currentSpeaker && currentSpeaker.username !== data.user.username) {
-                                clearTimeout(speakerTimerRef.current)
-                                speakerTimerRef.current = setTimeout(() => {
-                                    setCurrentSpeaker(data.user)
-                                }, 300)
-                            } else {
-                                setCurrentSpeaker(data.user)
-                            }
+                            // if (currentSpeaker && currentSpeaker.username !== data.user.username) {
+                            //     clearTimeout(speakerTimerRef.current)
+                            //     speakerTimerRef.current = setTimeout(() => {
+                            //         setCurrentSpeaker(data.user)
+                            //     }, 300)
+                            // } else {
+                            //     setCurrentSpeaker(data.user)
+                            // }
 
                             if (user.username !== data.user.username) {
                                 var delay = Number(Date.now() - data.timestamp)
-                                if (delay < 300) {
-                                    playReceivedAudio(data.audio)
+                                if (delay < 500) {
+                                    setCurrentSpeaker(data.user)
+                                    await playReceivedAudio(data.audio)
                                 }
                             }
                         }
@@ -217,7 +219,7 @@ export default function VideoStream() {
 
             audioStreamRef.current = stream
 
-            startAudioProcessing(stream)
+            await startAudioProcessing(stream)
         } catch (error) {
             console.error("Error accessing camera:", error)
             let errorMessage = "Не удалось получить доступ к камере. "
@@ -270,7 +272,7 @@ export default function VideoStream() {
         setCurrentSpeaker(() => null)
     }
 
-    var base64EncodeAudio = (audioBuffer) => {
+    var base64EncodeAudio = async (audioBuffer) => {
         try {
             // Конвертируем Float32 в Int16
             var array = new Int16Array(audioBuffer.length)
@@ -288,7 +290,7 @@ export default function VideoStream() {
         }
     }
 
-    var base64DecodeAudio = (base64Data) => {
+    var base64DecodeAudio = async (base64Data) => {
         try {
             var binaryString = atob(base64Data)
             var bytes = new Uint8Array(binaryString.length)
@@ -311,7 +313,7 @@ export default function VideoStream() {
         }
     }
 
-    var startAudioProcessing = (stream) => {
+    async function startAudioProcessing(stream) {
         try {
             console.log("Starting audio processing...")
 
@@ -334,7 +336,7 @@ export default function VideoStream() {
             }
 
             // Вызываем резюмирование при создании
-            resumeAudioContext()
+            await resumeAudioContext()
 
             var source = audioContextRef.current.createMediaStreamSource(stream)
             console.log("MediaStreamSource created")
@@ -342,11 +344,11 @@ export default function VideoStream() {
             audioProcessorRef.current = audioContextRef.current.createScriptProcessor(4096, 1, 1)
             console.log("ScriptProcessorNode created")
 
-            audioProcessorRef.current.onaudioprocess = (event) => {
+            audioProcessorRef.current.onaudioprocess = async (event) => {
                 if (isAudioStreaming && webSocketAudio.current.readyState === WebSocket.OPEN) {
                     // +++ ДОБАВЛЕНО: Проверяем состояние контекста +++
                     if (audioContextRef.current.state !== 'running') {
-                        resumeAudioContext()
+                        await resumeAudioContext()
                         return
                     }
 
@@ -362,11 +364,11 @@ export default function VideoStream() {
 
                     // Отправка только если звук выше порога
                     if (level > 0.005) {
-                        var encoded = base64EncodeAudio(audioData)
+                        var encoded = await base64EncodeAudio(audioData)
                         if (encoded) {
                             setIsSpeaking(true)
                             try {
-                                webSocketAudio.current.send(JSON.stringify({
+                                await webSocketAudio.current.send(JSON.stringify({
                                     type: "audio_data",
                                     audio: encoded,
                                     room: params.room_id,
@@ -394,9 +396,9 @@ export default function VideoStream() {
         }
     }
 
-    var playReceivedAudio = (audioData) => {
+    var playReceivedAudio = async (audioData) => {
         var audioContext = new (window.AudioContext || window.webkitAudioContext)()
-        var decodedData = base64DecodeAudio(audioData)
+        var decodedData = await base64DecodeAudio(audioData)
 
         var buffer = audioContext.createBuffer(1, decodedData.length, audioContext.sampleRate)
         buffer.copyToChannel(decodedData, 0)
@@ -407,8 +409,8 @@ export default function VideoStream() {
         source.start()
     }
 
-    var captureAndSendFrames = () => {
-        if (!isStreaming || !webSocketVideo.current || webSocketVideo.current.readyState !== WebSocket.OPEN || !isSpeaking) {
+    var captureAndSendFrames = async () => {
+        if (!isStreaming || !webSocketVideo.current || webSocketVideo.current.readyState !== WebSocket.OPEN) {
             return
         }
 
@@ -438,7 +440,7 @@ export default function VideoStream() {
         }
 
         try {
-            webSocketVideo.current.send(JSON.stringify({
+            await webSocketVideo.current.send(JSON.stringify({
                 type: "video_frame",
                 frame: frameData,
                 room: params.room_id,
@@ -460,9 +462,9 @@ export default function VideoStream() {
         }, 100) // ~10 FPS
     }
 
-    var displayProcessedFrame = (frameData) => {
+    var displayProcessedFrame = async (frameData) => {
         var img = new Image()
-        img.onload = () => {
+        img.onload = async () => {
             var mainContext
             if (isFullscreen && canvasModalRef.current) {
                 mainContext = canvasModalRef.current.getContext("2d")
@@ -505,37 +507,75 @@ export default function VideoStream() {
         }
     }, [params.room_id])
 
+    // useEffect(() => {
+    //     if (isStreaming && isSpeaking && isAudioStreaming) {
+    //         animationRef.current = requestAnimationFrame(captureAndSendFrames)
+    //     } else {
+    //         if (animationRef.current) {
+    //             cancelAnimationFrame(animationRef.current)
+    //             animationRef.current = null
+    //         }
+    //     }
+
+    //     if (isFullscreen) {
+    //         animationRef.current = requestAnimationFrame(captureAndSendFrames)
+    //     }
+
+    //     return () => {
+    //         if (animationRef.current) {
+    //             cancelAnimationFrame(animationRef.current)
+    //             animationRef.current = null
+    //         }
+    //     }
+    // }, [isStreaming, isSpeaking, isAudioStreaming, isFullscreen])
+
+
+
+
+
     useEffect(() => {
-        if (isStreaming && isSpeaking && isAudioStreaming) {
-            animationRef.current = requestAnimationFrame(captureAndSendFrames)
+        const shouldStreamVideo = isStreaming && webSocketVideo.current?.readyState === WebSocket.OPEN
+
+        if (shouldStreamVideo) {
+            if (!animationRef.current) {
+                animationRef.current = requestAnimationFrame(captureAndSendFrames)
+            }
         } else {
             if (animationRef.current) {
                 cancelAnimationFrame(animationRef.current)
                 animationRef.current = null
             }
         }
-
-        if (isFullscreen) {
-            animationRef.current = requestAnimationFrame(captureAndSendFrames)
-        }
-
+        // if (isFullscreen) {
+        //     animationRef.current = requestAnimationFrame(captureAndSendFrames)
+        // }
         return () => {
             if (animationRef.current) {
                 cancelAnimationFrame(animationRef.current)
                 animationRef.current = null
             }
         }
-    }, [isStreaming, isSpeaking, isAudioStreaming, isFullscreen])
+    }, [isStreaming, isSpeaking]) // Убрать isSpeaking и isAudioStreaming из зависимостей
 
+    // Для управления только аудио-стримингом
     useEffect(() => {
-        if (isAudioStreaming) {
-            if (!audioStreamRef.current) {
-                startStreamingAudio()
-            }
-        } else {
+        if (isAudioStreaming && !audioStreamRef.current) {
+            startStreamingAudio()
+        } else if (!isAudioStreaming && audioStreamRef.current) {
             stopStreamingAudio()
         }
     }, [isAudioStreaming])
+
+
+    // useEffect(() => {
+    //     if (isAudioStreaming) {
+    //         if (!audioStreamRef.current) {
+    //             startStreamingAudio()
+    //         }
+    //     } else {
+    //         stopStreamingAudio()
+    //     }
+    // }, [isAudioStreaming])
 
     useEffect(() => {
         disconnectWebSocket()
