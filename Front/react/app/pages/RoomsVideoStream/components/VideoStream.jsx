@@ -260,6 +260,7 @@ export default function VideoStream() {
             videoRef.current.srcObject = null
         }
         setIsStreaming(false)
+        setCurrentSpeaker(() => null)
     }
 
     var stopStreamingAudio = () => {
@@ -476,12 +477,10 @@ export default function VideoStream() {
         var img = new Image()
         img.onload = () => {
             var mainContext
-            if (isFullscreen) {
-                if (canvasModalRef.current) {
-                    mainContext = canvasModalRef.current.getContext("2d")
-                    mainContext.clearRect(0, 0, canvasModalRef.current.width, canvasModalRef.current.height)
-                    mainContext.drawImage(img, 0, 0, canvasModalRef.current.width, canvasModalRef.current.height)
-                }
+            if (isFullscreen && canvasModalRef.current) {
+                mainContext = canvasModalRef.current.getContext("2d")
+                mainContext.clearRect(0, 0, canvasModalRef.current.width, canvasModalRef.current.height)
+                mainContext.drawImage(img, 0, 0, canvasModalRef.current.width, canvasModalRef.current.height)
             } else {
                 if (canvasRef.current) {
                     mainContext = canvasRef.current.getContext("2d")
