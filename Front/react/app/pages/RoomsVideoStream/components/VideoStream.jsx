@@ -36,21 +36,6 @@ export default function VideoStream() {
 
     rememberPage(`video_stream/${params.username}/${params.room_id}`)
 
-    useEffect(() => {
-        checkCameraAccess()
-        connectWebSocket()
-
-        return () => {
-            disconnectWebSocket()
-            stopStreamingVideo()
-            stopStreamingAudio()
-
-            if (animationRef.current) {
-                cancelAnimationFrame(animationRef.current)
-            }
-        }
-    }, [params.room_id])
-
     var checkCameraAccess = async () => {
         try {
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -260,7 +245,6 @@ export default function VideoStream() {
             videoRef.current.srcObject = null
         }
         setIsStreaming(false)
-        setCurrentSpeaker(() => null)
     }
 
     var stopStreamingAudio = () => {
@@ -278,7 +262,6 @@ export default function VideoStream() {
             audioStreamRef.current = null
         }
         setIsSpeaking(false)
-        setCurrentSpeaker(() => null)
     }
 
     var base64EncodeAudio = (audioBuffer) => {
@@ -456,24 +439,6 @@ export default function VideoStream() {
         }, 100) // ~10 FPS
     }
 
-    useEffect(() => {
-        if (isStreaming && isSpeaking && isAudioStreaming) {
-            animationRef.current = requestAnimationFrame(captureAndSendFrames)
-        } else {
-            if (animationRef.current) {
-                cancelAnimationFrame(animationRef.current)
-                animationRef.current = null
-            }
-        }
-
-        return () => {
-            if (animationRef.current) {
-                cancelAnimationFrame(animationRef.current)
-                animationRef.current = null
-            }
-        }
-    }, [isStreaming, isSpeaking, isAudioStreaming])
-
     var displayProcessedFrame = (frameData) => {
         var img = new Image()
         img.onload = () => {
@@ -496,23 +461,6 @@ export default function VideoStream() {
         img.src = frameData
     }
 
-    useEffect(() => {
-        let speakerTimeout
-
-        if (currentSpeaker) {
-            // Сбрасываем спикера через 3 секунды без активности
-            speakerTimeout = setTimeout(() => {
-                setCurrentSpeaker(null)
-            }, 3000)
-        }
-
-        return () => {
-            if (speakerTimeout) {
-                clearTimeout(speakerTimeout)
-            }
-        }
-    }, [currentSpeaker])
-
     var retryConnection = () => {
         setError("")
         disconnectWebSocket()
@@ -520,6 +468,39 @@ export default function VideoStream() {
             connectWebSocket()
         }, 1000)
     }
+
+    useEffect(() => {
+        checkCameraAccess()
+        connectWebSocket()
+
+        return () => {
+            disconnectWebSocket()
+            stopStreamingVideo()
+            stopStreamingAudio()
+
+            if (animationRef.current) {
+                cancelAnimationFrame(animationRef.current)
+            }
+        }
+    }, [params.room_id])
+
+    useEffect(() => {
+        if (isStreaming && isSpeaking && isAudioStreaming) {
+            animationRef.current = requestAnimationFrame(captureAndSendFrames)
+        } else {
+            if (animationRef.current) {
+                cancelAnimationFrame(animationRef.current)
+                animationRef.current = null
+            }
+        }
+
+        return () => {
+            if (animationRef.current) {
+                cancelAnimationFrame(animationRef.current)
+                animationRef.current = null
+            }
+        }
+    }, [isStreaming, isSpeaking, isAudioStreaming, isFullscreen])
 
     useEffect(() => {
         if (isAudioStreaming) {
