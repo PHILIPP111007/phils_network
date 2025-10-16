@@ -84,14 +84,15 @@ export default function VideoStream() {
                     if (data.type === "broadcast_frame") {
                         if (data.is_speaking) {
                             var delay = Number(Date.now() - data.timestamp)
-                            if (delay < 100) {
+                            if (delay < 300) {
                                 if (currentSpeaker && currentSpeaker.username !== data.user.username) {
                                     clearTimeout(frameTimerRef.current)
                                     frameTimerRef.current = setTimeout(() => {
                                         setCurrentSpeaker(data.user)
                                         displayProcessedFrame(data.frame)
-                                    }, 500)
+                                    }, 300)
                                 } else {
+                                    setCurrentSpeaker(data.user)
                                     displayProcessedFrame(data.frame)
                                 }
                             }
@@ -124,14 +125,14 @@ export default function VideoStream() {
                                 clearTimeout(speakerTimerRef.current)
                                 speakerTimerRef.current = setTimeout(() => {
                                     setCurrentSpeaker(data.user)
-                                }, 500)
+                                }, 300)
                             } else {
                                 setCurrentSpeaker(data.user)
                             }
 
                             if (user.username !== data.user.username) {
                                 var delay = Number(Date.now() - data.timestamp)
-                                if (delay < 100) {
+                                if (delay < 300) {
                                     playReceivedAudio(data.audio)
                                 }
                             }
