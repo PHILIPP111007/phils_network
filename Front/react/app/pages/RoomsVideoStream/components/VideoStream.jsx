@@ -457,18 +457,24 @@ export default function VideoStream() {
     var displayProcessedFrame = async (frameData) => {
         var img = new Image()
         img.onload = async () => {
-            var mainContext
-            if (isFullscreen && canvasModalRef.current) {
-                mainContext = canvasModalRef.current.getContext("2d")
-                mainContext.clearRect(0, 0, canvasModalRef.current.width, canvasModalRef.current.height)
-                mainContext.drawImage(img, 0, 0, canvasModalRef.current.width, canvasModalRef.current.height)
-            } else {
-                if (canvasRef.current) {
-                    mainContext = canvasRef.current.getContext("2d")
-                    mainContext.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
-                    mainContext.drawImage(img, 0, 0, canvasRef.current.width, canvasRef.current.height)
-                }
+            var targetCanvas = isFullscreen ? canvasModalRef.current : canvasRef.current
+            if (!targetCanvas) {
+                console.warn("Canvas not available")
+                return
             }
+            var context = targetCanvas.getContext('2d')
+            if (!context) {
+                console.warn("Canvas context not available")
+                return
+            }
+
+            // Устанавливаем размеры canvas
+            targetCanvas.width = img.width
+            targetCanvas.height = img.height
+
+            // Очищаем и рисуем
+            context.clearRect(0, 0, targetCanvas.width, targetCanvas.height)
+            context.drawImage(img, 0, 0, targetCanvas.width, targetCanvas.height)
         }
         img.onerror = () => {
             console.error("Error loading broadcast image")
@@ -519,7 +525,28 @@ export default function VideoStream() {
                 animationRef.current = null
             }
         }
-    }, [isStreaming, isSpeaking, isFullscreen])
+    }, [isStreaming, isSpeaking])
+
+
+    useEffect(() => {
+        if (isFullscreen && webSocketVideo.current?.readyState === WebSocket.OPEN) {
+            if (!animationRef.current) {
+                animationRef.current = requestAnimationFrame(captureAndSendFrames)
+            }
+        } else {
+            if (animationRef.current) {
+                cancelAnimationFrame(animationRef.current)
+                animationRef.current = null
+            }
+        }
+
+        return () => {
+            if (animationRef.current) {
+                cancelAnimationFrame(animationRef.current)
+                animationRef.current = null
+            }
+        }
+    }, [isFullscreen])
 
     useEffect(() => {
         if (isAudioStreaming && !audioStreamRef.current) {
