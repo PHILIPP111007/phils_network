@@ -95,10 +95,9 @@ export default function VideoStream() {
                     })
 
                     if (data.type === "broadcast_frame") {
-                        var delay = Number(Date.now() - data.timestamp)
-                        if (delay < 1_000) {
-                            // Всегда показываем кадр если нет текущего спикера ИЛИ если это текущий спикер
-                            if (!currentSpeaker || (currentSpeaker && currentSpeaker.username === data.user.username)) {
+                        if (data.is_speaking) {
+                            var delay = Number(Date.now() - data.timestamp)
+                            if (delay < 100) {
                                 displayProcessedFrame(data.frame)
                             }
                         }
@@ -131,7 +130,7 @@ export default function VideoStream() {
                                 speakerTimerRef.current = setTimeout(() => {
                                     setCurrentSpeaker(data.user)
                                 }, 500)
-                            } else if (!currentSpeaker) {
+                            } else {
                                 setCurrentSpeaker(data.user)
                             }
 
@@ -254,7 +253,6 @@ export default function VideoStream() {
         }
 
         setIsStreaming(false)
-        // setIsSpeaking(false)
     }
 
     var stopStreamingAudio = () => {
