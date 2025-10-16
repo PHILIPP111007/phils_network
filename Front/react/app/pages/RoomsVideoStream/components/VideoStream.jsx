@@ -14,6 +14,8 @@ export default function VideoStream() {
     var params = useParams()
     var videoRef = useRef(null)
     var canvasRef = useRef(null)
+    var canvasModalRef = useRef(null)
+    var [isFullscreen, setIsFullscreen] = useState(false)
     var webSocketVideo = useRef(null)
     var webSocketAudio = useRef(null)
     var [isConnected, setIsConnected] = useState(false)
@@ -406,18 +408,28 @@ export default function VideoStream() {
 
         var video = videoRef.current
         var canvas = canvasRef.current
+        var canvasModal = canvasModalRef.current
 
         if (!video || !canvas || video.videoWidth === 0 || video.videoHeight === 0) {
             animationRef.current = requestAnimationFrame(captureAndSendFrames)
             return
         }
 
-        var context = canvas.getContext("2d")
-        canvas.width = video.videoWidth
-        canvas.height = video.videoHeight
-        context.drawImage(video, 0, 0, canvas.width, canvas.height)
-
-        var frameData = canvas.toDataURL("image/jpeg", 0.7)
+        var context
+        var frameData
+        if (isFullscreen && canvasModal) {
+            context = canvasModal.getContext("2d")
+            canvasModal.width = video.videoWidth
+            canvasModal.height = video.videoHeight
+            context.drawImage(video, 0, 0, canvasModal.width, canvasModal.height)
+            frameData = canvasModal.toDataURL("image/jpeg", 0.7)
+        } else {
+            context = canvas.getContext("2d")
+            canvas.width = video.videoWidth
+            canvas.height = video.videoHeight
+            context.drawImage(video, 0, 0, canvas.width, canvas.height)
+            frameData = canvas.toDataURL("image/jpeg", 0.7)
+        }
 
         try {
             webSocketVideo.current.send(JSON.stringify({
@@ -463,10 +475,19 @@ export default function VideoStream() {
     var displayProcessedFrame = (frameData) => {
         var img = new Image()
         img.onload = () => {
-            if (canvasRef.current) {
-                var mainContext = canvasRef.current.getContext("2d")
-                mainContext.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
-                mainContext.drawImage(img, 0, 0, canvasRef.current.width, canvasRef.current.height)
+            var mainContext
+            if (isFullscreen) {
+                if (canvasModalRef.current) {
+                    mainContext = canvasModalRef.current.getContext("2d")
+                    mainContext.clearRect(0, 0, canvasModalRef.current.width, canvasModalRef.current.height)
+                    mainContext.drawImage(img, 0, 0, canvasModalRef.current.width, canvasModalRef.current.height)
+                }
+            } else {
+                if (canvasRef.current) {
+                    mainContext = canvasRef.current.getContext("2d")
+                    mainContext.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
+                    mainContext.drawImage(img, 0, 0, canvasRef.current.width, canvasRef.current.height)
+                }
             }
         }
         img.onerror = () => {
@@ -529,6 +550,47 @@ export default function VideoStream() {
     return (
         <>
             <MainComponents />
+
+            {isFullscreen && (
+                <div style={{
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    width: "100vw",
+                    height: "100vh",
+                    backgroundColor: "black",
+                    zIndex: 9999,
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center"
+                }}>
+                    <button
+                        onClick={() => setIsFullscreen(false)}
+                        style={{
+                            position: "absolute",
+                            top: "20px",
+                            right: "20px",
+                            padding: "10px 20px",
+                            backgroundColor: "#dc3545",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "5px",
+                            cursor: "pointer",
+                            zIndex: 10000
+                        }}
+                    >
+                        ✕ Закрыть
+                    </button>
+                    <canvas
+                        ref={canvasModalRef}
+                        style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "contain"
+                        }}
+                    />
+                </div>
+            )}
 
             <div style={{ padding: "100px", textAlign: "center", maxWidth: "1200px", margin: "0 auto" }}>
                 {error && (
@@ -629,6 +691,23 @@ export default function VideoStream() {
                             }}
                         >
                             {isAudioStreaming ? "🔇 Выкл. аудио" : "🔊 Вкл. аудио"}
+                        </button>
+                        <button
+                            onClick={() => {
+                                setIsFullscreen((prev) => !prev)
+                            }}
+                            style={{
+                                margin: "5px",
+                                padding: "12px 24px",
+                                backgroundColor: "#007bff",
+                                color: "white",
+                                border: "none",
+                                borderRadius: "5px",
+                                cursor: "pointer",
+                                fontSize: "16px"
+                            }}
+                        >
+                            На весь экран
                         </button>
                     </div>
                 </div>
