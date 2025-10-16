@@ -19,7 +19,6 @@ export default function VideoStream() {
     var [isConnected, setIsConnected] = useState(false)
     var [isStreaming, setIsStreaming] = useState(false)
     var [error, setError] = useState("")
-    var [cameraAccess, setCameraAccess] = useState(false)
     var [activeUsers, setActiveUsers] = useState([])
     var streamRef = useRef(null)
     var animationRef = useRef(null)
@@ -54,12 +53,10 @@ export default function VideoStream() {
         try {
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
                 setError("Ваш браузер не поддерживает доступ к камере.")
-                setCameraAccess(false)
                 return
             }
 
             var permissions = await navigator.permissions.query({ name: "camera" })
-            setCameraAccess(permissions.state !== "denied")
 
             if (permissions.state === "denied") {
                 setError("Доступ к камере запрещен.")
@@ -67,7 +64,6 @@ export default function VideoStream() {
 
         } catch (err) {
             console.warn("Permission API not supported:", err)
-            setCameraAccess(true)
         }
     }
 
@@ -99,10 +95,6 @@ export default function VideoStream() {
                     })
 
                     if (data.type === "broadcast_frame") {
-                        if (data.is_speaking && (!currentSpeaker || currentSpeaker.username !== data.user.username)) {
-                            setCurrentSpeaker(data.user)
-                        }
-
                         var delay = Number(Date.now() - data.timestamp)
                         if (delay < 1_000) {
                             // Всегда показываем кадр если нет текущего спикера ИЛИ если это текущий спикер
@@ -136,11 +128,10 @@ export default function VideoStream() {
                         if (data.is_speaking) {
                             if (currentSpeaker && currentSpeaker.username !== data.user.username) {
                                 clearTimeout(speakerTimerRef.current)
-                                speakerTimerRef.current = null
                                 speakerTimerRef.current = setTimeout(() => {
                                     setCurrentSpeaker(data.user)
                                 }, 500)
-                            } else {
+                            } else if (!currentSpeaker) {
                                 setCurrentSpeaker(data.user)
                             }
 
@@ -305,14 +296,15 @@ export default function VideoStream() {
         try {
             var binaryString = atob(base64Data)
             var bytes = new Uint8Array(binaryString.length)
-            for (var i = 0; i < binaryString.length; i++) {
+            var i
+            for (i = 0; i < binaryString.length; i++) {
                 bytes[i] = binaryString.charCodeAt(i)
             }
 
             // Конвертируем обратно в Int16, затем в Float32
             var int16Array = new Int16Array(bytes.buffer)
             var floatBuffer = new Float32Array(int16Array.length)
-            for (var i = 0; i < int16Array.length; i++) {
+            for (i = 0; i < int16Array.length; i++) {
                 floatBuffer[i] = int16Array[i] / 0x7FFF
             }
 
