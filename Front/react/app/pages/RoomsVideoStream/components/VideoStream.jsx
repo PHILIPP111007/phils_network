@@ -131,10 +131,10 @@ export default function VideoStream() {
                             //     setCurrentSpeaker(data.user)
                             // }
 
+                            setCurrentSpeaker(data.user)
                             if (user.username !== data.user.username) {
                                 var delay = Number(Date.now() - data.timestamp)
                                 if (delay < 500) {
-                                    setCurrentSpeaker(data.user)
                                     await playReceivedAudio(data.audio)
                                 }
                             }
@@ -319,7 +319,6 @@ export default function VideoStream() {
 
             // Создаем AudioContext в приостановленном состоянии
             audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)()
-            console.log("AudioContext created")
 
             // Проверяем, есть ли аудиотреки
             if (!stream.getAudioTracks().length) {
@@ -327,7 +326,6 @@ export default function VideoStream() {
                 return
             }
 
-            // +++ ДОБАВЛЕНО: Резюмируем контекст по пользовательскому жесту +++
             var resumeAudioContext = async () => {
                 if (audioContextRef.current && audioContextRef.current.state === 'suspended') {
                     await audioContextRef.current.resume()
@@ -339,14 +337,9 @@ export default function VideoStream() {
             await resumeAudioContext()
 
             var source = audioContextRef.current.createMediaStreamSource(stream)
-            console.log("MediaStreamSource created")
-
             audioProcessorRef.current = audioContextRef.current.createScriptProcessor(4096, 1, 1)
-            console.log("ScriptProcessorNode created")
-
             audioProcessorRef.current.onaudioprocess = async (event) => {
                 if (isAudioStreaming && webSocketAudio.current.readyState === WebSocket.OPEN) {
-                    // +++ ДОБАВЛЕНО: Проверяем состояние контекста +++
                     if (audioContextRef.current.state !== 'running') {
                         await resumeAudioContext()
                         return
@@ -388,7 +381,6 @@ export default function VideoStream() {
 
             source.connect(audioProcessorRef.current)
             audioProcessorRef.current.connect(audioContextRef.current.destination)
-            console.log("Audio processing started successfully")
 
         } catch (error) {
             console.error("Error starting audio processing:", error)
@@ -507,32 +499,6 @@ export default function VideoStream() {
         }
     }, [params.room_id])
 
-    // useEffect(() => {
-    //     if (isStreaming && isSpeaking && isAudioStreaming) {
-    //         animationRef.current = requestAnimationFrame(captureAndSendFrames)
-    //     } else {
-    //         if (animationRef.current) {
-    //             cancelAnimationFrame(animationRef.current)
-    //             animationRef.current = null
-    //         }
-    //     }
-
-    //     if (isFullscreen) {
-    //         animationRef.current = requestAnimationFrame(captureAndSendFrames)
-    //     }
-
-    //     return () => {
-    //         if (animationRef.current) {
-    //             cancelAnimationFrame(animationRef.current)
-    //             animationRef.current = null
-    //         }
-    //     }
-    // }, [isStreaming, isSpeaking, isAudioStreaming, isFullscreen])
-
-
-
-
-
     useEffect(() => {
         const shouldStreamVideo = isStreaming && webSocketVideo.current?.readyState === WebSocket.OPEN
 
@@ -546,18 +512,15 @@ export default function VideoStream() {
                 animationRef.current = null
             }
         }
-        // if (isFullscreen) {
-        //     animationRef.current = requestAnimationFrame(captureAndSendFrames)
-        // }
+
         return () => {
             if (animationRef.current) {
                 cancelAnimationFrame(animationRef.current)
                 animationRef.current = null
             }
         }
-    }, [isStreaming, isSpeaking]) // Убрать isSpeaking и isAudioStreaming из зависимостей
+    }, [isStreaming, isSpeaking, isFullscreen])
 
-    // Для управления только аудио-стримингом
     useEffect(() => {
         if (isAudioStreaming && !audioStreamRef.current) {
             startStreamingAudio()
@@ -565,17 +528,6 @@ export default function VideoStream() {
             stopStreamingAudio()
         }
     }, [isAudioStreaming])
-
-
-    // useEffect(() => {
-    //     if (isAudioStreaming) {
-    //         if (!audioStreamRef.current) {
-    //             startStreamingAudio()
-    //         }
-    //     } else {
-    //         stopStreamingAudio()
-    //     }
-    // }, [isAudioStreaming])
 
     useEffect(() => {
         disconnectWebSocket()
