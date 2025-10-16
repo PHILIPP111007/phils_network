@@ -98,7 +98,15 @@ export default function VideoStream() {
                         if (data.is_speaking) {
                             var delay = Number(Date.now() - data.timestamp)
                             if (delay < 100) {
-                                displayProcessedFrame(data.frame)
+                                if (currentSpeaker && currentSpeaker.username !== data.user.username) {
+                                    clearTimeout(frameTimerRef.current)
+                                    frameTimerRef.current = setTimeout(() => {
+                                        setCurrentSpeaker(data.user)
+                                        displayProcessedFrame(data.frame)
+                                    }, 500)
+                                } else {
+                                    displayProcessedFrame(data.frame)
+                                }
                             }
                         }
                     } else if (data.type === "error") {
@@ -242,16 +250,13 @@ export default function VideoStream() {
             })
             streamRef.current = null
         }
-
         if (animationRef.current) {
             cancelAnimationFrame(animationRef.current)
             animationRef.current = null
         }
-
         if (videoRef.current) {
             videoRef.current.srcObject = null
         }
-
         setIsStreaming(false)
     }
 
@@ -358,7 +363,7 @@ export default function VideoStream() {
                                     user: user,
                                     active_users: activeUsers,
                                     is_speaking: true,
-                                    current_speaker: currentSpeaker,
+                                    current_speaker: user,
                                     timestamp: Date.now(),
                                 }))
                             } catch (sendError) {
