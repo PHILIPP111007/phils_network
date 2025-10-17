@@ -2,7 +2,7 @@ import json
 import logging
 from concurrent.futures import ThreadPoolExecutor
 
-from app.services import MessageService
+from app.services import StreamService
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from rest_framework.authtoken.models import Token
@@ -154,4 +154,4 @@ def _get_user_pk(token_key: str) -> int | None:
 def _check_permission(room_id: int, pk: int) -> bool:
 	"""Check if user is this room subscriber."""
 
-	return MessageService.check_permission(room_id=room_id, subscriber_id=pk)
+	return StreamService.check_permission(room_id=room_id, subscriber_id=pk)
