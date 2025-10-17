@@ -7,6 +7,10 @@ import { encodeAudio, decodeAudio } from "../../../modules/encodeAndDecodeAudio.
 import { playReceivedAudio } from "../../../modules/playReceivedAudio.js"
 import { displayProcessedFrame } from "../../../modules/displayProcessedFrame.js"
 import { checkCameraAccess } from "../../../modules/checkCameraAccess.js"
+import { startStreamingVideo } from "../../../modules/startStreamingVideo.js"
+import { startStreamingAudio } from "../../../modules/startStreamingAudio.js"
+import { stopStreamingAudio } from "../../../modules/stopStreamingAudio.js"
+import { stopStreamingVideo } from "../../../modules/stopStreamingVideo.js"
 import rememberPage from "../../../modules/rememberPage.js"
 import MainComponents from "../../components/MainComponents/MainComponents.jsx"
 
@@ -40,114 +44,6 @@ export default function VideoStream() {
     var speakerTimerRef = useRef(null)
 
     rememberPage(`video_stream/${params.username}/${params.room_id}`)
-
-    var startStreamingVideo = async () => {
-        try {
-            setError("")
-
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                throw new Error("getUserMedia не поддерживается в вашем браузере")
-            }
-
-            var stream = await navigator.mediaDevices.getUserMedia({
-                video: {
-                    width: { ideal: 640 },
-                    height: { ideal: 480 },
-                    frameRate: { ideal: 15, max: 30 }
-                },
-                audio: false,
-            })
-
-            streamRef.current = stream
-
-            if (videoRef.current) {
-                videoRef.current.srcObject = stream
-
-                setIsStreaming(true)
-            }
-        } catch (error) {
-            console.error("Error accessing camera:", error)
-            let errorMessage = "Не удалось получить доступ к камере. "
-
-            if (error.name === "NotAllowedError") {
-                errorMessage += "Доступ к камере запрещен."
-            } else if (error.name === "NotFoundError") {
-                errorMessage += "Камера не найдена."
-            } else {
-                errorMessage += error.message
-            }
-
-            setError(errorMessage)
-        }
-    }
-
-    var startStreamingAudio = async () => {
-        try {
-            setError("")
-
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                throw new Error("getUserMedia не поддерживается в вашем браузере")
-            }
-
-            var stream = await navigator.mediaDevices.getUserMedia({
-                video: false,
-                audio: true,
-            })
-
-            audioStreamRef.current = stream
-
-            await startAudioProcessing(stream)
-        } catch (error) {
-            console.error("Error accessing camera:", error)
-            let errorMessage = "Не удалось получить доступ к камере. "
-
-            if (error.name === "NotAllowedError") {
-                errorMessage += "Доступ к камере запрещен."
-            } else if (error.name === "NotFoundError") {
-                errorMessage += "Камера не найдена."
-            } else {
-                errorMessage += error.message
-            }
-
-            setError(errorMessage)
-        }
-    }
-
-    var stopStreamingVideo = () => {
-        if (streamRef.current) {
-            streamRef.current.getTracks().forEach(track => {
-                track.stop()
-            })
-            streamRef.current = null
-        }
-        if (animationRef.current) {
-            cancelAnimationFrame(animationRef.current)
-            animationRef.current = null
-        }
-        if (videoRef.current) {
-            videoRef.current.srcObject = null
-        }
-        setIsStreaming(false)
-        setCurrentSpeaker(() => null)
-    }
-
-    var stopStreamingAudio = () => {
-        if (audioProcessorRef.current) {
-            audioProcessorRef.current.disconnect()
-            audioProcessorRef.current.onaudioprocess = null
-            audioProcessorRef.current = null
-        }
-        if (audioContextRef.current) {
-            audioContextRef.current.close()
-            audioContextRef.current = null
-        }
-        if (audioStreamRef.current) {
-            audioStreamRef.current.getTracks().forEach(track => track.stop())
-            audioStreamRef.current = null
-        }
-        setIsSpeaking(false)
-        setCurrentSpeaker(() => null)
-    }
 
     async function startAudioProcessing(stream) {
         try {
@@ -322,8 +218,20 @@ export default function VideoStream() {
 
         return () => {
             disconnectStreamWebSocket({ webSocketVideo: webSocketVideo, webSocketAudio: webSocketAudio })
-            stopStreamingVideo()
-            stopStreamingAudio()
+            stopStreamingVideo({
+                streamRef: streamRef,
+                animationRef: animationRef,
+                videoRef: videoRef,
+                setIsStreaming: setIsStreaming,
+                setCurrentSpeaker: setCurrentSpeaker
+            })
+            stopStreamingAudio({
+                audioProcessorRef: audioProcessorRef,
+                audioContextRef: audioContextRef,
+                audioStreamRef: audioStreamRef,
+                setIsSpeaking: setIsSpeaking,
+                setCurrentSpeaker: setCurrentSpeaker
+            })
 
             if (animationRef.current) {
                 cancelAnimationFrame(animationRef.current)
@@ -376,9 +284,15 @@ export default function VideoStream() {
 
     useEffect(() => {
         if (isAudioStreaming && !audioStreamRef.current) {
-            startStreamingAudio()
+            startStreamingAudio({ setError: setError, audioStreamRef: audioStreamRef, startAudioProcessing: startAudioProcessing })
         } else if (!isAudioStreaming && audioStreamRef.current) {
-            stopStreamingAudio()
+            stopStreamingAudio({
+                audioProcessorRef: audioProcessorRef,
+                audioContextRef: audioContextRef,
+                audioStreamRef: audioStreamRef,
+                setIsSpeaking: setIsSpeaking,
+                setCurrentSpeaker: setCurrentSpeaker
+            })
         }
     }, [isAudioStreaming])
 
@@ -489,7 +403,7 @@ export default function VideoStream() {
                 }}>
                     <div style={{ marginBottom: "15px" }}>
                         <button
-                            onClick={() => startStreamingVideo()}
+                            onClick={() => startStreamingVideo({ setError: setError, videoRef: videoRef, streamRef: streamRef, setIsStreaming: setIsStreaming })}
                             disabled={!isConnected || isStreaming}
                             style={{
                                 margin: "5px",
@@ -506,7 +420,13 @@ export default function VideoStream() {
                         </button>
 
                         <button
-                            onClick={() => stopStreamingVideo()}
+                            onClick={() => stopStreamingVideo({
+                                streamRef: streamRef,
+                                animationRef: animationRef,
+                                videoRef: videoRef,
+                                setIsStreaming: setIsStreaming,
+                                setCurrentSpeaker: setCurrentSpeaker
+                            })}
                             disabled={!isStreaming}
                             style={{
                                 margin: "5px",
