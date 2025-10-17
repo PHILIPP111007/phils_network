@@ -1,7 +1,12 @@
 import { use, useRef, useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { UserContext } from "../../../data/context.js"
-import { getWebSocketDjango } from "../../../modules/getWebSocket.js"
+import { connectStreamWebSocket } from "../../../modules/connectStreamWebSocket.js"
+import { disconnectStreamWebSocket } from "../../../modules/disconnectStreamWebSocket.js"
+import { encodeAudio, decodeAudio } from "../../../modules/encodeAndDecodeAudio.js"
+import { playReceivedAudio } from "../../../modules/playReceivedAudio.js"
+import { displayProcessedFrame } from "../../../modules/displayProcessedFrame.js"
+import { checkCameraAccess } from "../../../modules/checkCameraAccess.js"
 import rememberPage from "../../../modules/rememberPage.js"
 import MainComponents from "../../components/MainComponents/MainComponents.jsx"
 
@@ -35,134 +40,6 @@ export default function VideoStream() {
     var speakerTimerRef = useRef(null)
 
     rememberPage(`video_stream/${params.username}/${params.room_id}`)
-
-    var checkCameraAccess = async () => {
-        try {
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                setError("Ваш браузер не поддерживает доступ к камере.")
-                return
-            }
-
-            var permissions = await navigator.permissions.query({ name: "camera" })
-
-            if (permissions.state === "denied") {
-                setError("Доступ к камере запрещен.")
-            }
-
-        } catch (err) {
-            console.warn("Permission API not supported:", err)
-        }
-    }
-
-    var connectWebSocket = async () => {
-        try {
-            webSocketVideo.current = getWebSocketDjango({
-                socket_name: "videoStreamSocket",
-                path: `video_stream/${params.room_id}/`,
-                setIsConnected: setIsConnected
-            })
-
-            webSocketAudio.current = getWebSocketDjango({
-                socket_name: "audioStreamSocket",
-                path: `audio_stream/${params.room_id}/`,
-                setIsConnected: setIsConnected
-            })
-
-            webSocketVideo.current.onmessage = async (event) => {
-                try {
-                    var data = await JSON.parse(event.data)
-
-                    // Обновляем список активных пользователей
-                    setActiveUsers(prev => {
-                        var users = new Set(prev)
-                        if (data.user && data.user.username) {
-                            users.add(data.user.username)
-                        }
-                        return Array.from(users)
-                    })
-
-                    if (data.type === "broadcast_frame") {
-                        if (data.is_speaking) {
-                            var delay = Number(Date.now() - data.timestamp)
-                            if (delay < 500) {
-                                // if (currentSpeaker && currentSpeaker.username !== data.user.username) {
-                                //     clearTimeout(frameTimerRef.current)
-                                //     frameTimerRef.current = setTimeout(() => {
-                                //         setCurrentSpeaker(data.user)
-                                //         displayProcessedFrame(data.frame)
-                                //     }, 300)
-                                // } else {
-                                //     setCurrentSpeaker(data.user)
-                                //     displayProcessedFrame(data.frame)
-                                // }
-                                await displayProcessedFrame(data.frame)
-                            }
-                        }
-                    } else if (data.type === "error") {
-                        console.error("Server error:", data.message)
-                        setError(`Server error: ${data.message}`)
-                    }
-                } catch (err) {
-                    console.error("Error parsing WebSocket message:", err)
-                }
-            }
-
-            webSocketAudio.current.onmessage = async (event) => {
-                try {
-                    var data = await JSON.parse(event.data)
-
-                    // Обновляем список активных пользователей
-                    setActiveUsers(prev => {
-                        var users = new Set(prev)
-                        if (data.user && data.user.username) {
-                            users.add(data.user.username)
-                        }
-                        return Array.from(users)
-                    })
-
-                    if (data.type === "broadcast_audio") {
-                        if (data.is_speaking) {
-                            // if (currentSpeaker && currentSpeaker.username !== data.user.username) {
-                            //     clearTimeout(speakerTimerRef.current)
-                            //     speakerTimerRef.current = setTimeout(() => {
-                            //         setCurrentSpeaker(data.user)
-                            //     }, 300)
-                            // } else {
-                            //     setCurrentSpeaker(data.user)
-                            // }
-
-                            setCurrentSpeaker(data.user)
-                            if (user.username !== data.user.username) {
-                                var delay = Number(Date.now() - data.timestamp)
-                                if (delay < 500) {
-                                    await playReceivedAudio(data.audio)
-                                }
-                            }
-                        }
-                    } else if (data.type === "error") {
-                        console.error("Server error:", data.message)
-                        setError(`Server error: ${data.message}`)
-                    }
-                } catch (err) {
-                    console.error("Error parsing WebSocket message:", err)
-                }
-            }
-        } catch (err) {
-            console.error("Error creating WebSocket:", err)
-            setError("Failed to establish WebSocket connection")
-        }
-    }
-
-    var disconnectWebSocket = () => {
-        if (webSocketVideo.current) {
-            webSocketVideo.current.close(1000, "Page closed")
-            webSocketVideo.current = null
-        }
-        if (webSocketAudio.current) {
-            webSocketAudio.current.close(1000, "Page closed")
-            webSocketAudio.current = null
-        }
-    }
 
     var startStreamingVideo = async () => {
         try {
@@ -272,47 +149,6 @@ export default function VideoStream() {
         setCurrentSpeaker(() => null)
     }
 
-    var base64EncodeAudio = async (audioBuffer) => {
-        try {
-            // Конвертируем Float32 в Int16
-            var array = new Int16Array(audioBuffer.length)
-            for (var i = 0; i < audioBuffer.length; i++) {
-                var sample = Math.max(-1, Math.min(1, audioBuffer[i]))
-                array[i] = sample * 0x7FFF
-            }
-
-            // Конвертируем Int16Array в base64 правильно
-            var binaryString = new Uint8Array(array.buffer)
-            return btoa(String.fromCharCode.apply(null, binaryString))
-        } catch (error) {
-            console.error("Error encoding audio:", error)
-            return ""
-        }
-    }
-
-    var base64DecodeAudio = async (base64Data) => {
-        try {
-            var binaryString = atob(base64Data)
-            var bytes = new Uint8Array(binaryString.length)
-            var i
-            for (i = 0; i < binaryString.length; i++) {
-                bytes[i] = binaryString.charCodeAt(i)
-            }
-
-            // Конвертируем обратно в Int16, затем в Float32
-            var int16Array = new Int16Array(bytes.buffer)
-            var floatBuffer = new Float32Array(int16Array.length)
-            for (i = 0; i < int16Array.length; i++) {
-                floatBuffer[i] = int16Array[i] / 0x7FFF
-            }
-
-            return floatBuffer
-        } catch (error) {
-            console.error("Error decoding audio:", error)
-            return new Float32Array(0)
-        }
-    }
-
     async function startAudioProcessing(stream) {
         try {
             console.log("Starting audio processing...")
@@ -357,7 +193,7 @@ export default function VideoStream() {
 
                     // Отправка только если звук выше порога
                     if (level > 0.005) {
-                        var encoded = await base64EncodeAudio(audioData)
+                        var encoded = await encodeAudio(audioData)
                         if (encoded) {
                             setIsSpeaking(true)
                             try {
@@ -386,19 +222,6 @@ export default function VideoStream() {
             console.error("Error starting audio processing:", error)
             setIsSpeaking(false)
         }
-    }
-
-    var playReceivedAudio = async (audioData) => {
-        var audioContext = new (window.AudioContext || window.webkitAudioContext)()
-        var decodedData = await base64DecodeAudio(audioData)
-
-        var buffer = audioContext.createBuffer(1, decodedData.length, audioContext.sampleRate)
-        buffer.copyToChannel(decodedData, 0)
-
-        var source = audioContext.createBufferSource()
-        source.buffer = buffer
-        source.connect(audioContext.destination)
-        source.start()
     }
 
     var captureAndSendFrames = async () => {
@@ -454,48 +277,51 @@ export default function VideoStream() {
         }, 100) // ~10 FPS
     }
 
-    var displayProcessedFrame = async (frameData) => {
-        var img = new Image()
-        img.onload = async () => {
-            var targetCanvas = isFullscreen ? canvasModalRef.current : canvasRef.current
-            if (!targetCanvas) {
-                console.warn("Canvas not available")
-                return
-            }
-            var context = targetCanvas.getContext('2d')
-            if (!context) {
-                console.warn("Canvas context not available")
-                return
-            }
-
-            // Устанавливаем размеры canvas
-            targetCanvas.width = img.width
-            targetCanvas.height = img.height
-
-            // Очищаем и рисуем
-            context.clearRect(0, 0, targetCanvas.width, targetCanvas.height)
-            context.drawImage(img, 0, 0, targetCanvas.width, targetCanvas.height)
-        }
-        img.onerror = () => {
-            console.error("Error loading broadcast image")
-        }
-        img.src = frameData
-    }
-
     var retryConnection = () => {
         setError("")
-        disconnectWebSocket()
+        disconnectStreamWebSocket({ webSocketVideo: webSocketVideo, webSocketAudio: webSocketAudio })
         setTimeout(() => {
-            connectWebSocket()
+            connectStreamWebSocket({
+                webSocketVideo: webSocketVideo,
+                webSocketAudio: webSocketAudio,
+                setIsConnected: setIsConnected,
+                room_id: params.room_id,
+                setActiveUsers: setActiveUsers,
+                displayProcessedFrame: displayProcessedFrame,
+                setCurrentSpeaker: setCurrentSpeaker,
+                playReceivedAudio: playReceivedAudio,
+                setError: setError,
+                user: user,
+                isFullscreen: isFullscreen,
+                canvasModalRef: canvasModalRef,
+                canvasRef: canvasRef,
+                decodeAudio: decodeAudio,
+            })
         }, 1000)
     }
 
     useEffect(() => {
-        checkCameraAccess()
-        connectWebSocket()
+        disconnectStreamWebSocket({ webSocketVideo: webSocketVideo, webSocketAudio: webSocketAudio })
+        checkCameraAccess({ setError: setError })
+        connectStreamWebSocket({
+            webSocketVideo: webSocketVideo,
+            webSocketAudio: webSocketAudio,
+            setIsConnected: setIsConnected,
+            room_id: params.room_id,
+            setActiveUsers: setActiveUsers,
+            displayProcessedFrame: displayProcessedFrame,
+            setCurrentSpeaker: setCurrentSpeaker,
+            playReceivedAudio: playReceivedAudio,
+            setError: setError,
+            user: user,
+            isFullscreen: isFullscreen,
+            canvasModalRef: canvasModalRef,
+            canvasRef: canvasRef,
+            decodeAudio: decodeAudio,
+        })
 
         return () => {
-            disconnectWebSocket()
+            disconnectStreamWebSocket({ webSocketVideo: webSocketVideo, webSocketAudio: webSocketAudio })
             stopStreamingVideo()
             stopStreamingAudio()
 
@@ -555,11 +381,6 @@ export default function VideoStream() {
             stopStreamingAudio()
         }
     }, [isAudioStreaming])
-
-    useEffect(() => {
-        disconnectWebSocket()
-        connectWebSocket()
-    }, [params.room_id])
 
     useEffect(() => {
         return () => {
