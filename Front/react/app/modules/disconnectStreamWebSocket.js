@@ -1,4 +1,4 @@
-export var disconnectStreamWebSocket = ({ webSocketVideo, webSocketAudio }) => {
+export var disconnectStreamWebSocket = async ({ webSocketVideo, webSocketAudio }) => {
     if (webSocketVideo.current) {
         webSocketVideo.current.close(1000, "Page closed")
         webSocketVideo.current = null

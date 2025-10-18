@@ -1,7 +1,7 @@
 import { use, useRef, useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { UserContext } from "../../../data/context.js"
-import { connectStreamWebSocket } from "../../../modules/connectStreamWebSocket.js"
+import { useConnectStreamWebSocket } from "../../../modules/useConnectStreamWebSocket.js"
 import { disconnectStreamWebSocket } from "../../../modules/disconnectStreamWebSocket.js"
 import { encodeAudio, decodeAudio } from "../../../modules/encodeAndDecodeAudio.js"
 import { playReceivedAudio } from "../../../modules/playReceivedAudio.js"
@@ -59,7 +59,7 @@ export default function VideoStream() {
             }
 
             var resumeAudioContext = async () => {
-                if (audioContextRef.current && audioContextRef.current.state === 'suspended') {
+                if (audioContextRef.current && audioContextRef.current.state === "suspended") {
                     await audioContextRef.current.resume()
                     console.log("AudioContext resumed")
                 }
@@ -72,7 +72,7 @@ export default function VideoStream() {
             audioProcessorRef.current = audioContextRef.current.createScriptProcessor(4096, 1, 1)
             audioProcessorRef.current.onaudioprocess = async (event) => {
                 if (isAudioStreaming && webSocketAudio.current.readyState === WebSocket.OPEN) {
-                    if (audioContextRef.current.state !== 'running') {
+                    if (audioContextRef.current.state !== "running") {
                         await resumeAudioContext()
                         return
                     }
@@ -173,48 +173,9 @@ export default function VideoStream() {
         }, 100) // ~10 FPS
     }
 
-    var retryConnection = () => {
-        setError("")
-        disconnectStreamWebSocket({ webSocketVideo: webSocketVideo, webSocketAudio: webSocketAudio })
-        setTimeout(() => {
-            connectStreamWebSocket({
-                webSocketVideo: webSocketVideo,
-                webSocketAudio: webSocketAudio,
-                setIsConnected: setIsConnected,
-                room_id: params.room_id,
-                setActiveUsers: setActiveUsers,
-                displayProcessedFrame: displayProcessedFrame,
-                setCurrentSpeaker: setCurrentSpeaker,
-                playReceivedAudio: playReceivedAudio,
-                setError: setError,
-                user: user,
-                isFullscreen: isFullscreen,
-                canvasModalRef: canvasModalRef,
-                canvasRef: canvasRef,
-                decodeAudio: decodeAudio,
-            })
-        }, 1000)
-    }
-
     useEffect(() => {
         disconnectStreamWebSocket({ webSocketVideo: webSocketVideo, webSocketAudio: webSocketAudio })
         checkCameraAccess({ setError: setError })
-        connectStreamWebSocket({
-            webSocketVideo: webSocketVideo,
-            webSocketAudio: webSocketAudio,
-            setIsConnected: setIsConnected,
-            room_id: params.room_id,
-            setActiveUsers: setActiveUsers,
-            displayProcessedFrame: displayProcessedFrame,
-            setCurrentSpeaker: setCurrentSpeaker,
-            playReceivedAudio: playReceivedAudio,
-            setError: setError,
-            user: user,
-            isFullscreen: isFullscreen,
-            canvasModalRef: canvasModalRef,
-            canvasRef: canvasRef,
-            decodeAudio: decodeAudio,
-        })
 
         return () => {
             disconnectStreamWebSocket({ webSocketVideo: webSocketVideo, webSocketAudio: webSocketAudio })
@@ -239,10 +200,36 @@ export default function VideoStream() {
         }
     }, [params.room_id])
 
-    useEffect(() => {
-        const shouldStreamVideo = isStreaming && webSocketVideo.current?.readyState === WebSocket.OPEN
+    const connectStreamWebSocket = useConnectStreamWebSocket({
+        webSocketVideo: webSocketVideo,
+        webSocketAudio: webSocketAudio,
+        setIsConnected: setIsConnected,
+        room_id: params.room_id,
+        setActiveUsers: setActiveUsers,
+        displayProcessedFrame: displayProcessedFrame,
+        setCurrentSpeaker: setCurrentSpeaker,
+        playReceivedAudio: playReceivedAudio,
+        setError: setError,
+        user: user,
+        isFullscreen: isFullscreen,
+        canvasModalRef: canvasModalRef,
+        canvasRef: canvasRef,
+        decodeAudio: decodeAudio,
+    })
 
-        if (shouldStreamVideo) {
+    useEffect(() => {
+        disconnectStreamWebSocket({ webSocketVideo: webSocketVideo, webSocketAudio: webSocketAudio })
+        connectStreamWebSocket()
+    }, [connectStreamWebSocket, isFullscreen])
+
+    useEffect(() => {
+        if (isStreaming) {
+            startStreamingVideo({ setError: setError, videoRef: videoRef, streamRef: streamRef, setIsStreaming: setIsStreaming })
+        }
+    }, [isStreaming, isFullscreen])
+
+    useEffect(() => {
+        if (isStreaming && webSocketVideo.current?.readyState === WebSocket.OPEN) {
             if (!animationRef.current) {
                 animationRef.current = requestAnimationFrame(captureAndSendFrames)
             }
@@ -251,6 +238,7 @@ export default function VideoStream() {
                 cancelAnimationFrame(animationRef.current)
                 animationRef.current = null
             }
+
         }
 
         return () => {
@@ -260,27 +248,6 @@ export default function VideoStream() {
             }
         }
     }, [isStreaming, isSpeaking])
-
-
-    useEffect(() => {
-        if (isFullscreen && webSocketVideo.current?.readyState === WebSocket.OPEN) {
-            if (!animationRef.current) {
-                animationRef.current = requestAnimationFrame(captureAndSendFrames)
-            }
-        } else {
-            if (animationRef.current) {
-                cancelAnimationFrame(animationRef.current)
-                animationRef.current = null
-            }
-        }
-
-        return () => {
-            if (animationRef.current) {
-                cancelAnimationFrame(animationRef.current)
-                animationRef.current = null
-            }
-        }
-    }, [isFullscreen])
 
     useEffect(() => {
         if (isAudioStreaming && !audioStreamRef.current) {
@@ -364,20 +331,6 @@ export default function VideoStream() {
                     }}>
                         {error}
                         <br />
-                        <button
-                            onClick={retryConnection}
-                            style={{
-                                marginTop: "10px",
-                                padding: "8px 16px",
-                                backgroundColor: "#f44336",
-                                color: "white",
-                                border: "none",
-                                borderRadius: "4px",
-                                cursor: "pointer"
-                            }}
-                        >
-                            Попробовать снова
-                        </button>
                     </div>
                 )}
 
@@ -460,7 +413,7 @@ export default function VideoStream() {
                         </button>
                         <button
                             onClick={() => {
-                                setIsFullscreen((prev) => !prev)
+                                setIsFullscreen(true)
                             }}
                             style={{
                                 margin: "5px",
