@@ -3,6 +3,7 @@ export var displayProcessedFrame = async ({ frameData, isFullscreen, canvasModal
     img.onload = async () => {
         var targetCanvas = isFullscreen ? canvasModalRef.current : canvasRef.current
         if (!targetCanvas) {
+            targetCanvas = canvasRef.current
             console.warn("Canvas not available")
             return
         }

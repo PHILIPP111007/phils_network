@@ -173,6 +173,23 @@ export default function VideoStream() {
         }, 100) // ~10 FPS
     }
 
+    var connectStreamWebSocket = useConnectStreamWebSocket({
+        webSocketVideo: webSocketVideo,
+        webSocketAudio: webSocketAudio,
+        setIsConnected: setIsConnected,
+        room_id: params.room_id,
+        setActiveUsers: setActiveUsers,
+        displayProcessedFrame: displayProcessedFrame,
+        setCurrentSpeaker: setCurrentSpeaker,
+        playReceivedAudio: playReceivedAudio,
+        setError: setError,
+        user: user,
+        isFullscreen: isFullscreen,
+        canvasModalRef: canvasModalRef,
+        canvasRef: canvasRef,
+        decodeAudio: decodeAudio,
+    })
+
     useEffect(() => {
         disconnectStreamWebSocket({ webSocketVideo: webSocketVideo, webSocketAudio: webSocketAudio })
         checkCameraAccess({ setError: setError })
@@ -200,25 +217,7 @@ export default function VideoStream() {
         }
     }, [params.room_id])
 
-    const connectStreamWebSocket = useConnectStreamWebSocket({
-        webSocketVideo: webSocketVideo,
-        webSocketAudio: webSocketAudio,
-        setIsConnected: setIsConnected,
-        room_id: params.room_id,
-        setActiveUsers: setActiveUsers,
-        displayProcessedFrame: displayProcessedFrame,
-        setCurrentSpeaker: setCurrentSpeaker,
-        playReceivedAudio: playReceivedAudio,
-        setError: setError,
-        user: user,
-        isFullscreen: isFullscreen,
-        canvasModalRef: canvasModalRef,
-        canvasRef: canvasRef,
-        decodeAudio: decodeAudio,
-    })
-
     useEffect(() => {
-        disconnectStreamWebSocket({ webSocketVideo: webSocketVideo, webSocketAudio: webSocketAudio })
         connectStreamWebSocket()
     }, [connectStreamWebSocket, isFullscreen])
 
@@ -247,7 +246,7 @@ export default function VideoStream() {
                 animationRef.current = null
             }
         }
-    }, [isStreaming, isSpeaking])
+    }, [isStreaming, isSpeaking, isFullscreen])
 
     useEffect(() => {
         if (isAudioStreaming && !audioStreamRef.current) {
@@ -278,8 +277,8 @@ export default function VideoStream() {
         <>
             <MainComponents />
 
-            {isFullscreen && (
-                <div style={{
+            <div
+                style={{
                     position: "fixed",
                     top: 0,
                     left: 0,
@@ -287,37 +286,37 @@ export default function VideoStream() {
                     height: "100vh",
                     backgroundColor: "black",
                     zIndex: 9999,
-                    display: "flex",
+                    display: isFullscreen ? "flex" : "none",
                     justifyContent: "center",
                     alignItems: "center"
-                }}>
-                    <button
-                        onClick={() => setIsFullscreen(false)}
-                        style={{
-                            position: "absolute",
-                            top: "20px",
-                            right: "20px",
-                            padding: "10px 20px",
-                            backgroundColor: "#dc3545",
-                            color: "white",
-                            border: "none",
-                            borderRadius: "5px",
-                            cursor: "pointer",
-                            zIndex: 10000
-                        }}
-                    >
-                        ✕ Закрыть
-                    </button>
-                    <canvas
-                        ref={canvasModalRef}
-                        style={{
-                            width: "100%",
-                            height: "100%",
-                            objectFit: "contain"
-                        }}
-                    />
-                </div>
-            )}
+                }}
+            >
+                <button
+                    onClick={() => setIsFullscreen(false)}
+                    style={{
+                        position: "absolute",
+                        top: "20px",
+                        right: "20px",
+                        padding: "10px 20px",
+                        backgroundColor: "#dc3545",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "5px",
+                        cursor: "pointer",
+                        zIndex: 10000
+                    }}
+                >
+                    ✕ Закрыть
+                </button>
+                <canvas
+                    ref={canvasModalRef}
+                    style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "contain"
+                    }}
+                />
+            </div>
 
             <div style={{ padding: "100px", textAlign: "center", maxWidth: "1200px", margin: "0 auto" }}>
                 {error && (
