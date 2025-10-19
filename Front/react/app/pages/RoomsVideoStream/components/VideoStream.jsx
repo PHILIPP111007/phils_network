@@ -200,9 +200,9 @@ export default function VideoStream() {
                 streamRef: streamRef,
                 animationRef: animationRef,
                 videoRef: videoRef,
-                setIsStreaming: setIsStreaming,
                 setCurrentSpeaker: setCurrentSpeaker
             })
+            setIsStreaming(false)
             stopStreamingAudio({
                 audioProcessorRef: audioProcessorRef,
                 audioContextRef: audioContextRef,
@@ -219,11 +219,14 @@ export default function VideoStream() {
 
     useEffect(() => {
         connectStreamWebSocket()
-    }, [connectStreamWebSocket, isFullscreen])
+        if (isFullscreen) {
+            startStreamingVideo({ setError: setError, videoRef: videoRef, streamRef: streamRef })
+        }
+    }, [isFullscreen, isStreaming, isAudioStreaming])
 
     useEffect(() => {
         if (isStreaming) {
-            startStreamingVideo({ setError: setError, videoRef: videoRef, streamRef: streamRef, setIsStreaming: setIsStreaming })
+            startStreamingVideo({ setError: setError, videoRef: videoRef, streamRef: streamRef })
         }
     }, [isStreaming, isFullscreen])
 
@@ -355,7 +358,7 @@ export default function VideoStream() {
                 }}>
                     <div style={{ marginBottom: "15px" }}>
                         <button
-                            onClick={() => startStreamingVideo({ setError: setError, videoRef: videoRef, streamRef: streamRef, setIsStreaming: setIsStreaming })}
+                            onClick={() => setIsStreaming(true)}
                             disabled={!isConnected || isStreaming}
                             style={{
                                 margin: "5px",
@@ -372,13 +375,15 @@ export default function VideoStream() {
                         </button>
 
                         <button
-                            onClick={() => stopStreamingVideo({
-                                streamRef: streamRef,
-                                animationRef: animationRef,
-                                videoRef: videoRef,
-                                setIsStreaming: setIsStreaming,
-                                setCurrentSpeaker: setCurrentSpeaker
-                            })}
+                            onClick={() => {
+                                stopStreamingVideo({
+                                    streamRef: streamRef,
+                                    animationRef: animationRef,
+                                    videoRef: videoRef,
+                                    setCurrentSpeaker: setCurrentSpeaker
+                                })
+                                setIsStreaming(false)
+                            }}
                             disabled={!isStreaming}
                             style={{
                                 margin: "5px",

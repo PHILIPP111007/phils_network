@@ -1,4 +1,4 @@
-export var startStreamingVideo = async ({ setError, videoRef, streamRef, setIsStreaming }) => {
+export var startStreamingVideo = async ({ setError, videoRef, streamRef }) => {
     try {
         setError("")
 
@@ -19,8 +19,6 @@ export var startStreamingVideo = async ({ setError, videoRef, streamRef, setIsSt
 
         if (videoRef.current) {
             videoRef.current.srcObject = stream
-
-            setIsStreaming(true)
         }
     } catch (error) {
         console.error("Error accessing camera:", error)
