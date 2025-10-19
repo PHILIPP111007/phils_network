@@ -33,7 +33,7 @@ export default function VideoStream() {
     rememberPage(`video_stream/${params.username}/${params.room_id}`)
 
     // Встроенные функции вместо модулей
-    const checkCameraAccess = async () => {
+    var checkCameraAccess = async () => {
         try {
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
                 setError("Ваш браузер не поддерживает доступ к камере.")
@@ -47,17 +47,17 @@ export default function VideoStream() {
         }
     }
 
-    const startStreamingVideo = async () => {
+    var startStreamingVideo = async () => {
         try {
             setError("")
             console.log("Starting video streaming...")
 
-            const hasAccess = await checkCameraAccess()
+            var hasAccess = await checkCameraAccess()
             if (!hasAccess) {
                 return
             }
 
-            const stream = await navigator.mediaDevices.getUserMedia({
+            var stream = await navigator.mediaDevices.getUserMedia({
                 video: {
                     width: { ideal: 640 },
                     height: { ideal: 480 },
@@ -74,7 +74,7 @@ export default function VideoStream() {
             }
         } catch (error) {
             console.error("Error accessing camera:", error)
-            let errorMessage = "Не удалось получить доступ к камере. "
+            var errorMessage = "Не удалось получить доступ к камере. "
             if (error.name === "NotAllowedError") {
                 errorMessage += "Доступ к камере запрещен."
             } else if (error.name === "NotFoundError") {
@@ -86,7 +86,7 @@ export default function VideoStream() {
         }
     }
 
-    const stopStreamingVideo = async () => {
+    var stopStreamingVideo = async () => {
         console.log("Stopping video streaming...")
         if (streamRef.current) {
             await streamRef.current.getTracks().forEach(track => {
@@ -106,22 +106,24 @@ export default function VideoStream() {
         setCurrentSpeaker(null)
     }
 
-    const startStreamingAudio = async () => {
+    var startStreamingAudio = async () => {
         try {
             setError("")
             console.log("Starting audio streaming...")
 
-            const hasAccess = await checkCameraAccess()
+            var hasAccess = await checkCameraAccess()
             if (!hasAccess) {
                 return
             }
 
-            const stream = await navigator.mediaDevices.getUserMedia({
+            var stream = await navigator.mediaDevices.getUserMedia({
                 video: false,
                 audio: {
                     echoCancellation: true,
                     noiseSuppression: true,
-                    autoGainControl: true
+                    autoGainControl: true,
+                    sampleRate: 16000, // добавляем конкретные настройки
+                    channelCount: 1
                 },
             })
 
@@ -130,7 +132,7 @@ export default function VideoStream() {
 
         } catch (error) {
             console.error("Error accessing microphone:", error)
-            let errorMessage = "Не удалось получить доступ к микрофону. "
+            var errorMessage = "Не удалось получить доступ к микрофону. "
             if (error.name === "NotAllowedError") {
                 errorMessage += "Доступ к микрофону запрещен."
             } else if (error.name === "NotFoundError") {
@@ -143,33 +145,46 @@ export default function VideoStream() {
         }
     }
 
-    const stopStreamingAudio = async () => {
+    var stopStreamingAudio = async () => {
         console.log("Stopping audio streaming...")
+
+        // Очищаем интервал проверки
+        if (audioContextRef.current && audioContextRef.current._checkInterval) {
+            clearInterval(audioContextRef.current._checkInterval)
+        }
+
         if (audioProcessorRef.current) {
-            await audioProcessorRef.current.disconnect()
+            audioProcessorRef.current.disconnect()
             audioProcessorRef.current = null
         }
+
         if (audioContextRef.current) {
-            await audioContextRef.current.close()
+            try {
+                await audioContextRef.current.close()
+            } catch (error) {
+                console.error("Error closing audio context:", error)
+            }
             audioContextRef.current = null
         }
+
         if (audioStreamRef.current) {
-            await audioStreamRef.current.getTracks().forEach(track => track.stop())
+            audioStreamRef.current.getTracks().forEach(track => track.stop())
             audioStreamRef.current = null
         }
+
         setIsSpeaking(false)
         setCurrentSpeaker(null)
         setAudioLevel(0)
     }
 
-    const encodeAudio = async (audioData) => {
+    var encodeAudio = (audioData) => {
         try {
-            const array = new Uint8Array(audioData.length)
-            for (let i = 0; i < audioData.length; i++) {
-                const sample = Math.max(-1, Math.min(1, audioData[i]))
+            var array = new Uint8Array(audioData.length)
+            for (var i = 0; i < audioData.length; i++) {
+                var sample = Math.max(-1, Math.min(1, audioData[i]))
                 array[i] = Math.floor((sample + 1) * 127)
             }
-            const binaryString = String.fromCharCode.apply(null, array)
+            var binaryString = String.fromCharCode.apply(null, array)
             return btoa(binaryString)
         } catch (error) {
             console.error("Error encoding audio:", error)
@@ -177,14 +192,14 @@ export default function VideoStream() {
         }
     }
 
-    const decodeAudio = async (base64Data) => {
+    var decodeAudio = (base64Data) => {
         try {
-            const binaryString = atob(base64Data)
-            const array = new Uint8Array(binaryString.length)
+            var binaryString = atob(base64Data)
+            var array = new Uint8Array(binaryString.length)
             for (let i = 0; i < binaryString.length; i++) {
                 array[i] = binaryString.charCodeAt(i)
             }
-            const floatBuffer = new Float32Array(array.length)
+            var floatBuffer = new Float32Array(array.length)
             for (let i = 0; i < array.length; i++) {
                 floatBuffer[i] = (array[i] / 127) - 1
             }
@@ -195,13 +210,13 @@ export default function VideoStream() {
         }
     }
 
-    const playReceivedAudio = async (audioData) => {
+    var playReceivedAudio = async (audioData) => {
         try {
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)()
-            const decodedData = await decodeAudio(audioData)
-            const buffer = audioContext.createBuffer(1, decodedData.length, audioContext.sampleRate)
+            var audioContext = new (window.AudioContext || window.webkitAudioContext)()
+            var decodedData = decodeAudio(audioData)
+            var buffer = audioContext.createBuffer(1, decodedData.length, audioContext.sampleRate)
             buffer.copyToChannel(decodedData, 0)
-            const source = audioContext.createBufferSource()
+            var source = audioContext.createBufferSource()
             source.buffer = buffer
             source.connect(audioContext.destination)
             source.start()
@@ -210,11 +225,11 @@ export default function VideoStream() {
         }
     }
 
-    const displayProcessedFrame = async (frameData) => {
-        const img = new Image()
+    var displayProcessedFrame = async (frameData) => {
+        var img = new Image()
         img.onload = async () => {
             if (canvasRef.current) {
-                const mainContext = await canvasRef.current.getContext("2d")
+                var mainContext = await canvasRef.current.getContext("2d")
                 await mainContext.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
                 await mainContext.drawImage(img, 0, 0, canvasRef.current.width, canvasRef.current.height)
             }
@@ -225,54 +240,81 @@ export default function VideoStream() {
         img.src = frameData
     }
 
-    const startAudioProcessing = async (stream) => {
+    var restartAudioContext = async () => {
         try {
-            console.log("Starting audio processing...")
+            console.log("Restarting AudioContext...")
 
-            // Останавливаем существующую обработку
+            // Останавливаем текущую обработку
             if (audioProcessorRef.current) {
-                await audioProcessorRef.current.disconnect()
+                audioProcessorRef.current.disconnect()
                 audioProcessorRef.current = null
             }
 
-            if (audioContextRef.current && audioContextRef.current.state !== "closed") {
+            if (audioContextRef.current) {
                 await audioContextRef.current.close()
             }
 
             // Создаем новый AudioContext
             audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)()
 
-            if (!stream.getAudioTracks().length) {
-                console.error("No audio tracks in stream")
-                return
-            }
-
+            // Ждем готовности
             if (audioContextRef.current.state === "suspended") {
                 await audioContextRef.current.resume()
             }
 
-            const source = audioContextRef.current.createMediaStreamSource(stream)
-            audioProcessorRef.current = audioContextRef.current.createScriptProcessor(4096, 1, 1)
+            console.log("AudioContext restarted successfully")
+            return true
+        } catch (error) {
+            console.error("Error restarting AudioContext:", error)
+            return false
+        }
+    }
 
-            audioProcessorRef.current.onaudioprocess = async (event) => {
+    var startAudioProcessing = async (stream) => {
+        try {
+            console.log("Starting audio processing...")
+
+            // Перезапускаем AudioContext
+            var success = await restartAudioContext()
+            if (!success) {
+                throw new Error("Failed to initialize AudioContext")
+            }
+
+            var source = audioContextRef.current.createMediaStreamSource(stream)
+            audioProcessorRef.current = audioContextRef.current.createScriptProcessor(16384, 1, 1)
+
+            var errorCount = 0
+            var MAX_ERRORS = 3
+
+            audioProcessorRef.current.onaudioprocess = (event) => {
                 if (!isAudioStreaming || !webSocketAudio.current || webSocketAudio.current.readyState !== WebSocket.OPEN) {
                     return
                 }
 
                 try {
-                    const audioData = event.inputBuffer.getChannelData(0)
-                    let sum = 0
-                    for (let i = 0; i < audioData.length; i++) {
+                    // Проверяем состояние AudioContext
+                    if (audioContextRef.current.state !== "running") {
+                        console.log("AudioContext not running, state:", audioContextRef.current.state)
+                        if (errorCount < MAX_ERRORS) {
+                            errorCount++
+                            audioContextRef.current.resume().catch(console.error)
+                        }
+                        return
+                    }
+
+                    var audioData = event.inputBuffer.getChannelData(0)
+                    var sum = 0
+                    for (var i = 0; i < audioData.length; i++) {
                         sum += Math.abs(audioData[i])
                     }
-                    const level = sum / audioData.length
+                    var level = sum / audioData.length
                     setAudioLevel(level)
 
-                    if (level > 0.01 && audioContextRef.current.state === "running") {
-                        const encoded = await encodeAudio(audioData)
+                    if (level > 0.01) {
+                        setIsSpeaking(true)
+                        var encoded = encodeAudio(audioData)
                         if (encoded && webSocketAudio.current.readyState === WebSocket.OPEN) {
-                            setIsSpeaking(true)
-                            await webSocketAudio.current.send(JSON.stringify({
+                            webSocketAudio.current.send(JSON.stringify({
                                 type: "audio_data",
                                 audio: encoded,
                                 room: params.room_id,
@@ -283,34 +325,53 @@ export default function VideoStream() {
                                 timestamp: Date.now(),
                             }))
                         }
+                        errorCount = 0 // сбрасываем счетчик ошибок при успешной обработке
                     } else {
                         setIsSpeaking(false)
                     }
                 } catch (error) {
                     console.error("Error in audio processing:", error)
+                    errorCount++
                     setIsSpeaking(false)
+
+                    // Если много ошибок подряд, перезапускаем AudioContext
+                    if (errorCount >= MAX_ERRORS) {
+                        console.log("Too many errors, restarting AudioContext...")
+                        setTimeout(() => {
+                            if (isAudioStreaming && audioStreamRef.current) {
+                                restartAudioContext().then(success => {
+                                    if (success && audioStreamRef.current) {
+                                        var source = audioContextRef.current.createMediaStreamSource(audioStreamRef.current)
+                                        source.connect(audioProcessorRef.current)
+                                    }
+                                })
+                            }
+                        }, 100)
+                    }
                 }
             }
 
-            await source.connect(audioProcessorRef.current)
-            await audioProcessorRef.current.connect(audioContextRef.current.destination)
-            console.log("Audio processing started")
+            source.connect(audioProcessorRef.current)
+            audioProcessorRef.current.connect(audioContextRef.current.destination)
+            console.log("Audio processing started successfully")
 
         } catch (error) {
             console.error("Error starting audio processing:", error)
+            setError("Ошибка инициализации аудио: " + error.message)
             setIsSpeaking(false)
+            setIsAudioStreaming(false)
         }
     }
 
-    const captureAndSendFrames = async () => {
+    var captureAndSendFrames = async () => {
         if (!isStreaming || !webSocketVideo.current || webSocketVideo.current.readyState !== WebSocket.OPEN) {
             animationRef.current = null
             return
         }
 
-        const video = videoRef.current
-        const canvas = canvasRef.current
-        const canvasModal = canvasModalRef.current
+        var video = videoRef.current
+        var canvas = canvasRef.current
+        var canvasModal = canvasModalRef.current
 
         if (!video || !canvas || video.videoWidth === 0 || video.videoHeight === 0) {
             animationRef.current = requestAnimationFrame(captureAndSendFrames)
@@ -318,7 +379,7 @@ export default function VideoStream() {
         }
 
         try {
-            let context, frameData
+            var context, frameData
 
             if (isFullscreen && canvasModal) {
                 context = await canvasModal.getContext("2d")
@@ -355,7 +416,7 @@ export default function VideoStream() {
         }, 100) // ~10 FPS
     }
 
-    const connectStreamWebSocket = async () => {
+    var connectStreamWebSocket = async () => {
         try {
             console.log("Connecting WebSocket...")
 
@@ -372,7 +433,7 @@ export default function VideoStream() {
 
             webSocketVideo.current.onmessage = async (event) => {
                 try {
-                    const data = await JSON.parse(event.data)
+                    var data = await JSON.parse(event.data)
 
                     if (data.type === "broadcast_frame") {
                         var delay = Number(Date.now() - data.timestamp)
@@ -390,7 +451,7 @@ export default function VideoStream() {
 
             webSocketAudio.current.onmessage = async (event) => {
                 try {
-                    const data = await JSON.parse(event.data)
+                    var data = await JSON.parse(event.data)
 
                     if (data.type === "broadcast_audio") {
                         if (data.user.username !== user.username) {
@@ -413,7 +474,7 @@ export default function VideoStream() {
         }
     }
 
-    const disconnectStreamWebSocket = async () => {
+    var disconnectStreamWebSocket = async () => {
         if (webSocketVideo.current) {
             await webSocketVideo.current.close()
             webSocketVideo.current = null
@@ -447,9 +508,7 @@ export default function VideoStream() {
 
     useEffect(() => {
         if (isStreaming && !animationRef.current) {
-            setTimeout(() => {
-                animationRef.current = requestAnimationFrame(captureAndSendFrames)
-            }, 100) // ~10 FPS
+            animationRef.current = requestAnimationFrame(captureAndSendFrames)
         } else if (animationRef.current && (!isStreaming || !isSpeaking)) {
             cancelAnimationFrame(animationRef.current)
             animationRef.current = null
@@ -468,6 +527,23 @@ export default function VideoStream() {
             startStreamingAudio()
         } else {
             stopStreamingAudio()
+        }
+    }, [isAudioStreaming])
+
+    useEffect(() => {
+        if (!isAudioStreaming) {
+            return
+        }
+
+        var monitorInterval = setInterval(() => {
+            if (audioContextRef.current && audioContextRef.current.state !== "running") {
+                console.log("AudioContext state:", audioContextRef.current.state)
+                audioContextRef.current.resume().catch(console.error)
+            }
+        }, 3000) // проверяем реже - каждые 3 секунды
+
+        return () => {
+            clearInterval(monitorInterval)
         }
     }, [isAudioStreaming])
 
