@@ -219,16 +219,10 @@ export default function VideoStream() {
 
     useEffect(() => {
         connectStreamWebSocket()
-        if (isFullscreen) {
+        if (isStreaming && isAudioStreaming) {
             startStreamingVideo({ setError: setError, videoRef: videoRef, streamRef: streamRef })
         }
     }, [isFullscreen, isStreaming, isAudioStreaming])
-
-    useEffect(() => {
-        if (isStreaming) {
-            startStreamingVideo({ setError: setError, videoRef: videoRef, streamRef: streamRef })
-        }
-    }, [isStreaming, isFullscreen])
 
     useEffect(() => {
         if (isStreaming && webSocketVideo.current?.readyState === WebSocket.OPEN) {
@@ -240,7 +234,6 @@ export default function VideoStream() {
                 cancelAnimationFrame(animationRef.current)
                 animationRef.current = null
             }
-
         }
 
         return () => {
