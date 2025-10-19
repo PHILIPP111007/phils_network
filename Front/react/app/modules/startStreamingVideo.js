@@ -22,7 +22,7 @@ export var startStreamingVideo = async ({ setError, videoRef, streamRef }) => {
         }
     } catch (error) {
         console.error("Error accessing camera:", error)
-        let errorMessage = "Не удалось получить доступ к камере. "
+        var errorMessage = "Не удалось получить доступ к камере. "
 
         if (error.name === "NotAllowedError") {
             errorMessage += "Доступ к камере запрещен."

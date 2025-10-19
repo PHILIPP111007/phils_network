@@ -1,8 +1,6 @@
 export var stopStreamingVideo = async ({ streamRef, animationRef, videoRef, setCurrentSpeaker }) => {
     if (streamRef.current) {
-        streamRef.current.getTracks().forEach(track => {
-            track.stop()
-        })
+        await streamRef.current.getTracks().forEach(track => track.stop())
         streamRef.current = null
     }
     if (animationRef.current) {
@@ -12,5 +10,5 @@ export var stopStreamingVideo = async ({ streamRef, animationRef, videoRef, setC
     if (videoRef.current) {
         videoRef.current.srcObject = null
     }
-    setCurrentSpeaker(() => null)
+    await setCurrentSpeaker(() => null)
 }

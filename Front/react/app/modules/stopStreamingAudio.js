@@ -1,17 +1,16 @@
-export var stopStreamingAudio = ({ audioProcessorRef, audioContextRef, audioStreamRef, setIsSpeaking, setCurrentSpeaker }) => {
+export var stopStreamingAudio = async ({ audioProcessorRef, audioContextRef, audioStreamRef, setIsSpeaking }) => {
     if (audioProcessorRef.current) {
-        audioProcessorRef.current.disconnect()
+        await audioProcessorRef.current.disconnect()
         audioProcessorRef.current.onaudioprocess = null
         audioProcessorRef.current = null
     }
     if (audioContextRef.current) {
-        audioContextRef.current.close()
+        await audioContextRef.current.close()
         audioContextRef.current = null
     }
     if (audioStreamRef.current) {
-        audioStreamRef.current.getTracks().forEach(track => track.stop())
+        await audioStreamRef.current.getTracks().forEach(track => track.stop())
         audioStreamRef.current = null
     }
-    setIsSpeaking(false)
-    setCurrentSpeaker(() => null)
+    await setIsSpeaking(false)
 }

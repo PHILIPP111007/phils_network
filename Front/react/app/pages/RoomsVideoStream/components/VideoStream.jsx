@@ -40,46 +40,48 @@ export default function VideoStream() {
     var audioStreamRef = useRef(null)
     var audioProcessorRef = useRef(null)
 
-    var frameTimerRef = useRef(null)
-    var speakerTimerRef = useRef(null)
-
     rememberPage(`video_stream/${params.username}/${params.room_id}`)
 
     async function startAudioProcessing(stream) {
         try {
             console.log("Starting audio processing...")
 
-            // Создаем AudioContext в приостановленном состоянии
+            // Stop existing audio processing first
+            if (audioProcessorRef.current) {
+                await audioProcessorRef.current.disconnect()
+                audioProcessorRef.current = null
+            }
+
+            if (audioContextRef.current) {
+                await audioContextRef.current.close()
+            }
+
+            // Create new AudioContext
             audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)()
 
-            // Проверяем, есть ли аудиотреки
+            // Check for audio tracks
             if (!stream.getAudioTracks().length) {
                 console.error("No audio tracks in stream")
                 return
             }
 
-            var resumeAudioContext = async () => {
-                if (audioContextRef.current && audioContextRef.current.state === "suspended") {
-                    await audioContextRef.current.resume()
-                    console.log("AudioContext resumed")
-                }
+            // Resume AudioContext immediately
+            if (audioContextRef.current.state === "suspended") {
+                await audioContextRef.current.resume()
             }
-
-            // Вызываем резюмирование при создании
-            await resumeAudioContext()
 
             var source = audioContextRef.current.createMediaStreamSource(stream)
             audioProcessorRef.current = audioContextRef.current.createScriptProcessor(4096, 1, 1)
-            audioProcessorRef.current.onaudioprocess = async (event) => {
-                if (isAudioStreaming && webSocketAudio.current.readyState === WebSocket.OPEN) {
-                    if (audioContextRef.current.state !== "running") {
-                        await resumeAudioContext()
-                        return
-                    }
 
+            audioProcessorRef.current.onaudioprocess = async (event) => {
+                if (!isAudioStreaming || !webSocketAudio.current || webSocketAudio.current.readyState !== WebSocket.OPEN) {
+                    return
+                }
+
+                try {
                     var audioData = event.inputBuffer.getChannelData(0)
 
-                    // Расчет уровня звука
+                    // Calculate audio level
                     var sum = 0
                     for (var i = 0; i < audioData.length; i++) {
                         sum += Math.abs(audioData[i])
@@ -87,13 +89,12 @@ export default function VideoStream() {
                     var level = sum / audioData.length
                     setAudioLevel(level)
 
-                    // Отправка только если звук выше порога
-                    if (level > 0.005) {
-                        var encoded = await encodeAudio(audioData)
-                        if (encoded) {
-                            setIsSpeaking(true)
-                            try {
-                                await webSocketAudio.current.send(JSON.stringify({
+                    // Send audio only if above threshold and context is running
+                    if (audioContextRef.current.state === "running") {
+                        encodeAudio(audioData).then(encoded => {
+                            if (encoded && webSocketAudio.current.readyState === WebSocket.OPEN) {
+                                setIsSpeaking(true)
+                                webSocketAudio.current.send(JSON.stringify({
                                     type: "audio_data",
                                     audio: encoded,
                                     room: params.room_id,
@@ -103,11 +104,13 @@ export default function VideoStream() {
                                     current_speaker: user,
                                     timestamp: Date.now(),
                                 }))
-                            } catch (sendError) {
-                                console.error("Error sending audio:", sendError)
                             }
-                        }
+                        }).catch(err => {
+                            console.error("Error encoding audio:", err)
+                        })
                     }
+                } catch (error) {
+                    console.error("Error in audio processing:", error)
                 }
             }
 
@@ -137,17 +140,17 @@ export default function VideoStream() {
         var context
         var frameData
         if (isFullscreen && canvasModal) {
-            context = canvasModal.getContext("2d")
+            context = await canvasModal.getContext("2d")
             canvasModal.width = video.videoWidth
             canvasModal.height = video.videoHeight
-            context.drawImage(video, 0, 0, canvasModal.width, canvasModal.height)
-            frameData = canvasModal.toDataURL("image/jpeg", 0.7)
+            await context.drawImage(video, 0, 0, canvasModal.width, canvasModal.height)
+            frameData = await canvasModal.toDataURL("image/jpeg", 0.7)
         } else {
-            context = canvas.getContext("2d")
+            context = await canvas.getContext("2d")
             canvas.width = video.videoWidth
             canvas.height = video.videoHeight
-            context.drawImage(video, 0, 0, canvas.width, canvas.height)
-            frameData = canvas.toDataURL("image/jpeg", 0.7)
+            await context.drawImage(video, 0, 0, canvas.width, canvas.height)
+            frameData = await canvas.toDataURL("image/jpeg", 0.7)
         }
 
         try {
@@ -165,12 +168,11 @@ export default function VideoStream() {
             console.error("Error sending frame:", err)
         }
 
-        // Ограничиваем FPS для уменьшения нагрузки
-        setTimeout(() => {
-            if (isStreaming && isSpeaking) {
+        if (isStreaming && isSpeaking) {
+            setTimeout(() => {
                 animationRef.current = requestAnimationFrame(captureAndSendFrames)
-            }
-        }, 100) // ~10 FPS
+            }, 100) // ~10 FPS
+        }
     }
 
     var connectStreamWebSocket = useConnectStreamWebSocket({
@@ -208,7 +210,6 @@ export default function VideoStream() {
                 audioContextRef: audioContextRef,
                 audioStreamRef: audioStreamRef,
                 setIsSpeaking: setIsSpeaking,
-                setCurrentSpeaker: setCurrentSpeaker
             })
 
             if (animationRef.current) {
@@ -219,15 +220,17 @@ export default function VideoStream() {
 
     useEffect(() => {
         connectStreamWebSocket()
-        if (isStreaming && isAudioStreaming) {
+        if (isStreaming) {
             startStreamingVideo({ setError: setError, videoRef: videoRef, streamRef: streamRef })
         }
-    }, [isFullscreen, isStreaming, isAudioStreaming])
+    }, [isStreaming, isAudioStreaming, isFullscreen])
 
     useEffect(() => {
-        if (isStreaming && webSocketVideo.current?.readyState === WebSocket.OPEN) {
+        if (isStreaming && isSpeaking) {
             if (!animationRef.current) {
-                animationRef.current = requestAnimationFrame(captureAndSendFrames)
+                setTimeout(() => {
+                    animationRef.current = requestAnimationFrame(captureAndSendFrames)
+                }, 100) // ~10 FPS
             }
         } else {
             if (animationRef.current) {
@@ -245,7 +248,7 @@ export default function VideoStream() {
     }, [isStreaming, isSpeaking, isFullscreen])
 
     useEffect(() => {
-        if (isAudioStreaming && !audioStreamRef.current) {
+        if ((isAudioStreaming || isSpeaking || currentSpeaker) && !audioStreamRef.current) {
             startStreamingAudio({ setError: setError, audioStreamRef: audioStreamRef, startAudioProcessing: startAudioProcessing })
         } else if (!isAudioStreaming && audioStreamRef.current) {
             stopStreamingAudio({
@@ -256,18 +259,7 @@ export default function VideoStream() {
                 setCurrentSpeaker: setCurrentSpeaker
             })
         }
-    }, [isAudioStreaming])
-
-    useEffect(() => {
-        return () => {
-            if (frameTimerRef.current) {
-                clearTimeout(frameTimerRef.current)
-            }
-            if (speakerTimerRef.current) {
-                clearTimeout(speakerTimerRef.current)
-            }
-        }
-    }, [])
+    }, [isAudioStreaming, isSpeaking])
 
     return (
         <>

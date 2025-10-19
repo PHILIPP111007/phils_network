@@ -7,7 +7,7 @@ export var displayProcessedFrame = async ({ frameData, isFullscreen, canvasModal
             console.warn("Canvas not available")
             return
         }
-        var context = targetCanvas.getContext('2d')
+        var context = await targetCanvas.getContext('2d')
         if (!context) {
             console.warn("Canvas context not available")
             return
@@ -18,8 +18,8 @@ export var displayProcessedFrame = async ({ frameData, isFullscreen, canvasModal
         targetCanvas.height = img.height
 
         // Очищаем и рисуем
-        context.clearRect(0, 0, targetCanvas.width, targetCanvas.height)
-        context.drawImage(img, 0, 0, targetCanvas.width, targetCanvas.height)
+        await context.clearRect(0, 0, targetCanvas.width, targetCanvas.height)
+        await context.drawImage(img, 0, 0, targetCanvas.width, targetCanvas.height)
     }
     img.onerror = () => {
         console.error("Error loading broadcast image")
