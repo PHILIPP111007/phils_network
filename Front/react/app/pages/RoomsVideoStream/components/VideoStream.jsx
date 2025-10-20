@@ -30,6 +30,8 @@ export default function VideoStream() {
     var audioStreamRef = useRef(null)
     var audioProcessorRef = useRef(null)
 
+    var [currentFPS, setCurrentFPS] = useState(10)
+
     rememberPage(`video_stream/${params.username}/${params.room_id}`)
 
     // Встроенные функции вместо модулей
@@ -396,7 +398,7 @@ export default function VideoStream() {
             }
 
             if (webSocketVideo.current.readyState === WebSocket.OPEN) {
-                await webSocketVideo.current.send(JSON.stringify({
+                var data = JSON.stringify({
                     type: "video_frame",
                     frame: frameData,
                     room: params.room_id,
@@ -405,15 +407,17 @@ export default function VideoStream() {
                     is_speaking: isSpeaking,
                     current_speaker: currentSpeaker,
                     timestamp: Date.now(),
-                }))
+                })
+                await webSocketVideo.current.send(data)
             }
         } catch (err) {
             console.error("Error sending frame:", err)
         }
 
+        var frameInterval = 1000 / currentFPS
         setTimeout(() => {
             animationRef.current = requestAnimationFrame(captureAndSendFrames)
-        }, 100) // ~10 FPS
+        }, frameInterval)
     }
 
     var connectStreamWebSocket = async () => {
@@ -508,7 +512,10 @@ export default function VideoStream() {
 
     useEffect(() => {
         if (isStreaming && !animationRef.current) {
-            animationRef.current = requestAnimationFrame(captureAndSendFrames)
+            var frameInterval = 1000 / currentFPS
+            setTimeout(() => {
+                animationRef.current = requestAnimationFrame(captureAndSendFrames)
+            }, frameInterval)
         } else if (animationRef.current && (!isStreaming || !isSpeaking)) {
             cancelAnimationFrame(animationRef.current)
             animationRef.current = null
@@ -520,7 +527,7 @@ export default function VideoStream() {
                 animationRef.current = null
             }
         }
-    }, [isStreaming, isFullscreen])
+    }, [isStreaming, isFullscreen, currentFPS])
 
     useEffect(() => {
         if (isAudioStreaming) {
@@ -693,6 +700,17 @@ export default function VideoStream() {
                         >
                             📺 На весь экран
                         </button>
+                        <div style={{ marginTop: '10px' }}>
+                            <label>FPS: {currentFPS}</label>
+                            <input
+                                type="range"
+                                min="1"
+                                max="30"
+                                value={currentFPS}
+                                onChange={(e) => setCurrentFPS(Number(e.target.value))}
+                                style={{ marginLeft: '10px', width: '150px' }}
+                            />
+                        </div>
                     </div>
                 </div>
 
@@ -720,7 +738,6 @@ export default function VideoStream() {
                                 backgroundColor: "#000"
                             }}
                         />
-                        {isStreaming && <div style={{ color: "green", marginTop: "10px" }}>✅ Трансляция активна</div>}
                     </div>
 
                     <div style={{ textAlign: "center" }}>

@@ -1,15 +1,10 @@
 import json
-import logging
-from concurrent.futures import ThreadPoolExecutor
+import time
 
 from app.services import StreamService
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from rest_framework.authtoken.models import Token
-
-from django.conf import settings
-
-logger = logging.getLogger(__name__)
 
 VIDEO_STREAMING_GROUP = "video_streaming_group_{}"
 AUDIO_STREAMING_GROUP = "audio_streaming_group_{}"
@@ -18,9 +13,6 @@ AUDIO_STREAMING_GROUP = "audio_streaming_group_{}"
 class VideoStreamConsumer(AsyncWebsocketConsumer):
 	def __init__(self):
 		super().__init__()
-		self.executor = ThreadPoolExecutor(
-			max_workers=settings.NUM_WORKERS_VIDEO_STREAMING
-		)
 
 	async def connect(self):
 		token_key = self.scope["query_string"].decode().split("=")[-1]
@@ -47,18 +39,19 @@ class VideoStreamConsumer(AsyncWebsocketConsumer):
 			room_id = data["room"]
 			video_streaming_group = VIDEO_STREAMING_GROUP.format(room_id)
 
-			await self.channel_layer.group_send(
-				video_streaming_group,
-				{
-					"type": "broadcast_frame",
-					"frame": data["frame"],
-					"user": data["user"],
-					"active_users": data["active_users"],
-					"is_speaking": data["is_speaking"],
-					"current_speaker": data["current_speaker"],
-					"timestamp": data["timestamp"],
-				},
-			)
+			if time.time() - data["timestamp"] <= 1.0:
+				await self.channel_layer.group_send(
+					video_streaming_group,
+					{
+						"type": "broadcast_frame",
+						"frame": data["frame"],
+						"user": data["user"],
+						"active_users": data["active_users"],
+						"is_speaking": data["is_speaking"],
+						"current_speaker": data["current_speaker"],
+						"timestamp": data["timestamp"],
+					},
+				)
 
 		except Exception:
 			await self.close()
