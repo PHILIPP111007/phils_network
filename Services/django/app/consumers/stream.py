@@ -100,18 +100,19 @@ class AudioStreamConsumer(AsyncWebsocketConsumer):
 			room_id = data["room"]
 			audio_streaming_group = AUDIO_STREAMING_GROUP.format(room_id)
 
-			await self.channel_layer.group_send(
-				audio_streaming_group,
-				{
-					"type": "broadcast_audio",
-					"audio": data["audio"],
-					"user": data["user"],
-					"active_users": data["active_users"],
-					"is_speaking": data["is_speaking"],
-					"current_speaker": data["current_speaker"],
-					"timestamp": data["timestamp"],
-				},
-			)
+			if time.time() - data["timestamp"] <= 1.0:
+				await self.channel_layer.group_send(
+					audio_streaming_group,
+					{
+						"type": "broadcast_audio",
+						"audio": data["audio"],
+						"user": data["user"],
+						"active_users": data["active_users"],
+						"is_speaking": data["is_speaking"],
+						"current_speaker": data["current_speaker"],
+						"timestamp": data["timestamp"],
+					},
+				)
 
 		except Exception:
 			await self.close()

@@ -444,6 +444,13 @@ export default function VideoStream() {
                         if (delay < 1000) {
                             await displayProcessedFrame(data.frame)
                             setCurrentSpeaker(data.user)
+                            setActiveUsers(prev => {
+                                var users = new Set(prev)
+                                if (data.user && data.user.username) {
+                                    users.add(data.user.username)
+                                }
+                                return Array.from(users)
+                            })
                         }
                     } else if (data.type === "error") {
                         setError(`Server error: ${data.message}`)
@@ -462,10 +469,16 @@ export default function VideoStream() {
                             var delay = Number(Date.now() - data.timestamp)
                             if (delay < 1000) {
                                 await playReceivedAudio(data.audio)
+                                setActiveUsers(prev => {
+                                    var users = new Set(prev)
+                                    if (data.user && data.user.username) {
+                                        users.add(data.user.username)
+                                    }
+                                    return Array.from(users)
+                                })
+                                setCurrentSpeaker(data.user)
                             }
                         }
-                        setCurrentSpeaker(data.user)
-                        setActiveUsers(data.active_users || [])
                     }
                 } catch (err) {
                     console.error("Error parsing audio message:", err)
@@ -527,7 +540,7 @@ export default function VideoStream() {
                 animationRef.current = null
             }
         }
-    }, [isStreaming, isFullscreen, currentFPS])
+    }, [isStreaming, isFullscreen])
 
     useEffect(() => {
         if (isAudioStreaming) {
@@ -701,11 +714,11 @@ export default function VideoStream() {
                             📺 На весь экран
                         </button>
                         <div style={{ marginTop: '10px' }}>
-                            <label>FPS: {currentFPS}</label>
+                            <label>FPS (настройка видеообновлений для просмотра пользователями): {currentFPS}</label>
                             <input
                                 type="range"
                                 min="1"
-                                max="30"
+                                max="60"
                                 value={currentFPS}
                                 onChange={(e) => setCurrentFPS(Number(e.target.value))}
                                 style={{ marginLeft: '10px', width: '150px' }}
