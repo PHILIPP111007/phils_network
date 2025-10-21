@@ -223,5 +223,3 @@ BUCKET_NAME = "philsnetwork"
 DATETIME_FORMAT: str = environ.get("DATETIME_FORMAT", "%Y-%m-%d %H:%M")
 
 API_VERSION = 1
-
-NUM_WORKERS_VIDEO_STREAMING = 100
