@@ -441,7 +441,6 @@ export default function VideoStream() {
                         var delay = Number(Date.now() - data.timestamp)
                         if (delay < 1000) {
                             await displayProcessedFrame(data.frame)
-                            setCurrentSpeaker(data.user)
                             setActiveUsers(prev => {
                                 var users = new Set(prev)
                                 if (data.user && data.user.username) {
@@ -581,9 +580,72 @@ export default function VideoStream() {
                     zIndex: 9999,
                     display: isFullscreen ? "flex" : "none",
                     justifyContent: "center",
-                    alignItems: "center"
+                    alignItems: "center",
+                    flexDirection: "column"
                 }}
             >
+                {/* Панель управления в полноэкранном режиме */}
+                <div style={{
+                    position: "absolute",
+                    top: "20px",
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    display: "flex",
+                    gap: "10px",
+                    zIndex: 10000,
+                    backgroundColor: "rgba(0, 0, 0, 0.7)",
+                    padding: "10px",
+                    borderRadius: "10px"
+                }}>
+                    <button
+                        onClick={() => setIsStreaming(true)}
+                        disabled={!isConnected || isStreaming}
+                        style={{
+                            padding: "10px 20px",
+                            backgroundColor: isStreaming ? "#ccc" : "#007bff",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "5px",
+                            cursor: isStreaming ? "not-allowed" : "pointer",
+                            fontSize: "14px"
+                        }}
+                    >
+                        ▶️ Начать
+                    </button>
+
+                    <button
+                        onClick={() => setIsStreaming(false)}
+                        disabled={!isStreaming}
+                        style={{
+                            padding: "10px 20px",
+                            backgroundColor: isStreaming ? "#dc3545" : "#ccc",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "5px",
+                            cursor: isStreaming ? "pointer" : "not-allowed",
+                            fontSize: "14px"
+                        }}
+                    >
+                        ⏹️ Остановить
+                    </button>
+
+                    <button
+                        onClick={() => setIsAudioStreaming((prev) => !prev)}
+                        style={{
+                            padding: "10px 20px",
+                            backgroundColor: isAudioStreaming ? "#dc3545" : "#007bff",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "5px",
+                            cursor: "pointer",
+                            fontSize: "14px"
+                        }}
+                    >
+                        {isAudioStreaming ? "🔇 Выкл. аудио" : "🔊 Вкл. аудио"}
+                    </button>
+                </div>
+
+                {/* Кнопка закрытия */}
                 <button
                     onClick={() => setIsFullscreen(false)}
                     style={{
@@ -601,6 +663,8 @@ export default function VideoStream() {
                 >
                     ✕ Закрыть
                 </button>
+
+                {/* Canvas для видео */}
                 <canvas
                     ref={canvasModalRef}
                     style={{
@@ -609,6 +673,24 @@ export default function VideoStream() {
                         objectFit: "contain"
                     }}
                 />
+
+                {/* Информация о текущем спикере в полноэкранном режиме */}
+                {currentSpeaker && (
+                    <div style={{
+                        position: "absolute",
+                        bottom: "20px",
+                        left: "50%",
+                        transform: "translateX(-50%)",
+                        color: "white",
+                        backgroundColor: "rgba(0, 0, 0, 0.7)",
+                        padding: "10px 20px",
+                        borderRadius: "5px",
+                        zIndex: 10000,
+                        fontSize: "16px"
+                    }}>
+                        {currentSpeaker.first_name} {currentSpeaker.last_name}
+                    </div>
+                )}
             </div>
 
             <div style={{ padding: "100px", textAlign: "center", maxWidth: "1200px", margin: "0 auto" }}>
