@@ -230,10 +230,16 @@ export default function VideoStream() {
     var displayProcessedFrame = async (frameData) => {
         var img = new Image()
         img.onload = async () => {
+            var mainContext
             if (canvasRef.current) {
-                var mainContext = await canvasRef.current.getContext("2d")
+                mainContext = await canvasRef.current.getContext("2d")
                 await mainContext.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
                 await mainContext.drawImage(img, 0, 0, canvasRef.current.width, canvasRef.current.height)
+            }
+            if (canvasModalRef.current) {
+                mainContext = await canvasModalRef.current.getContext("2d")
+                await mainContext.clearRect(0, 0, canvasModalRef.current.width, canvasModalRef.current.height)
+                await mainContext.drawImage(img, 0, 0, canvasModalRef.current.width, canvasModalRef.current.height)
             }
         }
         img.onerror = () => {
@@ -383,19 +389,11 @@ export default function VideoStream() {
         try {
             var context, frameData
 
-            if (isFullscreen && canvasModal) {
-                context = await canvasModal.getContext("2d")
-                canvasModal.width = video.videoWidth
-                canvasModal.height = video.videoHeight
-                await context.drawImage(video, 0, 0, canvasModal.width, canvasModal.height)
-                frameData = await canvasModal.toDataURL("image/jpeg", 0.7)
-            } else {
-                context = await canvas.getContext("2d")
-                canvas.width = video.videoWidth
-                canvas.height = video.videoHeight
-                await context.drawImage(video, 0, 0, canvas.width, canvas.height)
-                frameData = await canvas.toDataURL("image/jpeg", 0.7)
-            }
+            context = await canvas.getContext("2d")
+            canvas.width = video.videoWidth
+            canvas.height = video.videoHeight
+            await context.drawImage(video, 0, 0, canvas.width, canvas.height)
+            frameData = await canvas.toDataURL("image/jpeg", 0.7)
 
             if (webSocketVideo.current.readyState === WebSocket.OPEN) {
                 var data = JSON.stringify({
@@ -540,7 +538,7 @@ export default function VideoStream() {
                 animationRef.current = null
             }
         }
-    }, [isStreaming, isFullscreen])
+    }, [isStreaming])
 
     useEffect(() => {
         if (isAudioStreaming) {
@@ -699,15 +697,14 @@ export default function VideoStream() {
 
                         <button
                             onClick={() => setIsFullscreen(true)}
-                            disabled={!isStreaming}
                             style={{
                                 margin: "5px",
                                 padding: "12px 24px",
-                                backgroundColor: isStreaming ? "#007bff" : "#ccc",
+                                backgroundColor: "#007bff",
                                 color: "white",
                                 border: "none",
                                 borderRadius: "5px",
-                                cursor: isStreaming ? "pointer" : "not-allowed",
+                                cursor: "pointer",
                                 fontSize: "16px"
                             }}
                         >
