@@ -166,19 +166,72 @@ export default function VideoStream() {
                 return
             }
 
+            // Оптимальные настройки аудио для высокого качества
+            var audioConstraints = {
+                echoCancellation: { ideal: true },
+                noiseSuppression: { ideal: true },
+                autoGainControl: { ideal: true },
+                // Улучшенные настройки качества
+                sampleRate: { ideal: 48000, min: 44100 }, // CD качество
+                channelCount: { ideal: 1, max: 2 }, // моно или стерео
+                sampleSize: { ideal: 16 }, // битность
+                // Дополнительные улучшения для Mac
+                googEchoCancellation: true,
+                googAutoGainControl: true,
+                googNoiseSuppression: true,
+                googHighpassFilter: true,
+                // Экспериментальные настройки (если поддерживаются)
+                latency: { ideal: 0.01 },
+                volume: { ideal: 1.0 }
+            }
+
+            // Проверяем поддержку расширенных настроек
+            var supportedConstraints = navigator.mediaDevices.getSupportedConstraints()
+            console.log("Supported audio constraints:", supportedConstraints)
+
+            // Убираем неподдерживаемые ограничения
+            var finalConstraints = {}
+            Object.keys(audioConstraints).forEach(key => {
+                if (supportedConstraints[key]) {
+                    finalConstraints[key] = audioConstraints[key]
+                }
+            })
+
+            // Альтернативные настройки для разных браузеров
             var stream = await navigator.mediaDevices.getUserMedia({
                 video: false,
-                audio: {
-                    echoCancellation: true,
-                    noiseSuppression: true,
-                    autoGainControl: true,
-                    sampleRate: 16000, // добавляем конкретные настройки
-                    channelCount: 1
-                },
+                audio: finalConstraints
+            }).catch(async (error) => {
+                console.log("High quality audio failed, trying basic settings:", error)
+
+                // Резервные настройки
+                return await navigator.mediaDevices.getUserMedia({
+                    video: false,
+                    audio: {
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        autoGainControl: true,
+                        sampleRate: 44100,
+                        channelCount: 1
+                    }
+                })
             })
+
+            // Проверяем и логируем фактические настройки
+            var audioTrack = stream.getAudioTracks()[0]
+            if (audioTrack && audioTrack.getSettings) {
+                var actualSettings = audioTrack.getSettings()
+                console.log("Actual audio settings:", actualSettings)
+
+                // Проверяем качество
+                var capabilities = audioTrack.getCapabilities ? audioTrack.getCapabilities() : {}
+                console.log("Audio capabilities:", capabilities)
+            }
 
             audioStreamRef.current = stream
             await startAudioProcessing(stream)
+
+            console.log("High quality audio streaming started")
 
         } catch (error) {
             console.error("Error accessing microphone:", error)
@@ -187,6 +240,21 @@ export default function VideoStream() {
                 errorMessage += "Доступ к микрофону запрещен."
             } else if (error.name === "NotFoundError") {
                 errorMessage += "Микрофон не найден."
+            } else if (error.name === "OverconstrainedError") {
+                errorMessage += "Требуемые настройки микрофона недоступны. Попробуйте базовые настройки."
+                // Пробуем минимальные настройки
+                try {
+                    var basicStream = await navigator.mediaDevices.getUserMedia({
+                        video: false,
+                        audio: true // Минимальные настройки
+                    })
+                    audioStreamRef.current = basicStream
+                    await startAudioProcessing(basicStream)
+                    setError("") // Очищаем ошибку
+                    return
+                } catch (basicError) {
+                    console.error("Basic microphone access also failed:", basicError)
+                }
             } else {
                 errorMessage += error.message
             }
@@ -493,6 +561,7 @@ export default function VideoStream() {
                                 if (data.user && data.user.username) {
                                     users.add(data.user.username)
                                 }
+                                users.add(user.username)
                                 return Array.from(users)
                             })
                         }
@@ -518,6 +587,7 @@ export default function VideoStream() {
                                     if (data.user && data.user.username) {
                                         users.add(data.user.username)
                                     }
+                                    users.add(user.username)
                                     return Array.from(users)
                                 })
                                 setCurrentSpeaker(data.user)
