@@ -63,7 +63,7 @@ export default function VideoStream() {
                 video: {
                     width: { ideal: 640 },
                     height: { ideal: 480 },
-                    frameRate: { ideal: 15, max: 30 }
+                    frameRate: { ideal: 15, max: 60 }
                 },
                 audio: false,
             })
@@ -379,7 +379,6 @@ export default function VideoStream() {
 
         var video = videoRef.current
         var canvas = canvasRef.current
-        var canvasModal = canvasModalRef.current
 
         if (!video || !canvas || video.videoWidth === 0 || video.videoHeight === 0) {
             animationRef.current = requestAnimationFrame(captureAndSendFrames)
