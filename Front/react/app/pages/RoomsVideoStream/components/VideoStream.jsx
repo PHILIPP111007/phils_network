@@ -52,28 +52,60 @@ export default function VideoStream() {
     var startStreamingVideo = async () => {
         try {
             setError("")
-            console.log("Starting video streaming...")
 
             var hasAccess = await checkCameraAccess()
             if (!hasAccess) {
                 return
             }
 
-            var stream = await navigator.mediaDevices.getUserMedia({
+            var constraints = {
                 video: {
                     width: { ideal: 640 },
                     height: { ideal: 480 },
-                    frameRate: { ideal: 15, max: 60 }
+                    frameRate: { ideal: 15, max: 60 },
+                    facingMode: "user",
+                    aspectRatio: { ideal: 16 / 9 },
+                    resizeMode: "crop-and-scale",
                 },
                 audio: false,
-            })
+            }
+
+            if (navigator.mediaDevices.getSupportedConstraints().frameRate) {
+                constraints.video.frameRate = { ideal: 30, max: 60 }
+            }
+
+            var stream = await navigator.mediaDevices.getUserMedia(constraints)
 
             streamRef.current = stream
 
             if (videoRef.current) {
                 videoRef.current.srcObject = stream
-                console.log("Video stream started")
+
+                videoRef.current.onloadedmetadata = () => {
+                    console.log("Video metadata loaded, dimensions:",
+                        videoRef.current.videoWidth, "x", videoRef.current.videoHeight)
+                }
             }
+
+            if (stream.getVideoTracks().length > 0) {
+                var track = stream.getVideoTracks()[0]
+                var capabilities = track.getCapabilities ? track.getCapabilities() : {}
+                var settings = track.getSettings ? track.getSettings() : {}
+
+                console.log("Camera capabilities:", capabilities)
+                console.log("Current camera settings:", settings)
+
+                if (capabilities.zoom) {
+                    try {
+                        await track.applyConstraints({
+                            advanced: [{ zoom: capabilities.zoom.min }]
+                        })
+                    } catch (constraintError) {
+                        console.log("Cannot apply zoom constraints:", constraintError)
+                    }
+                }
+            }
+
         } catch (error) {
             console.error("Error accessing camera:", error)
             var errorMessage = "Не удалось получить доступ к камере. "
@@ -81,6 +113,22 @@ export default function VideoStream() {
                 errorMessage += "Доступ к камере запрещен."
             } else if (error.name === "NotFoundError") {
                 errorMessage += "Камера не найдена."
+            } else if (error.name === "OverconstrainedError") {
+                errorMessage += "Требуемые настройки камеры недоступны. Попробуйте другие параметры."
+                try {
+                    var basicStream = await navigator.mediaDevices.getUserMedia({
+                        video: true,
+                        audio: false
+                    })
+                    streamRef.current = basicStream
+                    if (videoRef.current) {
+                        videoRef.current.srcObject = basicStream
+                    }
+                    setError("")
+                    return
+                } catch (basicError) {
+                    console.error("Basic camera access also failed:", basicError)
+                }
             } else {
                 errorMessage += error.message
             }
