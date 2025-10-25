@@ -7,12 +7,23 @@ export default defineConfig({
     host: "0.0.0.0",
     port: 3000,
   },
-  plugins: [react()],
   root: ".",
   build: {
     outDir: "dist",
   },
   define: {
     global: {}
-  }
-})
+  },
+  plugins: [
+    react({
+      babel: {
+        plugins: [
+          // Add the React Compiler Babel plugin here
+          "babel-plugin-react-compiler",
+          // You can also pass options to the compiler if needed
+          // ['babel-plugin-react-compiler', { /* compiler options */ }]
+        ],
+      },
+    }),
+  ],
+});
