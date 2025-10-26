@@ -78,6 +78,12 @@ To run tests, use:
 
 ```bash
 docker compose run -e TEST=1 --build fastapi pytest
+
+# or
+
+export TEST=1
+cd Services/fastapi
+pytest
 ```
 
 ## Development installation
