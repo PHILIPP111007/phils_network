@@ -4,6 +4,7 @@ import { UserContext } from "../../../data/context.js"
 import rememberPage from "../../../modules/rememberPage.js"
 import MainComponents from "../../components/MainComponents/MainComponents.jsx"
 import { getWebSocketDjango } from "../../../modules/getWebSocket.js"
+import { qualitySettings } from "../../../data/qualitySettings.js"
 
 export default function VideoStream() {
     var { user } = use(UserContext)
@@ -19,6 +20,7 @@ export default function VideoStream() {
     var webSocketAudio = useRef(null)
     var [isConnected, setIsConnected] = useState(false)
     var [isStreaming, setIsStreaming] = useState(false)
+    var [isScreenSharing, setIsScreenSharing] = useState(false)
     var [error, setError] = useState("")
     var [activeUsers, setActiveUsers] = useState([])
     var streamRef = useRef(null)
@@ -29,6 +31,8 @@ export default function VideoStream() {
     var audioContextRef = useRef(null)
     var audioStreamRef = useRef(null)
     var audioProcessorRef = useRef(null)
+    var screenStreamRef = useRef(null)
+    var [screenQuality, setScreenQuality] = useState("720p")
 
     var [currentFPS, setCurrentFPS] = useState(10)
 
@@ -49,20 +53,116 @@ export default function VideoStream() {
         }
     }
 
+    // Функция для начала трансляции экрана
+    var startScreenSharing = async () => {
+        try {
+            setError("")
+            console.log("Starting screen sharing...")
+
+            // Проверяем поддержку API захвата экрана
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+                setError("Ваш браузер не поддерживает захват экрана")
+                return false
+            }
+
+            var quality = qualitySettings[screenQuality]
+
+            // Запрашиваем разрешение на захват экрана
+            var screenStream = await navigator.mediaDevices.getDisplayMedia({
+                video: {
+                    cursor: "always",
+                    displaySurface: "monitor", // или "browser", "window", "monitor"
+                    logicalSurface: false,
+                    width: { ideal: quality.width, max: quality.width },
+                    height: { ideal: quality.height, max: quality.height },
+                    frameRate: { ideal: quality.frameRate, max: 60 },
+                    aspectRatio: { ideal: 16 / 9 },
+                    resizeMode: "crop-and-scale",
+                },
+                audio: false,
+            })
+
+            screenStreamRef.current = screenStream
+
+            // Обработка события остановки захвата пользователем
+            screenStream.getVideoTracks()[0].onended = () => {
+                console.log("Screen sharing stopped by user")
+                stopScreenSharing()
+            }
+
+            // Заменяем видеопоток камеры на поток экрана
+            if (videoRef.current) {
+                videoRef.current.srcObject = screenStream
+            }
+
+            // Обновляем streamRef для использования в captureAndSendFrames
+            streamRef.current = screenStream
+
+            console.log("Screen sharing started successfully")
+            return true
+
+        } catch (error) {
+            console.error("Error starting screen sharing:", error)
+            var errorMessage = "Не удалось начать трансляцию экрана. "
+
+            if (error.name === "NotAllowedError") {
+                errorMessage += "Доступ к экрану запрещен."
+            } else if (error.name === "NotFoundError") {
+                errorMessage += "Не удалось выбрать источник для трансляции."
+            } else {
+                errorMessage += error.message
+            }
+
+            setError(errorMessage)
+            return false
+        }
+    }
+
+    // Функция для остановки трансляции экрана
+    var stopScreenSharing = async () => {
+        console.log("Stopping screen sharing...")
+
+        if (screenStreamRef.current) {
+            screenStreamRef.current.getTracks().forEach(track => track.stop())
+            screenStreamRef.current = null
+        }
+
+        // Если была активна трансляция, переключаемся обратно на камеру
+        if (isStreaming && !isScreenSharing) {
+            await startStreamingVideo()
+        } else if (videoRef.current) {
+            videoRef.current.srcObject = null
+        }
+
+        setIsScreenSharing(false)
+    }
+
+    // Модифицированная функция начала трансляции видео
     var startStreamingVideo = async () => {
         try {
             setError("")
+
+            // Если активна трансляция экрана, используем ее
+            if (isScreenSharing && screenStreamRef.current) {
+                streamRef.current = screenStreamRef.current
+                if (videoRef.current) {
+                    videoRef.current.srcObject = screenStreamRef.current
+                }
+                return
+            }
 
             var hasAccess = await checkCameraAccess()
             if (!hasAccess) {
                 return
             }
 
+            var quality = qualitySettings[screenQuality]
+
             var constraints = {
                 video: {
-                    width: { ideal: 640 },
-                    height: { ideal: 480 },
-                    frameRate: { ideal: 15, max: 60 },
+                    width: { ideal: quality.width, max: quality.width },
+                    height: { ideal: quality.height, max: quality.height },
+                    frameRate: { ideal: quality.frameRate, max: 60 },
                     facingMode: "user",
                     aspectRatio: { ideal: 16 / 9 },
                     resizeMode: "crop-and-scale",
@@ -75,12 +175,10 @@ export default function VideoStream() {
             }
 
             var stream = await navigator.mediaDevices.getUserMedia(constraints)
-
             streamRef.current = stream
 
             if (videoRef.current) {
                 videoRef.current.srcObject = stream
-
                 videoRef.current.onloadedmetadata = () => {
                     console.log("Video metadata loaded, dimensions:",
                         videoRef.current.videoWidth, "x", videoRef.current.videoHeight)
@@ -138,20 +236,24 @@ export default function VideoStream() {
 
     var stopStreamingVideo = async () => {
         console.log("Stopping video streaming...")
-        if (streamRef.current) {
-            await streamRef.current.getTracks().forEach(track => {
-                track.stop()
-            })
-            streamRef.current = null
-        }
 
-        if (animationRef.current) {
-            cancelAnimationFrame(animationRef.current)
-            animationRef.current = null
-        }
+        // Останавливаем только если это не трансляция экрана
+        if (!isScreenSharing) {
+            if (streamRef.current) {
+                streamRef.current.getTracks().forEach(track => {
+                    track.stop()
+                })
+                streamRef.current = null
+            }
 
-        if (videoRef.current) {
-            videoRef.current.srcObject = null
+            if (animationRef.current) {
+                cancelAnimationFrame(animationRef.current)
+                animationRef.current = null
+            }
+
+            if (videoRef.current) {
+                videoRef.current.srcObject = null
+            }
         }
         setCurrentSpeaker(null)
     }
@@ -346,22 +448,98 @@ export default function VideoStream() {
     var displayProcessedFrame = async (frameData) => {
         var img = new Image()
         img.onload = async () => {
-            var mainContext
+            var mainContext, modalContext
+
             if (canvasRef.current) {
-                mainContext = await canvasRef.current.getContext("2d")
-                await mainContext.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
-                await mainContext.drawImage(img, 0, 0, canvasRef.current.width, canvasRef.current.height)
+                mainContext = await canvasRef.current.getContext("2d", {
+                    alpha: false,
+                    desynchronized: true
+                })
+
+                // Устанавливаем точные размеры без масштабирования
+                var displayWidth = img.naturalWidth
+                var displayHeight = img.naturalHeight
+
+                // Обновляем размеры canvas только если они изменились
+                if (canvasRef.current.width !== displayWidth || canvasRef.current.height !== displayHeight) {
+                    canvasRef.current.width = displayWidth
+                    canvasRef.current.height = displayHeight
+                }
+
+                // Настраиваем высокое качество рендеринга
+                mainContext.imageSmoothingEnabled = true
+                mainContext.imageSmoothingQuality = "high"
+
+                // Очищаем и рисуем без масштабирования
+                await mainContext.clearRect(0, 0, displayWidth, displayHeight)
+                await mainContext.drawImage(
+                    img,
+                    0, 0,
+                    displayWidth,
+                    displayHeight,
+                    0, 0,
+                    displayWidth,
+                    displayHeight
+                )
             }
+
             if (canvasModalRef.current) {
-                mainContext = await canvasModalRef.current.getContext("2d")
-                await mainContext.clearRect(0, 0, canvasModalRef.current.width, canvasModalRef.current.height)
-                await mainContext.drawImage(img, 0, 0, canvasModalRef.current.width, canvasModalRef.current.height)
+                modalContext = await canvasModalRef.current.getContext("2d", {
+                    alpha: false,
+                    desynchronized: true
+                })
+
+                // Получаем реальные размеры контейнера полноэкранного режима
+                var containerWidth = window.innerWidth
+                var containerHeight = window.innerHeight
+
+                // Устанавливаем размеры canvas равными размерам окна
+                if (canvasModalRef.current.width !== containerWidth || canvasModalRef.current.height !== containerHeight) {
+                    canvasModalRef.current.width = containerWidth
+                    canvasModalRef.current.height = containerHeight
+                }
+
+                // Рассчитываем масштаб с сохранением пропорций
+                var scale = Math.min(
+                    containerWidth / img.naturalWidth,
+                    containerHeight / img.naturalHeight
+                )
+
+                var renderWidth = img.naturalWidth * scale
+                var renderHeight = img.naturalHeight * scale
+                var offsetX = (containerWidth - renderWidth) / 2
+                var offsetY = (containerHeight - renderHeight) / 2
+
+                // Настраиваем высокое качество рендеринга
+                modalContext.imageSmoothingEnabled = true
+                modalContext.imageSmoothingQuality = "high"
+
+                // Очищаем весь canvas
+                await modalContext.clearRect(0, 0, containerWidth, containerHeight)
+
+                // Рисуем изображение с правильными размерами
+                await modalContext.drawImage(
+                    img,
+                    0, 0,
+                    img.naturalWidth,
+                    img.naturalHeight,
+                    offsetX,
+                    offsetY,
+                    renderWidth,
+                    renderHeight
+                )
             }
         }
         img.onerror = () => {
             console.error("Error loading broadcast image")
         }
+
         img.src = frameData
+
+        // Предзагрузка для плавного отображения
+        img.decode && img.decode().catch(() => {
+            console.log("Image decode failed, falling back to onload")
+        })
     }
 
     var restartAudioContext = async () => {
@@ -504,11 +682,48 @@ export default function VideoStream() {
         try {
             var context, frameData
 
-            context = await canvas.getContext("2d")
+            context = await canvas.getContext("2d", {
+                alpha: false, // Отключаем альфа-канал для лучшей производительности
+                desynchronized: true // Включаем десинхронизацию для оптимизации
+            })
+
             canvas.width = video.videoWidth
             canvas.height = video.videoHeight
-            await context.drawImage(video, 0, 0, canvas.width, canvas.height)
-            frameData = await canvas.toDataURL("image/jpeg", 0.7)
+
+            // Настраиваем высококачественное сглаживание
+            context.imageSmoothingEnabled = true
+            context.imageSmoothingQuality = "high"
+
+            // Очищаем canvas перед отрисовкой
+            await context.clearRect(0, 0, canvas.width, canvas.height)
+
+            // Рисуем видео с высоким качеством
+            await context.drawImage(
+                video,
+                0, 0,
+                canvas.width,
+                canvas.height,
+            )
+
+            // Настраиваем качество сжатия в зависимости от типа контента
+            var compressionQuality = 0.85 // Базовое высокое качество
+
+            if (isScreenSharing) {
+                // Для экрана используем более высокое качество для текста и графики
+                compressionQuality = 0.92
+            } else if (currentFPS <= 15) {
+                // Для низкого FPS можно повысить качество
+                compressionQuality = 0.9
+            }
+
+            // Используем WebP если поддерживается для лучшего сжатия
+            var format = "image/jpeg"
+            if (canvas.toDataURL("image/webp", compressionQuality).length > 0) {
+                format = "image/webp"
+                compressionQuality = Math.min(compressionQuality + 0.05, 0.95) // WebP эффективнее
+            }
+
+            frameData = await canvas.toDataURL(format, compressionQuality)
 
             if (webSocketVideo.current.readyState === WebSocket.OPEN) {
                 var data = JSON.stringify({
@@ -531,6 +746,22 @@ export default function VideoStream() {
         setTimeout(() => {
             animationRef.current = requestAnimationFrame(captureAndSendFrames)
         }, frameInterval)
+    }
+
+    // Функция переключения трансляции экрана
+    var toggleScreenSharing = async () => {
+        if (isScreenSharing) {
+            await stopScreenSharing()
+        } else {
+            var success = await startScreenSharing()
+            if (success) {
+                setIsScreenSharing(true)
+                // Автоматически включаем трансляцию если она была выключена
+                if (!isStreaming) {
+                    setIsStreaming(true)
+                }
+            }
+        }
     }
 
     var connectStreamWebSocket = async () => {
@@ -626,6 +857,7 @@ export default function VideoStream() {
             disconnectStreamWebSocket()
             stopStreamingVideo()
             stopStreamingAudio()
+            stopScreenSharing()
         }
     }, [params.room_id])
 
@@ -715,35 +947,33 @@ export default function VideoStream() {
                     borderRadius: "10px"
                 }}>
                     <button
-                        onClick={() => setIsStreaming(true)}
-                        disabled={!isConnected || isStreaming}
+                        onClick={() => setIsStreaming((prev) => !prev)}
                         style={{
                             padding: "10px 20px",
-                            backgroundColor: isStreaming ? "#ccc" : "#007bff",
+                            backgroundColor: isStreaming ? "#dc3545" : "#007bff",
                             color: "white",
                             border: "none",
                             borderRadius: "5px",
-                            cursor: isStreaming ? "not-allowed" : "pointer",
+                            cursor: "pointer",
                             fontSize: "14px"
                         }}
                     >
-                        ▶️ Начать
+                        {isStreaming ? "⏹️ Остановить" : "▶️ Начать трансляцию видео"}
                     </button>
 
                     <button
-                        onClick={() => setIsStreaming(false)}
-                        disabled={!isStreaming}
+                        onClick={toggleScreenSharing}
                         style={{
                             padding: "10px 20px",
-                            backgroundColor: isStreaming ? "#dc3545" : "#ccc",
+                            backgroundColor: isScreenSharing ? "#dc3545" : "#007bff",
                             color: "white",
                             border: "none",
                             borderRadius: "5px",
-                            cursor: isStreaming ? "pointer" : "not-allowed",
+                            cursor: "pointer",
                             fontSize: "14px"
                         }}
                     >
-                        ⏹️ Остановить
+                        {isScreenSharing ? "🖥️ Остановить экран" : "🖥️ Трансляция экрана"}
                     </button>
 
                     <button
@@ -785,9 +1015,9 @@ export default function VideoStream() {
                 <canvas
                     ref={canvasModalRef}
                     style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "contain"
+                        width: "100vh",
+                        height: "100vh",
+                        display: "block"
                     }}
                 />
 
@@ -845,37 +1075,35 @@ export default function VideoStream() {
                 }}>
                     <div style={{ marginBottom: "15px" }}>
                         <button
-                            onClick={() => setIsStreaming(true)}
-                            disabled={!isConnected || isStreaming}
+                            onClick={() => setIsStreaming((prev) => !prev)}
                             style={{
                                 margin: "5px",
                                 padding: "12px 24px",
-                                backgroundColor: isStreaming ? "#ccc" : "#007bff",
+                                backgroundColor: isStreaming ? "#dc3545" : "#007bff",
                                 color: "white",
                                 border: "none",
                                 borderRadius: "5px",
-                                cursor: isStreaming ? "not-allowed" : "pointer",
+                                cursor: "pointer",
                                 fontSize: "16px"
                             }}
                         >
-                            ▶️ Начать трансляцию
+                            {isStreaming ? "⏹️ Остановить" : "▶️ Начать трансляцию видео"}
                         </button>
 
                         <button
-                            onClick={() => setIsStreaming(false)}
-                            disabled={!isStreaming}
+                            onClick={toggleScreenSharing}
                             style={{
                                 margin: "5px",
                                 padding: "12px 24px",
-                                backgroundColor: isStreaming ? "#dc3545" : "#ccc",
+                                backgroundColor: isScreenSharing ? "#dc3545" : "#007bff",
                                 color: "white",
                                 border: "none",
                                 borderRadius: "5px",
-                                cursor: isStreaming ? "pointer" : "not-allowed",
+                                cursor: "pointer",
                                 fontSize: "16px"
                             }}
                         >
-                            ⏹️ Остановить
+                            {isScreenSharing ? "🖥️ Остановить экран" : "🖥️ Трансляция экрана"}
                         </button>
 
                         <button
@@ -919,6 +1147,27 @@ export default function VideoStream() {
                                 onChange={(e) => setCurrentFPS(Number(e.target.value))}
                                 style={{ marginLeft: '10px', width: '150px' }}
                             />
+                        </div>
+                        <div style={{ marginTop: '10px' }}>
+                            <label>Качество экрана: </label>
+                            <select
+                                value={screenQuality}
+                                onChange={(e) => setScreenQuality(e.target.value)}
+                                style={{
+                                    marginLeft: '10px',
+                                    padding: '5px',
+                                    borderRadius: '5px',
+                                    border: '1px solid #ccc'
+                                }}
+                            >
+                                <option value="720p">720p HD</option>
+                                <option value="1080p">1080p Full HD</option>
+                                <option value="2K">2K Quad HD</option>
+                                <option value="4K">4K Ultra HD</option>
+                            </select>
+                            <div style={{ fontSize: '12px', color: '#666', marginTop: '5px' }}>
+                                Разрешение: {qualitySettings[screenQuality].width}x{qualitySettings[screenQuality].height}
+                            </div>
                         </div>
                     </div>
                 </div>
