@@ -8,7 +8,7 @@ target-version = "py313"
 
 # Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default. 
 lint.select = ["E", "F"]
-lint.ignore = ["F403"]
+lint.ignore = ["F403", "F401"]
 
 # Allow autofix for all enabled rules (when `--fix`) is provided. 
 lint.unfixable = []
