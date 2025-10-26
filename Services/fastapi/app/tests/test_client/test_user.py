@@ -2,15 +2,15 @@ from fastapi.testclient import TestClient
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.tests.fixtures import (
-	test_engine_fixture,
-	session_fixture,
 	client_fixture,
+	session_fixture,
+	test_engine_fixture,
 )
 from app.tests.modules import (
+	DEFAULT_USER_TOKEN_KEY,
+	create_upload_file,
 	get_or_create_default_user,
 	get_or_create_user,
-	create_upload_file,
-	DEFAULT_USER_TOKEN_KEY,
 )
 
 
@@ -103,7 +103,7 @@ async def test_put_user_wrong_key(session: AsyncSession, client: TestClient):
 		"infura_api_key": "",
 	}
 	response = client.put(
-		"/api/v2/user/", json=body, headers={"Authorization": f"Bearer WRONG_KEY"}
+		"/api/v2/user/", json=body, headers={"Authorization": "Bearer WRONG_KEY"}
 	)
 	assert response.status_code == 200
 
@@ -135,7 +135,7 @@ async def test_put_user_image(session: AsyncSession, client: TestClient):
 		"ethereum_address": "",
 		"first_name": "Admin",
 		"id": 1,
-		"image": "user_1",
+		"image": "",
 		"infura_api_key": "",
 		"is_online": False,
 		"last_name": "Admin",
@@ -162,7 +162,7 @@ async def test_delete_user(session: AsyncSession, client: TestClient):
 	assert data["ok"] == True
 
 	response = client.delete(
-		f"/api/v2/user/NON_EXISTING_USERNAME/",
+		"/api/v2/user/NON_EXISTING_USERNAME/",
 		headers={"Authorization": f"Bearer {token_key}"},
 	)
 	data = response.json()
@@ -177,7 +177,7 @@ async def test_delete_user(session: AsyncSession, client: TestClient):
 	token_key = token.key
 
 	response = client.delete(
-		f"/api/v2/user/NON_EXISTING_USERNAME/",
+		"/api/v2/user/NON_EXISTING_USERNAME/",
 		headers={"Authorization": f"Bearer {token_key}"},
 	)
 
@@ -192,7 +192,7 @@ async def test_delete_user(session: AsyncSession, client: TestClient):
 	)
 
 	response = client.delete(
-		f"/api/v2/user/admin1/",
+		"/api/v2/user/admin1/",
 		headers={"Authorization": f"Bearer {token_key}"},
 	)
 

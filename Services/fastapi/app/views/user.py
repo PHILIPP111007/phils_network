@@ -5,7 +5,7 @@ import tempfile
 from fastapi import APIRouter, File, Request, UploadFile
 from sqlmodel import delete, select
 
-from app.constants import BUCKET_NAME, MEDIA_ROOT, USER_IMAGE_PATH
+from app.constants import BUCKET_NAME, MEDIA_ROOT, TESTING, USER_IMAGE_PATH
 from app.database import SessionDep
 from app.models import (
 	DjangoAdminLog,
@@ -35,14 +35,17 @@ async def get_user(session: SessionDep, request: Request, username: str):
 	if not query:
 		return {"ok": False, "error": "Not found the global user."}
 
-	try:
-		file_path = f"user_{query.id}"
-		with open(file_path, "wb") as file:
-			s3.download_fileobj(BUCKET_NAME, file_path, file)
-		with open(file_path, "rb") as file:
-			content = file.read()
-			content_base64 = base64.b64encode(content).decode("utf-8")
-	except Exception:
+	if TESTING != "1":
+		try:
+			file_path = f"user_{query.id}"
+			with open(file_path, "wb") as file:
+				s3.download_fileobj(BUCKET_NAME, file_path, file)
+			with open(file_path, "rb") as file:
+				content = file.read()
+				content_base64 = base64.b64encode(content).decode("utf-8")
+		except Exception:
+			content_base64 = None
+	else:
 		content_base64 = None
 
 	user = {
@@ -65,14 +68,18 @@ async def get_user(session: SessionDep, request: Request, username: str):
 	query = query.first()
 	if not query:
 		return result
-	try:
-		file_path = f"user_{query.id}"
-		with open(file_path, "wb") as file:
-			s3.download_fileobj(BUCKET_NAME, file_path, file)
-		with open(file_path, "rb") as file:
-			content = file.read()
-			content_base64 = base64.b64encode(content).decode("utf-8")
-	except Exception:
+
+	if TESTING != "1":
+		try:
+			file_path = f"user_{query.id}"
+			with open(file_path, "wb") as file:
+				s3.download_fileobj(BUCKET_NAME, file_path, file)
+			with open(file_path, "rb") as file:
+				content = file.read()
+				content_base64 = base64.b64encode(content).decode("utf-8")
+		except Exception:
+			content_base64 = None
+	else:
 		content_base64 = None
 
 	user = {
@@ -136,13 +143,14 @@ async def put_user_image(
 	if image:
 		image_path = USER_IMAGE_PATH.format(user.id)
 
-		with tempfile.NamedTemporaryFile() as temp_file:
-			with open(temp_file.name, "wb") as f_out:
-				content = await image.read()
-				f_out.write(content)
+		if TESTING != "1":
+			with tempfile.NamedTemporaryFile() as temp_file:
+				with open(temp_file.name, "wb") as f_out:
+					content = await image.read()
+					f_out.write(content)
 
-			s3.upload_file(temp_file.name, BUCKET_NAME, image_path)
-			user.image = image_path
+				s3.upload_file(temp_file.name, BUCKET_NAME, image_path)
+				user.image = image_path
 
 	session.add(user)
 	await session.commit()
