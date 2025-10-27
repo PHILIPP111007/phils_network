@@ -1044,7 +1044,6 @@ export default function VideoStream() {
                 <div style={{
                     marginBottom: "20px",
                     padding: "15px",
-                    backgroundColor: "#e3f2fd",
                     borderRadius: "10px"
                 }}>
                     <div style={{ display: "flex", justifyContent: "center", gap: "20px", flexWrap: "wrap" }}>
@@ -1056,7 +1055,6 @@ export default function VideoStream() {
                 <div style={{
                     marginBottom: "20px",
                     padding: "20px",
-                    backgroundColor: "#f5f5f5",
                     borderRadius: "10px"
                 }}>
                     <div style={{ marginBottom: "15px" }}>
