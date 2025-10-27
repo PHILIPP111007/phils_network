@@ -33,6 +33,7 @@ export default function VideoStream() {
     var audioProcessorRef = useRef(null)
     var screenStreamRef = useRef(null)
     var [screenQuality, setScreenQuality] = useState("720p")
+    var [compressionQuality, setCompressionQuality] = useState(1.0)
 
     var [currentFPS, setCurrentFPS] = useState(10)
 
@@ -476,9 +477,6 @@ export default function VideoStream() {
                     img,
                     0, 0,
                     displayWidth,
-                    displayHeight,
-                    0, 0,
-                    displayWidth,
                     displayHeight
                 )
             }
@@ -705,22 +703,10 @@ export default function VideoStream() {
                 canvas.height,
             )
 
-            // Настраиваем качество сжатия в зависимости от типа контента
-            var compressionQuality = 0.85 // Базовое высокое качество
-
-            if (isScreenSharing) {
-                // Для экрана используем более высокое качество для текста и графики
-                compressionQuality = 0.92
-            } else if (currentFPS <= 15) {
-                // Для низкого FPS можно повысить качество
-                compressionQuality = 0.9
-            }
-
             // Используем WebP если поддерживается для лучшего сжатия
             var format = "image/jpeg"
             if (canvas.toDataURL("image/webp", compressionQuality).length > 0) {
                 format = "image/webp"
-                compressionQuality = Math.min(compressionQuality + 0.05, 0.95) // WebP эффективнее
             }
 
             frameData = await canvas.toDataURL(format, compressionQuality)
@@ -1015,7 +1001,7 @@ export default function VideoStream() {
                 <canvas
                     ref={canvasModalRef}
                     style={{
-                        width: "100vh",
+                        width: "100vw",
                         height: "100vh",
                         display: "block"
                     }}
@@ -1137,7 +1123,7 @@ export default function VideoStream() {
                         >
                             📺 На весь экран
                         </button>
-                        <div style={{ marginTop: '10px' }}>
+                        <div style={{ marginTop: "10px" }}>
                             <label>FPS (настройка видеообновлений для просмотра пользователями): {currentFPS}</label>
                             <input
                                 type="range"
@@ -1145,19 +1131,19 @@ export default function VideoStream() {
                                 max="60"
                                 value={currentFPS}
                                 onChange={(e) => setCurrentFPS(Number(e.target.value))}
-                                style={{ marginLeft: '10px', width: '150px' }}
+                                style={{ marginLeft: "10px", width: "150px" }}
                             />
                         </div>
-                        <div style={{ marginTop: '10px' }}>
-                            <label>Качество экрана: </label>
+                        <div style={{ marginTop: "10px" }}>
+                            <label>Качество транслируемого экрана: </label>
                             <select
                                 value={screenQuality}
                                 onChange={(e) => setScreenQuality(e.target.value)}
                                 style={{
-                                    marginLeft: '10px',
-                                    padding: '5px',
-                                    borderRadius: '5px',
-                                    border: '1px solid #ccc'
+                                    marginLeft: "10px",
+                                    padding: "5px",
+                                    borderRadius: "5px",
+                                    border: "1px solid #ccc"
                                 }}
                             >
                                 <option value="720p">720p HD</option>
@@ -1165,9 +1151,28 @@ export default function VideoStream() {
                                 <option value="2K">2K Quad HD</option>
                                 <option value="4K">4K Ultra HD</option>
                             </select>
-                            <div style={{ fontSize: '12px', color: '#666', marginTop: '5px' }}>
+                            <div style={{ fontSize: "12px", color: "#666", marginTop: "5px" }}>
                                 Разрешение: {qualitySettings[screenQuality].width}x{qualitySettings[screenQuality].height}
                             </div>
+                        </div>
+                        <div style={{ marginTop: "10px" }}>
+                            <label>Уровень качества картинки: </label>
+                            <select
+                                value={compressionQuality}
+                                onChange={(e) => setCompressionQuality(parseFloat(e.target.value))}
+                                style={{
+                                    marginLeft: "10px",
+                                    padding: "5px",
+                                    borderRadius: "5px",
+                                    border: "1px solid #ccc"
+                                }}
+                            >
+                                <option value="1.0">100%</option>
+                                <option value="0.9">90%</option>
+                                <option value="0.8">80%</option>
+                                <option value="0.3">30%</option>
+                                <option value="0.01">1%</option>
+                            </select>
                         </div>
                     </div>
                 </div>
