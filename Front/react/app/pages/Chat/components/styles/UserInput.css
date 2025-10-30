@@ -1,6 +1,6 @@
 .UserInput {
     position: fixed;
-    bottom: 10px;
+    bottom: 30px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -53,7 +53,7 @@
 
 .ParentMessage {
     position: fixed;
-    bottom: 30px;
+    bottom: 100px;
     left: 50%;
     transform: translateX(-50%);
     display: block;
@@ -61,6 +61,7 @@
 }
 
 @media (pointer: coarse) {
+
     /* mobile device */
     .UserInput {
         margin-bottom: 60px;
@@ -75,9 +76,15 @@
         resize: none;
         max-height: 500px;
     }
+
+    .ParentMessage {
+        bottom: 200px;
+    }
 }
 
-@media (pointer: fine), (pointer: none) {
+@media (pointer: fine),
+(pointer: none) {
+
     /* desktop */
     .UserInput .TextArea {
         width: 400px;
