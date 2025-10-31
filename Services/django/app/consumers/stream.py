@@ -1,6 +1,6 @@
-import json
 import time
 
+import ujson as json
 from app.services import StreamService
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
@@ -11,9 +11,6 @@ AUDIO_STREAMING_GROUP = "audio_streaming_group_{}"
 
 
 class VideoStreamConsumer(AsyncWebsocketConsumer):
-	def __init__(self):
-		super().__init__()
-
 	async def connect(self):
 		token_key = self.scope["query_string"].decode().split("=")[-1]
 		pk = await _get_user_pk(token_key=token_key)
@@ -36,10 +33,10 @@ class VideoStreamConsumer(AsyncWebsocketConsumer):
 		try:
 			data = json.loads(text_data)
 
-			room_id = data["room"]
-			video_streaming_group = VIDEO_STREAMING_GROUP.format(room_id)
-
 			if time.time() - data["timestamp"] <= 1.0:
+				room_id = data["room"]
+				video_streaming_group = VIDEO_STREAMING_GROUP.format(room_id)
+
 				await self.channel_layer.group_send(
 					video_streaming_group,
 					{
@@ -69,7 +66,8 @@ class VideoStreamConsumer(AsyncWebsocketConsumer):
 					"is_speaking": event["is_speaking"],
 					"current_speaker": event["current_speaker"],
 					"timestamp": event["timestamp"],
-				}
+				},
+				separators=(",", ":"),
 			)
 		)
 
@@ -97,10 +95,10 @@ class AudioStreamConsumer(AsyncWebsocketConsumer):
 		try:
 			data = json.loads(text_data)
 
-			room_id = data["room"]
-			audio_streaming_group = AUDIO_STREAMING_GROUP.format(room_id)
-
 			if time.time() - data["timestamp"] <= 1.0:
+				room_id = data["room"]
+				audio_streaming_group = AUDIO_STREAMING_GROUP.format(room_id)
+
 				await self.channel_layer.group_send(
 					audio_streaming_group,
 					{
@@ -129,7 +127,8 @@ class AudioStreamConsumer(AsyncWebsocketConsumer):
 					"is_speaking": event["is_speaking"],
 					"current_speaker": event["current_speaker"],
 					"timestamp": event["timestamp"],
-				}
+				},
+				separators=(",", ":"),
 			)
 		)
 

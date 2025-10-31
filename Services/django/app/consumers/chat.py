@@ -1,10 +1,9 @@
 __all__ = ["ChatConsumer", "DeleteMessageConsumer"]
 
-import json
 import os
 
+import ujson as json
 from app.services import MessageService
-
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from rest_framework.authtoken.models import Token
@@ -70,7 +69,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 				{
 					"status": True,
 					"message": event["message"],
-				}
+				},
+				separators=(",", ":"),
 			)
 		)
 
@@ -129,7 +129,8 @@ class DeleteMessageConsumer(AsyncWebsocketConsumer):
 				{
 					"status": True,
 					"message": event["message"],
-				}
+				},
+				separators=(",", ":"),
 			)
 		)
 
