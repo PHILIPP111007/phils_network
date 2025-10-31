@@ -21,7 +21,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		he will be disconnected.
 		"""
 
-		token_key = self.scope["query_string"].decode().split("=")[-1]
+		token_key = self.scope["query_string"].decode().split("=", 1)[-1]
 		pk = await _get_user_pk(token_key=token_key)
 
 		if not pk:
@@ -83,7 +83,7 @@ class DeleteMessageConsumer(AsyncWebsocketConsumer):
 		he will be disconnected.
 		"""
 
-		token_key = self.scope["query_string"].decode().split("=")[-1]
+		token_key = self.scope["query_string"].decode().split("=", 1)[-1]
 		pk = await _get_user_pk(token_key=token_key)
 
 		if not pk:
@@ -143,7 +143,7 @@ class LikeMessageConsumer(AsyncWebsocketConsumer):
 		he will be disconnected.
 		"""
 
-		token_key = self.scope["query_string"].decode().split("=")[-1]
+		token_key = self.scope["query_string"].decode().split("=", 1)[-1]
 		pk = await _get_user_pk(token_key=token_key)
 
 		if not pk:

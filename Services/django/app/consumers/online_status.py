@@ -9,7 +9,7 @@ from rest_framework.authtoken.models import Token
 
 class OnlineStatusConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
-		token_key = self.scope["query_string"].decode().split("=")[-1]
+		token_key = self.scope["query_string"].decode().split("=", 1)[-1]
 		pk = await _get_user_pk(token_key=token_key)
 
 		if not pk:
