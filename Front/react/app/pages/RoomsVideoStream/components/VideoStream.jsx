@@ -767,7 +767,17 @@ export default function VideoStream() {
 
             webSocketVideo.current.onmessage = async (event) => {
                 try {
-                    var data = await JSON.parse(event.data)
+                    var data
+
+                    // Check if data is Blob (binary data)
+                    if (event.data instanceof Blob) {
+                        // Convert Blob to text
+                        const text = await event.data.text()
+                        data = JSON.parse(text)
+                    } else {
+                        // Data is already text
+                        data = JSON.parse(event.data)
+                    }
 
                     if (data.type === "broadcast_frame") {
                         var delay = Number(Date.now() - data.timestamp)
@@ -792,7 +802,17 @@ export default function VideoStream() {
 
             webSocketAudio.current.onmessage = async (event) => {
                 try {
-                    var data = await JSON.parse(event.data)
+                    var data
+
+                    // Check if data is Blob (binary data)
+                    if (event.data instanceof Blob) {
+                        // Convert Blob to text
+                        const text = await event.data.text()
+                        data = JSON.parse(text)
+                    } else {
+                        // Data is already text
+                        data = JSON.parse(event.data)
+                    }
 
                     if (data.type === "broadcast_audio") {
                         if (data.user.username !== user.username) {

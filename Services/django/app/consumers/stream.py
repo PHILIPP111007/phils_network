@@ -1,6 +1,6 @@
 import time
 
-import ujson as json
+import orjson as json
 from app.services import StreamService
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
@@ -67,7 +67,6 @@ class VideoStreamConsumer(AsyncWebsocketConsumer):
 					"current_speaker": event["current_speaker"],
 					"timestamp": event["timestamp"],
 				},
-				separators=(",", ":"),
 			)
 		)
 
@@ -128,7 +127,6 @@ class AudioStreamConsumer(AsyncWebsocketConsumer):
 					"current_speaker": event["current_speaker"],
 					"timestamp": event["timestamp"],
 				},
-				separators=(",", ":"),
 			)
 		)
 

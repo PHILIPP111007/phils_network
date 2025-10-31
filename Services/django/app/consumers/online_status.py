@@ -1,11 +1,10 @@
 __all__ = ["OnlineStatusConsumer"]
 
 
+from app.models import User
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from rest_framework.authtoken.models import Token
-
-from app.models import User
 
 
 class OnlineStatusConsumer(AsyncWebsocketConsumer):
