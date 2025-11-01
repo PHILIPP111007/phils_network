@@ -35,6 +35,8 @@ THIRD_PARTY_APPS: list[str] = [
 	# Servers
 	"gunicorn",
 	"uvicorn",
+	# WebSocket
+	"channels",
 	# REST API
 	"rest_framework",
 	"rest_framework.authtoken",
