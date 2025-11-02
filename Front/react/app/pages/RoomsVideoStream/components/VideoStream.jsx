@@ -18,7 +18,6 @@ export default function VideoStream() {
     var [isFullscreen, setIsFullscreen] = useState(false)
     var webSocketVideo = useRef(null)
     var webSocketAudio = useRef(null)
-    var [isConnected, setIsConnected] = useState(false)
     var [isStreaming, setIsStreaming] = useState(false)
     var [isScreenSharing, setIsScreenSharing] = useState(false)
     var [error, setError] = useState("")
@@ -172,7 +171,7 @@ export default function VideoStream() {
             }
 
             if (navigator.mediaDevices.getSupportedConstraints().frameRate) {
-                constraints.video.frameRate = { ideal: 30, max: 60 }
+                constraints.video.frameRate = { ideal: quality.frameRate, max: 60 }
             }
 
             var stream = await navigator.mediaDevices.getUserMedia(constraints)
@@ -204,7 +203,6 @@ export default function VideoStream() {
                     }
                 }
             }
-
         } catch (error) {
             console.error("Error accessing camera:", error)
             var errorMessage = "Не удалось получить доступ к камере. "
@@ -757,12 +755,10 @@ export default function VideoStream() {
             webSocketVideo.current = getWebSocketDjango({
                 socket_name: "videoStreamSocket",
                 path: `video_stream/${params.room_id}/`,
-                setIsConnected: setIsConnected
             })
             webSocketAudio.current = getWebSocketDjango({
                 socket_name: "audioStreamSocket",
                 path: `audio_stream/${params.room_id}/`,
-                setIsConnected: setIsConnected
             })
 
             webSocketVideo.current.onmessage = async (event) => {
@@ -779,20 +775,19 @@ export default function VideoStream() {
                         data = JSON.parse(event.data)
                     }
 
-                    if (data.type === "broadcast_frame") {
-                        var delay = Number(Date.now() - data.timestamp)
-                        if (delay < 1000) {
-                            await displayProcessedFrame(data.frame)
-                            setActiveUsers(prev => {
-                                var users = new Set(prev)
-                                if (data.user && data.user.username) {
-                                    users.add(data.user.username)
-                                }
-                                users.add(user.username)
-                                return Array.from(users)
-                            })
-                        }
-                    } else if (data.type === "error") {
+                    var delay = Number(Date.now() - data.timestamp)
+                    if (delay < 1000) {
+                        await displayProcessedFrame(data.frame)
+                        setActiveUsers(prev => {
+                            var users = new Set(prev)
+                            if (data.user && data.user.username) {
+                                users.add(data.user.username)
+                            }
+                            users.add(user.username)
+                            return Array.from(users)
+                        })
+                    }
+                    if (data.type === "error") {
                         setError(`Server error: ${data.message}`)
                     }
                 } catch (err) {
@@ -814,21 +809,19 @@ export default function VideoStream() {
                         data = JSON.parse(event.data)
                     }
 
-                    if (data.type === "broadcast_audio") {
-                        if (data.user.username !== user.username) {
-                            var delay = Number(Date.now() - data.timestamp)
-                            if (delay < 1000) {
-                                await playReceivedAudio(data.audio)
-                                setActiveUsers(prev => {
-                                    var users = new Set(prev)
-                                    if (data.user && data.user.username) {
-                                        users.add(data.user.username)
-                                    }
-                                    users.add(user.username)
-                                    return Array.from(users)
-                                })
-                                setCurrentSpeaker(data.user)
-                            }
+                    if (data.user.username !== user.username) {
+                        var delay = Number(Date.now() - data.timestamp)
+                        if (delay < 1000) {
+                            await playReceivedAudio(data.audio)
+                            setActiveUsers(prev => {
+                                var users = new Set(prev)
+                                if (data.user && data.user.username) {
+                                    users.add(data.user.username)
+                                }
+                                users.add(user.username)
+                                return Array.from(users)
+                            })
+                            setCurrentSpeaker(data.user)
                         }
                     }
                 } catch (err) {
@@ -851,7 +844,6 @@ export default function VideoStream() {
             await webSocketAudio.current.close()
             webSocketAudio.current = null
         }
-        setIsConnected(false)
     }
 
     // Эффекты
