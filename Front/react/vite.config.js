@@ -6,10 +6,9 @@ var ReactConfig = {
     plugins: [
       // Add the React Compiler Babel plugin here
       "babel-plugin-react-compiler",
-      // You can also pass options to the compiler if needed
-      // ['babel-plugin-react-compiler', { /* compiler options */ }]
     ],
   },
+  jsxRuntime: "automatic", // для React 19
 }
 
 // https://vite.dev/config/
@@ -21,6 +20,8 @@ export default defineConfig({
   root: ".",
   build: {
     outDir: "dist",
+    minify: "esbuild",
+    target: "esnext",
   },
   define: {
     global: {}
@@ -28,4 +29,12 @@ export default defineConfig({
   plugins: [
     react(ReactConfig),
   ],
-});
+  // Оптимизации
+  optimizeDeps: {
+    include: [
+      "react",
+      "react-dom",
+      "react-router-dom",
+    ],
+  },
+})
