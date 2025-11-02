@@ -1,7 +1,7 @@
 import { DEVELOPMENT, WEBSOCKET_DJANGO_URL, WEBSOCKET_FASTAPI_URL, DEVELOPMENT_WEBSOCKET_DJANGO_URL, DEVELOPMENT_WEBSOCKET_FASTAPI_URL } from "../data/constants.js"
 import getToken from "./getToken"
 
-export function getWebSocketDjango({ socket_name, path, setIsConnected }) {
+export function getWebSocketDjango({ socket_name, path }) {
     var url
 
     if (DEVELOPMENT === "1") {
@@ -16,21 +16,12 @@ export function getWebSocketDjango({ socket_name, path, setIsConnected }) {
         + `?token_key=${getToken()}`
     )
     socket.onopen = () => {
-        if (setIsConnected) {
-            setIsConnected(true)
-        }
         console.log(`${socket_name}: The connection was setup successfully.`)
     }
     socket.onclose = () => {
-        if (setIsConnected) {
-            setIsConnected(false)
-        }
         console.log(`${socket_name}: Has already closed.`)
     }
     socket.onerror = (e) => {
-        if (setIsConnected) {
-            setIsConnected(false)
-        }
         console.error(e)
     }
     return socket
