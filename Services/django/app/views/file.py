@@ -29,7 +29,7 @@ class FileAPIView(APIView):
 	def post(self, request: Request, room_id: int) -> Response:
 		self.check_permissions(request=request)
 
-		message = self.service_class.create_message(
+		message = self.service_class.create(
 			sender=request.user,
 			room_id=room_id,
 			text=request.POST.get("text"),

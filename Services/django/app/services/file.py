@@ -14,7 +14,7 @@ from django.contrib.auth.models import User
 
 class FileService:
 	@staticmethod
-	def create_message(sender: User, room_id: int, text: str, file):
+	def create(sender: User, room_id: int, text: str, file):
 		for bucket in s3.list_buckets()["Buckets"]:
 			if bucket["Name"] == settings.BUCKET_NAME:
 				break
