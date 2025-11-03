@@ -15,11 +15,9 @@ from app.s3 import s3
 
 async def get_image_file_content(file_name: str):
 	try:
-		file_path = file_name
-
 		# Download file directly to memory
 		file_stream = io.BytesIO()
-		s3.download_fileobj(BUCKET_NAME, file_path, file_stream)
+		s3.download_fileobj(BUCKET_NAME, file_name, file_stream)
 		file_stream.seek(0)
 
 		# Process image in memory
