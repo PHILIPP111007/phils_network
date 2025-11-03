@@ -16,18 +16,24 @@ from app.s3 import s3
 async def get_image_file_content(file_name: str):
 	try:
 		file_path = file_name
-		with open(file_path, "wb") as file:
-			s3.download_fileobj(BUCKET_NAME, file_path, file)
 
-		with open(file_path, "rb") as file:
-			content = file.read()
-			img = Image.open(io.BytesIO(content))
-			img = img.resize((30, 30))
-			img.save(file_path, "PNG")
+		# Download file directly to memory
+		file_stream = io.BytesIO()
+		s3.download_fileobj(BUCKET_NAME, file_path, file_stream)
+		file_stream.seek(0)
 
-		with open(file_path, "rb") as file:
-			content = file.read()
-			content_base64 = base64.b64encode(content).decode("utf-8")
+		# Process image in memory
+		img = Image.open(file_stream)
+		img = img.resize((30, 30))
+
+		# Save processed image to memory
+		output_stream = io.BytesIO()
+		img.save(output_stream, "PNG")
+		output_stream.seek(0)
+
+		# Encode to base64
+		content_base64 = base64.b64encode(output_stream.getvalue()).decode("utf-8")
+
 	except Exception:
 		content_base64 = None
 
