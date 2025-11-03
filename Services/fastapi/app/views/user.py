@@ -191,9 +191,12 @@ async def delete_user(session: SessionDep, request: Request, username: str):
 
 	await session.refresh(user)
 
+	# Delete user logo
+	image_path = USER_IMAGE_PATH.format(user.id)
+	s3.delete_object(Bucket=BUCKET_NAME, Key=image_path)
+
 	messages = await session.exec(select(Message).where(Message.sender_id == user.id))
 	messages = messages.unique().all()
-
 	message_ids = []
 	for message in messages:
 		message_ids.append(message.id)
