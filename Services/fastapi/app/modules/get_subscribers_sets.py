@@ -7,14 +7,14 @@ from app.database import SessionDep
 from app.models import Subscriber
 
 
-async def get_subscribers_sets(session: SessionDep, id: int):
-	set_1 = await session.exec(
+async def get_subscribers_sets(session: SessionDep, id: int) -> tuple[set, set]:
+	subscriptions = await session.exec(
 		select(Subscriber.subscribe_id).where(Subscriber.user_id == id)
 	)
-	set_1 = set_1.unique().all()
+	subscriptions = set(subscriptions.unique().all())
 
-	set_2 = await session.exec(
+	subscribers = await session.exec(
 		select(Subscriber.user_id).where(Subscriber.subscribe_id == id)
 	)
-	set_2 = set_2.unique().all()
-	return set_1, set_2
+	subscribers = set(subscribers.unique().all())
+	return subscriptions, subscribers

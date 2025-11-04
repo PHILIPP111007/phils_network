@@ -15,14 +15,11 @@ router = APIRouter(tags=["news"])
 @router.get("/news/{loaded_posts}/")
 async def get_news(session: SessionDep, request: Request, loaded_posts: int):
 	async def _get_friends(id: int):
-		set_1, set_2 = await get_subscribers_sets(session=session, id=id)
+		subscriptions, subscribers = await get_subscribers_sets(session=session, id=id)
 
-		set_3 = set()
-		for id in set_1:
-			if id in set_2:
-				set_3.add(id)
+		friend_ids = subscriptions & subscribers
 
-		query = await session.exec(select(User.id).where(User.id.in_(set_3)))
+		query = await session.exec(select(User.id).where(User.id.in_(friend_ids)))
 		query = query.unique().all()
 		return query
 

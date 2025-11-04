@@ -15,40 +15,40 @@ router = APIRouter(tags=["friend"])
 @router.get("/friends/{option}/")
 async def get_friends(session: SessionDep, request: Request, option: FilterOption):
 	async def _get_friends(id: int) -> list[User]:
-		set_1, set_2 = await get_subscribers_sets(session=session, id=id)
+		subscriptions, subscribers = await get_subscribers_sets(session=session, id=id)
 
-		set_3 = set()
-		for id in set_1:
-			if id in set_2:
-				set_3.add(id)
+		friend_ids = subscriptions & subscribers
 
-		query = await session.exec(select(User).where(User.id.in_(set_3)))
+		query = await session.exec(select(User).where(User.id.in_(friend_ids)))
 		query = query.unique().all()
 		return query
 
 	async def _get_subscriptions(id: int) -> list[User]:
-		set_1, set_2 = await get_subscribers_sets(session=session, id=id)
+		subscriptions, subscribers = await get_subscribers_sets(session=session, id=id)
 
-		set_3 = set()
-		for id in set_1:
-			if id not in set_2:
-				set_3.add(id)
+		subscription_ids = subscriptions - subscribers
 
-		query = await session.exec(select(User).where(User.id.in_(set_3)))
+		query = await session.exec(select(User).where(User.id.in_(subscription_ids)))
 		query = query.unique().all()
 		return query
 
 	async def _get_subscribers(id: int) -> list[User]:
-		set_1, set_2 = await get_subscribers_sets(session=session, id=id)
+		subscriptions, subscribers = await get_subscribers_sets(session=session, id=id)
 
-		set_3 = set()
-		for id in set_2:
-			if id not in set_1:
-				set_3.add(id)
+		subscriber_ids = subscribers - subscriptions
 
-		query = await session.exec(select(User).where(User.id.in_(set_3)))
+		query = await session.exec(select(User).where(User.id.in_(subscriber_ids)))
 		query = query.unique().all()
 		return query
+
+	async def _get_subscribers_count(id: int) -> list[User]:
+		subscriptions, subscribers = await get_subscribers_sets(session=session, id=id)
+
+		subscriber_ids = subscribers - subscriptions
+
+		query = await session.exec(select(User).where(User.id.in_(subscriber_ids)))
+		query = query.unique().all()
+		return len(query)
 
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
@@ -61,7 +61,7 @@ async def get_friends(session: SessionDep, request: Request, option: FilterOptio
 		FilterOption.SUBSCRIBERS.value: lambda: _get_subscribers(
 			id=request.state.user.id
 		),
-		FilterOption.SUBSCRIBERS_COUNT.value: lambda: _get_subscribers(
+		FilterOption.SUBSCRIBERS_COUNT.value: lambda: _get_subscribers_count(
 			id=request.state.user.id
 		),
 	}
@@ -71,9 +71,9 @@ async def get_friends(session: SessionDep, request: Request, option: FilterOptio
 	if not option_func:
 		return {"ok": False, "error": "Not found users."}
 
-	users: list[dict] = []
 	query = await option_func()
 	if option != FilterOption.SUBSCRIBERS_COUNT.value:
+		users: list[dict] = []
 		for user in query:
 			image_path = USER_IMAGE_PATH.format(user.id)
 
@@ -89,5 +89,4 @@ async def get_friends(session: SessionDep, request: Request, option: FilterOptio
 			users.append(user)
 		return {"ok": True, "query": users}
 	else:
-		query = len(query)
 		return {"ok": True, "query": query}
