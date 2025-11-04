@@ -19,6 +19,7 @@ from app.models import (
 	Token,
 	User,
 )
+from app.modules import get_image_file_content
 from app.request_body import UserBody
 from app.s3 import s3
 
@@ -36,15 +37,8 @@ async def get_user(session: SessionDep, request: Request, username: str):
 		return {"ok": False, "error": "Not found the global user."}
 
 	if TESTING != "1":
-		try:
-			file_path = f"user_{query.id}"
-			with open(file_path, "wb") as file:
-				s3.download_fileobj(BUCKET_NAME, file_path, file)
-			with open(file_path, "rb") as file:
-				content = file.read()
-				content_base64 = base64.b64encode(content).decode("utf-8")
-		except Exception:
-			content_base64 = None
+		image_path = USER_IMAGE_PATH.format(query.id)
+		content_base64 = await get_image_file_content(file_name=image_path)
 	else:
 		content_base64 = None
 
@@ -70,15 +64,8 @@ async def get_user(session: SessionDep, request: Request, username: str):
 		return result
 
 	if TESTING != "1":
-		try:
-			file_path = f"user_{query.id}"
-			with open(file_path, "wb") as file:
-				s3.download_fileobj(BUCKET_NAME, file_path, file)
-			with open(file_path, "rb") as file:
-				content = file.read()
-				content_base64 = base64.b64encode(content).decode("utf-8")
-		except Exception:
-			content_base64 = None
+		image_path = USER_IMAGE_PATH.format(query.id)
+		content_base64 = await get_image_file_content(file_name=image_path)
 	else:
 		content_base64 = None
 
