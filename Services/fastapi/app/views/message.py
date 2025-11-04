@@ -107,7 +107,7 @@ async def get_message(
 				"first_name": message.sender.first_name,
 				"last_name": message.sender.last_name,
 				"is_online": message.sender.is_online,
-				"image": await get_image_file_content(file_name=image_path),
+				"image": await get_image_file_content(file_name=image_path, size=30),
 			},
 			"parent": parent,
 			"likes": len(message.likes),

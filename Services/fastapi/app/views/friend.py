@@ -84,7 +84,7 @@ async def get_friends(session: SessionDep, request: Request, option: FilterOptio
 				"first_name": user.first_name,
 				"last_name": user.last_name,
 				"is_online": user.is_online,
-				"image": await get_image_file_content(file_name=image_path),
+				"image": await get_image_file_content(file_name=image_path, size=30),
 			}
 			users.append(user)
 		return {"ok": True, "query": users}
