@@ -1,6 +1,7 @@
 from typing import Callable
 
 from fastapi import APIRouter, Request
+from sqlalchemy import func
 from sqlmodel import select
 
 from app.constants import USER_IMAGE_PATH
@@ -46,9 +47,11 @@ async def get_friends(session: SessionDep, request: Request, option: FilterOptio
 
 		subscriber_ids = subscribers - subscriptions
 
-		query = await session.exec(select(User).where(User.id.in_(subscriber_ids)))
-		query = query.unique().all()
-		return len(query)
+		subscribers_count = await session.exec(
+			select(func.count(User.id)).where(User.id.in_(subscriber_ids))
+		)
+		subscribers_count = subscribers_count.first()
+		return subscribers_count
 
 	if not request.state.user:
 		return {"ok": False, "error": "Can not authenticate."}
