@@ -13,7 +13,7 @@ from app.constants import (
 from app.s3 import s3
 
 
-async def get_image_file_content(file_name: str):
+async def get_image_file_content(file_name: str, size: int = None):
 	try:
 		# Download file directly to memory
 		file_stream = io.BytesIO()
@@ -22,7 +22,8 @@ async def get_image_file_content(file_name: str):
 
 		# Process image in memory
 		img = Image.open(file_stream)
-		img = img.resize((30, 30))
+		if size is not None:
+			img = img.resize((30, 30))
 
 		# Save processed image to memory
 		output_stream = io.BytesIO()
