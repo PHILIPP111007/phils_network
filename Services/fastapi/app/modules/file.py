@@ -23,7 +23,7 @@ async def get_image_file_content(file_name: str, size: int = None):
 		# Process image in memory
 		img = Image.open(file_stream)
 		if size is not None:
-			img = img.resize((30, 30))
+			img = img.resize((size, size))
 
 		# Save processed image to memory
 		output_stream = io.BytesIO()
