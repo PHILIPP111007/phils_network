@@ -131,7 +131,7 @@ async def put_user_image(
 		image_path = USER_IMAGE_PATH.format(user.id)
 
 		if TESTING != "1":
-			with tempfile.NamedTemporaryFile() as temp_file:
+			with tempfile.NamedTemporaryFile(delete=True) as temp_file:
 				with open(temp_file.name, "wb") as f_out:
 					content = await image.read()
 					f_out.write(content)
