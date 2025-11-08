@@ -1,10 +1,11 @@
 import time
 
-import orjson as json
-from app.services import StreamService
+import ujson as json
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from rest_framework.authtoken.models import Token
+
+from app.services import StreamService
 
 VIDEO_STREAMING_GROUP = "video_streaming_group_{}"
 AUDIO_STREAMING_GROUP = "audio_streaming_group_{}"
@@ -40,7 +41,7 @@ class VideoStreamConsumer(AsyncWebsocketConsumer):
 				# await self.channel_layer.group_send(
 				# 	video_streaming_group,
 				# 	{
-				# 		"type": "broadcast_frame",
+				# 		"type": "frame",
 				# 		"frame": data["frame"],
 				# 		"user": data["user"],
 				# 		"active_users": data["active_users"],
@@ -63,7 +64,7 @@ class VideoStreamConsumer(AsyncWebsocketConsumer):
 		# await self.send(
 		# 	text_data=json.dumps(
 		# 		{
-		# 			"type": "broadcast_frame",
+		# 			"type": "frame",
 		# 			"frame": event["frame"],
 		# 			"user": event["user"],
 		# 			"active_users": event["active_users"],
