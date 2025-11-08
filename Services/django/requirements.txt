@@ -8,6 +8,7 @@ channels==4.3.1
 channels-redis==4.3.0
 gunicorn==23.0.0
 uvicorn[standard]==0.38.0
+granian==2.5.7
 whitenoise==6.11.0
 psycopg[binary]==3.2.12
 django-cors-headers==4.9.0

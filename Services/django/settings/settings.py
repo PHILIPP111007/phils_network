@@ -35,6 +35,7 @@ THIRD_PARTY_APPS: list[str] = [
 	# Servers
 	"gunicorn",
 	"uvicorn",
+	"granian",
 	# WebSocket
 	"channels",
 	# REST API
