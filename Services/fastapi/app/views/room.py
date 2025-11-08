@@ -14,7 +14,6 @@ from app.models import (
 	RoomInvitation,
 	RoomSubscribers,
 	User,
-	MessageViewed,
 )
 from app.request_body import RoomNameAndSubscribers
 
