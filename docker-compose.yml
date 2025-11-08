@@ -10,6 +10,7 @@ services:
     depends_on:
       - db
       - s3
+      - cache
     command: >
       sh -c "python manage.py collectstatic --noinput &&
             python manage.py migrate &&
