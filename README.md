@@ -88,6 +88,16 @@ pytest
 
 ## Development installation
 
+### Using Makefile
+
+```sh
+make django
+make fastapi
+make react
+```
+
+### Other
+
 Postgres.
 
 ```sh
