@@ -31,31 +31,27 @@ class VideoStreamConsumer(AsyncWebsocketConsumer):
 				await self.close()
 
 	async def receive(self, text_data):
-		try:
-			data = json.loads(text_data)
+		data = json.loads(text_data)
 
-			if time.time() - data["timestamp"] <= 1.0:
-				room_id = data["room"]
-				video_streaming_group = VIDEO_STREAMING_GROUP.format(room_id)
+		if time.time() - data["timestamp"] <= 1.0:
+			room_id = data["room"]
+			video_streaming_group = VIDEO_STREAMING_GROUP.format(room_id)
 
-				# await self.channel_layer.group_send(
-				# 	video_streaming_group,
-				# 	{
-				# 		"type": "frame",
-				# 		"frame": data["frame"],
-				# 		"user": data["user"],
-				# 		"active_users": data["active_users"],
-				# 		"is_speaking": data["is_speaking"],
-				# 		"current_speaker": data["current_speaker"],
-				# 		"timestamp": data["timestamp"],
-				# 	},
-				# )
+			# await self.channel_layer.group_send(
+			# 	video_streaming_group,
+			# 	{
+			# 		"type": "frame",
+			# 		"frame": data["frame"],
+			# 		"user": data["user"],
+			# 		"active_users": data["active_users"],
+			# 		"is_speaking": data["is_speaking"],
+			# 		"current_speaker": data["current_speaker"],
+			# 		"timestamp": data["timestamp"],
+			# 	},
+			# )
 
-				data["type"] = "frame"
-				await self.channel_layer.group_send(video_streaming_group, data)
-
-		except Exception:
-			await self.close()
+			data["type"] = "frame"
+			await self.channel_layer.group_send(video_streaming_group, data)
 
 	# Этот метод будет вызываться при групповой рассылке
 	async def frame(self, event: dict):
@@ -99,31 +95,27 @@ class AudioStreamConsumer(AsyncWebsocketConsumer):
 				await self.close()
 
 	async def receive(self, text_data):
-		try:
-			data = json.loads(text_data)
+		data = json.loads(text_data)
 
-			if time.time() - data["timestamp"] <= 1.0:
-				room_id = data["room"]
-				audio_streaming_group = AUDIO_STREAMING_GROUP.format(room_id)
+		if time.time() - data["timestamp"] <= 1.0:
+			room_id = data["room"]
+			audio_streaming_group = AUDIO_STREAMING_GROUP.format(room_id)
 
-				# await self.channel_layer.group_send(
-				# 	audio_streaming_group,
-				# 	{
-				# 		"type": "audio",
-				# 		"audio": data["audio"],
-				# 		"user": data["user"],
-				# 		"active_users": data["active_users"],
-				# 		"is_speaking": data["is_speaking"],
-				# 		"current_speaker": data["current_speaker"],
-				# 		"timestamp": data["timestamp"],
-				# 	},
-				# )
+			# await self.channel_layer.group_send(
+			# 	audio_streaming_group,
+			# 	{
+			# 		"type": "audio",
+			# 		"audio": data["audio"],
+			# 		"user": data["user"],
+			# 		"active_users": data["active_users"],
+			# 		"is_speaking": data["is_speaking"],
+			# 		"current_speaker": data["current_speaker"],
+			# 		"timestamp": data["timestamp"],
+			# 	},
+			# )
 
-				data["type"] = "audio"
-				await self.channel_layer.group_send(audio_streaming_group, data)
-
-		except Exception:
-			await self.close()
+			data["type"] = "audio"
+			await self.channel_layer.group_send(audio_streaming_group, data)
 
 	async def audio(self, event: dict):
 		"""Отправляет аудио всем клиентам в комнате"""
