@@ -84,6 +84,10 @@ docker compose run -e TEST=1 --build fastapi pytest
 export TEST=1
 cd Services/fastapi
 pytest
+
+# or
+
+make test
 ```
 
 ## Development installation
@@ -92,6 +96,7 @@ pytest
 
 ```sh
 make create_env
+make test
 
 make django
 make fastapi

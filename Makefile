@@ -24,6 +24,13 @@ list:
 	micromamba activate $(MICROMAMBA_ENV) && \
 	pip list
 
+test:
+	eval "$$(micromamba shell hook --shell $(SHELL))" && \
+	micromamba activate $(MICROMAMBA_ENV) && \
+	cd $(FASTAPI_DIR) && \
+	export TEST=1 && \
+	pytest
+
 django:
 	@echo "Starting django..."
 	eval "$$(micromamba shell hook --shell $(SHELL))" && \
