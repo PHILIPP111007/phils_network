@@ -8,12 +8,13 @@ from app.constants import (
 	AWS_S3_ENDPOINT_URL,
 	AWS_SECRET_ACCESS_KEY,
 	BUCKET_NAME,
+	DEVELOPMENT,
 	TESTING,
 )
 
 s3 = None
 
-if TESTING != "1":
+if TESTING != "1" and DEVELOPMENT != "1":
 	s3 = boto3.client(
 		"s3",
 		endpoint_url=AWS_S3_ENDPOINT_URL,

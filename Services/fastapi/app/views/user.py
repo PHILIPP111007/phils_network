@@ -5,7 +5,7 @@ import tempfile
 from fastapi import APIRouter, File, Request, UploadFile
 from sqlmodel import delete, select
 
-from app.constants import BUCKET_NAME, MEDIA_ROOT, TESTING, USER_IMAGE_PATH
+from app.constants import BUCKET_NAME, DEVELOPMENT, MEDIA_ROOT, TESTING, USER_IMAGE_PATH
 from app.database import SessionDep
 from app.models import (
 	DjangoAdminLog,
@@ -36,7 +36,7 @@ async def get_user(session: SessionDep, request: Request, username: str):
 	if not query:
 		return {"ok": False, "error": "Not found the global user."}
 
-	if TESTING != "1":
+	if TESTING != "1" and DEVELOPMENT != "1":
 		image_path = USER_IMAGE_PATH.format(query.id)
 		content_base64 = await get_image_file_content(file_name=image_path)
 	else:
@@ -63,7 +63,7 @@ async def get_user(session: SessionDep, request: Request, username: str):
 	if not query:
 		return result
 
-	if TESTING != "1":
+	if TESTING != "1" and DEVELOPMENT != "1":
 		image_path = USER_IMAGE_PATH.format(query.id)
 		content_base64 = await get_image_file_content(file_name=image_path)
 	else:
@@ -130,7 +130,7 @@ async def put_user_image(
 	if image:
 		image_path = USER_IMAGE_PATH.format(user.id)
 
-		if TESTING != "1":
+		if TESTING != "1" and DEVELOPMENT != "1":
 			with tempfile.NamedTemporaryFile(delete=True) as temp_file:
 				with open(temp_file.name, "wb") as f_out:
 					content = await image.read()
