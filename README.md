@@ -98,6 +98,8 @@ make fastapi
 make react
 ```
 
+Then go to <http://localhost:3000/>
+
 ### Other
 
 Postgres.
