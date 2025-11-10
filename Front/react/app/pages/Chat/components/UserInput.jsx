@@ -43,7 +43,7 @@ export default function UserInput({ mainSets, sendMessage, editRoom, parentMessa
                         <div className="ParentMessage">
                             <div className="info">
                                 <Link to={`/users/${parentMessage.sender.username}/`} >
-                                    <p className="timestamp">{parentMessage.sender.first_name} {parentMessage.sender.last_name} @{parentMessage.sender.username} {parentMessage.timestamp} {parentMessage.sender.is_online && <div className="MessageOnlineStatus"></div>}</p>
+                                    <div className="timestamp"><p>{parentMessage.sender.first_name} {parentMessage.sender.last_name} @{parentMessage.sender.username} {parentMessage.timestamp}</p> {parentMessage.sender.is_online && <div className="MessageOnlineStatus"></div>}</div>
                                 </Link>
                             </div>
                             <div className="text">
@@ -98,7 +98,7 @@ export default function UserInput({ mainSets, sendMessage, editRoom, parentMessa
                         <div className="ParentMessage">
                             <div className="info">
                                 <Link to={`/users/${parentMessage.sender.username}/`} >
-                                    <p className="timestamp">{parentMessage.sender.first_name} {parentMessage.sender.last_name} @{parentMessage.sender.username} {parentMessage.timestamp} {parentMessage.sender.is_online && <div className="MessageOnlineStatus"></div>}</p>
+                                    <div className="timestamp"><p>{parentMessage.sender.first_name} {parentMessage.sender.last_name} @{parentMessage.sender.username} {parentMessage.timestamp}</p> {parentMessage.sender.is_online && <div className="MessageOnlineStatus"></div>}</div>
                                 </Link>
                             </div>
                             <div className="text">
