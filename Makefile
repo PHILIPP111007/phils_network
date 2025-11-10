@@ -59,4 +59,5 @@ fastapi:
 
 react:
 	@echo "Starting react..."
+	cd $(REACT_DIR) && \
 	sudo VITE_DEVELOPMENT=1 npm run dev
