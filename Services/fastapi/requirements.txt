@@ -2,11 +2,11 @@ fastapi[standard]==0.120.0
 sqlmodel==0.0.27
 sqlalchemy==2.0.44
 websockets==15.0.1
-boto3==1.40.59
+granian==2.5.7
 asyncpg==0.30.0
+boto3==1.40.59
 aiosqlite==0.21.0
 pytest==8.4.2
 pytest-asyncio==1.2.0
 web3==7.13.0
-granian==2.5.7
 Pillow
