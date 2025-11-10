@@ -1,3 +1,4 @@
+import logging
 from os import environ
 from pathlib import Path
 
@@ -14,6 +15,10 @@ SECRET_KEY: str = environ.get("SECRET_KEY", "12345")
 # SECURITY WARNING: don"t run with debug turned on in production!
 DEBUG: bool = not not int(environ.get("DEBUG", "0"))
 DEVELOPMENT = environ.get("DEVELOPMENT", "0")
+
+if DEVELOPMENT != "1":
+	# disable logging including websocket connection
+	logging.disable(logging.CRITICAL)
 
 
 ALLOWED_HOSTS: list[str] = environ.get("ALLOWED_HOSTS", "*").split(",")
