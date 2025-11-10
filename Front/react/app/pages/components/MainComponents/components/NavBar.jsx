@@ -19,7 +19,7 @@ export default function NavBar() {
     var params = useParams()
 
     async function getUnreadMessagesCount() {
-        var data = await Fetch({ api_version: APIVersion.V2, action: `get_unread_message_count/`, method: HttpMethod.GET })
+        var data = await Fetch({ api_version: APIVersion.V2, action: "get_unread_message_count/", method: HttpMethod.GET })
 
         if (data && data.ok) {
             setUnreadMessagesCount(data.unread_messages_count)
