@@ -38,7 +38,7 @@ export default function App() {
             <UserContext.Provider value={{ user, setUser }}>
                 <BrowserRouter>
                     <div className="App">
-                        <Toaster/>
+                        <Toaster />
                         <Suspense fallback={<SuspenseLoading />}>
                             <Routes>
                                 {PrivateRoutes.map((route) =>
