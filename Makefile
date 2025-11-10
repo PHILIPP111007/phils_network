@@ -32,7 +32,7 @@ django:
 	export $(DEV_ENV) && \
 	export DEBUG=1 && \
 	python manage.py migrate && \
-	bash gunicorn.sh
+	uvicorn settings.asgi:application --host 0.0.0.0 --port 8000 --workers 1 --reload --loop uvloop
 
 fastapi:
 	@echo "Starting fastapi..."
@@ -40,7 +40,7 @@ fastapi:
 	micromamba activate $(MICROMAMBA_ENV) && \
 	cd $(FASTAPI_DIR) && \
 	export $(DEV_ENV) && \
-	uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 1
+	uvicorn app.main:app --host 0.0.0.0 --port 8001 --workers 1
 
 react:
 	@echo "Starting react..."

@@ -10,3 +10,4 @@ pytest==8.4.2
 pytest-asyncio==1.2.0
 web3==7.13.0
 Pillow
+greenlet==3.2.4
