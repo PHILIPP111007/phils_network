@@ -1,17 +1,23 @@
 # Variables
 SHELL = zsh
 DEV_ENV = DEVELOPMENT=1
-MICROMAMBA_ENV = /Users/phil/micromamba/envs/phils_network
+MICROMAMBA_ENV = phils_network
 DJANGO_DIR = Services/django
 FASTAPI_DIR = Services/fastapi
 REACT_DIR = Front/react
 
 help:
 	@echo "Available targets:"
-	@echo "  activate - Activate micromamba environment"
-	@echo "  django  - Run Django with Gunicorn"
-	@echo "  fastapi - Run FastAPI with Uvicorn"
-	@echo "  react - Run React"
+	@echo "\tcreate_env  - Create Python env"
+	@echo "\tlist        - List Python packages"
+	@echo "\tdjango      - Run Django with Gunicorn"
+	@echo "\tfastapi     - Run FastAPI with Uvicorn"
+	@echo "\treact       - Run React"
+
+create_env:
+	eval "$$(micromamba shell hook --shell $(SHELL))" && \
+	cd Services/ && \
+	micromamba env create -f ./env.yml
 
 list:
 	eval "$$(micromamba shell hook --shell $(SHELL))" && \

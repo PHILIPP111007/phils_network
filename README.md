@@ -91,6 +91,8 @@ pytest
 ### Using Makefile
 
 ```sh
+make create_env
+
 make django
 make fastapi
 make react
