@@ -8,7 +8,7 @@ REACT_DIR = Front/react
 
 help:
 	@echo "Available targets:"
-	@echo "\tcreate_env  - Create Python env"
+	@echo "\tcreate_env  - Create env"
 	@echo "\tlist        - List Python packages"
 	@echo "\tdjango      - Run Django with Gunicorn"
 	@echo "\tfastapi     - Run FastAPI with Uvicorn"
@@ -18,6 +18,13 @@ create_env:
 	eval "$$(micromamba shell hook --shell $(SHELL))" && \
 	cd Services/ && \
 	micromamba env create -f ./env.yml
+
+	cd $(REACT_DIR) && \
+	sudo npm install
+
+update_js_env:
+	cd $(REACT_DIR) && \
+	sudo npm update
 
 list:
 	eval "$$(micromamba shell hook --shell $(SHELL))" && \
@@ -51,6 +58,4 @@ fastapi:
 
 react:
 	@echo "Starting react..."
-	cd $(REACT_DIR) && \
-	sudo npm install && \
 	sudo VITE_DEVELOPMENT=1 npm run dev
