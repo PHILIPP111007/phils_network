@@ -180,7 +180,8 @@ async def delete_user(session: SessionDep, request: Request, username: str):
 
 	# Delete user logo
 	image_path = USER_IMAGE_PATH.format(user.id)
-	s3.delete_object(Bucket=BUCKET_NAME, Key=image_path)
+	if TESTING != "1" and DEVELOPMENT != "1":
+		s3.delete_object(Bucket=BUCKET_NAME, Key=image_path)
 
 	messages = await session.exec(select(Message).where(Message.sender_id == user.id))
 	messages = messages.unique().all()
@@ -189,7 +190,8 @@ async def delete_user(session: SessionDep, request: Request, username: str):
 		message_ids.append(message.id)
 		if message.file:
 			file_path = os.path.join(MEDIA_ROOT, message.file)
-			s3.delete_object(Bucket=BUCKET_NAME, Key=file_path)
+			if TESTING != "1" and DEVELOPMENT != "1":
+				s3.delete_object(Bucket=BUCKET_NAME, Key=file_path)
 
 	rooms = await session.exec(select(Room).where(Room.creator_id == user.id))
 	rooms = rooms.unique().all()
