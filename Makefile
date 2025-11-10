@@ -8,11 +8,12 @@ REACT_DIR = Front/react
 
 help:
 	@echo "Available targets:"
-	@echo "\tcreate_env  - Create env"
-	@echo "\tlist        - List Python packages"
-	@echo "\tdjango      - Run Django with Gunicorn"
-	@echo "\tfastapi     - Run FastAPI with Uvicorn"
-	@echo "\treact       - Run React"
+	@echo "\tcreate_env     - Create JavaScript and Python env"
+	@echo "\tupdate_js_env  - Update JavaScript env"
+	@echo "\tlist           - List Python packages"
+	@echo "\tdjango         - Run Django with Gunicorn"
+	@echo "\tfastapi        - Run FastAPI with Uvicorn"
+	@echo "\treact          - Run React"
 
 create_env:
 	eval "$$(micromamba shell hook --shell $(SHELL))" && \
