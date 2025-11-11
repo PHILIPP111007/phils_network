@@ -1,9 +1,9 @@
-django==5.2.7
+django==5.2.8
 django-extensions==4.1
 djangorestframework==3.16.1
 djoser==2.3.3
 django-storages==1.14.6
-boto3==1.40.59
+boto3==1.40.70
 channels==4.3.1
 channels-redis==4.3.0
 gunicorn==23.0.0
