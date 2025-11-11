@@ -17,6 +17,8 @@ POST http://127.0.0.1:8000/api/v1/token/token/logout/
 __all__ = ["urlpatterns", "websocket_urlpatterns"]
 
 
+from django.urls import include, path, re_path
+
 from app.consumers import (
 	AudioStreamConsumer,
 	ChatConsumer,
@@ -26,8 +28,6 @@ from app.consumers import (
 	VideoStreamConsumer,
 )
 from app.views import FileAPIView, TokenCreateView, TokenDestroyView, file_download
-
-from django.urls import include, path, re_path
 
 urlpatterns = []
 
@@ -46,10 +46,16 @@ urlpatterns += auth_urlpatterns + file_urlpatterns
 
 
 websocket_urlpatterns = [
-	path("ws/v1/chat/<str:room>/delete_message/", DeleteMessageConsumer.as_asgi()),
-	path("ws/v1/chat/<str:room>/like_message/", LikeMessageConsumer.as_asgi()),
-	path("ws/v1/chat/<str:room>/", ChatConsumer.as_asgi()),
+	path(
+		"ws/v1/chat/<str:room>/<str:user_id>/delete_message/",
+		DeleteMessageConsumer.as_asgi(),
+	),
+	path(
+		"ws/v1/chat/<str:room>/<str:user_id>/like_message/",
+		LikeMessageConsumer.as_asgi(),
+	),
+	path("ws/v1/chat/<str:room>/<str:user_id>/", ChatConsumer.as_asgi()),
 	path("ws/v1/online_status/<str:user_id>/", OnlineStatusConsumer.as_asgi()),
-	path("ws/v1/video_stream/<str:room>/", VideoStreamConsumer.as_asgi()),
-	path("ws/v1/audio_stream/<str:room>/", AudioStreamConsumer.as_asgi()),
+	path("ws/v1/video_stream/<str:room>/<str:user_id>/", VideoStreamConsumer.as_asgi()),
+	path("ws/v1/audio_stream/<str:room>/<str:user_id>/", AudioStreamConsumer.as_asgi()),
 ]

@@ -754,11 +754,11 @@ export default function VideoStream() {
 
             webSocketVideo.current = getWebSocketDjango({
                 socket_name: "videoStreamSocket",
-                path: `video_stream/${params.room_id}/`,
+                path: `video_stream/${params.room_id}/${user.id}/`,
             })
             webSocketAudio.current = getWebSocketDjango({
                 socket_name: "audioStreamSocket",
-                path: `audio_stream/${params.room_id}/`,
+                path: `audio_stream/${params.room_id}/${user.id}/`,
             })
 
             webSocketVideo.current.onmessage = async (event) => {

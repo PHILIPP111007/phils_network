@@ -14,9 +14,10 @@ AUDIO_STREAMING_GROUP = "audio_streaming_group_{}"
 class VideoStreamConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
 		token_key = self.scope["query_string"].decode().split("=", 1)[-1]
+		request_pk = int(self.scope["url_route"]["kwargs"]["user_id"])
 		pk = await _get_user_pk(token_key=token_key)
 
-		if not pk:
+		if not pk or request_pk != pk:
 			await self.close()
 		else:
 			room_id = int(self.scope["url_route"]["kwargs"]["room"])
@@ -78,9 +79,10 @@ class VideoStreamConsumer(AsyncWebsocketConsumer):
 class AudioStreamConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
 		token_key = self.scope["query_string"].decode().split("=", 1)[-1]
+		request_pk = int(self.scope["url_route"]["kwargs"]["user_id"])
 		pk = await _get_user_pk(token_key=token_key)
 
-		if not pk:
+		if not pk or request_pk != pk:
 			await self.close()
 		else:
 			room_id = int(self.scope["url_route"]["kwargs"]["room"])

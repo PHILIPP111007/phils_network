@@ -3,10 +3,11 @@ __all__ = ["ChatConsumer", "DeleteMessageConsumer"]
 import os
 
 import ujson as json
-from app.services import MessageService
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from rest_framework.authtoken.models import Token
+
+from app.services import MessageService
 
 CHAT_GROUP = "chat_{}"
 DELETE_MESSAGE_GROUP = "delete_message_{}"
@@ -22,9 +23,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		"""
 
 		token_key = self.scope["query_string"].decode().split("=", 1)[-1]
+		request_pk = int(self.scope["url_route"]["kwargs"]["user_id"])
 		pk = await _get_user_pk(token_key=token_key)
 
-		if not pk:
+		if not pk or request_pk != pk:
 			await self.close()
 		else:
 			room_id = int(self.scope["url_route"]["kwargs"]["room"])
@@ -84,9 +86,10 @@ class DeleteMessageConsumer(AsyncWebsocketConsumer):
 		"""
 
 		token_key = self.scope["query_string"].decode().split("=", 1)[-1]
+		request_pk = int(self.scope["url_route"]["kwargs"]["user_id"])
 		pk = await _get_user_pk(token_key=token_key)
 
-		if not pk:
+		if not pk or request_pk != pk:
 			await self.close()
 		else:
 			room_id = int(self.scope["url_route"]["kwargs"]["room"])
@@ -144,9 +147,10 @@ class LikeMessageConsumer(AsyncWebsocketConsumer):
 		"""
 
 		token_key = self.scope["query_string"].decode().split("=", 1)[-1]
+		request_pk = int(self.scope["url_route"]["kwargs"]["user_id"])
 		pk = await _get_user_pk(token_key=token_key)
 
-		if not pk:
+		if not pk or request_pk != pk:
 			await self.close()
 		else:
 			room_id = int(self.scope["url_route"]["kwargs"]["room"])

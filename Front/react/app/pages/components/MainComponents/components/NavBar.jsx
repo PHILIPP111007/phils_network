@@ -38,7 +38,7 @@ export default function NavBar() {
 
     useEffect(() => {
         roomSocket.current = rooms.map((room) => {
-            var socket = getWebSocketDjango({ socket_name: "roomSocketNavBar", path: `chat/${room.id}/` })
+            var socket = getWebSocketDjango({ socket_name: "roomSocketNavBar", path: `chat/${room.id}/${user.id}/` })
             socket.onmessage = (e) => {
                 var data = JSON.parse(e.data)
                 if (user.username !== data.message.sender.username && Number(params.room_id) !== room.id) {

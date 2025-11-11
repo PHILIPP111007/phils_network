@@ -96,7 +96,7 @@ export default function Rooms() {
 
     useEffect(() => {
         roomSocket.current = rooms.map((room) => {
-            var socket = getWebSocketDjango({ socket_name: "roomSocket", path: `chat/${room.id}/` })
+            var socket = getWebSocketDjango({ socket_name: "roomSocket", path: `chat/${room.id}/${user.id}/` })
             socket.onmessage = (e) => {
                 var data = JSON.parse(e.data)
                 updateRoomLastMessage(data)

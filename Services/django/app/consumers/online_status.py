@@ -1,18 +1,20 @@
 __all__ = ["OnlineStatusConsumer"]
 
 
-from app.models import User
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from rest_framework.authtoken.models import Token
+
+from app.models import User
 
 
 class OnlineStatusConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
 		token_key = self.scope["query_string"].decode().split("=", 1)[-1]
+		request_pk = int(self.scope["url_route"]["kwargs"]["user_id"])
 		pk = await _get_user_pk(token_key=token_key)
 
-		if not pk:
+		if not pk or request_pk != pk:
 			await self.close()
 		else:
 			user_id = int(self.scope["url_route"]["kwargs"]["user_id"])

@@ -258,9 +258,9 @@ export default function Chat() {
                 }
             })
 
-        chatSocket.current = getWebSocketDjango({ socket_name: "chatSocket", path: `chat/${params.room_id}/` })
-        deleteMessageSocket.current = getWebSocketDjango({ socket_name: "deleteMessageSocket", path: `chat/${params.room_id}/delete_message/` })
-        likeMessageSocket.current = getWebSocketDjango({ socket_name: "likeMessageSocket", path: `chat/${params.room_id}/like_message/` })
+        chatSocket.current = getWebSocketDjango({ socket_name: "chatSocket", path: `chat/${params.room_id}/${user.id}/` })
+        deleteMessageSocket.current = getWebSocketDjango({ socket_name: "deleteMessageSocket", path: `chat/${params.room_id}/${user.id}/delete_message/` })
+        likeMessageSocket.current = getWebSocketDjango({ socket_name: "likeMessageSocket", path: `chat/${params.room_id}/${user.id}/like_message/` })
 
         var textArea = document.getElementsByClassName("TextArea").item(0)
         var sendButton = document.getElementById("SendButton")
