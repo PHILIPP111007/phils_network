@@ -31,7 +31,7 @@ if DEVELOPMENT == "1":
 		DEVEL_DATABASE_URL,
 		connect_args={"check_same_thread": False},
 		poolclass=StaticPool,
-		echo=False,
+		echo=True,
 	)
 elif TESTING == "1":
 	engine = create_async_engine(
