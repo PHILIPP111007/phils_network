@@ -11,6 +11,20 @@
         "ms-python.vscode-python-envs",
         "vscode-icons-team.vscode-icons",
         "william-voyek.vscode-nginx",
-        "yzhang.markdown-all-in-one"
+        "yzhang.markdown-all-in-one",
+        "ahmadalli.vscode-nginx-conf",
+        "batisteo.vscode-django",
+        "bradlc.vscode-tailwindcss",
+        "charliermarsh.ruff",
+        "christian-kohler.npm-intellisense",
+        "davidanson.vscode-markdownlint",
+        "docker.docker",
+        "ms-python.mypy-type-checker",
+        "postman.postman-for-vscode",
+        "qwtel.sqlite-viewer",
+        "raynigon.nginx-formatter",
+        "redhat.vscode-yaml",
+        "tamasfe.even-better-toml",
+        "wix.vscode-import-cost"
     ]
 }
