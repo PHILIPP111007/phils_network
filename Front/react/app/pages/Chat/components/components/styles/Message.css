@@ -24,6 +24,7 @@
 
 .Message .timestamp {
     color: gray;
+    display: inline-flex;
 }
 
 .Message .downloadButton {
@@ -37,6 +38,7 @@
 
 .Message .MessageOnlineStatus {
     display: inline-block;
+    margin: 5px;
     padding: 5px 5px;
     background-color: green;
     border-radius: 20px;

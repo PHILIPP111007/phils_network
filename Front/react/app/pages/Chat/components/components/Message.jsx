@@ -90,7 +90,7 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
                             />
                         }
                         <Link to={`/users/${message.sender.username}/`} >
-                            <div className="timestamp"><p>{message.parent && "Reply"} {message.sender.first_name} {message.sender.last_name} @{message.sender.username} {message.timestamp}</p> {message.sender.is_online && <div className="MessageOnlineStatus"></div>}</div>
+                            <div className="timestamp"><div>{message.parent && "Reply"} {message.sender.first_name} {message.sender.last_name} @{message.sender.username} {message.timestamp}</div> {message.sender.is_online && <div className="MessageOnlineStatus"></div>}</div>
                         </Link>
                     </div>
                     {imageUrl &&
@@ -132,7 +132,7 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
                                     </>
                                 }
                                 <Link to={`/users/${message.parent.sender.username}/`} >
-                                    <div className="timestamp"><p>{message.parent.sender.first_name} {message.parent.sender.last_name} @{message.parent.sender.username} {message.parent.timestamp}</p> {message.parent.sender.is_online && <div className="MessageOnlineStatus"></div>}</div>
+                                    <div className="timestamp"><div>{message.parent.sender.first_name} {message.parent.sender.last_name} @{message.parent.sender.username} {message.parent.timestamp}</div> {message.parent.sender.is_online && <div className="MessageOnlineStatus"></div>}</div>
                                 </Link>
                                 <div className="text">
                                     <ReactMarkdown children={message.parent.text} />
@@ -161,7 +161,7 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
                             />
                         }
                         <Link to={`/users/${message.sender.username}/`} >
-                            <div className="timestamp"><p>{message.parent && "Ответ"} {message.sender.first_name} {message.sender.last_name} @{message.sender.username} {message.timestamp}</p> {message.sender.is_online && <div className="MessageOnlineStatus"></div>}</div>
+                            <div className="timestamp"><div>{message.parent && "Ответ"} {message.sender.first_name} {message.sender.last_name} @{message.sender.username} {message.timestamp}</div> {message.sender.is_online && <div className="MessageOnlineStatus"></div>}</div>
                         </Link>
                     </div>
                     {imageUrl &&
@@ -203,7 +203,7 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
                                     </>
                                 }
                                 <Link to={`/users/${message.parent.sender.username}/`} >
-                                    <div className="timestamp"><p>{message.parent.sender.first_name} {message.parent.sender.last_name} @{message.parent.sender.username} {message.parent.timestamp}</p> {message.parent.sender.is_online && <div className="MessageOnlineStatus"></div>}</div>
+                                    <div className="timestamp"><div>{message.parent.sender.first_name} {message.parent.sender.last_name} @{message.parent.sender.username} {message.parent.timestamp}</div> {message.parent.sender.is_online && <div className="MessageOnlineStatus"></div>}</div>
                                 </Link>
                                 <div className="text">
                                     <ReactMarkdown children={message.parent.text} />
@@ -233,7 +233,7 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
                     />
                 }
                 <Link to={`/users/${message.sender.username}/`} >
-                    <div className="timestamp"><p>{message.parent && "Reply"} {message.sender.first_name} {message.sender.last_name} @{message.sender.username} {message.timestamp}</p> {message.sender.is_online && <div className="MessageOnlineStatus"></div>}</div>
+                    <div className="timestamp"><div>{message.parent && "Reply"} {message.sender.first_name} {message.sender.last_name} @{message.sender.username} {message.timestamp}</div> {message.sender.is_online && <div className="MessageOnlineStatus"></div>}</div>
                 </Link>
             </div>
             <div className="text">
@@ -256,7 +256,7 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
                             </>
                         }
                         <Link to={`/users/${message.parent.sender.username}/`} >
-                            <div className="timestamp"><p>{message.parent.sender.first_name} {message.parent.sender.last_name} @{message.parent.sender.username} {message.parent.timestamp}</p> {message.parent.sender.is_online && <div className="MessageOnlineStatus"></div>}</div>
+                            <div className="timestamp"><div>{message.parent.sender.first_name} {message.parent.sender.last_name} @{message.parent.sender.username} {message.parent.timestamp}</div> {message.parent.sender.is_online && <div className="MessageOnlineStatus"></div>}</div>
                         </Link>
                         <div className="text">
                             <ReactMarkdown children={message.parent.text} />
