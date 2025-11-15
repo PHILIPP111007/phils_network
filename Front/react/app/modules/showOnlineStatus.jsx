@@ -5,9 +5,9 @@ export default function showOnlineStatus({ user }) {
 
     if (user.is_online) {
         if (language === Language.EN) {
-            return <div className="onlineStatus">online</div>
+            return <span className="onlineStatus">online</span>
         } else if (language === Language.RU) {
-            return <div className="onlineStatus">онлайн</div>
+            return <span className="onlineStatus">онлайн</span>
         }
     } else {
         return
