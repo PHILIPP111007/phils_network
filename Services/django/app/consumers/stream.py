@@ -5,10 +5,8 @@ from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from rest_framework.authtoken.models import Token
 
+from app.enums import WebSocketGroup
 from app.services import StreamService
-
-VIDEO_STREAMING_GROUP = "video_streaming_group_{}"
-AUDIO_STREAMING_GROUP = "audio_streaming_group_{}"
 
 
 class VideoStreamConsumer(AsyncWebsocketConsumer):
@@ -23,7 +21,9 @@ class VideoStreamConsumer(AsyncWebsocketConsumer):
 			room_id = int(self.scope["url_route"]["kwargs"]["room"])
 			flag = await _check_permission(room_id=room_id, pk=pk)
 			if flag:
-				video_streaming_group = VIDEO_STREAMING_GROUP.format(room_id)
+				video_streaming_group = (
+					WebSocketGroup.VIDEO_STREAMING_GROUP.value.format(room_id)
+				)
 				await self.channel_layer.group_add(
 					video_streaming_group, self.channel_name
 				)
@@ -36,7 +36,9 @@ class VideoStreamConsumer(AsyncWebsocketConsumer):
 
 		if time.time() - data["timestamp"] <= 1.0:
 			room_id = data["room"]
-			video_streaming_group = VIDEO_STREAMING_GROUP.format(room_id)
+			video_streaming_group = WebSocketGroup.VIDEO_STREAMING_GROUP.value.format(
+				room_id
+			)
 
 			# await self.channel_layer.group_send(
 			# 	video_streaming_group,
@@ -88,7 +90,9 @@ class AudioStreamConsumer(AsyncWebsocketConsumer):
 			room_id = int(self.scope["url_route"]["kwargs"]["room"])
 			flag = await _check_permission(room_id=room_id, pk=pk)
 			if flag:
-				audio_streaming_group = AUDIO_STREAMING_GROUP.format(room_id)
+				audio_streaming_group = (
+					WebSocketGroup.AUDIO_STREAMING_GROUP.value.format(room_id)
+				)
 				await self.channel_layer.group_add(
 					audio_streaming_group, self.channel_name
 				)
@@ -101,7 +105,9 @@ class AudioStreamConsumer(AsyncWebsocketConsumer):
 
 		if time.time() - data["timestamp"] <= 1.0:
 			room_id = data["room"]
-			audio_streaming_group = AUDIO_STREAMING_GROUP.format(room_id)
+			audio_streaming_group = WebSocketGroup.AUDIO_STREAMING_GROUP.value.format(
+				room_id
+			)
 
 			# await self.channel_layer.group_send(
 			# 	audio_streaming_group,

@@ -7,11 +7,8 @@ from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from rest_framework.authtoken.models import Token
 
+from app.enums import WebSocketGroup
 from app.services import MessageService
-
-CHAT_GROUP = "chat_{}"
-DELETE_MESSAGE_GROUP = "delete_message_{}"
-LIKE_MESSAGE_GROUP = "like_message_{}"
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -32,7 +29,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			room_id = int(self.scope["url_route"]["kwargs"]["room"])
 			flag = await _check_permission(room_id=room_id, pk=pk)
 			if flag:
-				chat_group = CHAT_GROUP.format(room_id)
+				chat_group = WebSocketGroup.CHAT_GROUP.value.format(room_id)
 				await self.channel_layer.group_add(chat_group, self.channel_name)
 				await self.accept()
 			else:
@@ -57,7 +54,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 				)
 
 		# Send message to room group
-		chat_group = CHAT_GROUP.format(message["room"])
+		chat_group = WebSocketGroup.CHAT_GROUP.value.format(message["room"])
 
 		await self.channel_layer.group_send(
 			chat_group, {"type": "chat_message", "message": message}
@@ -95,7 +92,9 @@ class DeleteMessageConsumer(AsyncWebsocketConsumer):
 			room_id = int(self.scope["url_route"]["kwargs"]["room"])
 			flag = await _check_permission(room_id=room_id, pk=pk)
 			if flag:
-				delete_message_group = DELETE_MESSAGE_GROUP.format(room_id)
+				delete_message_group = WebSocketGroup.DELETE_MESSAGE_GROUP.value.format(
+					room_id
+				)
 				await self.channel_layer.group_add(
 					delete_message_group, self.channel_name
 				)
@@ -118,7 +117,7 @@ class DeleteMessageConsumer(AsyncWebsocketConsumer):
 		await _delete_message(message_id=message["message_id"])
 
 		# Send message to room group
-		delete_message_group = DELETE_MESSAGE_GROUP.format(room_id)
+		delete_message_group = WebSocketGroup.DELETE_MESSAGE_GROUP.value.format(room_id)
 		await self.channel_layer.group_send(
 			delete_message_group,
 			{"type": "chat_message", "status": True, "message": message},
@@ -156,7 +155,9 @@ class LikeMessageConsumer(AsyncWebsocketConsumer):
 			room_id = int(self.scope["url_route"]["kwargs"]["room"])
 			flag = await _check_permission(room_id=room_id, pk=pk)
 			if flag:
-				delete_message_group = LIKE_MESSAGE_GROUP.format(room_id)
+				delete_message_group = WebSocketGroup.LIKE_MESSAGE_GROUP.value.format(
+					room_id
+				)
 				await self.channel_layer.group_add(
 					delete_message_group, self.channel_name
 				)
@@ -177,7 +178,7 @@ class LikeMessageConsumer(AsyncWebsocketConsumer):
 		room_id = message["room_id"]
 
 		# Send message to room group
-		delete_message_group = LIKE_MESSAGE_GROUP.format(room_id)
+		delete_message_group = WebSocketGroup.LIKE_MESSAGE_GROUP.value.format(room_id)
 		await self.channel_layer.group_send(
 			delete_message_group,
 			{"type": "chat_message", "status": True, "message": message},
