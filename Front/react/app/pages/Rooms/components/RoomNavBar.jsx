@@ -20,25 +20,27 @@ export default function RoomNavBar() {
             })
     }, [])
 
-    if (language === Language.EN) {
-        return (
-            <aside className="RoomNavBar">
-                <nav>
-                    <p>
-                        <Link to={`/invite_chats/${user.username}/`}>Invitation to chats <strong id="roomInvitationsLength" >{roomInvitationsLength}</strong></Link>
-                    </p>
-                </nav>
-            </aside>
-        )
-    } else if (language === Language.RU) {
-        return (
-            <aside className="RoomNavBar">
-                <nav>
-                    <p>
-                        <Link to={`/invite_chats/${user.username}/`}>Приглашение в чаты <strong id="roomInvitationsLength" >{roomInvitationsLength}</strong></Link>
-                    </p>
-                </nav>
-            </aside>
-        )
+    if (roomInvitationsLength > 0) {
+        if (language === Language.EN) {
+            return (
+                <aside className="RoomNavBar">
+                    <nav>
+                        <p>
+                            <Link to={`/invite_chats/${user.username}/`}>Invitation to chats <strong id="roomInvitationsLength" >{roomInvitationsLength}</strong></Link>
+                        </p>
+                    </nav>
+                </aside>
+            )
+        } else if (language === Language.RU) {
+            return (
+                <aside className="RoomNavBar">
+                    <nav>
+                        <p>
+                            <Link to={`/invite_chats/${user.username}/`}>Приглашение в чаты <strong id="roomInvitationsLength" >{roomInvitationsLength}</strong></Link>
+                        </p>
+                    </nav>
+                </aside>
+            )
+        }
     }
 }
