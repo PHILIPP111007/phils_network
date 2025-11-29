@@ -1,4 +1,4 @@
-# Phils network v1.2.1
+# Phils network v1.2.3
 
 Minimalistic social network written using Django, FastAPI and React.
 
@@ -27,6 +27,8 @@ Minimalistic social network written using Django, FastAPI and React.
 * [x] You can reply to messages.
 
 * [x] You can take part in video conferences.
+
+* [x] I encrypted messages, and now they're stored in the database as a jumbled mess. And anyone with access to the database won't see anything. This key isn't shared anywhere, and it must be manually entered by the user to decrypt messages in a specific conversation.
 
 [User Agreement](UserAgreement.md) (by using the Service, the User confirms that he/she has read and accepts the terms of this Agreement)
 
