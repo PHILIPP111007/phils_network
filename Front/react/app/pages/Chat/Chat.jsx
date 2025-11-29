@@ -191,9 +191,17 @@ export default function Chat() {
             if (data && data.ok) {
                 if (secretKey && generatedSecretKey && generatedSecretKey instanceof CryptoKey) {
                     for (var i = 0; i < data.messages.length; i++) {
-                        try {
-                            data.messages[i].text = await decrypt(data.messages[i].text, generatedSecretKey)
-                        } catch {
+                        if (data.messages[i].text) {
+                            try {
+                                data.messages[i].text = await decrypt(data.messages[i].text, generatedSecretKey)
+                            } catch {
+                            }
+                            if (data.messages[i].parent && data.messages[i].parent.text) {
+                                try {
+                                    data.messages[i].parent.text = await decrypt(data.messages[i].parent.text, generatedSecretKey)
+                                } catch {
+                                }
+                            }
                         }
                     }
                 }
@@ -300,6 +308,9 @@ export default function Chat() {
             if (data && data.message.id) {
                 if (secretKey && generatedSecretKey && generatedSecretKey instanceof CryptoKey) {
                     data.message.text = await decrypt(data.message.text, generatedSecretKey)
+                    if (data.message.parent.text) {
+                        data.message.parent.text = await decrypt(data.message.parent.text, generatedSecretKey)
+                    }
                 }
                 setMessages((prev) => [...messages, data.message])
                 await Fetch({ api_version: APIVersion.V2, action: `message_viewed/${data.message.id}/`, method: HttpMethod.POST })
