@@ -2,12 +2,14 @@ import "./styles/ModalRoomEdit.css"
 import { useEffect, useState, useCallback } from "react"
 import { Link } from "react-router-dom"
 import { FilterOption, HttpMethod, CacheKeys, Language, APIVersion } from "../../../../data/enums.js"
+import { setSecretKeyLocalStorage } from "../../../../modules/secretKey.js"
 import Fetch from "../../../../API/Fetch.js"
 import Loading from "../../../components/Loading.jsx"
 import Button from "../../../components/UI/Button.jsx"
+import Input from "../../../components/UI/Input.jsx"
 import showOnlineStatus from "../../../../modules/showOnlineStatus.jsx"
 
-export default function ModalRoomEdit({ mainSets, me, editRoom }) {
+export default function ModalRoomEdit({ mainSets, me, editRoom, secretKey, setSecretKey }) {
 
     var [loading, setLoading] = useState(true)
     var [renderFlag, setRenderFlag] = useState(false)
@@ -161,10 +163,24 @@ export default function ModalRoomEdit({ mainSets, me, editRoom }) {
         }
     }, [mainSets.value.room.id])
 
+    useEffect(() => {
+        setSecretKeyLocalStorage({ room_id: mainSets.value.room.id, value: secretKey })
+    }, [secretKey])
+
     if (language === Language.EN) {
         return (
             <div className="ModalRoomEdit">
                 <h3>{mainSets.value.room.name}</h3>
+                <br />
+                <br />
+                <h4>Secret key to encode / decode data</h4>
+                <Input
+                    value={secretKey}
+                    onChange={e => setSecretKey(e.target.value)}
+                    placeholder="secret key"
+                    type="text"
+                />
+                <br />
                 <br />
                 <Button onClick={() => editRoom()} >edit</Button>
                 <br />
@@ -190,6 +206,16 @@ export default function ModalRoomEdit({ mainSets, me, editRoom }) {
         return (
             <div className="ModalRoomEdit">
                 <h3>{mainSets.value.room.name}</h3>
+                <br />
+                <br />
+                <h4>Секретный ключ для шифровки / дешифровки сообщений</h4>
+                <Input
+                    value={secretKey}
+                    onChange={e => setSecretKey(e.target.value)}
+                    placeholder="секретный ключ"
+                    type="text"
+                />
+                <br />
                 <br />
                 <Button onClick={() => editRoom()} >edit</Button>
                 <br />

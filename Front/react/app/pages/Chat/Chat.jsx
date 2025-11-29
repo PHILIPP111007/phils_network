@@ -10,6 +10,8 @@ import rememberPage from "../../modules/rememberPage.js"
 import getToken from "../../modules/getToken.js"
 import useObserver from "../../hooks/useObserver"
 import { getWebSocketDjango } from "../../modules/getWebSocket.js"
+import { getSecretKeyLocalStorage } from "../../modules/secretKey.js"
+import { encrypt, decrypt, generateKey } from "../../modules/cryptoUtils.js"
 import Fetch from "../../API/Fetch.js"
 import MainComponents from "../components/MainComponents/MainComponents.jsx"
 import LazyDiv from "../components/LazyDiv.jsx"
@@ -21,6 +23,8 @@ export default function Chat() {
 
     var { user } = use(UserContext)
     var [messages, setMessages] = useState([])
+    var [secretKey, setSecretKey] = useState(null)
+    var [generatedSecretKey, setGeneratedSecretKey] = useState("")
     var [parentId, setParentId] = useState(null)
     var [parentMessage, setParentMessage] = useState(null)
     var mainSets = useSignal({
@@ -56,6 +60,10 @@ export default function Chat() {
 
     async function sendMessage(text, file) {
         var sendingText = await text.trim()
+
+        if (secretKey && generatedSecretKey && generatedSecretKey instanceof CryptoKey) {
+            sendingText = await encrypt(sendingText, generatedSecretKey)
+        }
 
         var message = null
         if (file) {
@@ -181,6 +189,14 @@ export default function Chat() {
             var data = await Fetch({ api_version: APIVersion.V2, action: `room/${params.room_id}/${msgs_len}/`, method: HttpMethod.GET })
 
             if (data && data.ok) {
+                if (secretKey && generatedSecretKey && generatedSecretKey instanceof CryptoKey) {
+                    for (var i = 0; i < data.messages.length; i++) {
+                        try {
+                            data.messages[i].text = await decrypt(data.messages[i].text, generatedSecretKey)
+                        } catch {
+                        }
+                    }
+                }
                 setMessages((prev) => [...data.messages.reverse(), ...messages])
 
                 data.messages.forEach(message => {
@@ -276,18 +292,21 @@ export default function Chat() {
             deleteMessageSocket.current.close()
             likeMessageSocket.current.close()
         }
-    }, [])
+    }, [generatedSecretKey])
 
     useEffect(() => {
-        chatSocket.current.onmessage = (e) => {
+        chatSocket.current.onmessage = async (e) => {
             var data = JSON.parse(e.data)
             if (data && data.message.id) {
+                if (secretKey && generatedSecretKey && generatedSecretKey instanceof CryptoKey) {
+                    data.message.text = await decrypt(data.message.text, generatedSecretKey)
+                }
                 setMessages((prev) => [...messages, data.message])
-                Fetch({ api_version: APIVersion.V2, action: `message_viewed/${data.message.id}/`, method: HttpMethod.POST })
+                await Fetch({ api_version: APIVersion.V2, action: `message_viewed/${data.message.id}/`, method: HttpMethod.POST })
             }
             scrollToBottom()
         }
-    }, [messages])
+    }, [messages, generatedSecretKey])
 
     useEffect(() => {
         deleteMessageSocket.current.onmessage = (e) => {
@@ -326,6 +345,24 @@ export default function Chat() {
         }
     }, [parentId])
 
+    useEffect(() => {
+        var key = getSecretKeyLocalStorage({ room_id: mainSets.value.room.id })
+        setSecretKey(key)
+    }, [mainSets.value.room.id])
+
+    useEffect(() => {
+        var generateAndSetKey = async () => {
+            if (secretKey) {
+                try {
+                    var key = await generateKey(secretKey)
+                    setGeneratedSecretKey(key)
+                } catch (error) {
+                    console.error('Key generation error:', error)
+                }
+            }
+        }
+        generateAndSetKey()
+    }, [secretKey])
 
     useObserver({ inView: inViewLazyDiv, func: fetchAddMessages, flag: !mainSets.value.loading })
 
@@ -339,7 +376,7 @@ export default function Chat() {
 
             <Messages messages={messages} downloadFile={downloadFile} deleteMessage={deleteMessage} setParentId={setParentId} likeMessage={likeMessage} unLikeMessage={unLikeMessage} handleMessageLike={handleMessageLike} />
 
-            <UserInput mainSets={mainSets} sendMessage={sendMessage} editRoom={editRoom} parentMessage={parentMessage} />
+            <UserInput mainSets={mainSets} sendMessage={sendMessage} editRoom={editRoom} parentMessage={parentMessage} secretKey={secretKey} setSecretKey={setSecretKey} />
 
             <div className="Wrapper-InView" ref={wrapperRef} ></div>
 

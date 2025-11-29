@@ -10,7 +10,7 @@ import Input from "../../components/UI/Input.jsx"
 import settingsLogo from "../../../images/three_points_gray.svg"
 import sendIcon from "../../../images/send-icon.svg"
 
-export default function UserInput({ mainSets, sendMessage, editRoom, parentMessage }) {
+export default function UserInput({ mainSets, sendMessage, editRoom, parentMessage, secretKey, setSecretKey }) {
 
     var { user } = use(UserContext)
     var [modalRoomEdit, setModalRoomEdit] = useState(false)
@@ -34,7 +34,7 @@ export default function UserInput({ mainSets, sendMessage, editRoom, parentMessa
         return (
             <>
                 <Modal modal={modalRoomEdit} setModal={setModalRoomEdit}>
-                    <ModalRoomEdit mainSets={mainSets} me={user} editRoom={editRoom} />
+                    <ModalRoomEdit mainSets={mainSets} me={user} editRoom={editRoom} secretKey={secretKey} setSecretKey={setSecretKey} />
                 </Modal>
 
                 {
@@ -89,7 +89,7 @@ export default function UserInput({ mainSets, sendMessage, editRoom, parentMessa
         return (
             <>
                 <Modal modal={modalRoomEdit} setModal={setModalRoomEdit}>
-                    <ModalRoomEdit mainSets={mainSets} me={user} editRoom={editRoom} />
+                    <ModalRoomEdit mainSets={mainSets} me={user} editRoom={editRoom} secretKey={secretKey} setSecretKey={setSecretKey} />
                 </Modal>
 
                 {
