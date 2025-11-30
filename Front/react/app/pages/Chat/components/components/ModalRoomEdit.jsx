@@ -1,6 +1,7 @@
 import "./styles/ModalRoomEdit.css"
-import { useEffect, useState, useCallback } from "react"
+import { use, useEffect, useState, useCallback } from "react"
 import { Link } from "react-router-dom"
+import { UserContext } from "../../../../data/context.js"
 import { FilterOption, HttpMethod, CacheKeys, Language, APIVersion } from "../../../../data/enums.js"
 import { setSecretKeyLocalStorage } from "../../../../modules/secretKey.js"
 import Fetch from "../../../../API/Fetch.js"
@@ -11,6 +12,7 @@ import showOnlineStatus from "../../../../modules/showOnlineStatus.jsx"
 
 export default function ModalRoomEdit({ mainSets, me, editRoom, secretKey, setSecretKey }) {
 
+    var { user } = use(UserContext)
     var [loading, setLoading] = useState(true)
     var [renderFlag, setRenderFlag] = useState(false)
     var language = localStorage.getItem(CacheKeys.LANGUAGE)
@@ -164,7 +166,7 @@ export default function ModalRoomEdit({ mainSets, me, editRoom, secretKey, setSe
     }, [mainSets.value.room.id])
 
     useEffect(() => {
-        setSecretKeyLocalStorage({ room_id: mainSets.value.room.id, value: secretKey })
+        setSecretKeyLocalStorage({ password: user.password, room_id: mainSets.value.room.id, value: secretKey })
     }, [secretKey])
 
     if (language === Language.EN) {

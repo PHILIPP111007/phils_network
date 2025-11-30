@@ -23,6 +23,7 @@ export default function App() {
         email: "",
         first_name: "",
         last_name: "",
+        password: "",
         is_online: false,
         image: null,
         ethereum_address: null,

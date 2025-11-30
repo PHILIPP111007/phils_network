@@ -43,6 +43,8 @@ export default function Login() {
             localStorage.setItem(CacheKeys.TOKEN, data.auth_token)
             setIsAuth(true)
 
+            setUser({ ...user, password: loginForm.password })
+
             if (language === Language.EN) {
                 notify_success('Successfully login!')
             } else if (language === Language.RU) {

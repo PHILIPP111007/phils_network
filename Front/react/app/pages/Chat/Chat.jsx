@@ -357,8 +357,20 @@ export default function Chat() {
     }, [parentId])
 
     useEffect(() => {
-        var key = getSecretKeyLocalStorage({ room_id: mainSets.value.room.id })
-        setSecretKey(key)
+        var fetchSecretKey = async () => {
+            try {
+                var key = await getSecretKeyLocalStorage({
+                    password: user.password,
+                    room_id: mainSets.value.room.id
+                })
+                setSecretKey(key)
+            } catch (error) {
+                console.error('Failed to get secret key:', error)
+                setSecretKey("")
+            }
+        }
+
+        fetchSecretKey()
     }, [mainSets.value.room.id])
 
     useEffect(() => {
