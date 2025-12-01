@@ -26,9 +26,9 @@ Minimalistic social network written using Django, FastAPI and React.
 
 * [x] You can reply to messages.
 
-* [x] You can take part in video conferences.
+* [x] You can take part in video conferences. For each text conversation, a separate video conversation with the same name is created. If a secret key is added to a text conversation, this key must be written down for all participants in the conversation, after which the text and video conversation will be enabled.
 
-* [x] I encrypted messages, and now they're stored in the database as a jumbled mess. And anyone with access to the database won't see anything. This key isn't shared anywhere, and it must be manually entered by the user to decrypt messages in a specific conversation.
+* [x] I encrypted messages, and now they're stored in the database as a jumbled mess. And anyone with access to the database won't see anything. This key isn't shared anywhere, and it must be manually entered by the user to decrypt messages in a specific conversation. If a secret key is added to a specific conversation, that key is required for all users to record and then be able to share the video.
 
 [User Agreement](UserAgreement.md) (by using the Service, the User confirms that he/she has read and accepts the terms of this Agreement)
 

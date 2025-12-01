@@ -1,13 +1,17 @@
 import { use, useRef, useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { UserContext } from "../../../data/context.js"
+import { getSecretKeyLocalStorage } from "../../../modules/secretKey.js"
+import { generateKey, encrypt, decrypt } from "../../../modules/cryptoUtils.js"
 import rememberPage from "../../../modules/rememberPage.js"
 import MainComponents from "../../components/MainComponents/MainComponents.jsx"
 import { getWebSocketDjango } from "../../../modules/getWebSocket.js"
 import { qualitySettings } from "../../../data/qualitySettings.js"
 
 export default function VideoStream() {
+
     var { user } = use(UserContext)
+    var [generatedSecretKey, setGeneratedSecretKey] = useState(null)
     var [currentSpeaker, setCurrentSpeaker] = useState(null)
     var [isSpeaking, setIsSpeaking] = useState(false)
 
@@ -702,12 +706,11 @@ export default function VideoStream() {
             )
 
             // Используем WebP если поддерживается для лучшего сжатия
-            var format = "image/jpeg"
-            if (canvas.toDataURL("image/webp", compressionQuality).length > 0) {
-                format = "image/webp"
-            }
-
+            var format = "image/webp"
             frameData = await canvas.toDataURL(format, compressionQuality)
+            if (generatedSecretKey && generatedSecretKey instanceof CryptoKey) {
+                frameData = await encrypt(frameData, generatedSecretKey)
+            }
 
             if (webSocketVideo.current.readyState === WebSocket.OPEN) {
                 var data = JSON.stringify({
@@ -777,7 +780,13 @@ export default function VideoStream() {
 
                     var delay = Number(Date.now() - data.timestamp)
                     if (delay < 1000) {
-                        await displayProcessedFrame(data.frame)
+                        if (generatedSecretKey && generatedSecretKey instanceof CryptoKey) {
+                            var frameData = await decrypt(data.frame, generatedSecretKey)
+                            await displayProcessedFrame(frameData)
+                        } else {
+                            await displayProcessedFrame(data.frame)
+                        }
+
                         setActiveUsers(prev => {
                             var users = new Set(prev)
                             if (data.user && data.user.username) {
@@ -848,8 +857,10 @@ export default function VideoStream() {
 
     // Эффекты
     useEffect(() => {
-        checkCameraAccess()
-        connectStreamWebSocket()
+        if (generatedSecretKey === "" || generatedSecretKey instanceof CryptoKey) {
+            checkCameraAccess()
+            connectStreamWebSocket()
+        }
 
         return () => {
             disconnectStreamWebSocket()
@@ -857,7 +868,7 @@ export default function VideoStream() {
             stopStreamingAudio()
             stopScreenSharing()
         }
-    }, [params.room_id])
+    }, [params.room_id, generatedSecretKey])
 
     useEffect(() => {
         if (isStreaming) {
@@ -910,6 +921,29 @@ export default function VideoStream() {
             clearInterval(monitorInterval)
         }
     }, [isAudioStreaming])
+
+    useEffect(() => {
+        var fetchSecretKey = async () => {
+            try {
+                var secretKey = await getSecretKeyLocalStorage({
+                    password: user.password,
+                    room_id: params.room_id
+                })
+
+                if (secretKey) {
+                    var genSecretKey = await generateKey(secretKey)
+                    setGeneratedSecretKey(genSecretKey)
+                } else {
+                    setGeneratedSecretKey("")
+                }
+            } catch (error) {
+                console.error('Failed to get secret key:', error)
+                setGeneratedSecretKey("")
+            }
+        }
+
+        fetchSecretKey()
+    }, [params.room_id])
 
     return (
         <>
