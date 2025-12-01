@@ -32,7 +32,7 @@ export default function VideoStream() {
     var audioProcessorRef = useRef(null)
     var screenStreamRef = useRef(null)
     var [screenQuality, setScreenQuality] = useState("720p")
-    var [compressionQuality, setCompressionQuality] = useState(1.0)
+    var [compressionQuality, setCompressionQuality] = useState(0.9)
 
     var [currentFPS, setCurrentFPS] = useState(10)
 
