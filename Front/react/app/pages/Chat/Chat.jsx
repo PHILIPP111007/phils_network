@@ -308,7 +308,7 @@ export default function Chat() {
             if (data && data.message.id) {
                 if (secretKey && generatedSecretKey && generatedSecretKey instanceof CryptoKey) {
                     data.message.text = await decrypt(data.message.text, generatedSecretKey)
-                    if (data.message.parent.text) {
+                    if (data.message.parent && data.message.parent.text) {
                         data.message.parent.text = await decrypt(data.message.parent.text, generatedSecretKey)
                     }
                 }
