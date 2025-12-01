@@ -2,7 +2,7 @@ import { use, useRef, useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { UserContext } from "../../../data/context.js"
 import { getSecretKeyLocalStorage } from "../../../modules/secretKey.js"
-import { generateKey, encrypt, decrypt } from "../../../modules/cryptoUtils.js"
+import { generateKey, encryptLargeData, decryptLargeData } from "../../../modules/cryptoUtils.js"
 import rememberPage from "../../../modules/rememberPage.js"
 import MainComponents from "../../components/MainComponents/MainComponents.jsx"
 import { getWebSocketDjango } from "../../../modules/getWebSocket.js"
@@ -36,7 +36,7 @@ export default function VideoStream() {
     var audioProcessorRef = useRef(null)
     var screenStreamRef = useRef(null)
     var [screenQuality, setScreenQuality] = useState("720p")
-    var [compressionQuality, setCompressionQuality] = useState(0.9)
+    var [compressionQuality, setCompressionQuality] = useState(0.99)
 
     var [currentFPS, setCurrentFPS] = useState(10)
 
@@ -588,7 +588,7 @@ export default function VideoStream() {
             var errorCount = 0
             var MAX_ERRORS = 3
 
-            audioProcessorRef.current.onaudioprocess = (event) => {
+            audioProcessorRef.current.onaudioprocess = async (event) => {
                 if (!isAudioStreaming || !webSocketAudio.current || webSocketAudio.current.readyState !== WebSocket.OPEN) {
                     return
                 }
@@ -615,6 +615,11 @@ export default function VideoStream() {
                     if (level > 0.01) {
                         setIsSpeaking(true)
                         var encoded = encodeAudio(audioData)
+
+                        if (generatedSecretKey && generatedSecretKey instanceof CryptoKey) {
+                            encoded = await encryptLargeData(encoded, generatedSecretKey)
+                        }
+
                         if (encoded && webSocketAudio.current.readyState === WebSocket.OPEN) {
                             webSocketAudio.current.send(JSON.stringify({
                                 type: "audio_data",
@@ -709,7 +714,7 @@ export default function VideoStream() {
             var format = "image/webp"
             frameData = await canvas.toDataURL(format, compressionQuality)
             if (generatedSecretKey && generatedSecretKey instanceof CryptoKey) {
-                frameData = await encrypt(frameData, generatedSecretKey)
+                frameData = await encryptLargeData(frameData, generatedSecretKey)
             }
 
             if (webSocketVideo.current.readyState === WebSocket.OPEN) {
@@ -780,12 +785,11 @@ export default function VideoStream() {
 
                     var delay = Number(Date.now() - data.timestamp)
                     if (delay < 1000) {
+                        var frameData = data.frame
                         if (generatedSecretKey && generatedSecretKey instanceof CryptoKey) {
-                            var frameData = await decrypt(data.frame, generatedSecretKey)
-                            await displayProcessedFrame(frameData)
-                        } else {
-                            await displayProcessedFrame(data.frame)
+                            var frameData = await decryptLargeData(frameData, generatedSecretKey)
                         }
+                        await displayProcessedFrame(frameData)
 
                         setActiveUsers(prev => {
                             var users = new Set(prev)
@@ -818,10 +822,15 @@ export default function VideoStream() {
                         data = JSON.parse(event.data)
                     }
 
-                    if (data.user.username !== user.username) {
+                    if (data.user.username !== user.username) {   // TODO
                         var delay = Number(Date.now() - data.timestamp)
                         if (delay < 1000) {
-                            await playReceivedAudio(data.audio)
+                            var data = data.audio
+                            if (generatedSecretKey && generatedSecretKey instanceof CryptoKey) {
+                                data = await decryptLargeData(data, generatedSecretKey)
+                            }
+                            await playReceivedAudio(data)
+
                             setActiveUsers(prev => {
                                 var users = new Set(prev)
                                 if (data.user && data.user.username) {
@@ -1212,6 +1221,7 @@ export default function VideoStream() {
                                 }}
                             >
                                 <option value="1.0">100%</option>
+                                <option value="0.99">99%</option>
                                 <option value="0.9">90%</option>
                                 <option value="0.8">80%</option>
                                 <option value="0.3">30%</option>
