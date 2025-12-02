@@ -822,7 +822,7 @@ export default function VideoStream() {
                         data = JSON.parse(event.data)
                     }
 
-                    if (data.user.username !== user.username) {   // TODO
+                    if (data.user.username !== user.username) {
                         var delay = Number(Date.now() - data.timestamp)
                         if (delay < 1000) {
                             var data = data.audio
