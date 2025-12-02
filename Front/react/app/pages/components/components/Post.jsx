@@ -69,14 +69,16 @@ export default function Post({ post, ...props }) {
                 </div>
                 <br />
                 <div className="content">
-                    <ReactMarkdown children={
-                        (post.postLen500 && btnFlag)
-                            ?
-                            post.content.substring(0, 499) + "..."
-                            :
-                            post.content
+                    <ReactMarkdown >
+                        {
+                            (post.postLen500 && btnFlag)
+                                ?
+                                post.content.substring(0, 499) + "..."
+                                :
+                                post.content
 
-                    } />
+                        }
+                    </ReactMarkdown>
                 </div>
                 <br />
 
@@ -112,14 +114,16 @@ export default function Post({ post, ...props }) {
                 </div>
                 <br />
                 <div className="content">
-                    <ReactMarkdown children={
-                        (post.postLen500 && btnFlag)
-                            ?
-                            post.content.substring(0, 499) + "..."
-                            :
-                            post.content
+                    <ReactMarkdown>
+                        {
+                            (post.postLen500 && btnFlag)
+                                ?
+                                post.content.substring(0, 499) + "..."
+                                :
+                                post.content
 
-                    } />
+                        }
+                    </ReactMarkdown>
                 </div>
                 <br />
 

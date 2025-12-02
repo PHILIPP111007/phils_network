@@ -123,7 +123,7 @@ export default function W3() {
     var showTransactions = useMemo(() => {
         if (language === Language.EN) {
             return transactions.map((transaction) =>
-                <Card className="TransactionCard text-center align-items-center" style={{ width: "100%" }}>
+                <Card key={transaction.id} className="TransactionCard text-center align-items-center" style={{ width: "100%" }}>
                     <Card.Body>
                         Transaction
                     </Card.Body>
@@ -148,7 +148,7 @@ export default function W3() {
             )
         } else if (language === Language.RU) {
             return transactions.map((transaction) =>
-                <Card className="TransactionCard text-center align-items-center" style={{ width: "100%" }}>
+                <Card key={transaction.id} className="TransactionCard text-center align-items-center" style={{ width: "100%" }}>
                     <Card.Body>
                         Транзакция
                     </Card.Body>

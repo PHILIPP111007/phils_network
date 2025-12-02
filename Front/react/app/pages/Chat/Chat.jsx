@@ -194,18 +194,20 @@ export default function Chat() {
                         if (data.messages[i].text) {
                             try {
                                 data.messages[i].text = await decrypt(data.messages[i].text, generatedSecretKey)
-                            } catch {
+                            } catch (error) {
+                                console.error(error)
                             }
                             if (data.messages[i].parent && data.messages[i].parent.text) {
                                 try {
                                     data.messages[i].parent.text = await decrypt(data.messages[i].parent.text, generatedSecretKey)
-                                } catch {
+                                } catch (error) {
+                                    console.error(error)
                                 }
                             }
                         }
                     }
                 }
-                setMessages((prev) => [...data.messages.reverse(), ...messages])
+                setMessages(() => [...data.messages.reverse(), ...messages])
 
                 data.messages.forEach(message => {
                     Fetch({ api_version: APIVersion.V2, action: `message_viewed/${message.id}/`, method: HttpMethod.POST })
@@ -312,7 +314,7 @@ export default function Chat() {
                         data.message.parent.text = await decrypt(data.message.parent.text, generatedSecretKey)
                     }
                 }
-                setMessages((prev) => [...messages, data.message])
+                setMessages(() => [...messages, data.message])
                 await Fetch({ api_version: APIVersion.V2, action: `message_viewed/${data.message.id}/`, method: HttpMethod.POST })
             }
             scrollToBottom()
@@ -323,7 +325,7 @@ export default function Chat() {
         deleteMessageSocket.current.onmessage = (e) => {
             var data = JSON.parse(e.data).message
             if (data) {
-                setMessages((prev) => messages.filter(message => {
+                setMessages(() => messages.filter(message => {
                     return message.id !== data.message_id
                 }))
             }

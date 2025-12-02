@@ -28,7 +28,7 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
         let longPressTimeout
         var LONG_PRESS_DURATION = 500 // duration in milliseconds
 
-        touchArea.addEventListener("touchstart", (event) => {
+        touchArea.addEventListener("touchstart", () => {
             longPressTimeout = setTimeout(() => {
                 setModalMessage(true)
             }, LONG_PRESS_DURATION)
@@ -106,7 +106,7 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
                     }
 
                     <div className="text">
-                        <ReactMarkdown children={message.text} />
+                        <ReactMarkdown>{message.text}</ReactMarkdown>
                     </div>
                     <img src={fileIcon} alt="file icon" width={50} />
                     <div className="downloadButton">
@@ -135,7 +135,7 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
                                     <div className="timestamp"><div>{message.parent.sender.first_name} {message.parent.sender.last_name} @{message.parent.sender.username} {message.parent.timestamp}</div> {message.parent.sender.is_online && <div className="MessageOnlineStatus"></div>}</div>
                                 </Link>
                                 <div className="text">
-                                    <ReactMarkdown children={message.parent.text} />
+                                    <ReactMarkdown>{message.parent.text}</ReactMarkdown>
                                 </div>
                             </>
                         }
@@ -177,7 +177,7 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
                     }
 
                     <div className="text">
-                        <ReactMarkdown children={message.text} />
+                        <ReactMarkdown>{message.text}</ReactMarkdown>
                     </div>
                     <img src={fileIcon} alt="file icon" width={50} />
                     <div className="downloadButton">
@@ -206,7 +206,7 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
                                     <div className="timestamp"><div>{message.parent.sender.first_name} {message.parent.sender.last_name} @{message.parent.sender.username} {message.parent.timestamp}</div> {message.parent.sender.is_online && <div className="MessageOnlineStatus"></div>}</div>
                                 </Link>
                                 <div className="text">
-                                    <ReactMarkdown children={message.parent.text} />
+                                    <ReactMarkdown>{message.parent.text}</ReactMarkdown>
                                 </div>
                             </>
                         }
@@ -237,7 +237,7 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
                 </Link>
             </div>
             <div className="text">
-                <ReactMarkdown children={message.text} />
+                <ReactMarkdown>{message.text}</ReactMarkdown>
             </div>
             <div className="info">
                 {
@@ -259,7 +259,7 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
                             <div className="timestamp"><div>{message.parent.sender.first_name} {message.parent.sender.last_name} @{message.parent.sender.username} {message.parent.timestamp}</div> {message.parent.sender.is_online && <div className="MessageOnlineStatus"></div>}</div>
                         </Link>
                         <div className="text">
-                            <ReactMarkdown children={message.parent.text} />
+                            <ReactMarkdown>{message.parent.text}</ReactMarkdown>
                         </div>
                     </>
                 }

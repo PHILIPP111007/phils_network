@@ -47,7 +47,7 @@ export default function UserInput({ mainSets, sendMessage, editRoom, parentMessa
                                 </Link>
                             </div>
                             <div className="text">
-                                <ReactMarkdown children={parentMessage.text} />
+                                <ReactMarkdown>{parentMessage.text}</ReactMarkdown>
                             </div>
                         </div>
                         <br />
@@ -102,7 +102,7 @@ export default function UserInput({ mainSets, sendMessage, editRoom, parentMessa
                                 </Link>
                             </div>
                             <div className="text">
-                                <ReactMarkdown children={parentMessage.text} />
+                                <ReactMarkdown>{parentMessage.text}</ReactMarkdown>
                             </div>
                         </div>
                         <br />

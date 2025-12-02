@@ -61,7 +61,7 @@ export default function Register() {
                     }
                 }
                 if (new_errors.length > 0) {
-                    setErrors((prev) => new_errors)
+                    setErrors(() => new_errors)
                 }
 
                 if (typeof data.username === "string") {

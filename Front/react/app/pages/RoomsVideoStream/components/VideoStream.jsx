@@ -787,7 +787,7 @@ export default function VideoStream() {
                     if (delay < 1000) {
                         var frameData = data.frame
                         if (generatedSecretKey && generatedSecretKey instanceof CryptoKey) {
-                            var frameData = await decryptLargeData(frameData, generatedSecretKey)
+                            frameData = await decryptLargeData(frameData, generatedSecretKey)
                         }
                         await displayProcessedFrame(frameData)
 
