@@ -114,7 +114,7 @@ export async function decryptLargeData(encryptedData, key) {
         // Пытаемся декодировать как текст, если это не получается - возвращаем ArrayBuffer
         try {
             return new TextDecoder().decode(decrypted)
-        } catch (textError) {
+        } catch {
             // Если это не текст (например, изображение), возвращаем ArrayBuffer
             return decrypted
         }
