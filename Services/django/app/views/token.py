@@ -13,23 +13,26 @@ class TokenCreateView(utils.ActionViewMixin, generics.GenericAPIView):
 	serializer_class = djoser_settings.SERIALIZERS.token_create
 	permission_classes = djoser_settings.PERMISSIONS.token_create
 
-	def _action(self, serializer):
-		key = django_settings.TOKEN_CREATE_CACHE_KEY.format(serializer.user.username)
+	def post(self, request, **kwargs):
+		ip_address = request.META.get("REMOTE_ADDR", "unknown")
+		key = django_settings.TOKEN_CREATE_CACHE_KEY.format(ip_address)
 		token_cache = cache.get(key, None)
 
 		if token_cache is None:
 			cache.set(key, True, 10)
-
-			token = utils.login_user(self.request, serializer.user)
-			token_serializer_class = djoser_settings.SERIALIZERS.token
-			return Response(
-				data=token_serializer_class(token).data, status=status.HTTP_200_OK
-			)
+			return super().post(request, **kwargs)
 		else:
 			return Response(
-				{"ok": False, "error": "Got login limit"},
+				{"ok": False, "error": "Entry limit reached, wait 10 sec"},
 				status=status.HTTP_403_FORBIDDEN,
 			)
+
+	def _action(self, serializer):
+		token = utils.login_user(self.request, serializer.user)
+		token_serializer_class = djoser_settings.SERIALIZERS.token
+		return Response(
+			data=token_serializer_class(token).data, status=status.HTTP_200_OK
+		)
 
 
 class TokenDestroyView(views.APIView):
