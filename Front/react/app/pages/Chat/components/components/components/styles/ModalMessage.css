@@ -6,19 +6,7 @@
     position: relative;
 }
 
-/* Но видео должно оставаться кликабельным внутри Message */
-.Message.modal-open .MessageVideo {
-    pointer-events: none;
-    opacity: 1;
-    z-index: 1;
-}
-
-/* И изображения тоже должны оставаться кликабельными */
-.Message.modal-open .MessageImage {
-    pointer-events: auto;
-    opacity: 1;
-}
-
+/* Модальное окно должно быть поверх ВСЕГО */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -28,11 +16,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 99999;
-    /* Увеличить до очень большого значения */
+    z-index: 2147483647;
+    /* Максимальный z-index */
     pointer-events: auto;
     background-color: transparent;
-    /* Уберите фон или сделайте его прозрачным */
 }
 
 .ModalMessage {
@@ -41,17 +28,45 @@
     background: white;
     border-radius: 8px;
     pointer-events: auto;
-    z-index: 100000;
-    /* Еще больше */
+    z-index: 2147483647;
+    /* Тот же максимальный z-index */
     position: relative;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-    /* Добавить тень для видимости */
+}
+
+/* Ключевое: принудительно убираем z-index у видео */
+.Message.modal-open .MessageVideo {
+    z-index: 0 !important;
+    /* Важно: принудительно уменьшаем z-index */
+    position: relative;
+}
+
+/* Или лучше использовать transform для создания нового контекста стека */
+.Message.modal-open .MessageVideo {
+    transform: translateZ(0);
+    z-index: 0;
+    isolation: isolate;
+    /* Создаем новый контекст стека */
+}
+
+/* Альтернативный вариант: уменьшить opacity видео, когда модалка открыта */
+.Message.modal-open .MessageVideo {
+    opacity: 0.7;
+    /* Слегка затемнить видео */
 }
 
 .MessageVideo {
     max-width: 100%;
     max-height: 400px;
-    z-index: 100000;
-    /* Уменьшить z-index для видео */
+    transform: translate3d(0, 0, 0);
+    /* Создает новый слой */
+    z-index: 1;
+    /* Низкий z-index */
     position: relative;
+}
+
+/* Когда модалка открыта, уменьшаем z-index видео еще больше */
+.Message.modal-open .MessageVideo {
+    z-index: -1 !important;
+    pointer-events: none;
 }
