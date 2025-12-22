@@ -23,6 +23,20 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
         return file_split[file_name_length - 1]
     }
 
+    const getFileType = (fileName) => {
+        if (!fileName) return null;
+        const extension = fileName.split('.').pop().toLowerCase();
+        const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg'];
+        const videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv', 'webm', 'm4v'];
+
+        if (imageExtensions.includes(extension)) {
+            return 'image';
+        } else if (videoExtensions.includes(extension)) {
+            return 'video';
+        }
+        return null;
+    }
+
     useEffect(() => {
         var touchArea = document.getElementById(`Message_${message.id}`)
         let longPressTimeout
@@ -71,10 +85,9 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
     }, [message.likes])
 
     if (message.file.path) {
-
         if (language === Language.EN) {
             return (
-                <div id={`Message_${message.id}`} className="Message"
+                <div id={`Message_${message.id}`} className={`Message ${modalMessage ? 'modal-open' : ''}`}
                     onContextMenu={() => {
                         setModalMessage(true)
                     }}>
@@ -93,16 +106,28 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
                             <div className="timestamp"><div>{message.parent && "Reply"} {message.sender.first_name} {message.sender.last_name} @{message.sender.username} {message.timestamp}</div> {message.sender.is_online && <div className="MessageOnlineStatus"></div>}</div>
                         </Link>
                     </div>
-                    {imageUrl &&
-                        <>
-                            <div style={{ marginBottom: "20px" }}>
-                                <img
-                                    className="MessageImage"
-                                    src={imageUrl}
-                                    alt="Uploaded preview"
-                                />
-                            </div>
-                        </>
+
+                    {imageUrl && getFileType(message.file.path) === 'image' &&
+                        <div style={{ marginBottom: "20px" }}>
+                            <img
+                                className="MessageImage"
+                                src={imageUrl}
+                                alt="Uploaded preview"
+                            />
+                        </div>
+                    }
+
+                    {imageUrl && getFileType(message.file.path) === 'video' &&
+                        <div style={{ marginBottom: "20px" }}>
+                            <video
+                                className="MessageVideo"
+                                controls
+                                src={imageUrl}
+                                style={{ maxWidth: "100%", maxHeight: "400px" }}
+                            >
+                                Ваш браузер не поддерживает видео.
+                            </video>
+                        </div>
                     }
 
                     <div className="text">
@@ -120,17 +145,31 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
                             message.parent &&
                             <>
                                 <hr />
-                                {parentImageUrl &&
+                                {parentImageUrl && getFileType(parentImageUrl) === 'image' &&
+                                    <div style={{ marginBottom: "20px" }}>
+                                        <img
+                                            className="MessageImage"
+                                            src={parentImageUrl}
+                                            alt="Uploaded preview"
+                                        />
+                                    </div>
+                                }
+
+                                {parentImageUrl && getFileType(message.parent?.file?.path) === 'video' &&
                                     <>
                                         <div style={{ marginBottom: "20px" }}>
-                                            <img
-                                                className="MessageImage"
+                                            <video
+                                                className="MessageVideo"
+                                                controls
                                                 src={parentImageUrl}
-                                                alt="Uploaded preview"
-                                            />
+                                                style={{ maxWidth: "100%", maxHeight: "400px" }}
+                                            >
+                                                Ваш браузер не поддерживает видео.
+                                            </video>
                                         </div>
                                     </>
                                 }
+
                                 <Link to={`/users/${message.parent.sender.username}/`} >
                                     <div className="timestamp"><div>{message.parent.sender.first_name} {message.parent.sender.last_name} @{message.parent.sender.username} {message.parent.timestamp}</div> {message.parent.sender.is_online && <div className="MessageOnlineStatus"></div>}</div>
                                 </Link>
@@ -145,7 +184,7 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
             )
         } else if (language === Language.RU) {
             return (
-                <div id={`Message_${message.id}`} className="Message"
+                <div id={`Message_${message.id}`} className={`Message ${modalMessage ? 'modal-open' : ''}`}
                     onContextMenu={() => {
                         setModalMessage(true)
                     }}>
@@ -164,16 +203,28 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
                             <div className="timestamp"><div>{message.parent && "Ответ"} {message.sender.first_name} {message.sender.last_name} @{message.sender.username} {message.timestamp}</div> {message.sender.is_online && <div className="MessageOnlineStatus"></div>}</div>
                         </Link>
                     </div>
-                    {imageUrl &&
-                        <>
-                            <div style={{ marginBottom: "20px" }}>
-                                <img
-                                    className="MessageImage"
-                                    src={imageUrl}
-                                    alt="Uploaded preview"
-                                />
-                            </div>
-                        </>
+
+                    {imageUrl && getFileType(message.file.path) === 'image' &&
+                        <div style={{ marginBottom: "20px" }}>
+                            <img
+                                className="MessageImage"
+                                src={imageUrl}
+                                alt="Uploaded preview"
+                            />
+                        </div>
+                    }
+
+                    {imageUrl && getFileType(message.file.path) === 'video' &&
+                        <div style={{ marginBottom: "20px" }}>
+                            <video
+                                className="MessageVideo"
+                                controls
+                                src={imageUrl}
+                                style={{ maxWidth: "100%", maxHeight: "400px" }}
+                            >
+                                Ваш браузер не поддерживает видео.
+                            </video>
+                        </div>
                     }
 
                     <div className="text">
@@ -191,17 +242,31 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
                             message.parent &&
                             <>
                                 <hr />
-                                {parentImageUrl &&
+                                {parentImageUrl && getFileType(parentImageUrl) === 'image' &&
+                                    <div style={{ marginBottom: "20px" }}>
+                                        <img
+                                            className="MessageImage"
+                                            src={parentImageUrl}
+                                            alt="Uploaded preview"
+                                        />
+                                    </div>
+                                }
+
+                                {parentImageUrl && getFileType(message.parent?.file?.path) === 'video' &&
                                     <>
                                         <div style={{ marginBottom: "20px" }}>
-                                            <img
-                                                className="MessageImage"
+                                            <video
+                                                className="MessageVideo"
+                                                controls
                                                 src={parentImageUrl}
-                                                alt="Uploaded preview"
-                                            />
+                                                style={{ maxWidth: "100%", maxHeight: "400px" }}
+                                            >
+                                                Ваш браузер не поддерживает видео.
+                                            </video>
                                         </div>
                                     </>
                                 }
+
                                 <Link to={`/users/${message.parent.sender.username}/`} >
                                     <div className="timestamp"><div>{message.parent.sender.first_name} {message.parent.sender.last_name} @{message.parent.sender.username} {message.parent.timestamp}</div> {message.parent.sender.is_online && <div className="MessageOnlineStatus"></div>}</div>
                                 </Link>
@@ -217,7 +282,7 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
         }
     }
     return (
-        <div id={`Message_${message.id}`} className="Message"
+        <div id={`Message_${message.id}`} className={`Message ${modalMessage ? 'modal-open' : ''}`}
             onContextMenu={() => {
                 setModalMessage(true)
             }}>
@@ -244,7 +309,7 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
                     message.parent &&
                     <>
                         <hr />
-                        {parentImageUrl &&
+                        {parentImageUrl && getFileType(parentImageUrl) === 'image' &&
                             <>
                                 <div style={{ marginBottom: "20px" }}>
                                     <img
@@ -255,6 +320,22 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
                                 </div>
                             </>
                         }
+
+                        {parentImageUrl && getFileType(message.parent?.file?.path) === 'video' &&
+                            <>
+                                <div style={{ marginBottom: "20px" }}>
+                                    <video
+                                        className="MessageVideo"
+                                        controls
+                                        src={parentImageUrl}
+                                        style={{ maxWidth: "100%", maxHeight: "400px" }}
+                                    >
+                                        Ваш браузер не поддерживает видео.
+                                    </video>
+                                </div>
+                            </>
+                        }
+
                         <Link to={`/users/${message.parent.sender.username}/`} >
                             <div className="timestamp"><div>{message.parent.sender.first_name} {message.parent.sender.last_name} @{message.parent.sender.username} {message.parent.timestamp}</div> {message.parent.sender.is_online && <div className="MessageOnlineStatus"></div>}</div>
                         </Link>

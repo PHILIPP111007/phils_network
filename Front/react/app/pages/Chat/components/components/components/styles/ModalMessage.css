@@ -1,4 +1,57 @@
+/* В Message.css добавьте: */
+
+/* Когда модальное окно открыто, весь Message блок становится неактивным */
+.Message.modal-open {
+    pointer-events: none;
+    position: relative;
+}
+
+/* Но видео должно оставаться кликабельным внутри Message */
+.Message.modal-open .MessageVideo {
+    pointer-events: none;
+    opacity: 1;
+    z-index: 1;
+}
+
+/* И изображения тоже должны оставаться кликабельными */
+.Message.modal-open .MessageImage {
+    pointer-events: auto;
+    opacity: 1;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+    /* Увеличить до очень большого значения */
+    pointer-events: auto;
+    background-color: transparent;
+    /* Уберите фон или сделайте его прозрачным */
+}
+
 .ModalMessage {
     max-width: 500px;
     padding: 50px;
+    background: white;
+    border-radius: 8px;
+    pointer-events: auto;
+    z-index: 100000;
+    /* Еще больше */
+    position: relative;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    /* Добавить тень для видимости */
+}
+
+.MessageVideo {
+    max-width: 100%;
+    max-height: 400px;
+    z-index: 100000;
+    /* Уменьшить z-index для видео */
+    position: relative;
 }
