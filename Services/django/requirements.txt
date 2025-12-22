@@ -3,11 +3,11 @@ django-extensions==4.1
 djangorestframework==3.16.1
 djoser==2.3.3
 django-storages==1.14.6
-boto3==1.42.8
+boto3==1.42.14
 channels==4.3.2
 channels-redis==4.3.0
 gunicorn==23.0.0
-uvicorn[standard]==0.38.0
+uvicorn[standard]==0.40.0
 granian==2.6.0
 whitenoise==6.11.0
 psycopg[binary]==3.3.2
