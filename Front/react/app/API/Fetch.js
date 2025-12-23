@@ -1,6 +1,7 @@
 import { HttpMethod, APIVersion } from "../data/enums"
 import { DEVELOPMENT, PROD_FETCH_URL, DEVELOPMENT_DJANGO_FETCH_URL, DEVELOPMENT_FASTAPI_FETCH_URL } from "../data/constants"
 import getToken from "../modules/getToken"
+import { notify_error } from "../modules/notify.js"
 
 export default async function Fetch({ api_version, action, method, body, token, is_uploading_file }) {
 
@@ -39,11 +40,14 @@ export default async function Fetch({ api_version, action, method, body, token, 
             .then((data) => {
                 if (!data.ok) {
                     if (data.error) {
-                        console.warn(`Not 2xx response: ${data.error}`)
+                        var msg = `Not 2xx response: ${data.error}`
+                        console.warn(msg)
+                        notify_error(msg)
                     }
 
                     if (data.detail) {
                         console.warn(data.detail)
+                        notify_error(data.detail)
                     }
                 }
                 return data
@@ -79,11 +83,14 @@ export default async function Fetch({ api_version, action, method, body, token, 
             .then((data) => {
                 if (!data.ok) {
                     if (data.error) {
-                        console.warn(`Not 2xx response: ${data.error}`)
+                        var msg = `Not 2xx response: ${data.error}`
+                        console.warn(msg)
+                        notify_error(msg)
                     }
 
                     if (data.detail) {
                         console.warn(data.detail)
+                        notify_error(data.detail)
                     }
                 }
                 return data
