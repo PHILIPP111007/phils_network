@@ -16,7 +16,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 2147483647;
+    z-index: 99;
     /* Максимальный z-index */
     pointer-events: auto;
     background-color: transparent;
@@ -28,31 +28,10 @@
     background: white;
     border-radius: 8px;
     pointer-events: auto;
-    z-index: 2147483647;
+    z-index: 99;
     /* Тот же максимальный z-index */
     position: relative;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-}
-
-/* Ключевое: принудительно убираем z-index у видео */
-.Message.modal-open .MessageVideo {
-    z-index: 0 !important;
-    /* Важно: принудительно уменьшаем z-index */
-    position: relative;
-}
-
-/* Или лучше использовать transform для создания нового контекста стека */
-.Message.modal-open .MessageVideo {
-    transform: translateZ(0);
-    z-index: 0;
-    isolation: isolate;
-    /* Создаем новый контекст стека */
-}
-
-/* Альтернативный вариант: уменьшить opacity видео, когда модалка открыта */
-.Message.modal-open .MessageVideo {
-    opacity: 0.7;
-    /* Слегка затемнить видео */
 }
 
 .MessageVideo {
