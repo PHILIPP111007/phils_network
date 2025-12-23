@@ -32,10 +32,6 @@ export default function Login() {
                 path = `/users/${data.username}/`
             }
             navigate(path)
-        } else if (data.detail) {
-            notify_error(data.detail)
-        } else if (data.error) {
-            notify_error(data.error)
         }
     }
 
@@ -58,10 +54,6 @@ export default function Login() {
             await Fetch({ api_version: APIVersion.V2, action: "online_status/set_true/", method: HttpMethod.POST })
 
             auth()
-        } else if (data.detail) {
-            notify_error(data.detail)
-        } else if (data.error) {
-            notify_error(data.error)
         }
     }
 
