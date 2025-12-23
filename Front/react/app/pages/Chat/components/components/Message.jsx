@@ -23,23 +23,25 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
         return file_split[file_name_length - 1]
     }
 
-    const getFileType = (fileName) => {
-        if (!fileName) return null;
-        const extension = fileName.split('.').pop().toLowerCase();
-        const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg'];
-        const videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv', 'webm', 'm4v'];
+    var getFileType = (fileName) => {
+        if (!fileName) {
+            return null
+        }
+        var extension = fileName.split(".").pop().toLowerCase()
+        var imageExtensions = ["jpg", "jpeg", "png", "gif", "bmp", "webp", "svg"]
+        var videoExtensions = ["mp4", "avi", "mov", "wmv", "flv", "mkv", "webm", "m4v"]
 
         if (imageExtensions.includes(extension)) {
-            return 'image';
+            return "image"
         } else if (videoExtensions.includes(extension)) {
-            return 'video';
+            return "video"
         }
-        return null;
+        return null
     }
 
     useEffect(() => {
         var touchArea = document.getElementById(`Message_${message.id}`)
-        let longPressTimeout
+        var longPressTimeout
         var LONG_PRESS_DURATION = 500 // duration in milliseconds
 
         touchArea.addEventListener("touchstart", () => {
@@ -87,7 +89,7 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
     if (message.file.path) {
         if (language === Language.EN) {
             return (
-                <div id={`Message_${message.id}`} className={`Message ${modalMessage ? 'modal-open' : ''}`}
+                <div id={`Message_${message.id}`} className={`Message ${modalMessage ? "modal-open" : ""}`}
                     onContextMenu={() => {
                         setModalMessage(true)
                     }}>
@@ -107,7 +109,7 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
                         </Link>
                     </div>
 
-                    {imageUrl && getFileType(message.file.path) === 'image' &&
+                    {imageUrl && getFileType(message.file.path) === "image" &&
                         <div style={{ marginBottom: "20px" }}>
                             <img
                                 className="MessageImage"
@@ -117,7 +119,7 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
                         </div>
                     }
 
-                    {imageUrl && getFileType(message.file.path) === 'video' &&
+                    {imageUrl && getFileType(message.file.path) === "video" &&
                         <div style={{ marginBottom: "20px" }}>
                             <video
                                 className="MessageVideo"
@@ -125,7 +127,7 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
                                 src={imageUrl}
                                 style={{ maxWidth: "100%", maxHeight: "400px" }}
                             >
-                                Ваш браузер не поддерживает видео.
+                                Your browser does not support video.
                             </video>
                         </div>
                     }
@@ -145,7 +147,7 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
                             message.parent &&
                             <>
                                 <hr />
-                                {parentImageUrl && getFileType(parentImageUrl) === 'image' &&
+                                {parentImageUrl && getFileType(parentImageUrl) === "image" &&
                                     <div style={{ marginBottom: "20px" }}>
                                         <img
                                             className="MessageImage"
@@ -155,19 +157,17 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
                                     </div>
                                 }
 
-                                {parentImageUrl && getFileType(message.parent?.file?.path) === 'video' &&
-                                    <>
-                                        <div style={{ marginBottom: "20px" }}>
-                                            <video
-                                                className="MessageVideo"
-                                                controls
-                                                src={parentImageUrl}
-                                                style={{ maxWidth: "100%", maxHeight: "400px" }}
-                                            >
-                                                Ваш браузер не поддерживает видео.
-                                            </video>
-                                        </div>
-                                    </>
+                                {parentImageUrl && getFileType(message.parent?.file?.path) === "video" &&
+                                    <div style={{ marginBottom: "20px" }}>
+                                        <video
+                                            className="MessageVideo"
+                                            controls
+                                            src={parentImageUrl}
+                                            style={{ maxWidth: "100%", maxHeight: "400px" }}
+                                        >
+                                            Your browser does not support video.
+                                        </video>
+                                    </div>
                                 }
 
                                 <Link to={`/users/${message.parent.sender.username}/`} >
@@ -184,7 +184,7 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
             )
         } else if (language === Language.RU) {
             return (
-                <div id={`Message_${message.id}`} className={`Message ${modalMessage ? 'modal-open' : ''}`}
+                <div id={`Message_${message.id}`} className={`Message ${modalMessage ? "modal-open" : ""}`}
                     onContextMenu={() => {
                         setModalMessage(true)
                     }}>
@@ -196,7 +196,7 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
                             <img
                                 className="MessageUserImage"
                                 src={userImageUrl}
-                                alt="user image"
+                                alt="иконка юзера"
                             />
                         }
                         <Link to={`/users/${message.sender.username}/`} >
@@ -204,17 +204,17 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
                         </Link>
                     </div>
 
-                    {imageUrl && getFileType(message.file.path) === 'image' &&
+                    {imageUrl && getFileType(message.file.path) === "image" &&
                         <div style={{ marginBottom: "20px" }}>
                             <img
                                 className="MessageImage"
                                 src={imageUrl}
-                                alt="Uploaded preview"
+                                alt="загруженное превью"
                             />
                         </div>
                     }
 
-                    {imageUrl && getFileType(message.file.path) === 'video' &&
+                    {imageUrl && getFileType(message.file.path) === "video" &&
                         <div style={{ marginBottom: "20px" }}>
                             <video
                                 className="MessageVideo"
@@ -242,29 +242,27 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
                             message.parent &&
                             <>
                                 <hr />
-                                {parentImageUrl && getFileType(parentImageUrl) === 'image' &&
+                                {parentImageUrl && getFileType(parentImageUrl) === "image" &&
                                     <div style={{ marginBottom: "20px" }}>
                                         <img
                                             className="MessageImage"
                                             src={parentImageUrl}
-                                            alt="Uploaded preview"
+                                            alt="загруженное превью"
                                         />
                                     </div>
                                 }
 
-                                {parentImageUrl && getFileType(message.parent?.file?.path) === 'video' &&
-                                    <>
-                                        <div style={{ marginBottom: "20px" }}>
-                                            <video
-                                                className="MessageVideo"
-                                                controls
-                                                src={parentImageUrl}
-                                                style={{ maxWidth: "100%", maxHeight: "400px" }}
-                                            >
-                                                Ваш браузер не поддерживает видео.
-                                            </video>
-                                        </div>
-                                    </>
+                                {parentImageUrl && getFileType(message.parent?.file?.path) === "video" &&
+                                    <div style={{ marginBottom: "20px" }}>
+                                        <video
+                                            className="MessageVideo"
+                                            controls
+                                            src={parentImageUrl}
+                                            style={{ maxWidth: "100%", maxHeight: "400px" }}
+                                        >
+                                            Ваш браузер не поддерживает видео.
+                                        </video>
+                                    </div>
                                 }
 
                                 <Link to={`/users/${message.parent.sender.username}/`} >
@@ -282,7 +280,7 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
         }
     }
     return (
-        <div id={`Message_${message.id}`} className={`Message ${modalMessage ? 'modal-open' : ''}`}
+        <div id={`Message_${message.id}`} className={`Message ${modalMessage ? "modal-open" : ""}`}
             onContextMenu={() => {
                 setModalMessage(true)
             }}>
@@ -309,7 +307,7 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
                     message.parent &&
                     <>
                         <hr />
-                        {parentImageUrl && getFileType(parentImageUrl) === 'image' &&
+                        {parentImageUrl && getFileType(parentImageUrl) === "image" &&
                             <>
                                 <div style={{ marginBottom: "20px" }}>
                                     <img
@@ -321,19 +319,17 @@ export default function Message({ message, downloadFile, deleteMessage, setParen
                             </>
                         }
 
-                        {parentImageUrl && getFileType(message.parent?.file?.path) === 'video' &&
-                            <>
-                                <div style={{ marginBottom: "20px" }}>
-                                    <video
-                                        className="MessageVideo"
-                                        controls
-                                        src={parentImageUrl}
-                                        style={{ maxWidth: "100%", maxHeight: "400px" }}
-                                    >
-                                        Ваш браузер не поддерживает видео.
-                                    </video>
-                                </div>
-                            </>
+                        {parentImageUrl && getFileType(message.parent?.file?.path) === "video" &&
+                            <div style={{ marginBottom: "20px" }}>
+                                <video
+                                    className="MessageVideo"
+                                    controls
+                                    src={parentImageUrl}
+                                    style={{ maxWidth: "100%", maxHeight: "400px" }}
+                                >
+                                    Your browser does not support video.
+                                </video>
+                            </div>
                         }
 
                         <Link to={`/users/${message.parent.sender.username}/`} >
