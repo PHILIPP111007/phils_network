@@ -5,6 +5,7 @@
     transform: translateX(-50%);
     display: flex;
     align-items: center;
+    z-index: 99;
 }
 
 .UserInput .ButtonsAndTextArea {
