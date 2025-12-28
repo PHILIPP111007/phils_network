@@ -63,37 +63,43 @@ if DEVELOPMENT == "1":
 
 
 @app.middleware("http")
-async def middleware_add_user_to_request(request: Request, call_next: Callable):
+async def attach_user_to_request(request: Request, call_next: Callable):
 	"""Middleware to store user in request context"""
 
+	# Извлекаем учетные данные из запроса
 	token = request.headers.get("Authorization")
 	global_user_username = request.query_params.get("global_user_username")
-	request.state.user = None  # Устанавливаем по умолчанию
 
-	if token and global_user_username and " " in token:
-		token = token.split(" ", 1)[1]  # Remove "Bearer"
+	# Инициализируем пользователя как None по умолчанию
+	request.state.user = None
 
-		async with AsyncSession(engine) as session:
-			token_obj = await session.exec(select(Token).where(Token.key == token))
-			token_obj = token_obj.first()
-			if token_obj:
-				user = await session.exec(
-					select(User).where(User.id == token_obj.user_id)
-				)
-				user = user.one()
+	# Базовая валидация наличия учетных данных
+	if not (token and global_user_username and " " in token):
+		return await call_next(request)
 
-				if user and user.username == global_user_username:
-					request.state.user = User(
-						id=user.id,
-						username=user.username,
-						user_timezone=user.user_timezone,
-						image=user.image,
-						ethereum_address=user.ethereum_address,
-						infura_api_key=user.infura_api_key,
-					)
+	# Извлекаем токен из заголовка Authorization (формат: "Bearer <token>")
+	token = token.split(" ", 1)[1]
 
-	response = await call_next(request)
-	return response
+	async with AsyncSession(engine) as session:
+		token_obj = await session.exec(select(Token).where(Token.key == token))
+		token_obj = token_obj.first()
+		if not token_obj:
+			return await call_next(request)
+
+		user = await session.exec(select(User).where(User.id == token_obj.user_id))
+		user = user.one()
+		if user and user.username == global_user_username:
+			request.state.user = User(
+				id=user.id,
+				username=user.username,
+				user_timezone=user.user_timezone,
+				image=user.image,
+				ethereum_address=user.ethereum_address,
+				infura_api_key=user.infura_api_key,
+			)
+
+	# Продолжаем обработку запроса
+	return await call_next(request)
 
 
 app.include_router(online_status.router, prefix=API_PREFIX)
