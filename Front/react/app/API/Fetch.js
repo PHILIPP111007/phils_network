@@ -1,4 +1,4 @@
-import { HttpMethod, APIVersion } from "../data/enums"
+import { HttpMethod, APIVersion, CacheKeys } from "../data/enums"
 import { DEVELOPMENT, PROD_FETCH_URL, DEVELOPMENT_DJANGO_FETCH_URL, DEVELOPMENT_FASTAPI_FETCH_URL } from "../data/constants"
 import getToken from "../modules/getToken"
 import { notify_error } from "../modules/notify.js"
@@ -25,6 +25,9 @@ export default async function Fetch({ api_version, action, method, body, token, 
     } else (
         url = `${PROD_FETCH_URL}api/v${api_version}/${action}`
     )
+
+    var global_user_username = localStorage.getItem(CacheKeys.GLOBAL_USER_USERNAME)
+    url += `?global_user_username=${global_user_username}`
 
     if (method === HttpMethod.GET) {
         data = await fetch(url, {

@@ -67,9 +67,10 @@ async def middleware_add_user_to_request(request: Request, call_next: Callable):
 	"""Middleware to store user in request context"""
 
 	token = request.headers.get("Authorization")
+	global_user_username = request.query_params.get("global_user_username")
 	request.state.user = None  # Устанавливаем по умолчанию
 
-	if token and " " in token:
+	if token and global_user_username and " " in token:
 		token = token.split(" ", 1)[1]  # Remove "Bearer"
 
 		async with AsyncSession(engine) as session:
@@ -80,7 +81,8 @@ async def middleware_add_user_to_request(request: Request, call_next: Callable):
 					select(User).where(User.id == token_obj.user_id)
 				)
 				user = user.one()
-				if user:
+
+				if user and user.username == global_user_username:
 					request.state.user = User(
 						id=user.id,
 						username=user.username,
