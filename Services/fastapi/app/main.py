@@ -1,13 +1,20 @@
-from typing import Callable
+import base64
+import hashlib
+import hmac
+import json
+import secrets
+from datetime import datetime, timedelta
+from typing import Callable, Optional
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from app.constants import API_PREFIX, DEVELOPMENT
+from app.constants import API_PREFIX, DEVELOPMENT, FASTAPI_SESSION_KEY, SECRET_KEY
 from app.database import engine
 from app.models import Token, User
+from app.modules.session_token import verify_session_token
 from app.views import (
 	chat,
 	find_user,
@@ -18,6 +25,7 @@ from app.views import (
 	online_status,
 	post,
 	room,
+	session,
 	subscriber,
 	timezone,
 	user,
@@ -52,14 +60,18 @@ app.openapi_version = "3.0.0"
 
 if DEVELOPMENT == "1":
 	origins = ["http://localhost:3000", "http://127.0.0.1:3000"]
+else:
+	# TODO: add
+	origins = ["https://ваш-домен.com"]
 
-	app.add_middleware(
-		CORSMiddleware,
-		allow_origins=origins,
-		allow_credentials=True,  # Allow cookies to be included in cross-origin requests
-		allow_methods=["*"],  # Allow all HTTP methods (GET, POST, PUT, DELETE, etc.)
-		allow_headers=["*"],  # Allow all headers in cross-origin requests
-	)
+
+app.add_middleware(
+	CORSMiddleware,
+	allow_origins=origins,
+	allow_credentials=True,  # Allow cookies to be included in cross-origin requests
+	allow_methods=["*"],  # Allow all HTTP methods (GET, POST, PUT, DELETE, etc.)
+	allow_headers=["*"],  # Allow all headers in cross-origin requests
+)
 
 
 @app.middleware("http")
@@ -68,13 +80,21 @@ async def attach_user_to_request(request: Request, call_next: Callable):
 
 	# Извлекаем учетные данные из запроса
 	token = request.headers.get("Authorization")
+	session_token = request.cookies.get(FASTAPI_SESSION_KEY)
 	global_user_username = request.query_params.get("global_user_username")
 
 	# Инициализируем пользователя как None по умолчанию
 	request.state.user = None
 
+	if not session_token:
+		return await call_next(request)
+
 	# Базовая валидация наличия учетных данных
 	if not (token and global_user_username and " " in token):
+		return await call_next(request)
+
+	session_data = verify_session_token(session_token=session_token)
+	if session_data is None:
 		return await call_next(request)
 
 	# Извлекаем токен из заголовка Authorization (формат: "Bearer <token>")
@@ -86,9 +106,14 @@ async def attach_user_to_request(request: Request, call_next: Callable):
 		if not token_obj:
 			return await call_next(request)
 
+		session_user_id = session_data["user_id"]
 		user = await session.exec(select(User).where(User.id == token_obj.user_id))
 		user = user.one()
-		if user and user.username == global_user_username:
+		if (
+			user
+			and user.username == global_user_username
+			and user.id == session_user_id
+		):
 			request.state.user = User(
 				id=user.id,
 				username=user.username,
@@ -102,6 +127,7 @@ async def attach_user_to_request(request: Request, call_next: Callable):
 	return await call_next(request)
 
 
+app.include_router(session.router, prefix=API_PREFIX)
 app.include_router(online_status.router, prefix=API_PREFIX)
 app.include_router(post.router, prefix=API_PREFIX)
 app.include_router(news.router, prefix=API_PREFIX)
