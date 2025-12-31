@@ -14,8 +14,6 @@ export default async function Fetch({ api_version, action, method, body, token, 
     var url
     var data
 
-    action = encodeURIComponent(action)
-
     if (DEVELOPMENT == "1") {
         if (api_version === APIVersion.V1) {
             url = `${DEVELOPMENT_DJANGO_FETCH_URL}api/v${api_version}/${action}`
@@ -28,6 +26,7 @@ export default async function Fetch({ api_version, action, method, body, token, 
 
     var global_user_username = localStorage.getItem(CacheKeys.GLOBAL_USER_USERNAME)
     url += `?global_user_username=${global_user_username}`
+    var credentials = api_version === APIVersion.V2 ? "include" : "same-origin"
 
     if (method === HttpMethod.GET) {
         data = await fetch(url, {
@@ -38,6 +37,7 @@ export default async function Fetch({ api_version, action, method, body, token, 
                 "Authorization": token ? `Token ${token}` : "",
             },
             mode: "cors",
+            credentials: credentials,
         })
             .then((response) => response.json())
             .then((data) => {
@@ -81,6 +81,7 @@ export default async function Fetch({ api_version, action, method, body, token, 
             headers: headers,
             mode: "cors",
             body: body,
+            credentials: credentials,
         })
             .then((response) => response.json())
             .then((data) => {
