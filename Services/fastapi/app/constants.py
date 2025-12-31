@@ -1,6 +1,8 @@
 import os
 from os import environ
 
+SECRET_KEY: str = environ.get("SECRET_KEY", "1234")
+
 DATETIME_FORMAT: str = environ.get("DATETIME_FORMAT", "%Y-%m-%d %H:%M")
 POSTS_TO_LOAD: int = int(environ.get("POSTS_TO_LOAD", "20"))
 MESSAGES_TO_LOAD: int = int(environ.get("MESSAGES_TO_LOAD", "30"))
@@ -23,6 +25,8 @@ USER_IMAGE_PATH = "user_{}"
 
 TESTING = environ.get("TEST", "0")
 DEVELOPMENT = environ.get("DEVELOPMENT", "0")
+
+FASTAPI_SESSION_KEY = "fastapi_session"
 
 API_VERSION = 2
 API_PREFIX = f"/api/v{API_VERSION}"
