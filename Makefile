@@ -37,7 +37,7 @@ test:
 	micromamba activate $(MICROMAMBA_ENV) && \
 	cd $(FASTAPI_DIR) && \
 	export TEST=1 && \
-	pytest
+	pytest -v
 
 django:
 	@echo "Starting django..."
