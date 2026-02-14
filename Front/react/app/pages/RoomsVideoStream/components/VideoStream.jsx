@@ -826,7 +826,7 @@ export default function VideoStream() {
                     if (data.user.username !== user.username) {
                         var delay = Number(Date.now() - data.timestamp)
                         if (delay < 1000) {
-                            var data = data.audio
+                            data = data.audio
                             if (generatedSecretKey && generatedSecretKey instanceof CryptoKey) {
                                 data = await decryptLargeData(data, generatedSecretKey)
                             }
