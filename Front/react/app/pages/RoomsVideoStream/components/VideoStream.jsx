@@ -5,6 +5,7 @@ import { getSecretKeyLocalStorage } from "../../../modules/secretKey.js"
 import { generateKey, encryptLargeData, decryptLargeData } from "../../../modules/cryptoUtils.js"
 import rememberPage from "../../../modules/rememberPage.js"
 import MainComponents from "../../components/MainComponents/MainComponents.jsx"
+import Button from "../../components/UI/Button.jsx"
 import { getWebSocketDjango } from "../../../modules/getWebSocket.js"
 import { qualitySettings } from "../../../data/qualitySettings.js"
 
@@ -987,70 +988,51 @@ export default function VideoStream() {
                     padding: "10px",
                     borderRadius: "10px"
                 }}>
-                    <button
+                    <Button
                         onClick={() => setIsStreaming((prev) => !prev)}
                         style={{
-                            padding: "10px 20px",
                             backgroundColor: isStreaming ? "#dc3545" : "#007bff",
-                            color: "white",
-                            border: "none",
-                            borderRadius: "5px",
                             cursor: "pointer",
-                            fontSize: "14px"
                         }}
                     >
                         {isStreaming ? "⏹️ Остановить" : "▶️ Начать трансляцию видео"}
-                    </button>
+                    </Button>
 
-                    <button
+                    <Button
                         onClick={toggleScreenSharing}
                         style={{
-                            padding: "10px 20px",
                             backgroundColor: isScreenSharing ? "#dc3545" : "#007bff",
-                            color: "white",
-                            border: "none",
-                            borderRadius: "5px",
                             cursor: "pointer",
-                            fontSize: "14px"
                         }}
                     >
                         {isScreenSharing ? "🖥️ Остановить экран" : "🖥️ Трансляция экрана"}
-                    </button>
+                    </Button>
 
-                    <button
+                    <Button
                         onClick={() => setIsAudioStreaming((prev) => !prev)}
                         style={{
-                            padding: "10px 20px",
                             backgroundColor: isAudioStreaming ? "#dc3545" : "#007bff",
-                            color: "white",
-                            border: "none",
-                            borderRadius: "5px",
                             cursor: "pointer",
-                            fontSize: "14px"
                         }}
                     >
                         {isAudioStreaming ? "🔇 Выкл. аудио" : "🔊 Вкл. аудио"}
-                    </button>
+                    </Button>
                 </div>
 
                 {/* Кнопка закрытия */}
-                <button
+                <Button
                     onClick={() => setIsFullscreen(false)}
                     style={{
                         position: "absolute",
                         top: "20px",
                         right: "20px",
-                        padding: "10px 20px",
                         backgroundColor: "#dc3545",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "5px",
                         cursor: "pointer",
                         zIndex: 10000
                     }}
                 >
                     ✕ Закрыть
-                </button>
+                </Button>
 
                 {/* Canvas для видео */}
                 <canvas
@@ -1113,69 +1095,48 @@ export default function VideoStream() {
                     borderRadius: "10px"
                 }}>
                     <div style={{ marginBottom: "15px" }}>
-                        <button
+                        <Button
                             onClick={() => setIsStreaming((prev) => !prev)}
                             style={{
                                 margin: "5px",
-                                padding: "12px 24px",
                                 backgroundColor: isStreaming ? "#dc3545" : "#007bff",
-                                color: "white",
-                                border: "none",
-                                borderRadius: "5px",
                                 cursor: "pointer",
-                                fontSize: "16px"
                             }}
                         >
                             {isStreaming ? "⏹️ Остановить" : "▶️ Начать трансляцию видео"}
-                        </button>
+                        </Button>
 
-                        <button
+                        <Button
                             onClick={toggleScreenSharing}
                             style={{
                                 margin: "5px",
-                                padding: "12px 24px",
                                 backgroundColor: isScreenSharing ? "#dc3545" : "#007bff",
-                                color: "white",
-                                border: "none",
-                                borderRadius: "5px",
                                 cursor: "pointer",
-                                fontSize: "16px"
                             }}
                         >
                             {isScreenSharing ? "🖥️ Остановить экран" : "🖥️ Трансляция экрана"}
-                        </button>
+                        </Button>
 
-                        <button
+                        <Button
                             onClick={() => setIsAudioStreaming((prev) => !prev)}
                             style={{
                                 margin: "5px",
-                                padding: "12px 24px",
                                 backgroundColor: isAudioStreaming ? "#dc3545" : "#007bff",
-                                color: "white",
-                                border: "none",
-                                borderRadius: "5px",
                                 cursor: "pointer",
-                                fontSize: "16px"
                             }}
                         >
                             {isAudioStreaming ? "🔇 Выкл. аудио" : "🔊 Вкл. аудио"}
-                        </button>
+                        </Button>
 
-                        <button
+                        <Button
                             onClick={() => setIsFullscreen(true)}
                             style={{
                                 margin: "5px",
-                                padding: "12px 24px",
-                                backgroundColor: "#007bff",
-                                color: "white",
-                                border: "none",
-                                borderRadius: "5px",
                                 cursor: "pointer",
-                                fontSize: "16px"
                             }}
                         >
                             📺 На весь экран
-                        </button>
+                        </Button>
                         <div style={{ marginTop: "10px" }}>
                             <label>FPS (настройка видеообновлений для просмотра пользователями): {currentFPS}</label>
                             <input
