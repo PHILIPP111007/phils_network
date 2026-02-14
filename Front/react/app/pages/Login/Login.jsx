@@ -38,6 +38,7 @@ export default function Login() {
     async function login(event) {
         event.preventDefault()
         var data = await Fetch({ api_version: APIVersion.V1, action: "token/login/", method: HttpMethod.POST, body: loginForm, token: "" })
+        await Fetch({ api_version: APIVersion.V2, action: "set-session-cookie/", method: HttpMethod.POST })
 
         if (data && !data.detail && data.auth_token) {
             localStorage.setItem(CacheKeys.TOKEN, data.auth_token)
@@ -55,8 +56,6 @@ export default function Login() {
 
             auth()
         }
-
-        await Fetch({ api_version: APIVersion.V2, action: "set-session-cookie/", method: HttpMethod.POST })
     }
 
     useEffect(() => {

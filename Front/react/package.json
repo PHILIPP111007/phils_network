@@ -1,6 +1,6 @@
 {
   "name": "phils_network",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "license": "MIT",
   "type": "module",
   "author": {
@@ -17,34 +17,34 @@
   "private": true,
   "homepage": "/",
   "dependencies": {
-    "@preact/signals-react": "3.6.1",
+    "@preact/signals-react": "3.9.0",
     "@tailwindcss/vite": "^4.1.18",
     "babel-plugin-react-compiler": "^1.0.0",
     "bootstrap": "^5.3.8",
     "browserslist": "^4.28.1",
-    "react": "^19.2.3",
+    "react": "^19.2.4",
     "react-app-polyfill": "^3.0.0",
     "react-bootstrap": "^2.10.10",
     "react-dev-utils": "^12.0.1",
-    "react-dom": "^19.2.3",
+    "react-dom": "^19.2.4",
     "react-hot-toast": "^2.6.0",
-    "react-intersection-observer": "10.0.0",
+    "react-intersection-observer": "10.0.2",
     "react-markdown": "10.1.0",
     "react-refresh": "^0.18.0",
-    "react-router-dom": "7.10.1",
+    "react-router-dom": "7.13.0",
     "tailwindcss": "4.1.18"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
-    "@types/react": "^19.2.7",
+    "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^5.1.2",
+    "@vitejs/plugin-react": "^5.1.4",
     "eslint": "^9.39.1",
     "eslint-plugin-react": "7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
-    "globals": "^16.5.0",
-    "vite": "^7.2.7"
+    "globals": "^17.3.0",
+    "vite": "^7.3.1"
   },
   "eslintConfig": {
     "extends": [

@@ -1220,7 +1220,6 @@ export default function VideoStream() {
                                     border: "1px solid #ccc"
                                 }}
                             >
-                                <option value="1.0">100%</option>
                                 <option value="0.99">99%</option>
                                 <option value="0.9">90%</option>
                                 <option value="0.8">80%</option>
