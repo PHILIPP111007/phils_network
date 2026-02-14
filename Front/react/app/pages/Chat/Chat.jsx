@@ -315,7 +315,11 @@ export default function Chat() {
                     }
                 }
                 setMessages(() => [...messages, data.message])
-                await Fetch({ api_version: APIVersion.V2, action: `message_viewed/${data.message.id}/`, method: HttpMethod.POST })
+
+                var messageId = Number(data.message.id)
+                if (Number.isInteger(messageId) && messageId > 0) {
+                    await Fetch({ api_version: APIVersion.V2, action: `message_viewed/${messageId}/`, method: HttpMethod.POST })
+                }
             }
             scrollToBottom()
         }
