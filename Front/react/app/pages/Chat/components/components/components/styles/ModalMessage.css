@@ -1,4 +1,51 @@
+/* В Message.css добавьте: */
+
+/* Когда модальное окно открыто, весь Message блок становится неактивным */
+.Message.modal-open {
+    pointer-events: none;
+    position: relative;
+}
+
+/* Модальное окно должно быть поверх ВСЕГО */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 99;
+    /* Максимальный z-index */
+    pointer-events: auto;
+    background-color: transparent;
+}
+
 .ModalMessage {
     max-width: 500px;
     padding: 50px;
+    background: white;
+    border-radius: 8px;
+    pointer-events: auto;
+    z-index: 99;
+    /* Тот же максимальный z-index */
+    position: relative;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+.MessageVideo {
+    max-width: 100%;
+    max-height: 400px;
+    transform: translate3d(0, 0, 0);
+    /* Создает новый слой */
+    z-index: 1;
+    /* Низкий z-index */
+    position: relative;
+}
+
+/* Когда модалка открыта, уменьшаем z-index видео еще больше */
+.Message.modal-open .MessageVideo {
+    z-index: -1 !important;
+    pointer-events: none;
 }

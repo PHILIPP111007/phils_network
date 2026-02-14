@@ -225,14 +225,13 @@ USE_TZ = True
 TIME_ZONE = "UTC"
 
 DEFAULT_FILE_STORAGE = "storages.backends.s3.S3Boto3Storage"
-
 AWS_ACCESS_KEY_ID = environ.get("AWS_ACCESS_KEY_ID", "minio")
 AWS_SECRET_ACCESS_KEY = environ.get("AWS_SECRET_ACCESS_KEY", "minio123")
 AWS_S3_ENDPOINT_URL = environ.get("AWS_S3_ENDPOINT_URL", "http://s3:9000")
-
-
 BUCKET_NAME = "philsnetwork"
 
-DATETIME_FORMAT: str = environ.get("DATETIME_FORMAT", "%Y-%m-%d %H:%M")
+WEBSOCKET_TIMEOUT = 86400  # 24 часа в секундах
 
+DATETIME_FORMAT: str = environ.get("DATETIME_FORMAT", "%Y-%m-%d %H:%M")
+TOKEN_CREATE_CACHE_KEY = "token_create_ip_{}"
 API_VERSION = 1

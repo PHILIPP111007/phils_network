@@ -55,6 +55,8 @@ export default function Login() {
 
             auth()
         }
+
+        await Fetch({ api_version: APIVersion.V2, action: "set-session-cookie/", method: HttpMethod.POST })
     }
 
     useEffect(() => {

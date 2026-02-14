@@ -1,6 +1,7 @@
-import { HttpMethod, APIVersion } from "../data/enums"
+import { HttpMethod, APIVersion, CacheKeys } from "../data/enums"
 import { DEVELOPMENT, PROD_FETCH_URL, DEVELOPMENT_DJANGO_FETCH_URL, DEVELOPMENT_FASTAPI_FETCH_URL } from "../data/constants"
 import getToken from "../modules/getToken"
+import { notify_error } from "../modules/notify.js"
 
 export default async function Fetch({ api_version, action, method, body, token, is_uploading_file }) {
 
@@ -13,8 +14,6 @@ export default async function Fetch({ api_version, action, method, body, token, 
     var url
     var data
 
-    action = encodeURIComponent(action)
-
     if (DEVELOPMENT == "1") {
         if (api_version === APIVersion.V1) {
             url = `${DEVELOPMENT_DJANGO_FETCH_URL}api/v${api_version}/${action}`
@@ -25,6 +24,10 @@ export default async function Fetch({ api_version, action, method, body, token, 
         url = `${PROD_FETCH_URL}api/v${api_version}/${action}`
     )
 
+    var global_user_username = localStorage.getItem(CacheKeys.GLOBAL_USER_USERNAME)
+    url += `?global_user_username=${global_user_username}`
+    var credentials = api_version === APIVersion.V2 ? "include" : "same-origin"
+
     if (method === HttpMethod.GET) {
         data = await fetch(url, {
             method: "GET",
@@ -34,16 +37,20 @@ export default async function Fetch({ api_version, action, method, body, token, 
                 "Authorization": token ? `Token ${token}` : "",
             },
             mode: "cors",
+            credentials: credentials,
         })
             .then((response) => response.json())
             .then((data) => {
                 if (!data.ok) {
                     if (data.error) {
-                        console.warn(`Not 2xx response: ${data.error}`)
+                        var msg = `Not 2xx response: ${data.error}`
+                        console.warn(msg)
+                        notify_error(msg)
                     }
 
                     if (data.detail) {
                         console.warn(data.detail)
+                        notify_error(data.detail)
                     }
                 }
                 return data
@@ -74,16 +81,20 @@ export default async function Fetch({ api_version, action, method, body, token, 
             headers: headers,
             mode: "cors",
             body: body,
+            credentials: credentials,
         })
             .then((response) => response.json())
             .then((data) => {
                 if (!data.ok) {
                     if (data.error) {
-                        console.warn(`Not 2xx response: ${data.error}`)
+                        var msg = `Not 2xx response: ${data.error}`
+                        console.warn(msg)
+                        notify_error(msg)
                     }
 
                     if (data.detail) {
                         console.warn(data.detail)
+                        notify_error(data.detail)
                     }
                 }
                 return data

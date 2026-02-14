@@ -776,7 +776,7 @@ export default function VideoStream() {
                     // Check if data is Blob (binary data)
                     if (event.data instanceof Blob) {
                         // Convert Blob to text
-                        const text = await event.data.text()
+                        var text = await event.data.text()
                         data = JSON.parse(text)
                     } else {
                         // Data is already text
@@ -815,7 +815,7 @@ export default function VideoStream() {
                     // Check if data is Blob (binary data)
                     if (event.data instanceof Blob) {
                         // Convert Blob to text
-                        const text = await event.data.text()
+                        var text = await event.data.text()
                         data = JSON.parse(text)
                     } else {
                         // Data is already text

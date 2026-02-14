@@ -1,6 +1,8 @@
 import os
 from os import environ
 
+SECRET_KEY: str = environ.get("SECRET_KEY", "1234")
+
 DATETIME_FORMAT: str = environ.get("DATETIME_FORMAT", "%Y-%m-%d %H:%M")
 POSTS_TO_LOAD: int = int(environ.get("POSTS_TO_LOAD", "20"))
 MESSAGES_TO_LOAD: int = int(environ.get("MESSAGES_TO_LOAD", "30"))
@@ -18,11 +20,13 @@ AWS_S3_ENDPOINT_URL = environ.get("AWS_S3_ENDPOINT_URL", "http://s3:9000")
 
 MEDIA_ROOT = os.path.join("/app", "media")
 
-MAX_ALLOWED_FILE_SIZE_FOR_PREVIEW = 30 * 1024 * 1024  # 30 Mb
+MAX_ALLOWED_FILE_SIZE_FOR_PREVIEW = 100 * 1024 * 1024  # 100 Mb
 USER_IMAGE_PATH = "user_{}"
 
 TESTING = environ.get("TEST", "0")
 DEVELOPMENT = environ.get("DEVELOPMENT", "0")
+
+FASTAPI_SESSION_KEY = "fastapi_session"
 
 API_VERSION = 2
 API_PREFIX = f"/api/v{API_VERSION}"

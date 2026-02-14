@@ -36,6 +36,7 @@ export var CacheKeys = {
     MESSAGES: "messages",
     ROOMS: "rooms",
     LANGUAGE: "language",
+    GLOBAL_USER_USERNAME: "global_user_username",
     ETH: "ETH",
 }
 
