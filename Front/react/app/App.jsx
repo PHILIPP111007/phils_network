@@ -1,7 +1,7 @@
 import "./styles/App.css"
 import "bootstrap/dist/css/bootstrap.min.css"
 import "./styles/theme.css"
-import { Suspense, useState, useEffect, ViewTransition } from "react"
+import { Suspense, useState, useEffect } from "react"
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import { Toaster } from "react-hot-toast"
 import { AuthContext, UserContext } from "./data/context.js"
