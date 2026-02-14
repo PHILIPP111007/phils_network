@@ -2,27 +2,28 @@ from fastapi.testclient import TestClient
 from sqlmodel import delete, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
+from app.enums import DeleteOption, SubscriberStatus
+from app.models import Subscriber
 from app.tests.fixtures import (
-	test_engine_fixture,
-	session_fixture,
 	client_fixture,
+	session_fixture,
+	test_engine_fixture,
 )
 from app.tests.modules import (
 	get_or_create_default_user,
-	get_or_create_user,
 	get_or_create_subscription,
+	get_or_create_user,
 )
-from app.models import Subscriber
-from app.enums import DeleteOption, SubscriberStatus
 
 
 async def test_get_subscriber(session: AsyncSession, client: TestClient):
 	user, token = await get_or_create_default_user(session=session)
+	user_username = user.username
 
 	subscriber_id = 2
 
 	response = client.get(
-		f"/api/v2/subscriber/{subscriber_id}/",
+		f"/api/v2/subscriber/{subscriber_id}/?global_user_username={user_username}",
 		headers={"Authorization": f"Bearer {token.key}"},
 	)
 	assert response.status_code == 200
@@ -40,7 +41,7 @@ async def test_get_subscriber(session: AsyncSession, client: TestClient):
 	await session.refresh(token)
 
 	response = client.get(
-		f"/api/v2/subscriber/{test_user.id}/",
+		f"/api/v2/subscriber/{test_user.id}/?global_user_username={user_username}",
 		headers={"Authorization": f"Bearer {token.key}"},
 	)
 	assert response.status_code == 200
@@ -57,7 +58,7 @@ async def test_get_subscriber(session: AsyncSession, client: TestClient):
 	await session.refresh(test_user)
 
 	response = client.get(
-		f"/api/v2/subscriber/{test_user.id}/",
+		f"/api/v2/subscriber/{test_user.id}/?global_user_username={user_username}",
 		headers={"Authorization": f"Bearer {token.key}"},
 	)
 	assert response.status_code == 200
@@ -80,7 +81,7 @@ async def test_get_subscriber(session: AsyncSession, client: TestClient):
 	await session.refresh(test_user)
 
 	response = client.get(
-		f"/api/v2/subscriber/{test_user.id}/",
+		f"/api/v2/subscriber/{test_user.id}/?global_user_username={user_username}",
 		headers={"Authorization": f"Bearer {token.key}"},
 	)
 	assert response.status_code == 200
@@ -98,7 +99,7 @@ async def test_get_subscriber(session: AsyncSession, client: TestClient):
 	await session.refresh(test_user)
 
 	response = client.get(
-		f"/api/v2/subscriber/{test_user.id}/",
+		f"/api/v2/subscriber/{test_user.id}/?global_user_username={user_username}",
 		headers={"Authorization": f"Bearer {token.key}"},
 	)
 	assert response.status_code == 200
@@ -120,7 +121,7 @@ async def test_get_subscriber(session: AsyncSession, client: TestClient):
 	await session.refresh(test_user)
 
 	response = client.get(
-		f"/api/v2/subscriber/{test_user.id}/",
+		f"/api/v2/subscriber/{test_user.id}/?global_user_username={user_username}",
 		headers={"Authorization": f"Bearer {token.key}"},
 	)
 	assert response.status_code == 200
@@ -132,6 +133,8 @@ async def test_get_subscriber(session: AsyncSession, client: TestClient):
 
 async def test_post_subscriber(session: AsyncSession, client: TestClient):
 	user, token = await get_or_create_default_user(session=session)
+	user_username = user.username
+
 	test_user, test_token = await get_or_create_user(
 		session=session, username="test_user", token_key="2"
 	)
@@ -141,7 +144,7 @@ async def test_post_subscriber(session: AsyncSession, client: TestClient):
 	await session.refresh(test_user)
 
 	response = client.post(
-		f"/api/v2/subscriber/{test_user.id}/",
+		f"/api/v2/subscriber/{test_user.id}/?global_user_username={user_username}",
 		headers={"Authorization": f"Bearer {token.key}"},
 	)
 	assert response.status_code == 200
@@ -178,6 +181,8 @@ async def test_post_subscriber(session: AsyncSession, client: TestClient):
 
 async def test_delete_subscriber(session: AsyncSession, client: TestClient):
 	user, token = await get_or_create_default_user(session=session)
+	user_username = user.username
+
 	test_user, test_token = await get_or_create_user(
 		session=session, username="test_user", token_key="2"
 	)
@@ -187,7 +192,7 @@ async def test_delete_subscriber(session: AsyncSession, client: TestClient):
 	await session.refresh(test_user)
 
 	response = client.delete(
-		f"/api/v2/delete_subscriber/100/{test_user.id}/",
+		f"/api/v2/delete_subscriber/100/{test_user.id}/?global_user_username={user_username}",
 		headers={"Authorization": f"Bearer {token.key}"},
 	)
 	assert response.status_code == 200
@@ -198,7 +203,7 @@ async def test_delete_subscriber(session: AsyncSession, client: TestClient):
 	assert data["error"] == "Wrong option."
 
 	response = client.delete(
-		f"/api/v2/delete_subscriber/{DeleteOption.DELETE_FRIEND.value}/{test_user.id}/",
+		f"/api/v2/delete_subscriber/{DeleteOption.DELETE_FRIEND.value}/{test_user.id}/?global_user_username={user_username}",
 		headers={"Authorization": f"Bearer {token.key}"},
 	)
 	assert response.status_code == 200
@@ -209,7 +214,7 @@ async def test_delete_subscriber(session: AsyncSession, client: TestClient):
 	assert data["error"] == "Not found subscriber."
 
 	response = client.delete(
-		f"/api/v2/delete_subscriber/{DeleteOption.DELETE_SUBSCRIBER.value}/{test_user.id}/",
+		f"/api/v2/delete_subscriber/{DeleteOption.DELETE_SUBSCRIBER.value}/{test_user.id}/?global_user_username={user_username}",
 		headers={"Authorization": f"Bearer {token.key}"},
 	)
 	assert response.status_code == 200
@@ -228,7 +233,7 @@ async def test_delete_subscriber(session: AsyncSession, client: TestClient):
 	await session.refresh(test_user)
 
 	response = client.delete(
-		f"/api/v2/delete_subscriber/{DeleteOption.DELETE_SUBSCRIBER.value}/{test_user.id}/",
+		f"/api/v2/delete_subscriber/{DeleteOption.DELETE_SUBSCRIBER.value}/{test_user.id}/?global_user_username={user_username}",
 		headers={"Authorization": f"Bearer {token.key}"},
 	)
 	assert response.status_code == 200
@@ -243,7 +248,7 @@ async def test_delete_subscriber(session: AsyncSession, client: TestClient):
 	await session.refresh(test_user)
 
 	response = client.delete(
-		f"/api/v2/delete_subscriber/{DeleteOption.DELETE_FRIEND.value}/{test_user.id}/",
+		f"/api/v2/delete_subscriber/{DeleteOption.DELETE_FRIEND.value}/{test_user.id}/?global_user_username={user_username}",
 		headers={"Authorization": f"Bearer {token.key}"},
 	)
 	assert response.status_code == 200
@@ -276,7 +281,7 @@ async def test_delete_subscriber(session: AsyncSession, client: TestClient):
 	await session.refresh(test_user)
 
 	response = client.delete(
-		f"/api/v2/delete_subscriber/{DeleteOption.DELETE_FRIEND.value}/{test_user.id}/",
+		f"/api/v2/delete_subscriber/{DeleteOption.DELETE_FRIEND.value}/{test_user.id}/?global_user_username={user_username}",
 		headers={"Authorization": f"Bearer {token.key}"},
 	)
 	assert response.status_code == 200
@@ -287,7 +292,7 @@ async def test_delete_subscriber(session: AsyncSession, client: TestClient):
 	assert data["error"] == "Not found subscriber."
 
 	response = client.delete(
-		f"/api/v2/delete_subscriber/{DeleteOption.DELETE_SUBSCRIBER.value}/{test_user.id}/",
+		f"/api/v2/delete_subscriber/{DeleteOption.DELETE_SUBSCRIBER.value}/{test_user.id}/?global_user_username={user_username}",
 		headers={"Authorization": f"Bearer {token.key}"},
 	)
 	assert response.status_code == 200

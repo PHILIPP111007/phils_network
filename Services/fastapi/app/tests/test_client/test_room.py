@@ -2,23 +2,24 @@ from fastapi.testclient import TestClient
 from sqlmodel import delete, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
+from app.models import Room, RoomInvitation, RoomSubscribers
 from app.tests.fixtures import (
-	test_engine_fixture,
-	session_fixture,
 	client_fixture,
+	session_fixture,
+	test_engine_fixture,
 )
 from app.tests.modules import (
 	get_or_create_default_user,
 	get_or_create_user,
 )
-from app.models import Room, RoomInvitation, RoomSubscribers
 
 
 async def test_room(session: AsyncSession, client: TestClient):
 	user, token = await get_or_create_default_user(session=session)
+	user_username = user.username
 
 	response = client.get(
-		"/api/v2/room/",
+		f"/api/v2/room/?global_user_username={user_username}",
 		headers={"Authorization": f"Bearer {token.key}"},
 	)
 	assert response.status_code == 200
@@ -41,7 +42,7 @@ async def test_room(session: AsyncSession, client: TestClient):
 	await session.refresh(token)
 
 	response = client.post(
-		"/api/v2/room/",
+		f"/api/v2/room/?global_user_username={user_username}",
 		json=body,
 		headers={"Authorization": f"Bearer {token.key}"},
 	)
@@ -61,7 +62,7 @@ async def test_room(session: AsyncSession, client: TestClient):
 	}
 
 	response = client.post(
-		"/api/v2/room/",
+		f"/api/v2/room/?global_user_username={user_username}",
 		json=body,
 		headers={"Authorization": f"Bearer {token.key}"},
 	)
@@ -112,7 +113,7 @@ async def test_room(session: AsyncSession, client: TestClient):
 	}
 
 	response = client.post(
-		"/api/v2/room/",
+		f"/api/v2/room/?global_user_username={user_username}",
 		json=body,
 		headers={"Authorization": f"Bearer {token.key}"},
 	)
@@ -175,6 +176,8 @@ async def test_room(session: AsyncSession, client: TestClient):
 
 async def test_get_room_invitation(session: AsyncSession, client: TestClient):
 	user, token = await get_or_create_default_user(session=session)
+	user_username = user.username
+
 	test_user, test_token = await get_or_create_user(
 		session=session, username="test_user", token_key="2"
 	)
@@ -184,7 +187,7 @@ async def test_get_room_invitation(session: AsyncSession, client: TestClient):
 	await session.refresh(test_token)
 
 	response = client.get(
-		"/api/v2/invite_chats/",
+		f"/api/v2/invite_chats/?global_user_username={user_username}",
 		headers={"Authorization": f"Bearer {token.key}"},
 	)
 	assert response.status_code == 200
@@ -203,7 +206,7 @@ async def test_get_room_invitation(session: AsyncSession, client: TestClient):
 	await session.refresh(token)
 
 	response = client.post(
-		"/api/v2/room/",
+		f"/api/v2/room/?global_user_username={user_username}",
 		json=body,
 		headers={"Authorization": f"Bearer {token.key}"},
 	)
@@ -218,7 +221,7 @@ async def test_get_room_invitation(session: AsyncSession, client: TestClient):
 	await session.refresh(test_token)
 
 	response = client.get(
-		"/api/v2/invite_chats/",
+		f"/api/v2/invite_chats/?global_user_username={test_user.username}",
 		headers={"Authorization": f"Bearer {test_token.key}"},
 	)
 	assert response.status_code == 200

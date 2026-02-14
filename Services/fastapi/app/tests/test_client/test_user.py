@@ -18,7 +18,7 @@ async def test_get_user(session: AsyncSession, client: TestClient):
 	user, token = await get_or_create_default_user(session=session)
 
 	response = client.get(
-		f"/api/v2/user/{user.username}/",
+		f"/api/v2/user/{user.username}/?global_user_username={user.username}",
 		headers={"Authorization": f"Bearer {token.key}"},
 	)
 	assert response.status_code == 200
@@ -32,6 +32,7 @@ async def test_get_user(session: AsyncSession, client: TestClient):
 
 async def test_get_user_test_user(session: AsyncSession, client: TestClient):
 	user, token = await get_or_create_default_user(session=session)
+	default_user_username = user.username
 
 	await session.refresh(token)
 	user_token_key = token.key
@@ -44,7 +45,7 @@ async def test_get_user_test_user(session: AsyncSession, client: TestClient):
 	await session.refresh(test_user)
 
 	response = client.get(
-		f"/api/v2/user/{test_user.username}/",
+		f"/api/v2/user/{test_user.username}/?global_user_username={default_user_username}",
 		headers={"Authorization": f"Bearer {user_token_key}"},
 	)
 	assert response.status_code == 200
@@ -70,7 +71,9 @@ async def test_put_user(session: AsyncSession, client: TestClient):
 		"infura_api_key": "",
 	}
 	response = client.put(
-		"/api/v2/user/", json=body, headers={"Authorization": f"Bearer {token.key}"}
+		f"/api/v2/user/?global_user_username={user.username}",
+		json=body,
+		headers={"Authorization": f"Bearer {token.key}"},
 	)
 	assert response.status_code == 200
 
@@ -103,7 +106,9 @@ async def test_put_user_wrong_key(session: AsyncSession, client: TestClient):
 		"infura_api_key": "",
 	}
 	response = client.put(
-		"/api/v2/user/", json=body, headers={"Authorization": "Bearer WRONG_KEY"}
+		f"/api/v2/user/?global_user_username={user.username}",
+		json=body,
+		headers={"Authorization": "Bearer WRONG_KEY"},
 	)
 	assert response.status_code == 200
 
@@ -121,7 +126,7 @@ async def test_put_user_image(session: AsyncSession, client: TestClient):
 	}
 
 	response = client.put(
-		"/api/v2/user_image/",
+		f"/api/v2/user_image/?global_user_username={user.username}",
 		files=form_data,
 		headers={"Authorization": f"Bearer {token.key}"},
 	)
@@ -152,7 +157,7 @@ async def test_delete_user(session: AsyncSession, client: TestClient):
 	token_key = token.key
 
 	response = client.delete(
-		f"/api/v2/user/{username}/",
+		f"/api/v2/user/{username}/?global_user_username={username}",
 		headers={"Authorization": f"Bearer {token_key}"},
 	)
 
@@ -162,7 +167,7 @@ async def test_delete_user(session: AsyncSession, client: TestClient):
 	assert data["ok"] == True
 
 	response = client.delete(
-		"/api/v2/user/NON_EXISTING_USERNAME/",
+		f"/api/v2/user/NON_EXISTING_USERNAME/?global_user_username={username}",
 		headers={"Authorization": f"Bearer {token_key}"},
 	)
 	data = response.json()
@@ -177,7 +182,7 @@ async def test_delete_user(session: AsyncSession, client: TestClient):
 	token_key = token.key
 
 	response = client.delete(
-		"/api/v2/user/NON_EXISTING_USERNAME/",
+		f"/api/v2/user/NON_EXISTING_USERNAME/?global_user_username={username}",
 		headers={"Authorization": f"Bearer {token_key}"},
 	)
 
@@ -192,7 +197,7 @@ async def test_delete_user(session: AsyncSession, client: TestClient):
 	)
 
 	response = client.delete(
-		"/api/v2/user/admin1/",
+		f"/api/v2/user/admin1/?global_user_username={username}",
 		headers={"Authorization": f"Bearer {token_key}"},
 	)
 
