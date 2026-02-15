@@ -1,49 +1,172 @@
+.FriendsNavBar {
+    position: fixed;
+    z-index: 1000;
+}
+
+.FriendsNavBar nav {
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+.FriendsNavBar p {
+    margin: 0;
+    padding: 0;
+}
+
 .FriendsNavBar a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-decoration: none;
     color: black;
-    text-align: left;
-    display: block;
+    position: relative;
+    transition: background-color 0.2s;
+    white-space: nowrap;
+}
+
+.FriendsNavBar a:hover {
+    background-color: rgba(0, 0, 0, 0.05);
 }
 
 .FriendsNavBar #subscribersCount {
-    padding: 5px 10px;
+    display: inline-block;
+    padding: 3px 8px;
     background-color: red;
     border-radius: 20px;
-    color: white;
+    font-size: 12px;
+    min-width: 20px;
+    text-align: center;
+    margin-left: 8px;
+    line-height: 1.2;
 }
 
-@media (pointer: fine),
-(pointer: none) {
+@media (min-width: 1024px) {
 
-    /* desktop */
+    /* desktop - более конкретное правило для десктопа */
     .FriendsNavBar {
-        position: fixed;
         top: 100px;
-        right: 10px;
+        right: 20px;
         display: flex;
+        max-width: 300px;
     }
 
-    .FriendsNavBar a {
-        padding: 20px 30px;
-        font-size: 17px;
+    .FriendsNavBar nav {
+        flex-direction: column;
+        padding: 10px 0;
+        width: 220px;
     }
-}
 
-@media (pointer: coarse) {
-
-    /* mobile device */
-    .FriendsNavBar {
-        position: fixed;
-        bottom: 100px;
-        left: 0px;
-        right: 0px;
+    .FriendsNavBar p {
         width: 100%;
     }
 
     .FriendsNavBar a {
-        float: left;
+        padding: 15px 25px;
+        font-size: 16px;
+        justify-content: flex-start;
+        width: 100%;
+        border-radius: 0;
+        white-space: nowrap;
+    }
+
+    .FriendsNavBar #subscribersCount {
+        margin-left: auto;
+        margin-right: 0;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+
+    /* планшеты */
+    .FriendsNavBar {
+        top: 100px;
+        right: 10px;
+    }
+
+    .FriendsNavBar nav {
+        flex-direction: column;
+        padding: 8px 0;
+        width: 180px;
+    }
+
+    .FriendsNavBar a {
+        padding: 12px 20px;
+        font-size: 15px;
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 767px) {
+
+    /* mobile device */
+    .FriendsNavBar {
+        bottom: 80px;
+        /* Выше основной навигации */
+        left: 0;
+        right: 0;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        pointer-events: none;
+        /* Позволяет кликать сквозь пустые области */
+    }
+
+    .FriendsNavBar nav {
+        padding: 5px;
+        width: auto;
+        max-width: 95%;
+        pointer-events: auto;
+        /* Возвращаем кликабельность для nav */
+        backdrop-filter: blur(10px);
+    }
+
+    .FriendsNavBar p {
+        display: inline-block;
+    }
+
+    .FriendsNavBar a {
+        padding: 10px 16px;
+        font-size: 14px;
         text-align: center;
-        padding: 10px 20px;
-        font-size: 17px;
+        background-color: transparent;
+        transition: background-color 0.2s;
+    }
+
+    .FriendsNavBar a:active {
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    .FriendsNavBar #subscribersCount,
+    .FriendsNavBar .badge {
+        margin-left: 5px;
+        padding: 2px 6px;
+        font-size: 11px;
+        min-width: 18px;
+    }
+}
+
+/* Для очень маленьких экранов */
+@media (max-width: 480px) {
+    .FriendsNavBar a {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+
+    .FriendsNavBar #subscribersCount {
+        padding: 2px 5px;
+        font-size: 10px;
+        min-width: 16px;
+    }
+}
+
+/* Для устройств с тачпадом */
+@media (pointer: coarse) and (max-width: 767px) {
+    .FriendsNavBar {
+        bottom: calc(80px + env(safe-area-inset-bottom, 0));
+    }
+
+    .FriendsNavBar nav {
+        padding-bottom: env(safe-area-inset-bottom, 5px);
     }
 }
