@@ -22,10 +22,17 @@
     white-space: pre-line;
 }
 
-.settingsLogo {
-    width: 25px;
+.Post .settingsLogo {
+    width: 30px;
+    transition: opacity 0.2s, transform 0.2s;
+    cursor: pointer;
 }
 
-.settingsLogo:hover {
-    cursor: pointer;
+.Post .settingsLogo:hover {
+    opacity: 0.7;
+    transform: scale(1.05);
+}
+
+.Post .settingsLogo:active {
+    transform: scale(0.95);
 }
