@@ -62,12 +62,13 @@ async def get_message(
 	if not query:
 		return {"ok": False, "error": "Not found messages."}
 
+	user_timezone = request.state.user.user_timezone
+	timezone_obj = ZoneInfo(user_timezone)
+
 	messages = []
 	for message in query:
 		if message.parent_id is not None:
-			if request.state.user.user_timezone:
-				user_timezone = request.state.user.user_timezone
-				timezone_obj = ZoneInfo(user_timezone)
+			if user_timezone:
 				timestamp = message.reply.timestamp.astimezone(timezone_obj)
 			else:
 				timestamp = message.reply.timestamp
@@ -87,9 +88,7 @@ async def get_message(
 		else:
 			parent = None
 
-		if request.state.user.user_timezone:
-			user_timezone = request.state.user.user_timezone
-			timezone_obj = ZoneInfo(user_timezone)
+		if user_timezone:
 			timestamp = message.timestamp.astimezone(timezone_obj)
 		else:
 			timestamp = message.timestamp
