@@ -144,7 +144,7 @@ export default function User() {
 
             <ScrollToTopOrBottom bottom={false} />
 
-            <Card className="UserCard text-center align-items-center" style={{ width: "100rem" }}>
+            <Card className="UserCard text-center align-items-center">
                 <Card.Img variant="top" className="UserCardImage" src={imageUrl ? imageUrl : profileIcon} />
                 <Card.Body>
                     <Card.Title>{userLocal.first_name} {userLocal.last_name}</Card.Title>
