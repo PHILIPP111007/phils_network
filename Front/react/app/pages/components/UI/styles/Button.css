@@ -1,19 +1,20 @@
-.Button {
+button {
+    margin: 8px 0;
+    width: 100%;
+    padding: 10px 15px;
     border: none;
+    font-size: 14px;
+    font-weight: 500;
     cursor: pointer;
-    display: inline-block;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    outline: none;
-    padding: 5px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
 }
-.Button:after {
-    z-index: -1;
+
+button:hover {
+    transform: translateY(-1px);
 }
-.Button:hover {
-    position: relative;
-}
-.Button:active {
-    position: relative;
-    top: 2px;
+
+button:active {
+    transform: translateY(0);
+    box-shadow: none;
 }

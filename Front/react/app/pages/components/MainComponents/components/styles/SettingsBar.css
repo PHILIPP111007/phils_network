@@ -16,30 +16,6 @@
     box-sizing: border-box;
 }
 
-.SettingsBar button {
-    margin: 8px 0;
-    width: 100%;
-    padding: 10px 15px;
-    border: none;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    white-space: nowrap;
-}
-
-.SettingsBar button:hover {
-    transform: translateY(-1px);
-}
-
-.SettingsBar button:active {
-    transform: translateY(0);
-    box-shadow: none;
-}
-
-
-
-
 /* Для мобильных устройств */
 @media (max-width: 767px) {
     .SettingsBar {
