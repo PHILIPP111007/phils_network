@@ -1,101 +1,149 @@
 .NavBar {
     position: fixed;
+    z-index: 1000;
+}
+
+.NavBar nav {
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+.NavBar p {
+    margin: 0;
+    padding: 0;
 }
 
 .NavBar a {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-decoration: none;
     color: black;
-    text-align: center;
-    flex-grow: 1;
+    position: relative;
 }
 
 .NavBar .unreadMessagesCount {
     display: inline-block;
-    padding: 5px 5px;
+    padding: 2px 6px;
     background-color: red;
     border-radius: 20px;
     color: white;
+    font-size: 12px;
+    min-width: 18px;
+    text-align: center;
+    line-height: 1;
 }
 
-@media (pointer: fine),
-(pointer: none) {
+@media (min-width: 768px) {
 
     /* desktop */
     .NavBar {
         top: 100px;
         left: 0px;
-    }
-
-    .NavBar a {
-        padding: 20px 30px;
-        font-size: 17px;
-        text-align: left;
-    }
-}
-
-@media (pointer: coarse) {
-
-    /* mobile device */
-    .NavBar {
-        bottom: 0px;
-        left: 0px;
-        right: 0px;
-        width: 100%;
-        justify-content: space-around;
-        align-items: center;
-        display: flex;
-        background-color: white;
-        /* Добавляем фон для лучшей видимости */
-        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-        /* Тень сверху для отделения от контента */
-        z-index: 1000;
-        /* Убеждаемся, что NavBar поверх другого контента */
-        box-sizing: border-box;
-        /* Важно для правильного расчета размеров */
+        width: 200px;
+        overflow-y: auto;
+        background-color: transparent;
     }
 
     .NavBar nav {
-        display: flex;
-        justify-content: space-evenly;
+        flex-direction: column;
         width: 100%;
-        margin: 0;
-        padding: 0;
+        gap: 5px;
     }
 
     .NavBar p {
-        margin: 0;
-        padding: 0;
+        width: 100%;
+    }
+
+    .NavBar a {
+        padding: 15px 25px;
+        font-size: 17px;
+        text-align: left;
+        justify-content: flex-start;
+        width: 100%;
+        transition: background-color 0.2s;
+    }
+
+    .NavBar a:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .NavBar .unreadMessagesCount {
+        margin-left: 10px;
+        position: static;
+    }
+}
+
+@media (max-width: 767px) {
+
+    /* mobile device */
+    .NavBar {
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        background-color: white;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        box-sizing: border-box;
+    }
+
+    .NavBar nav {
+        justify-content: space-around;
+        align-items: center;
+        width: 100%;
+    }
+
+    .NavBar p {
         flex: 1;
-        /* Каждый элемент занимает равное пространство */
         display: flex;
         justify-content: center;
     }
 
     .NavBar a {
         text-align: center;
-        padding: 12px 8px;
-        /* Уменьшаем горизонтальные отступы */
-        font-size: 14px;
-        /* Немного уменьшаем шрифт для лучшего размещения */
-        text-align: center;
-        width: 100%;
-        /* Занимает всю ширину родительского элемента */
-        display: flex;
+        padding: 12px 5px;
+        font-size: 13px;
         flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        /* Для позиционирования счетчика непрочитанных */
+        width: 100%;
+        transition: background-color 0.2s;
+    }
+
+    .NavBar a:active {
+        background-color: rgba(0, 0, 0, 0.05);
     }
 
     .NavBar .unreadMessagesCount {
         position: absolute;
-        top: 5px;
-        right: 5px;
-        padding: 2px 6px;
-        font-size: 12px;
-        min-width: 18px;
-        text-align: center;
+        top: 2px;
+        right: 2px;
+        padding: 2px 5px;
+        font-size: 10px;
+        min-width: 16px;
+        border-radius: 10px;
+    }
+}
+
+/* Для очень маленьких экранов */
+@media (max-width: 480px) {
+    .NavBar a {
+        font-size: 11px;
+        padding: 10px 3px;
+    }
+
+    .NavBar .unreadMessagesCount {
+        top: 0;
+        right: 0;
+        padding: 1px 4px;
+        font-size: 9px;
+        min-width: 14px;
+    }
+}
+
+/* Для устройств с тачпадом (дополнительная поддержка) */
+@media (pointer: coarse) and (max-width: 767px) {
+    .NavBar {
+        padding-bottom: env(safe-area-inset-bottom, 0);
+        /* Поддержка области safe area на iPhone */
     }
 }
