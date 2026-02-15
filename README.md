@@ -1,6 +1,6 @@
 # Phils network v1.2.4
 
-Minimalistic social network written using Django, FastAPI and React.
+Minimalistic secure social network written using Django, FastAPI and React.
 
 ## What supports this app
 
