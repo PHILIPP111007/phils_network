@@ -75,8 +75,10 @@ export default function UserInput({ mainSets, sendMessage, editRoom, parentMessa
                             onChange={(e) => setText(e.target.value)}
                         />
                         <img id="SendButton" src={sendIcon} onClick={() => {
-                            sendMessage(text, selectedFile)
-                            setText("")
+                            if (text.length > 0) {
+                                sendMessage(text, selectedFile)
+                                setText("")
+                            }
                             setSelectedFile(null)
                         }}
                             alt="send button"
