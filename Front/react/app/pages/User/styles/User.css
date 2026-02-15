@@ -1,10 +1,8 @@
 .UserCard {
-    margin-top: 100px;
     margin: 100px auto 0px;
     max-width: 500px;
     padding: 20px;
     text-align: center;
-    position: unset;
 }
 
 
@@ -13,6 +11,7 @@
     /* mobile device */
     .UserCard {
         min-width: 200px;
+        width: 90%;
     }
 }
 

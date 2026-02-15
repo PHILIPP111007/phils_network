@@ -1,7 +1,7 @@
 .ModalPostEdit {
     max-width: 500px;
-    padding: 50px;
-    overflow-y: auto;
+    padding: 20px;
+    margin: 0 auto;
 }
 
 .ModalPostEdit textarea {
@@ -9,15 +9,23 @@
     font-size: inherit;
     line-height: inherit;
     min-height: 200px;
-    resize: none;
+    resize: vertical;
     outline: none;
-    border: 1px solid;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
     overflow: auto;
-    padding: 5px;
+    padding: 10px;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.ModalPostEdit textarea:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, .25);
 }
 
 .ModalPostEdit button {
-    margin: 10px;
+    margin: 5px;
 }
 
 @media (pointer: fine),
@@ -25,11 +33,13 @@
 
     /* desktop */
     .ModalPostEdit {
+        min-width: 500px;
         max-height: calc(100vh - 110px);
-        width: 500px;
+        overflow-y: auto;
     }
 
     .ModalPostEdit textarea {
-        width: 500px;
+        width: 100%;
+        max-width: 500px;
     }
 }
