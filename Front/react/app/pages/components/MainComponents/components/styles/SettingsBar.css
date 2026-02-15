@@ -1,15 +1,136 @@
 .SettingsBar {
     position: fixed;
-    top: -200px;
-    right: 20%;
+    top: -300px;
+    /* Начальное положение скрыто */
+    right: 20px;
     text-align: center;
-    transition: top 0.5s;
-    -webkit-transition: top 0.5s;
-    border: 2px solid;
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
+    transition: top 0.3s ease-in-out;
+    -webkit-transition: top 0.3s ease-in-out;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 15px;
+    min-width: 200px;
+    z-index: 1050;
+    box-sizing: border-box;
 }
 
 .SettingsBar button {
-    margin: 10px;
+    margin: 8px 0;
+    width: 100%;
+    padding: 10px 15px;
+    border: none;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.SettingsBar button:hover {
+    transform: translateY(-1px);
+}
+
+.SettingsBar button:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+
+
+
+/* Для мобильных устройств */
+@media (max-width: 767px) {
+    .SettingsBar {
+        right: 10px;
+        left: 10px;
+        width: auto;
+        max-width: 300px;
+        margin: 0 auto;
+        padding: 12px;
+    }
+
+    .SettingsBar.show {
+        top: 60px;
+    }
+
+    .SettingsBar button {
+        padding: 12px 15px;
+        font-size: 15px;
+        margin: 6px 0;
+    }
+}
+
+/* Для очень маленьких экранов */
+@media (max-width: 480px) {
+    .SettingsBar {
+        left: 5px;
+        right: 5px;
+        max-width: none;
+        padding: 10px;
+    }
+
+    .SettingsBar button {
+        padding: 14px 12px;
+        /* Большая область касания */
+        font-size: 14px;
+    }
+}
+
+/* Анимация появления */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.SettingsBar.show {
+    animation: slideDown 0.3s ease-out;
+}
+
+
+/* Для устройств с тачпадом */
+@media (pointer: coarse) {
+    .SettingsBar button {
+        min-height: 44px;
+        /* Минимальная высота для касания */
+    }
+}
+
+/* Адаптация под разные позиции */
+.SettingsBar[data-position="left"] {
+    right: auto;
+    left: 20px;
+}
+
+.SettingsBar[data-position="center"] {
+    right: 50%;
+    transform: translateX(50%);
+}
+
+/* Затемнение фона при открытом меню (опционально) */
+body.menu-open::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    z-index: 1040;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+
+body.menu-open .SettingsBar.show+body::after {
+    opacity: 1;
+    pointer-events: auto;
 }
