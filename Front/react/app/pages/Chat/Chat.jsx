@@ -61,7 +61,7 @@ export default function Chat() {
     async function sendMessage(text, file) {
         var sendingText = await text.trim()
 
-        if (secretKey && generatedSecretKey && generatedSecretKey instanceof CryptoKey) {
+        if (sendingText && secretKey && generatedSecretKey && generatedSecretKey instanceof CryptoKey) {
             sendingText = await encrypt(sendingText, generatedSecretKey)
         }
 
