@@ -36,7 +36,7 @@ test:
 	eval "$$(micromamba shell hook --shell $(SHELL))" && \
 	micromamba activate $(MICROMAMBA_ENV) && \
 	cd $(FASTAPI_DIR) && \
-	export TEST=1 && \
+	export TESTING=1 && \
 	pytest -v
 
 django:

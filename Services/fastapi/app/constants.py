@@ -23,7 +23,7 @@ MEDIA_ROOT = os.path.join("/app", "media")
 MAX_ALLOWED_FILE_SIZE_FOR_PREVIEW = 100 * 1024 * 1024  # 100 Mb
 USER_IMAGE_PATH = "user_{}"
 
-TESTING = environ.get("TEST", "0")
+TESTING = environ.get("TESTING", "0")
 DEVELOPMENT = environ.get("DEVELOPMENT", "0")
 
 FASTAPI_SESSION_KEY = "fastapi_session"

@@ -79,11 +79,11 @@ If you are hosting this site, then go to `Front/react/src/data/constants.js` and
 To run tests, use:
 
 ```bash
-docker compose run -e TEST=1 --build fastapi pytest
+docker compose run -e TESTING=1 --build fastapi pytest
 
 # or
 
-export TEST=1
+export TESTING=1
 cd Services/fastapi
 pytest
 
