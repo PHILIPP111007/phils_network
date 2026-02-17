@@ -21,12 +21,6 @@
     text-decoration: none;
     color: black;
     position: relative;
-    transition: background-color 0.2s;
-    white-space: nowrap;
-}
-
-.FriendsNavBar a:hover {
-    background-color: rgba(0, 0, 0, 0.05);
 }
 
 .FriendsNavBar #subscribersCount {
@@ -48,13 +42,15 @@
         top: 100px;
         right: 20px;
         display: flex;
-        max-width: 300px;
+        width: 200px;
+        overflow-y: auto;
+        background-color: transparent;
     }
 
     .FriendsNavBar nav {
         flex-direction: column;
-        padding: 10px 0;
-        width: 220px;
+        width: 100%;
+        gap: 5px;
     }
 
     .FriendsNavBar p {

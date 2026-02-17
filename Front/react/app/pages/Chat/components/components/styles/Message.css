@@ -37,11 +37,17 @@
 }
 
 .Message .MessageOnlineStatus {
-    display: inline-block;
-    margin: 5px;
-    padding: 5px 5px;
-    background-color: green;
-    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 5px;
+    padding: 0;
+    width: 12px;
+    height: 12px;
+    background-color: #28a745;
+    border-radius: 50%;
+    color: white;
+    font-size: 10px;
 }
 
 .Message .MessageImage {
