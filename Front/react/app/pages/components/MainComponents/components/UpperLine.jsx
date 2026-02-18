@@ -1,10 +1,8 @@
 import "./styles/UpperLine.css"
 import { use } from "react"
 import { useParams } from "react-router-dom"
-import Form from "react-bootstrap/Form"
 import { UserContext, AuthContext } from "../../../../data/context.js"
 import { useSetUser, useAuth } from "../../../../hooks/useAuth.js"
-import { showLanguage, setLanguage } from "../../../../modules/language.jsx"
 import { CacheKeys, Language } from "../../../../data/enums.js"
 import showHideBar from "../../../../modules/showHideBar.js"
 import menuLogo from "../../../../images/lines_menu_burger_icon.svg"
@@ -38,12 +36,7 @@ export default function UpperLine(props) {
 
                 {props.loading && <Loading />}
 
-                <div>
-                    <Form.Select onChange={event => setLanguage(event)} className="LanguageSelect form-select d-inline-block w-auto" name="language">
-                        {showLanguage()}
-                    </Form.Select>
-                    <img src={menuLogo} onClick={() => showHideBar(props.setBarRef)} alt="menu logo" />
-                </div>
+                <img src={menuLogo} onClick={() => showHideBar(props.setBarRef)} alt="menu logo" />
             </div>
         )
     } else if (language === Language.RU) {
@@ -64,12 +57,7 @@ export default function UpperLine(props) {
 
                 {props.loading && <Loading />}
 
-                <div>
-                    <Form.Select onChange={event => setLanguage(event)} className="LanguageSelect form-select d-inline-block w-auto" name="language">
-                        {showLanguage()}
-                    </Form.Select>
-                    <img src={menuLogo} onClick={() => showHideBar(props.setBarRef)} alt="логотип меню" />
-                </div>
+                <img src={menuLogo} onClick={() => showHideBar(props.setBarRef)} alt="логотип меню" />
             </div>
         )
     }

@@ -5,6 +5,7 @@ import { UserContext } from "../../../../data/context.js"
 import { notify_success } from "../../../../modules/notify.js"
 import { HttpMethod, CacheKeys, Language, APIVersion } from "../../../../data/enums.js"
 import Fetch from "../../../../API/Fetch.js"
+import { showLanguage, setLanguage } from "../../../../modules/language.jsx"
 import Input from "../../UI/Input.jsx"
 import Button from "../../UI/Button.jsx"
 
@@ -99,9 +100,16 @@ export default function ModalSettings(props) {
                     />
                 </Form>
                 <br />
+
+                <p>Change user logo</p>
                 <form onChange={e => setUserNew({ ...userNew, image: e.target.files[0] })} className="uploadFileForm">
                     <Input id="formFile" type="file" accept="image/*" />
                 </form>
+                <br />
+
+                <Form.Select onChange={event => setLanguage(event)} className="LanguageSelect form-select d-inline-block w-auto" name="language">
+                    {showLanguage()}
+                </Form.Select>
                 <br />
 
                 <br />
@@ -166,9 +174,16 @@ export default function ModalSettings(props) {
                     <br />
                 </Form>
                 <br />
+
+                <p>Изменить аватарку</p>
                 <form onChange={e => setUserNew({ ...userNew, image: e.target.files[0] })} className="uploadFileForm">
                     <Input id="formFile" type="file" accept="image/*" />
                 </form>
+                <br />
+
+                <Form.Select onChange={event => setLanguage(event)} className="LanguageSelect form-select d-inline-block w-auto" name="language">
+                    {showLanguage()}
+                </Form.Select>
                 <br />
 
                 <br />
