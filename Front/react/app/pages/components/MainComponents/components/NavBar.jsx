@@ -64,7 +64,6 @@ export default function NavBar() {
                         }
                     }
 
-                    toast.remove()
                     notify(
                         <div className="Notification" >
                             <Link to={`/chats/${user.username}/${room.id}/`}><strong>{username}</strong>: {msg}</Link>

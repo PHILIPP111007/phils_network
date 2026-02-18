@@ -49,13 +49,11 @@ export default async function Fetch({ api_version, action, method, body, token, 
                     if (data.error) {
                         var msg = `Not 2xx response: ${data.error}`
                         console.warn(msg)
-                        toast.remove()
                         notify_error(msg)
                     }
 
                     if (data.detail) {
                         console.warn(data.detail)
-                        toast.remove()
                         notify_error(data.detail)
                     }
                 }
@@ -95,13 +93,11 @@ export default async function Fetch({ api_version, action, method, body, token, 
                     if (data.error) {
                         var msg = `Not 2xx response: ${data.error}`
                         console.warn(msg)
-                        toast.remove()
                         notify_error(msg)
                     }
 
                     if (data.detail) {
                         console.warn(data.detail)
-                        toast.remove()
                         notify_error(data.detail)
                     }
                 }
