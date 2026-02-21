@@ -32,3 +32,76 @@
 .Chat .Wrapper-Scrollbottom {
     margin-top: 10px;
 }
+
+/* Глобальный оверлей для перетаскивания */
+.Chat.global-dragging {
+    position: relative;
+}
+
+.global-drag-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 123, 255, 0.2);
+    backdrop-filter: blur(5px);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    animation: fadeIn 0.2s ease;
+}
+
+.global-drag-message {
+    background-color: white;
+    padding: 25px 50px;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    font-size: 20px;
+    font-weight: 500;
+    color: #007bff;
+    border: 3px dashed #007bff;
+    animation: bounce 1s infinite alternate;
+}
+
+@keyframes bounce {
+    from {
+        transform: translateY(0);
+    }
+
+    to {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Адаптация для мобильных */
+@media (max-width: 767px) {
+    .global-drag-message {
+        padding: 20px 30px;
+        font-size: 16px;
+        text-align: center;
+        max-width: 90%;
+    }
+}
+
+/* Темная тема */
+@media (prefers-color-scheme: dark) {
+    .global-drag-message {
+        background-color: #2d2d2d;
+        color: #66b0ff;
+        border-color: #66b0ff;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    }
+}

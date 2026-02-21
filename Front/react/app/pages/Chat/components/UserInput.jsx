@@ -1,5 +1,5 @@
 import "./styles/UserInput.css"
-import { useState, use, useEffect } from "react"
+import { useState, use, useEffect, useRef } from "react"
 import { Link } from "react-router-dom"
 import ReactMarkdown from "react-markdown"
 import { UserContext } from "../../../data/context.js"
@@ -17,6 +17,7 @@ export default function UserInput({ mainSets, sendMessage, editRoom, parentMessa
     var [text, setText] = useState("")
     var [selectedFile, setSelectedFile] = useState(null)
     var language = localStorage.getItem(CacheKeys.LANGUAGE)
+    var fileInputRef = useRef(null)
 
     function hideUserInput() {
         var user_input = document.getElementsByClassName("UserInput")[0]
@@ -29,6 +30,35 @@ export default function UserInput({ mainSets, sendMessage, editRoom, parentMessa
             user_input.style.display = ""
         }
     }, [modalRoomEdit])
+
+    useEffect(() => {
+        const userInput = document.querySelector(".UserInput")
+
+        function handleFileDrop(e) {
+            const file = e.detail.file
+            setSelectedFile(file)
+
+            // Обновляем input type=file
+            if (fileInputRef.current) {
+                // Создаем новый DataTransfer объект и добавляем файл
+                const dataTransfer = new DataTransfer()
+                dataTransfer.items.add(file)
+                fileInputRef.current.files = dataTransfer.files
+
+                // Создаем и диспатчим событие change
+                const changeEvent = new Event("change", { bubbles: true })
+                fileInputRef.current.dispatchEvent(changeEvent)
+            }
+        }
+
+        if (userInput) {
+            userInput.addEventListener("fileDrop", handleFileDrop)
+
+            return () => {
+                userInput.removeEventListener("fileDrop", handleFileDrop)
+            }
+        }
+    }, [])
 
     if (language === Language.EN) {
         return (
@@ -55,7 +85,7 @@ export default function UserInput({ mainSets, sendMessage, editRoom, parentMessa
                 }
                 <div className="UserInput">
                     <form onChange={e => setSelectedFile(e.target.files[0])} className="uploadFileForm">
-                        <Input id="formFile" type="file" />
+                        <Input id="formFile" type="file" ref={fileInputRef} />
                     </form>
                     <div className="ButtonsAndTextArea">
                         <img

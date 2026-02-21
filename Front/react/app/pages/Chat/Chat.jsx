@@ -48,6 +48,8 @@ export default function Chat() {
     var wrapperRef = useRef(null)
     var [refLazyDivinView, inViewLazyDiv] = useInView()
     var [refWrapperinView, inViewWrapper] = useInView()
+    var [isDragging, setIsDragging] = useState(false)
+    var chatContainerRef = useRef(null)
 
     function scrollToBottom() {
         if (wrapperRef.current) {
@@ -55,6 +57,44 @@ export default function Chat() {
                 block: "start",
                 inline: "start"
             })
+        }
+    }
+
+    function handleDragEnter(e) {
+        e.preventDefault()
+        e.stopPropagation()
+        setIsDragging(true)
+    }
+
+    function handleDragLeave(e) {
+        e.preventDefault()
+        e.stopPropagation()
+
+        // Проверяем, что мы действительно покидаем контейнер, а не его дочерние элементы
+        if (e.currentTarget === e.target) {
+            setIsDragging(false)
+        }
+    }
+
+    function handleDragOver(e) {
+        e.preventDefault()
+        e.stopPropagation()
+    }
+
+    function handleDrop(e) {
+        e.preventDefault()
+        e.stopPropagation()
+        setIsDragging(false)
+
+        const files = e.dataTransfer.files
+        if (files && files.length > 0) {
+            // Находим компонент UserInput и передаем ему файл
+            const userInput = document.querySelector(".UserInput")
+            if (userInput) {
+                // Создаем и диспатчим кастомное событие с файлом
+                const event = new CustomEvent("fileDrop", { detail: { file: files[0] } })
+                userInput.dispatchEvent(event)
+            }
         }
     }
 
@@ -371,7 +411,7 @@ export default function Chat() {
                 })
                 setSecretKey(key)
             } catch (error) {
-                console.error('Failed to get secret key:', error)
+                console.error("Failed to get secret key:", error)
                 setSecretKey("")
             }
         }
@@ -386,17 +426,44 @@ export default function Chat() {
                     var key = await generateKey(secretKey)
                     setGeneratedSecretKey(key)
                 } catch (error) {
-                    console.error('Key generation error:', error)
+                    console.error("Key generation error:", error)
                 }
             }
         }
         generateAndSetKey()
     }, [secretKey])
 
+    useEffect(() => {
+        const chatContainer = chatContainerRef.current
+
+        if (chatContainer) {
+            chatContainer.addEventListener("dragenter", handleDragEnter)
+            chatContainer.addEventListener("dragover", handleDragOver)
+            chatContainer.addEventListener("dragleave", handleDragLeave)
+            chatContainer.addEventListener("drop", handleDrop)
+
+            return () => {
+                chatContainer.removeEventListener("dragenter", handleDragEnter)
+                chatContainer.removeEventListener("dragover", handleDragOver)
+                chatContainer.removeEventListener("dragleave", handleDragLeave)
+                chatContainer.removeEventListener("drop", handleDrop)
+            }
+        }
+    }, [])
+
     useObserver({ inView: inViewLazyDiv, func: fetchAddMessages, flag: !mainSets.value.loading })
 
     return (
-        <div className="Chat">
+        <div className={`Chat ${isDragging ? "global-dragging" : ""}`} ref={chatContainerRef}>
+            {/* Оверлей для перетаскивания */}
+            {isDragging && (
+                <div className="global-drag-overlay">
+                    <div className="global-drag-message">
+                        📁 Отпустите файл для отправки в чат
+                    </div>
+                </div>
+            )}
+
             <MainComponents roomName={mainSets.value.room.name} loading={mainSets.value.loading} />
 
             <ScrollToTopOrBottom bottom={true} />
