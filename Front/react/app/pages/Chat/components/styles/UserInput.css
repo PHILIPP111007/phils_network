@@ -4,52 +4,136 @@
     left: 50%;
     transform: translateX(-50%);
     display: flex;
+    flex-direction: column;
     align-items: center;
-    z-index: 99;
+    z-index: 1000;
+    width: auto;
+    max-width: 90%;
 }
 
 .UserInput .ButtonsAndTextArea {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    align-items: flex-end;
+    width: 100%;
 }
 
 .UserInput .TextArea {
-    width: 100%;
-    padding: 5px;
-    min-height: 20px;
+    flex: 1;
+    padding: 12px 16px;
+    min-height: 24px;
+    max-height: 200px;
     resize: vertical;
-    box-sizing: border-box;
     field-sizing: content;
+    box-sizing: border-box;
     outline: none;
     overflow-y: auto;
     font-family: inherit;
-    font-size: inherit;
-    line-height: inherit;
-    border: 1px solid;
+    font-size: 15px;
+    line-height: 1.5;
+    border: none;
+    background-color: transparent;
+}
+
+.UserInput .TextArea::placeholder {
+    opacity: 1;
+}
+
+.UserInput .TextArea:disabled {
+    cursor: not-allowed;
+}
+
+.UserInput .ButtonsContainer {
+    display: flex;
+    align-items: center;
+    padding: 4px;
+    gap: 4px;
+}
+
+.UserInput .ActionButton {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 18px;
+    padding: 0;
+    margin: 0;
+}
+
+.UserInput .ActionButton:hover {
+    transform: scale(1.05);
+}
+
+.UserInput .ActionButton:active {
+    transform: scale(0.95);
+}
+
+.UserInput .ActionButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
 }
 
 .UserInput .uploadFileForm {
+    display: flex;
+    align-items: center;
+    margin: 0;
     height: 50%;
     width: 100%;
 }
 
-.UserInput #SettingsButton {
-    width: 35px;
-    border-top: 1px solid;
-    border-bottom: 1px solid;
-    border-left: 1px solid;
-    border-top-left-radius: 5px;
-    border-bottom-left-radius: 5px;
+.UserInput .uploadFileForm label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 18px;
+    margin: 0;
 }
 
-.UserInput #SendButton {
-    width: 35px;
-    border-top: 1px solid;
-    border-bottom: 1px solid;
-    border-right: 1px solid;
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
+.UserInput .uploadFileForm label:hover {
+    transform: scale(1.05);
+}
+
+.UserInput .uploadFileForm label:active {
+    transform: scale(0.95);
+}
+
+/* Индикатор загрузки файла */
+.UserInput .file-preview {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    right: 0;
+    padding: 8px 16px;
+    margin-bottom: 8px;
+    border-bottom: none;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.UserInput .file-preview .file-name {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.UserInput .file-preview .remove-file {
+    background: none;
+    border: none;
+    color: #dc3545;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0 4px;
 }
 
 .ParentMessage {
@@ -57,40 +141,156 @@
     bottom: 100px;
     left: 50%;
     transform: translateX(-50%);
-    display: block;
-    align-items: center;
+    background-color: #f8f9fa;
+    padding: 12px 16px;
+    max-width: 500px;
+    width: 90%;
+    z-index: 999;
+    animation: slideUp 0.3s ease;
 }
 
-@media (pointer: coarse) {
+.ParentMessage::before {
+    content: '↪ Ответ на:';
+    display: block;
+    font-size: 12px;
+    margin-bottom: 4px;
+    font-weight: 500;
+}
 
-    /* mobile device */
+.ParentMessage .message-content {
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 30px;
+}
+
+.ParentMessage .close-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 4px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Анимации */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translate(-50%, 20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}
+
+/* Десктоп версия */
+@media (min-width: 768px) {
     .UserInput {
-        margin-bottom: 60px;
+        min-width: 500px;
+    }
+
+    .UserInput .TextArea {
+        width: 450px;
     }
 
     .UserInput .ButtonsAndTextArea {
-        margin-bottom: 70px;
-        width: 100%;
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        resize: none;
-        max-height: 500px;
-    }
-
-    .ParentMessage {
-        bottom: 200px;
+        min-width: 500px;
     }
 }
 
-@media (pointer: fine),
-(pointer: none) {
+/* Мобильная версия */
+@media (max-width: 767px) {
+    .UserInput {
+        width: 95%;
+        max-width: 95%;
+        margin-bottom: 100px;
+    }
 
-    /* desktop */
+    .UserInput .ButtonsAndTextArea {
+        width: 100%;
+    }
+
     .UserInput .TextArea {
-        width: 400px;
-        max-height: 500px;
-        border-right: none;
-        border-left: none;
+        font-size: 16px;
+        padding: 12px 14px;
+        max-height: 150px;
+    }
+
+    .UserInput .ActionButton,
+    .UserInput .uploadFileForm label {
+        width: 44px;
+        height: 44px;
+        font-size: 20px;
+    }
+
+    .ParentMessage {
+        bottom: 85px;
+        width: 95%;
+        padding: 10px 12px;
+    }
+
+    .ParentMessage .message-content {
+        font-size: 13px;
+    }
+}
+
+/* Очень маленькие экраны */
+@media (max-width: 380px) {
+
+    .UserInput .ActionButton,
+    .UserInput .uploadFileForm label {
+        width: 40px;
+        height: 40px;
+    }
+
+    .UserInput .TextArea {
+        padding: 10px 12px;
+        font-size: 14px;
+    }
+}
+
+
+/* Для устройств с тачпадом */
+@media (pointer: coarse) {
+    .UserInput {
+        bottom: calc(20px + env(safe-area-inset-bottom, 0));
+    }
+
+    .UserInput .ActionButton,
+    .UserInput .uploadFileForm label {
+        min-width: 48px;
+        min-height: 48px;
+    }
+
+    .ParentMessage {
+        bottom: calc(90px + env(safe-area-inset-bottom, 0));
+    }
+}
+
+/* Анимация появления/исчезновения */
+.UserInput {
+    animation: fadeInUp 0.3s ease;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translate(-50%, 20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
     }
 }
