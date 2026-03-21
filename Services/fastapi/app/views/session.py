@@ -10,10 +10,7 @@ router = APIRouter(tags=["session"])
 
 @router.post("/set-session-cookie/")
 def create_session_cookie(request: Request, response: Response):
-	if not request.state.user:
-		return {"ok": False, "error": "Can not authenticate."}
-
-	session_id = create_session_token(user_id=request.state.user.id)
+	session_id = create_session_token()
 
 	httponly = True
 	secure = False if DEVELOPMENT == "1" else True

@@ -8,11 +8,10 @@ from typing import Optional
 from app.constants import SECRET_KEY
 
 
-def create_session_token(user_id: int) -> str:
+def create_session_token() -> str:
 	"""Создает подписанный сессионный токен"""
 	# Данные сессии
 	payload = {
-		"user_id": user_id,
 		"created_at": datetime.now().isoformat(),
 		"expires_at": (datetime.now() + timedelta(days=30)).isoformat(),
 	}

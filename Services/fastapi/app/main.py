@@ -1,12 +1,6 @@
-import base64
-import hashlib
-import hmac
-import json
-import secrets
-from datetime import datetime, timedelta
-from typing import Callable, Optional
+from typing import Callable
 
-from fastapi import FastAPI, HTTPException, Request, Response
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -15,7 +9,6 @@ from app.constants import (
 	API_PREFIX,
 	DEVELOPMENT,
 	FASTAPI_SESSION_KEY,
-	SECRET_KEY,
 	TESTING,
 )
 from app.database import engine
@@ -112,16 +105,9 @@ async def attach_user_to_request(request: Request, call_next: Callable):
 		if not token_obj:
 			return await call_next(request)
 
-		if TESTING != "1":
-			session_user_id = session_data["user_id"]
-		else:
-			session_user_id = None
-
 		user = await session.exec(select(User).where(User.id == token_obj.user_id))
 		user = user.one()
 		if user and user.username == global_user_username:
-			if TESTING != "1" and user.id != session_user_id:
-				return await call_next(request)
 			request.state.user = User(
 				id=user.id,
 				username=user.username,
