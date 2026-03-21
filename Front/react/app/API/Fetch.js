@@ -1,7 +1,6 @@
-import toast from "react-hot-toast"
-import { HttpMethod, APIVersion, CacheKeys } from "../data/enums"
-import { DEVELOPMENT, PROD_FETCH_URL, DEVELOPMENT_DJANGO_FETCH_URL, DEVELOPMENT_FASTAPI_FETCH_URL } from "../data/constants"
-import getToken from "../modules/getToken"
+import { HttpMethod, APIVersion, CacheKeys } from "../data/enums.js"
+import { DEVELOPMENT, PROD_FETCH_URL, DEVELOPMENT_DJANGO_FETCH_URL, DEVELOPMENT_FASTAPI_FETCH_URL } from "../data/constants.js"
+import getToken from "../modules/getToken.js"
 import { notify_error } from "../modules/notify.js"
 
 export default async function Fetch({ api_version, action, method, body, token, is_uploading_file }) {
