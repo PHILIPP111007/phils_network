@@ -10,7 +10,7 @@ import rememberPage from "../../modules/rememberPage.js"
 import getToken from "../../modules/getToken.js"
 import useObserver from "../../hooks/useObserver"
 import { getWebSocketDjango } from "../../modules/getWebSocket.js"
-import { getSecretKeyLocalStorage } from "../../modules/secretKey.js"
+import { getSecretKeyLocalStorageForRoom } from "../../modules/roomSecretKey.js"
 import { encrypt, decrypt, generateKey } from "../../modules/cryptoUtils.js"
 import Fetch from "../../API/Fetch.js"
 import MainComponents from "../components/MainComponents/MainComponents.jsx"
@@ -405,7 +405,7 @@ export default function Chat() {
     useEffect(() => {
         var fetchSecretKey = async () => {
             try {
-                var key = await getSecretKeyLocalStorage({
+                var key = await getSecretKeyLocalStorageForRoom({
                     password: user.password,
                     room_id: mainSets.value.room.id
                 })

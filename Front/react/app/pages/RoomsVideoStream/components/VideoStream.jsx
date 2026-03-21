@@ -1,7 +1,7 @@
 import { use, useRef, useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { UserContext } from "../../../data/context.js"
-import { getSecretKeyLocalStorage } from "../../../modules/secretKey.js"
+import { getSecretKeyLocalStorageForRoom } from "../../../modules/roomSecretKey.js"
 import { generateKey, encryptLargeData, decryptLargeData } from "../../../modules/cryptoUtils.js"
 import rememberPage from "../../../modules/rememberPage.js"
 import MainComponents from "../../components/MainComponents/MainComponents.jsx"
@@ -935,7 +935,7 @@ export default function VideoStream() {
     useEffect(() => {
         var fetchSecretKey = async () => {
             try {
-                var secretKey = await getSecretKeyLocalStorage({
+                var secretKey = await getSecretKeyLocalStorageForRoom({
                     password: user.password,
                     room_id: params.room_id
                 })

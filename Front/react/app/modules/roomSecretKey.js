@@ -1,6 +1,6 @@
 import { generateKey, encrypt, decrypt } from "./cryptoUtils.js"
 
-export async function getSecretKeyLocalStorage({ password, room_id }) {
+export async function getSecretKeyLocalStorageForRoom({ password, room_id }) {
     var key = `room_${room_id}_SECRET_KEY`
     var encryptedData = localStorage.getItem(key)
 
@@ -10,7 +10,7 @@ export async function getSecretKeyLocalStorage({ password, room_id }) {
     return secretKey
 }
 
-export async function setSecretKeyLocalStorage({ password, room_id, value }) {
+export async function setSecretKeyLocalStorageForRoom({ password, room_id, value }) {
     var generatedKey = await generateKey(password)
     var encryptedData = await encrypt(value, generatedKey)
 
